@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+interface Patient {
+  id: string;
+  name: string;
+  age: number;
+}
+
 const PatientList: React.FC = () => {
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
