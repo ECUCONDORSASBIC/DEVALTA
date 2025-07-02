@@ -30,8 +30,8 @@ const CONFIG = {
   MCP_SERVER_PATH: path.join(PROJECT_ROOT, 'mcp-servers/enhanced-multi-agent-mcp.js'),
   MAX_CONCURRENT_TASKS: 3,
   AUTO_COMMIT_ENABLED: true,
-  DRY_RUN: process.env.NEXT_PHASE_DRY_RUN === 'true',
-  LOG_LEVEL: process.env.NEXT_PHASE_LOG_LEVEL || 'info',
+  DRY_RUN: process.env.NEXT_PHASE_DRY_RUN === 'true' || process.argv.includes('--dry-run'),
+  LOG_LEVEL: process.env.NEXT_PHASE_LOG_LEVEL || (process.argv.includes('--debug') ? 'debug' : 'info'),
   TIMEOUT_MS: 30 * 60 * 1000, // 30 minutes timeout for each task
 };
 
@@ -484,9 +484,10 @@ class NextPhaseAutomation extends EventEmitter {
       this.stats.testsRun++;
 
       // Step 3: Auto-commit if tests pass
+      let commitResult = null;
       if (testResult.success) {
         logger.debug(`Step 3: Auto-committing for ${item.id}`);
-        const commitResult = await GitCommitter.autoCommit(item, testResult);
+        commitResult = await GitCommitter.autoCommit(item, testResult);
         if (commitResult.success && !commitResult.skipped) {
           this.stats.commitsCreated++;
         }
@@ -498,7 +499,7 @@ class NextPhaseAutomation extends EventEmitter {
         item,
         composition: compositionResult,
         tests: testResult,
-        commit: testResult.success ? commitResult : null
+        commit: commitResult
       };
     } catch (error) {
       logger.error(`❌ Workflow failed for ${item.id}:`, error.message);
@@ -552,9 +553,15 @@ async function main() {
 }
 
 // Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+const isMainModule = process.argv[1] && (
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url.endsWith(process.argv[1]) ||
+  process.argv[1].endsWith('next-phase.js')
+);
+
+if (isMainModule) {
   main().catch((error) => {
-    logger.error('💥 Main execution failed:', error);
+    console.error('💥 Main execution failed:', error);
     process.exit(1);
   });
 }

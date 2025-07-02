@@ -85,8 +85,8 @@
     "health-check:production": "node scripts/generate-post-deploy-report.js",
     "post-deploy:report": "node scripts/generate-post-deploy-report.js",
     "automation:next-phase": "node scripts/automation/next-phase.js",
-    "automation:next-phase:dry-run": "NEXT_PHASE_DRY_RUN=true node scripts/automation/next-phase.js",
-    "automation:next-phase:debug": "NEXT_PHASE_LOG_LEVEL=debug node scripts/automation/next-phase.js"
+    "automation:next-phase:dry-run": "node scripts/automation/next-phase.js --dry-run",
+    "automation:next-phase:debug": "node scripts/automation/next-phase.js --debug"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
