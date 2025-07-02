@@ -80,7 +80,10 @@
     "version-packages": "changeset version",
     "release": "changeset publish",
     "altamedica:refactored": "node run-refactored-altamedica.cjs",
-    "mcp": "node ./mcp-servers/warp-mcp-connector.js"
+    "mcp": "node ./mcp-servers/warp-mcp-connector.js",
+    "intelligence:report": "node scripts/generate-post-deploy-report.js",
+    "health-check:production": "node scripts/generate-post-deploy-report.js",
+    "post-deploy:report": "node scripts/generate-post-deploy-report.js"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
