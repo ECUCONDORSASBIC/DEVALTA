@@ -1,0 +1,33 @@
+{
+  "name": "mcp-protection-system",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Sistema de protección y aislamiento para servidores MCP",
+  "main": "mcp-protection-system.js",
+  "scripts": {
+    "start": "node mcp-secure-launcher.js start",
+    "stop": "node mcp-secure-launcher.js stop",
+    "status": "node mcp-secure-launcher.js status",
+    "protect": "node mcp-protection-system.js",
+    "validate": "node -e \"require('./mcp-protection-system').validateIntegrity()\"",
+    "backup": "node -e \"require('./mcp-protection-system').createBackupAll()\"",
+    "report": "node -e \"require('./mcp-protection-system').getSecurityReport().then(r => console.log(JSON.stringify(r, null, 2)))\""
+  },
+  "keywords": [
+    "mcp",
+    "security",
+    "isolation",
+    "protection",
+    "sandboxing"
+  ],
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "author": "ALTAMEDICADEV Security Team",
+  "license": "MIT"
+}

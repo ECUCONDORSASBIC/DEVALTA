@@ -1,0 +1,73 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["NODE_ENV"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["NODE_ENV", "PORT"]
+    },
+    "lint": {
+      "outputs": [],
+      "dependsOn": ["^lint"]
+    },
+    "lint:fix": {
+      "outputs": [],
+      "cache": false
+    },
+    "type-check": {
+      "dependsOn": ["^type-check"],
+      "outputs": []
+    },
+    "test": {
+      "outputs": ["coverage/**"],
+      "dependsOn": ["^build"]
+    },
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "outputs": []
+    },
+    "clean": {
+      "cache": false
+    },
+    "platform:mcp": {
+      "dependsOn": [],
+      "outputs": [],
+      "cache": false
+    },
+    "platform:devtools": {
+      "dependsOn": [],
+      "outputs": [],
+      "cache": false
+    },
+    "platform:analyze": {
+      "dependsOn": [],
+      "outputs": ["reports/**"],
+      "cache": true
+    },
+    "platform:deploy": {
+      "dependsOn": ["build", "test"],
+      "outputs": [],
+      "cache": false
+    }
+  },
+  "globalDependencies": [
+    "package.json",
+    "pnpm-workspace.yaml",
+    "turbo.json",
+    "configs/**"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "CI",
+    "VERCEL_ENV"
+  ]
+}

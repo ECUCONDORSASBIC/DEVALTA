@@ -1,0 +1,91 @@
+// Firebase Security Rules para Firestore
+// Este archivo debe copiarse a firestore.rules en el proyecto Firebase
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Reglas para colección de usuarios
+    match /users/{userId} {
+      // Los usuarios solo pueden leer y escribir su propio documento
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Los admins pueden leer todos los usuarios
+      allow read: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'admin';
+        
+      // Reglas para creación de usuarios (registro)
+      allow create: if request.auth != null && 
+        request.auth.uid == userId &&
+        request.resource.data.uid == userId &&
+        request.resource.data.email == request.auth.token.email;
+    }
+    
+    // Reglas para colección de citas médicas
+    match /appointments/{appointmentId} {
+      // Pacientes pueden leer sus propias citas
+      allow read: if request.auth != null && 
+        request.auth.uid == resource.data.patientId;
+        
+      // Doctores pueden leer citas donde son asignados
+      allow read: if request.auth != null && 
+        request.auth.uid == resource.data.doctorId;
+        
+      // Admins pueden leer todas las citas
+      allow read: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'admin';
+        
+      // Pacientes pueden crear citas
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.patientId &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'patient';
+        
+      // Doctores pueden actualizar citas asignadas a ellos
+      allow update: if request.auth != null && 
+        request.auth.uid == resource.data.doctorId &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'doctor';
+    }
+    
+    // Reglas para historiales médicos
+    match /medical_records/{recordId} {
+      // Solo el paciente propietario puede leer sus registros
+      allow read: if request.auth != null && 
+        request.auth.uid == resource.data.patientId;
+        
+      // Doctores autorizados pueden leer registros
+      allow read: if request.auth != null && 
+        request.auth.uid in resource.data.authorizedDoctors;
+        
+      // Solo doctores pueden crear/actualizar registros médicos
+      allow create, update: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType in ['doctor', 'admin'];
+    }
+    
+    // Reglas para configuraciones del sistema (solo admins)
+    match /system_config/{document=**} {
+      allow read, write: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'admin';
+    }
+    
+    // Reglas para auditoría (solo lectura para admins)
+    match /audit_logs/{document=**} {
+      allow read: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'admin';
+        
+      // Los logs se crean via Cloud Functions, no desde el cliente
+      allow write: if false;
+    }
+    
+    // Reglas por defecto: denegar todo lo que no esté explícitamente permitido
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,1031 @@
+import {
+    Prescription,
+    PrescriptionStatus,
+    DrugInformation,
+    Dosage,
+    RouteOfAdministration,
+    DrugSchedule,
+    PrescriptionQueryFilters as PrescriptionQueryParams
+} from './types';
+import { z } from 'zod';
+
+// Define missing types
+type AuditLog = any;
+type ValidationResult = any;
+
+/**
+ * 💊 PRESCRIPTIONS BUSINESS SERVICES
+ * Servicios de negocio para manejo de prescripciones médicas con cumplimiento FDA/DEA
+ */
+
+
+
+import {
+    validateControlledSubstanceRefills,
+    validateCreatePrescription,
+    validateDosageRange,
+    validatePrescriberCredentials,
+    validatePrescriptionPermissions,
+    validatePrescriptionQuery,
+    validateUpdatePrescription
+} from './schemas';
+
+// Missing types and interfaces first
+type DrugInteraction = {
+  drugA: string;
+  drugB: string;
+  severity: 'MINOR' | 'MODERATE' | 'MAJOR' | 'CONTRAINDICATED';
+  description: string;
+};
+
+// Mock databases - En producción, usar Firebase/Firestore
+class PrescriptionDatabase {
+  private prescriptions: Map<string, Prescription> = new Map();
+  private interactions: Map<string, DrugInteraction[]> = new Map();
+  private drugInteractions: Map<string, DrugInteraction[]> = new Map();
+  private auditLogs: AuditLog[] = [];
+
+  async findById(id: string): Promise<Prescription | null> {
+    return this.prescriptions.get(id) || null;
+  }
+
+  async save(prescription: Prescription): Promise<Prescription> {
+    this.prescriptions.set(prescription.id, prescription);
+    return prescription;
+  }
+
+  async query(params: PrescriptionQueryParams): Promise<{
+    data: Prescription[];
+    total: number;
+    hasMore: boolean;
+  }> {
+    let results = Array.from(this.prescriptions.values());
+
+    // Aplicar filtros
+    if ((params as any).patientId) {
+      results = results.filter((p: any) => p.patientId === (params as any).patientId);
+    }
+    
+    if (params.prescriberId) {
+      results = results.filter((p: any) => p.prescriberId === params.prescriberId);
+    }
+
+    if ((params as any).status?.length) {
+      results = results.filter((p: any) => (params as any).status!.includes((p as any).status));
+    }
+
+    if (params.drugName) {
+      const searchTerm = params.drugName.toLowerCase();
+      results = results.filter((p: any) => 
+        p.drug.name.toLowerCase().includes(searchTerm) ||
+        p.drug.genericName?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    if (params.dateRange) {
+      results = results.filter((p: any) => {
+        const prescDate = new Date(p.updatedAt);
+        return prescDate >= params.dateRange!.start && 
+               prescDate <= params.dateRange!.end;
+      });
+    }
+
+    // Ordenamiento
+    results.sort((a, b) => {
+      const direction = params.sortOrder === 'desc' ? -1 : 1;
+      
+      switch (params.sortBy) {
+        case 'date':
+          return direction * (new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime());
+        case 'patient':
+          return direction * (a as any).patientId.localeCompare((b as any).patientId);
+        case 'drug':
+          return direction * a.drug.name.localeCompare(b.drug.name);
+        case 'status':
+          return direction * (a as any).status.localeCompare((b as any).status);
+        case 'expiration':
+          const aExp = a.expirationDate ? new Date(a.expirationDate).getTime() : 0;
+          const bExp = b.expirationDate ? new Date(b.expirationDate).getTime() : 0;
+          return direction * (aExp - bExp);
+        default:
+          return 0;
+      }
+    });
+
+    // Paginación
+    const total = results.length;
+    const offset = params.offset || 0;
+    const limit = params.limit || 20;
+    const paginatedResults = results.slice(offset, offset + limit);
+
+    return {
+      data: paginatedResults,
+      total,
+      hasMore: offset + paginatedResults.length < total
+    };
+  }
+
+  async getDrugInteractions(drugNames: string[]): Promise<DrugInteraction[]> {
+    const interactions: DrugInteraction[] = [];
+    
+    for (let i = 0; i < drugNames.length; i++) {
+      for (let j = i + 1; j < drugNames.length; j++) {
+        const key1 = `${drugNames[i]}-${drugNames[j]}`;
+        const key2 = `${drugNames[j]}-${drugNames[i]}`;
+        
+        const interaction = this.drugInteractions.get(key1) || this.drugInteractions.get(key2);
+        if (interaction) {
+          interactions.push(...interaction);
+        }
+      }
+    }
+    
+    return interactions;
+  }
+  async logAudit(log: AuditLog): Promise<void> {
+    (this as any).auditLogs.push(log);
+  }
+
+  async getPatientAllergies(patientId: string): Promise<string[]> {
+    // Mock patient allergies - integrar con patient API
+    const allergies: Record<string, string[]> = {
+      'patient-123': ['penicillin', 'sulfa', 'latex'],
+      'patient-456': ['aspirin', 'codeine'],
+    };
+    
+    return allergies[patientId] || [];
+  }
+
+  async getPatientCurrentMedications(patientId: string): Promise<string[]> {
+    // Obtener medicamentos actuales del paciente
+    const currentPrescriptions = Array.from(this.prescriptions.values())
+      .filter((p: any) => 
+        p.patientId === patientId && 
+        p.status === PrescriptionStatus.PENDING &&
+        (!p.expirationDate || new Date(p.expirationDate) > new Date())
+      );
+    
+    return currentPrescriptions.map((p: any) => p.drug.name);
+  }
+  async getPrescriberCredentials(prescriberId: string): Promise<{
+    deaNumber: string;
+    npiNumber: string;
+    licenseNumber: string;
+    licenseState: string;
+  } | null> {
+    // Mock prescriber credentials - integrar con doctors API
+    const credentials: Record<string, any> = {
+      'prescriber-123': {
+        deaNumber: 'AB1234567',
+        npiNumber: '1234567890',
+        licenseNumber: 'LIC123456',
+        licenseState: 'CA'
+      }
+    };
+
+    return credentials[prescriberId] || null;
+  }
+}
+
+// Instancia singleton del database
+const db = new PrescriptionDatabase();
+
+// Additional types and interfaces
+type CreatePrescriptionRequest = any;
+type UpdatePrescriptionRequest = any;
+type PrescriptionType = any;
+
+type InteractionSeverity = {
+  MINOR: 'MINOR';
+  MODERATE: 'MODERATE';
+  MAJOR: 'MAJOR';
+  CONTRAINDICATED: 'CONTRAINDICATED';
+};
+
+const InteractionSeverity = {
+  MINOR: 'MINOR' as const,
+  MODERATE: 'MODERATE' as const,
+  MAJOR: 'MAJOR' as const,
+  CONTRAINDICATED: 'CONTRAINDICATED' as const
+};
+
+// Extend ValidationResult to be generic
+interface ValidationResultGeneric<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  errors?: any[];
+}
+
+type ValidationResult<T = any> = ValidationResultGeneric<T>;
+
+/**
+ * 🏥 PRESCRIPTION SERVICES CLASS
+ * Servicios principales para manejo de prescripciones
+ */
+export class PrescriptionServices {
+  
+  /**
+   * Crear nueva prescripción con validaciones completas
+   */
+  static async createPrescription(
+    data: CreatePrescriptionRequest,
+    userId: string,
+    userRole: string,
+    userPermissions: string[]
+  ): Promise<any> {
+    try {
+      // 1. Validar datos de entrada
+      const validation = validateCreatePrescription(data);
+      if (!validation.success) {
+        return {
+          success: false,
+          errors: validation.errors,
+          data: null
+        };
+      }
+
+      const validatedData = validation.data!;
+
+      // 2. Validar permisos del usuario
+      const permissionCheck = validatePrescriptionPermissions(
+        userRole,
+        'create',
+        (validatedData as any).type,
+        validatedData.drug.schedule || DrugSchedule.NON_CONTROLLED,
+        userPermissions
+      );
+
+      if (!permissionCheck.allowed) {
+        return {
+          success: false,
+          errors: [permissionCheck.reason!],
+          data: null
+        };
+      }
+
+      // 3. Validar credenciales del prescriptor
+      const prescriberCredentials = await db.getPrescriberCredentials(validatedData.prescriberId);
+      if (!prescriberCredentials) {
+        return {
+          success: false,
+          errors: ['Credenciales del prescriptor no encontradas'],
+          data: null
+        };
+      }
+
+      const credentialValidation = validatePrescriberCredentials(
+        prescriberCredentials.deaNumber,
+        prescriberCredentials.npiNumber,
+        prescriberCredentials.licenseNumber,
+        validatedData.drug.schedule || DrugSchedule.NON_CONTROLLED
+      );
+
+      if (!credentialValidation.isValid) {
+        return {
+          success: false,
+          errors: credentialValidation.errors,
+          data: null
+        };
+      }
+
+      // 4. Validar refills para sustancias controladas
+      if (validatedData.drug.schedule) {
+        const refillValidation = validateControlledSubstanceRefills(
+          validatedData.drug.schedule,
+          validatedData.dosage.refillsAuthorized
+        );
+
+        if (!refillValidation.isValid) {
+          return {
+            success: false,
+            errors: [refillValidation.reason!],
+            data: null
+          };
+        }
+      }
+
+      // 5. Validar rango de dosificación
+      const dosageValidation = validateDosageRange(
+        validatedData.drug.name,
+        validatedData.dosage.strength,
+        validatedData.dosage.frequency,
+        validatedData.dosage.route
+      );
+
+      // 6. Verificar alergias del paciente
+      const patientAllergies = await db.getPatientAllergies((validatedData as any).patientId);
+      const allergyWarnings: string[] = [];
+      
+      const drugNames = [
+        validatedData.drug.name.toLowerCase(),
+        validatedData.drug.genericName?.toLowerCase()
+      ].filter(Boolean);
+
+      for (const allergy of patientAllergies) {
+        for (const drugName of drugNames) {
+          if (drugName?.includes(allergy.toLowerCase()) || 
+              allergy.toLowerCase().includes(drugName || '')) {
+            allergyWarnings.push(`Posible alergia: ${allergy}`);
+          }
+        }
+      }
+
+      // 7. Verificar interacciones con medicamentos actuales
+      const currentMedications = await db.getPatientCurrentMedications((validatedData as any).patientId);
+      const allMedications = [...currentMedications, validatedData.drug.name];
+      const interactions = await db.getDrugInteractions(allMedications);
+      
+      const severeInteractions = interactions.filter((i: any) => 
+        i.severity === InteractionSeverity.MAJOR || 
+        i.severity === InteractionSeverity.CONTRAINDICATED
+      );
+
+      if (severeInteractions.length > 0) {
+        return {
+          success: false,
+          errors: [
+            'Interacciones severas detectadas',
+            ...severeInteractions.map((i: any) => `${i.drugA} + ${i.drugB}: ${i.description}`)
+          ],
+          data: null
+        };
+      }
+
+      // 8. Calcular fecha de expiración
+      const prescribedAt = new Date();
+      const expirationDate = new Date(prescribedAt);
+      
+      // Sustancias controladas expiran más rápido
+      const daysToAdd = validatedData.drug.schedule === DrugSchedule.SCHEDULE_II ? 30 :
+                       validatedData.drug.schedule === DrugSchedule.SCHEDULE_III ||
+                       validatedData.drug.schedule === DrugSchedule.SCHEDULE_IV ? 180 :
+                       365; // No controladas o Schedule V
+
+      expirationDate.setDate(expirationDate.getDate() + daysToAdd);
+
+      // 9. Crear prescripción
+      const prescription: Prescription = {
+        id: `rx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        prescriptionNumber: `RX${Date.now().toString().slice(-8)}`,
+        patientId: (validatedData as any).patientId,
+        prescriberId: validatedData.prescriberId,
+        type: (validatedData as any).type,
+        urgency: validatedData.urgency,
+        status: PrescriptionStatus.PENDING,
+        
+        drug: validatedData.drug as DrugInformation,
+        dosage: validatedData.dosage,
+        
+        indication: validatedData.indication,
+        diagnosis: validatedData.diagnosis,
+        medicalRecordId: validatedData.medicalRecordId,
+        
+        updatedAt: prescribedAt.toISOString(),
+        expirationDate: expirationDate,
+        
+        pharmacyId: (validatedData as any).pharmacyId,
+        pharmacyInstructions: validatedData.pharmacyInstructions,
+        
+        priorAuthorizationRequired: validatedData.priorAuthorizationRequired,
+        
+        warnings: [
+          ...dosageValidation.warnings,
+          ...allergyWarnings,
+          ...drugInteractions
+            .filter((i: any) => i.severity === InteractionSeverity.MODERATE)
+            .map((i: any) => `Interacción moderada: ${i.drugA} + ${i.drugB}`)
+        ],
+        
+        interactions: interactions,
+        
+        audit: {
+          createdBy: userId,
+          updatedAt: prescribedAt.toISOString(),
+          lastModifiedBy: userId,
+          lastModifiedAt: prescribedAt.toISOString(),
+          changeHistory: []
+        },
+        
+        metadata: {
+        createdBy: userId,
+        createdAt: new Date(),
+        version: 1,
+        ...validatedData.metadata
+      }
+      };
+
+      // 10. Guardar prescripción
+      const savedPrescription = await db.save(prescription);
+
+      // 11. Log de auditoría
+      await db.logAudit({
+        id: `audit_${Date.now()}`,
+        action: 'CREATE_PRESCRIPTION',
+        resourceType: 'prescription',
+        resourceId: prescription.id,
+        userId,
+        userRole,
+        timestamp: new Date().toISOString(),
+        details: {
+          patientId: (prescription as any).patientId,
+          drugName: prescription.drug.name,
+          prescriberId: prescription.prescriberId
+        },
+        ipAddress: 'unknown', // Obtener del request
+        userAgent: 'unknown'   // Obtener del request
+      });
+
+      return {
+        success: true,
+        data: savedPrescription,
+        warnings: [
+          ...dosageValidation.warnings,
+          ...allergyWarnings,
+          ...drugInteractions
+            .filter((i: any) => i.severity === InteractionSeverity.MINOR)
+            .map((i: any) => `Interacción menor: ${i.drugA} + ${i.drugB}`)
+        ]
+      };
+
+    } catch (error: any) {
+      return {
+        success: false,
+        errors: [`Error interno: ${error.message}`],
+        data: null
+      };
+    }
+  }
+
+  /**
+  static async updatePrescription(
+    prescriptionId: string,
+    updates: UpdatePrescriptionRequest,
+    userId: string,
+    userRole: string,
+    userPermissions: string[]
+  ): Promise<any> {
+    userPermissions: string[]
+  ): Promise<any> {
+    try {
+      // 1. Validar datos de entrada
+      const validation = validateUpdatePrescription({
+        ...updates, prescriptionId
+      });
+      
+      if (!validation.success) {
+        return {
+          success: false,
+          errors: validation.errors,
+          data: null
+        };
+      }
+
+      // 2. Buscar prescripción existente
+      const existingPrescription = await db.findById(prescriptionId);
+      if (!existingPrescription) {
+        return {
+          success: false,
+          errors: ['Prescripción no encontrada'],
+          data: null
+        };
+      }
+
+      // 3. Validar permisos
+      const permissionCheck = validatePrescriptionPermissions(
+        userRole,
+        'update',
+        (existingPrescription as any).type,
+        existingPrescription.drug.schedule || DrugSchedule.NON_CONTROLLED,
+        userPermissions
+      );
+
+      if (!permissionCheck.allowed) {
+        return {
+          success: false,
+          errors: [permissionCheck.reason!],
+          data: null
+        };
+      }
+
+      // 4. Aplicar actualizaciones
+      const updatedPrescription = {
+        ...existingPrescription,
+        ...updates.updates,
+        audit: {
+          ...(existingPrescription as any).audit,
+          lastModifiedBy: userId,
+          lastModifiedAt: new Date().toISOString(),
+          changeHistory: [
+            ...(existingPrescription as any).audit.changeHistory,
+            {
+              userId,
+              timestamp: new Date().toISOString(),
+              action: 'UPDATE',
+              changes: updates.updates,
+              reason: updates.updateReason
+            }
+          ]
+        }
+      };
+
+      // 5. Guardar cambios
+      const savedPrescription = await db.save(updatedPrescription);
+
+      // 6. Log de auditoría
+      await db.logAudit({
+        id: `audit_${Date.now()}`,
+        action: 'UPDATE_PRESCRIPTION',
+        resourceType: 'prescription',
+        resourceId: prescriptionId,
+        userId,
+        userRole,
+        timestamp: new Date().toISOString(),
+        details: {
+          changes: updates.updates,
+          reason: updates.updateReason
+        },
+        ipAddress: 'unknown',
+        userAgent: 'unknown'
+      });
+
+      return {
+        success: true,
+        data: savedPrescription,
+        warnings: []
+      };
+
+    } catch (error: any) {
+      return {
+        success: false,
+        errors: [`Error interno: ${error.message}`],
+        data: null
+      };
+    }
+  }
+
+  static async queryPrescriptions(
+    params: PrescriptionQueryParams,
+    userId: string,
+    userRole: string,
+    userPermissions: string[]
+  ): Promise<any> {
+    total: number;
+    hasMore: boolean;
+  }>> {
+    try {
+      // 1. Validar parámetros
+      const validation = validatePrescriptionQuery(params);
+      if (!validation.success) {
+        return {
+          success: false,
+          errors: validation.errors,
+          data: null
+        };
+      }
+
+      // 2. Validar permisos de lectura
+      const permissionCheck = validatePrescriptionPermissions(
+        userRole,
+        'read',
+        "NEW" as any, // Dummy type for permission check
+        DrugSchedule.NON_CONTROLLED,
+        userPermissions
+      );
+
+      if (!permissionCheck.allowed) {
+        return {
+          success: false,
+          errors: [permissionCheck.reason!],
+          data: null
+        };
+      }
+
+      // 3. Ejecutar consulta
+      const result = await db.query(validation.data!);
+
+      return {
+        success: true,
+        data: result,
+        warnings: []
+      };
+
+    } catch (error: any) {
+      return {
+        success: false,
+        errors: [`Error interno: ${error.message}`],
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Generar prescripción con validaciones avanzadas y firma electrónica
+   */
+  static async generatePrescription(
+  static async generatePrescription(
+    data: CreatePrescriptionRequest & {
+      checkInteractions?: boolean;
+      checkAllergies?: boolean;
+      validateDosage?: boolean;
+      electronicSignature?: any;
+    },
+    userId: string,
+    userRole: string,
+    userPermissions: string[]
+  ): Promise<any> {
+      // 1. Crear prescripción con todas las validaciones
+      const createResult = await this.createPrescription(
+        data,
+        userId,
+        userRole,
+        userPermissions
+      );
+
+      if (!createResult.success) {
+        return createResult as any;
+      }
+
+      const prescription = createResult.data!;
+
+      // 2. Generar reportes detallados
+      const currentMedications = await db.getPatientCurrentMedications((data as any).patientId);
+      const allMedications = [...currentMedications, data.drug.name];
+      const interactionReport = await db.getDrugInteractions(allMedications);
+
+      const patientAllergies = await db.getPatientAllergies((data as any).patientId);
+      const allergyReport: string[] = [];
+      
+      const drugNames = [
+        data.drug.name.toLowerCase(),
+        data.drug.genericName?.toLowerCase()
+      ].filter(Boolean);
+
+      for (const allergy of patientAllergies) {
+        for (const drugName of drugNames) {
+          if (drugName?.includes(allergy.toLowerCase()) || 
+              allergy.toLowerCase().includes(drugName || '')) {
+            allergyReport.push(`Alergia identificada: ${allergy}`);
+          }
+        }
+      }
+
+      const dosageValidation = validateDosageRange(
+        data.drug.name,
+        data.dosage.strength,
+        data.dosage.frequency,
+        data.dosage.route
+      );
+
+      // 3. Firmar electrónicamente si se proporciona firma
+      if (data.electronicSignature) {
+        prescription.electronicSignature = {
+          ...data.electronicSignature,
+          timestamp: new Date().toISOString(),
+          signedBy: userId
+        };
+        
+        prescription.status = PrescriptionStatus.PENDING;
+        await db.save(prescription);
+      }
+
+      return {
+        success: true,
+        data: {
+          prescription,
+          interactionReport,
+          allergyReport,
+          dosageWarnings: dosageValidation.warnings
+        },
+        warnings: createResult.warnings
+      };
+
+    } catch (error: any) {
+      return {
+        success: false,
+        errors: [`Error interno: ${error.message}`],
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Cancelar prescripción
+   */
+  static async cancelPrescription(
+    prescriptionId: string,
+    reason: string,
+    userId: string,
+    userRole: string,
+    userPermissions: string[]
+  ): Promise<any> {
+    try {
+      const prescription = await db.findById(prescriptionId);
+      if (!prescription) {
+        return {
+          success: false,
+          errors: ['Prescripción no encontrada'],
+          data: null
+        };
+      }
+
+      // Validar permisos
+      const permissionCheck = validatePrescriptionPermissions(
+        userRole,
+        'update',
+        (prescription as any).type,
+        prescription.drug.schedule || DrugSchedule.NON_CONTROLLED,
+        userPermissions
+      );
+
+      if (!permissionCheck.allowed) {
+        return {
+          success: false,
+          errors: [permissionCheck.reason!],
+          data: null
+        };
+      }
+
+      // Actualizar status
+      prescription.status = PrescriptionStatus.CANCELLED;
+      (prescription as any).cancellationReason = reason;
+      (prescription as any).cancelledAt = new Date().toISOString();
+      (prescription as any).cancelledBy = userId;
+
+      // Agregar al historial de cambios
+      (prescription as any).audit.changeHistory.push({
+        userId,
+        timestamp: new Date().toISOString(),
+        action: 'CANCEL',
+        changes: { status: PrescriptionStatus.CANCELLED },
+        reason
+      });
+
+      const updatedPrescription = await db.save(prescription);
+
+      // Log de auditoría
+      await db.logAudit({
+        id: `audit_${Date.now()}`,
+        action: 'CANCEL_PRESCRIPTION',
+        resourceType: 'prescription',
+        resourceId: prescriptionId,
+        userId,
+        userRole,
+        timestamp: new Date().toISOString(),
+        details: { reason },
+        ipAddress: 'unknown',
+        userAgent: 'unknown'
+      });
+
+      return {
+        success: true,
+        data: updatedPrescription,
+        warnings: []
+      };
+
+    } catch (error: any) {
+      return {
+        success: false,
+        errors: [`Error interno: ${error.message}`],
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Verificar interacciones de medicamentos
+   */
+  static async checkDrugInteractions(
+    drugNames: string[]
+  ): Promise<anyDrugInteraction[]>> {
+    try {
+      const interactions = await db.getDrugInteractions(drugNames);
+      
+  static async checkDrugInteractions(
+    drugNames: string[]
+  ): Promise<any> {
+        warnings: interactions
+          .filter((i: any) => i.severity === InteractionSeverity.MINOR)
+          .map((i: any) => `Interacción menor: ${i.drugA} + ${i.drugB}`)
+      };
+
+    } catch (error: any) {
+      return {
+        success: false,
+        errors: [`Error interno: ${error.message}`],
+        data: null
+      };
+    }
+  }
+
+  /**
+   * Obtener prescripciones que necesitan renovación
+   */
+  static async getPrescriptionsNeedingRenewal(
+    patientId?: string,
+    daysAhead: number = 30
+  ): Promise<anyPrescription[]>> {
+    try {
+      const expirationThreshold = new Date();
+  static async getPrescriptionsNeedingRenewal(
+    patientId?: string,
+    daysAhead: number = 30
+  ): Promise<any> {
+        limit: 100
+      };
+
+      if (patientId) {
+        queryParams.patientId = patientId;
+      }
+
+      const result = await db.query(queryParams);
+      
+      const needingRenewal = result.data.filter((prescription: any) => {
+        if (!prescription.expirationDate) return false;
+        
+        const expirationDate = new Date(prescription.expirationDate);
+        return expirationDate <= expirationThreshold;
+      });
+
+      return {
+        success: true,
+        data: needingRenewal,
+        warnings: []
+      };
+
+    } catch (error: any) {
+      return {
+        success: false,
+        errors: [`Error interno: ${error.message}`],
+        data: null
+      };
+    }
+  }
+}
+
+// Funciones de utilidad para integraciones
+export class PrescriptionUtils {
+  /**
+   * Formatear prescripción para transmisión electrónica
+   */
+  static formatForEPrescription(prescription: Prescription): any {
+    return {
+      prescriptionId: prescription.id,
+      prescriptionNumber: prescription.prescriptionNumber,
+      patient: {
+        id: (prescription as any).patientId
+      },
+      prescriber: {
+        id: prescription.prescriberId
+      },
+      medication: {
+        name: prescription.drug.name,
+        genericName: prescription.drug.genericName,
+        ndcNumber: prescription.drug.ndcNumber,
+        strength: prescription.dosage.strength,
+        dosageForm: prescription.drug.dosageForm,
+        quantity: prescription.dosage.quantity,
+        quantityUnit: prescription.dosage.quantityUnit,
+        daysSupply: prescription.dosage.daysSupply,
+        refillsAuthorized: prescription.dosage.refillsAuthorized,
+        instructions: prescription.dosage.instructions
+      },
+      pharmacy: prescription.pharmacy?.id ? {
+        id: prescription.pharmacy?.id
+      } : undefined,
+      prescribedDate: prescription.updatedAt,
+      expirationDate: prescription.expirationDate,
+      electronicSignature: prescription.electronicSignature
+    };
+  }
+
+  /**
+   * Calcular adherencia a medicamentos
+   */
+  static calculateMedicationAdherence(
+    prescriptions: Prescription[],
+    refillHistory: any[]
+  ): {
+    overallAdherence: number;
+    prescriptionAdherence: { prescriptionId: string; adherence: number }[];
+  } {
+    // Implementación simplificada - expandir con datos reales
+    const adherenceData = prescriptions.map((prescription: any) => {
+      const refills = refillHistory.filter((r: any) => r.prescriptionId === prescription.id);
+      const expectedRefills = Math.floor(prescription.dosage.daysSupply / 30);
+      const actualRefills = refills.length;
+      
+      const adherence = expectedRefills > 0 ? 
+        Math.min(actualRefills / expectedRefills, 1) * 100 : 100;
+
+      return {
+        prescriptionId: prescription.id,
+        adherence
+      };
+    });
+
+    const overallAdherence = adherenceData.length > 0 ?
+      adherenceData.reduce((sum, item) => sum + item.adherence, 0) / adherenceData.length :
+      0;
+
+    return {
+      overallAdherence,
+      prescriptionAdherence: adherenceData
+    };
+  }
+
+  /**
+   * Generar reporte de prescripciones
+   */
+  static generatePrescriptionReport(
+    prescriptions: Prescription[],
+    reportType: 'summary' | 'detailed' | 'compliance'
+  ): any {
+    const baseReport = {
+      generatedAt: new Date().toISOString(),
+      totalPrescriptions: prescriptions.length,
+      reportType
+    };
+
+    switch (reportType) {
+      case 'summary':
+        return {
+          ...baseReport,
+          statusDistribution: this.getStatusDistribution(prescriptions),
+          drugClassDistribution: this.getDrugClassDistribution(prescriptions),
+          prescriberDistribution: this.getPrescriberDistribution(prescriptions)
+        };
+
+      case 'detailed':
+        return {
+          ...baseReport,
+          prescriptions: prescriptions.map((p: any) => ({
+            id: p.id,
+            prescriptionNumber: p.prescriptionNumber,
+            patientId: (p as any).patientId,
+            drugName: p.drug.name,
+            status: (p as any).status,
+            prescribedAt: p.updatedAt,
+            expirationDate: p.expirationDate,
+            warnings: p.warnings?.length || 0,
+            interactions: p.drugInteractions?.length || 0
+          }))
+        };
+
+      case 'compliance':
+        return {
+          ...baseReport,
+          controlledSubstances: prescriptions.filter((p: any) => 
+            p.drug.schedule && p.drug.schedule !== DrugSchedule.NON_CONTROLLED
+          ).length,
+          expiringSoon: prescriptions.filter((p: any) => {
+            if (!p.expirationDate) return false;
+            const daysUntilExpiration = Math.ceil(
+              (new Date(p.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+            );
+            return daysUntilExpiration <= 30 && daysUntilExpiration >= 0;
+          }).length,
+          needingSignature: prescriptions.filter((p: any) => 
+            p.status === PrescriptionStatus.PENDING
+          ).length
+        };
+
+      default:
+        return baseReport;
+    }
+  }
+
+  private static getStatusDistribution(prescriptions: Prescription[]): Record<string, number> {
+    const distribution: Record<string, number> = {};
+    
+    prescriptions.forEach((p: any) => {
+      distribution[(p as any).status] = (distribution[(p as any).status] || 0) + 1;
+    });
+
+    return distribution;
+  }
+
+  private static getDrugClassDistribution(prescriptions: Prescription[]): Record<string, number> {
+    const distribution: Record<string, number> = {};
+    
+    prescriptions.forEach((p: any) => {
+      const schedule = p.drug.schedule || 'NON_CONTROLLED';
+      distribution[schedule] = (distribution[schedule] || 0) + 1;
+    });
+
+    return distribution;
+  }
+
+  private static getPrescriberDistribution(prescriptions: Prescription[]): Record<string, number> {
+    const distribution: Record<string, number> = {};
+    
+    prescriptions.forEach((p: any) => {
+      distribution[p.prescriberId] = (distribution[p.prescriberId] || 0) + 1;
+    });
+
+    return distribution;
+  }
+}
+
+export { db as PrescriptionDatabase };
+

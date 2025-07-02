@@ -1,0 +1,88 @@
+{
+    "mcpServers": {
+        "filesystem": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "C:\\Users\\Eduardo\\Documents\\altamedicadev\\backups\\complete-backup-1751261669172"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        "memory": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-memory"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        "nextjs-turbopack-expert": {
+            "command": "node",
+            "args": [
+                "mcp-servers/nextjs-turbopack-expert.js"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        "smart-completion": {
+            "command": "node",
+            "args": [
+                "../../mcp-protected/servers/smart-completion-mcp.js"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        "codebase-intelligence": {
+            "command": "node",
+            "args": [
+                "../../mcp-protected/servers/codebase-intelligence-mcp.js"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        "context-memory": {
+            "command": "node",
+            "args": [
+                "../../mcp-protected/servers/context-memory-mcp.js"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        "multi-agent-composer": {
+            "command": "node",
+            "args": [
+                "../../mcp-protected/servers/multi-agent-composer-mcp.js"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        "ai-flow-orchestrator": {
+            "command": "node",
+            "args": [
+                "../../mcp-protected/servers/ai-flow-orchestrator-mcp.js"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        "terminal": {
+            "command": "node",
+            "args": [
+                "../../platform/mcp-servers/terminal-mcp.js"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        }
+    }
+}

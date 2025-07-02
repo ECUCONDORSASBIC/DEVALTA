@@ -1,0 +1,33 @@
+{
+    "medical_context":  {
+                            "icd10_enabled":  true,
+                            "hipaa_compliance":  true
+                        },
+    "mcpServers":  {
+                       "smart-completion":  {
+                                                "args":  [
+                                                             "tools/smart-completion-mcp.js"
+                                                         ],
+                                                "command":  "node",
+                                                "priority":  2
+                                            },
+                       "codebase-intelligence":  {
+                                                     "args":  [
+                                                                  "tools/codebase-intelligence-mcp.js"
+                                                              ],
+                                                     "command":  "node",
+                                                     "priority":  1
+                                                 },
+                       "multi-agent-composer":  {
+                                                    "args":  [
+                                                                 "tools/multi-agent-composer-mcp.js"
+                                                             ],
+                                                    "command":  "node",
+                                                    "priority":  0
+                                                }
+                   },
+    "performance":  {
+                        "latency_max_ms":  200,
+                        "accuracy_target":  95
+                    }
+}

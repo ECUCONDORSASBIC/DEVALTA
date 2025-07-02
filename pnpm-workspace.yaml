@@ -1,0 +1,28 @@
+packages:
+  # 🏥 DOCTORES - Aplicaciones y Servicios para Médicos
+  - 'apps/doctors'
+  - 'apps/admin'
+  - 'apps/companies'
+  - 'apps/medical'
+  
+  # 👥 PACIENTES - Aplicaciones y Servicios para Pacientes
+  - 'apps/patients'
+  - 'apps/web-app'
+  
+  # 🏢 ROOT - Servicios Centrales y Administración
+  - 'apps/api-server'
+  - 'apps/development'
+  - 'apps/anthropic-simulator'
+  
+  # 📦 PACKAGES - Bibliotecas Compartidas
+  - 'packages/core'
+  - 'packages/ui'
+  - 'packages/auth'
+  - 'packages/firebase'
+  - 'packages/types'
+  - 'packages/shared'
+  - 'packages/medical'
+  - 'packages/eslint-config'
+  - 'packages/tailwind-config'
+  - 'packages/typescript-config'
+  - 'packages/claude-config-manager'

@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "altamedica-apis",
+    "altamedicadev": "altamedic-20f69"
+  },
+  "targets": {
+    "altamedica-apis": {
+      "hosting": {
+        "medical": [
+          "altamedica-medical"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}

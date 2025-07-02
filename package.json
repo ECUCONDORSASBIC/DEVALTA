@@ -1,0 +1,188 @@
+{
+  "name": "altamedica-apis",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "ALTAMEDICA Medical APIs - Professional healthcare management system",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev:all": "turbo run dev --concurrency=11",
+    "build:all": "turbo run build",
+    "test:all": "turbo run test",
+    "lint:all": "turbo run lint",
+    "clean:all": "turbo run clean && rm -rf node_modules apps/*/node_modules packages/*/node_modules",
+    "dev:doctors": "turbo run dev --filter=doctors --filter=admin --filter=companies --filter=medical",
+    "build:doctors": "turbo run build --filter=doctors --filter=admin --filter=companies --filter=medical",
+    "test:doctors": "turbo run test --filter=doctors --filter=admin --filter=companies --filter=medical",
+    "lint:doctors": "turbo run lint --filter=doctors --filter=admin --filter=companies --filter=medical",
+    "dev:patients": "turbo run dev --filter=patients --filter=web-app",
+    "build:patients": "turbo run build --filter=patients --filter=web-app",
+    "test:patients": "turbo run test --filter=patients --filter=web-app",
+    "lint:patients": "turbo run lint --filter=patients --filter=web-app",
+    "dev:root": "turbo run dev --filter=api-server --filter=development --filter=anthropic-simulator",
+    "build:root": "turbo run build --filter=api-server --filter=development --filter=anthropic-simulator",
+    "test:root": "turbo run test --filter=api-server --filter=development --filter=anthropic-simulator",
+    "lint:root": "turbo run lint --filter=api-server --filter=development --filter=anthropic-simulator",
+    "dev:packages": "turbo run dev --filter=\"./packages/*\"",
+    "build:packages": "turbo run build --filter=\"./packages/*\"",
+    "test:packages": "turbo run test --filter=\"./packages/*\"",
+    "lint:packages": "turbo run lint --filter=\"./packages/*\"",
+    "build:typescript": "tsc -b packages/types packages/shared packages/core packages/ui packages/firebase packages/claude-config-manager",
+    "dev:watch-typescript": "tsc -b packages/types packages/shared packages/core packages/ui packages/firebase packages/claude-config-manager -w --preserveWatchOutput",
+    "maintenance": "node scripts/maintenance/execute-full-validation.ps1",
+    "deploy": "node scripts/deployment/launch-commercial-plan.ps1",
+    "analyze": "node scripts/analyze-architecture.js",
+    "optimize": "node scripts/optimize-architecture.js",
+    "build": "turbo run build",
+    "dev": "turbo run dev --concurrency=11",
+    "dev:watch-all": "npm-run-all --parallel dev dev:watch-typescript",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "type-check": "turbo run type-check",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "test:coverage": "turbo run test:coverage",
+    "test:e2e": "turbo run test:e2e",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "postinstall": "turbo run postinstall",
+    "prepare": "husky install",
+    "firebase:emulators": "firebase emulators:start",
+    "firebase:deploy": "firebase deploy",
+    "db:seed": "tsx tools/seed-database.ts",
+    "db:migrate": "tsx tools/migrate-database.ts",
+    "pm2:start": "pm2 start ecosystem.config.cjs",
+    "pm2:start-tsc": "pm2 start ecosystem.config.cjs --only tsc-watch",
+    "pm2:start-or-restart": "pm2 startOrRestart ecosystem.config.cjs",
+    "pm2:start-or-restart-tsc": "pm2 startOrRestart ecosystem.config.cjs --only tsc-watch",
+    "pm2:stop": "pm2 stop ecosystem.config.cjs",
+    "pm2:restart": "pm2 restart ecosystem.config.cjs",
+    "pm2:reload": "pm2 reload ecosystem.config.cjs",
+    "pm2:delete": "pm2 delete ecosystem.config.cjs",
+    "pm2:status": "pm2 status",
+    "pm2:logs": "pm2 logs",
+    "pm2:monit": "pm2 monit",
+    "pm2:flush": "pm2 flush",
+    "pm2:save": "pm2 save",
+    "pm2:resurrect": "pm2 resurrect",
+    "pm2:startup": "pm2 startup",
+    "dev:api": "cd apps/api-server && pnpm dev",
+    "dev:companies": "cd apps/companies && pnpm dev",
+    "dev:doctors": "cd apps/doctors && pnpm dev",
+    "dev:patients": "cd apps/patients && pnpm dev",
+    "dev:web-app": "cd apps/web-app && pnpm dev",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish",
+    "altamedica:refactored": "node run-refactored-altamedica.cjs",
+    "mcp": "node ./mcp-servers/warp-mcp-connector.js"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@next/eslint-plugin-next": "^15.3.4",
+    "@types/node": "^20.19.1",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "firebase-tools": "^12.9.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
+    "npm-run-all": "^4.1.5",
+    "pm2": "^6.0.8",
+    "prettier": "^3.1.0",
+    "tsx": "^4.20.3",
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "@types/leaflet": "^1.9.18",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "autoprefixer": "^10.4.0",
+    "critters": "^0.0.25",
+    "dotenv": "^16.5.0",
+    "firebase": "^10.14.1",
+    "firebase-admin": "^12.7.0",
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "lucide-react": "^0.522.0",
+    "next": "15.3.4",
+    "node-fetch": "^3.3.2",
+    "postcss": "^8.4.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-leaflet": "^5.0.0",
+    "tailwindcss": "^3.4.0",
+    "zod": "^3.25.67"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{md,json}": [
+      "prettier --write"
+    ]
+  },
+  "turbo": {
+    "pipeline": {
+      "build": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          ".next/**",
+          "!.next/cache/**",
+          "dist/**"
+        ]
+      },
+      "dev": {
+        "cache": false,
+        "persistent": true
+      },
+      "lint": {
+        "outputs": []
+      },
+      "lint:fix": {
+        "outputs": []
+      },
+      "type-check": {
+        "dependsOn": [
+          "^type-check"
+        ],
+        "outputs": []
+      },
+      "test": {
+        "outputs": [
+          "coverage/**"
+        ]
+      },
+      "test:watch": {
+        "cache": false,
+        "persistent": true
+      },
+      "test:e2e": {
+        "dependsOn": [
+          "build"
+        ],
+        "outputs": []
+      },
+      "clean": {
+        "cache": false
+      }
+    }
+  }
+}
