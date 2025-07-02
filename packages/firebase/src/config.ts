@@ -2,6 +2,8 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { getPerformance } from 'firebase/performance';
+import { getAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyAkzR3fZjtwsGu4wJ6jNnbjcSLGu3rWoGs",
@@ -22,4 +24,18 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
+// Initialize Performance Monitoring (only in browser)
+let performance: any = null;
+let analytics: any = null;
+
+if (typeof window !== 'undefined') {
+  try {
+    performance = getPerformance(app);
+    analytics = getAnalytics(app);
+  } catch (error) {
+    console.warn('Failed to initialize Firebase Performance/Analytics:', error);
+  }
+}
+
+export { performance, analytics };
 export default app;
