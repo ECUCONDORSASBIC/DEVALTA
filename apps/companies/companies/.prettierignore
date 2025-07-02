@@ -1,0 +1,20 @@
+# Prettier ignore file para Altamédica
+# Archivos generados automáticamente
+.next/
+dist/
+build/
+coverage/
+.turbo/
+
+# Dependencias
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+
+# Archivos de configuración que no deben formatearse
+*.min.js
+*.min.css
+
+# Archivos específicos
+.env*
+*.log
