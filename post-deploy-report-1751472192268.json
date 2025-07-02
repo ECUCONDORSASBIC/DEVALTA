@@ -1,14 +1,14 @@
 {
   "metadata": {
-    "reportId": "post-deploy-1751472206928",
-    "generatedAt": "2025-07-02T16:03:26.928Z",
-    "generationTimeMs": 4,
+    "reportId": "post-deploy-1751472192256",
+    "generatedAt": "2025-07-02T16:03:12.256Z",
+    "generationTimeMs": 5,
     "version": "1.0.0",
     "type": "post-deploy-assessment"
   },
   "intelligence": {
     "success": true,
-    "timestamp": "2025-07-02T16:03:26.924Z",
+    "timestamp": "2025-07-02T16:03:12.253Z",
     "function": "get_intelligence_report",
     "arguments": {
       "timeRange": 3600000
@@ -31,7 +31,7 @@
   },
   "system": {
     "deployment": {
-      "timestamp": "2025-07-02T16:03:26.926Z",
+      "timestamp": "2025-07-02T16:03:12.254Z",
       "version": "1.0.0",
       "environment": "production"
     },
@@ -39,13 +39,13 @@
       "nodeVersion": "v24.2.0",
       "platform": "win32",
       "memory": {
-        "rss": 61095936,
+        "rss": 61116416,
         "heapTotal": 6574080,
         "heapUsed": 5065288,
         "external": 1886108,
         "arrayBuffers": 30955
       },
-      "uptime": 0.3514219
+      "uptime": 0.1692924
     },
     "services": {
       "firebase": {
@@ -98,17 +98,17 @@
   "nextActions": [
     {
       "action": "Monitor system performance for the next 4 hours",
-      "deadline": "2025-07-02T20:03:26.934Z",
+      "deadline": "2025-07-02T20:03:12.257Z",
       "responsible": "DevOps Team"
     },
     {
       "action": "Review error logs and address any critical issues",
-      "deadline": "2025-07-02T18:03:26.934Z",
+      "deadline": "2025-07-02T18:03:12.257Z",
       "responsible": "Engineering Team"
     },
     {
       "action": "Schedule next deployment health check",
-      "deadline": "2025-07-03T16:03:26.934Z",
+      "deadline": "2025-07-03T16:03:12.257Z",
       "responsible": "Release Manager"
     }
   ]

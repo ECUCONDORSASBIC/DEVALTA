@@ -83,7 +83,10 @@
     "mcp": "node ./mcp-servers/warp-mcp-connector.js",
     "intelligence:report": "node scripts/generate-post-deploy-report.js",
     "health-check:production": "node scripts/generate-post-deploy-report.js",
-    "post-deploy:report": "node scripts/generate-post-deploy-report.js"
+    "post-deploy:report": "node scripts/generate-post-deploy-report.js",
+    "automation:next-phase": "node scripts/automation/next-phase.js",
+    "automation:next-phase:dry-run": "NEXT_PHASE_DRY_RUN=true node scripts/automation/next-phase.js",
+    "automation:next-phase:debug": "NEXT_PHASE_LOG_LEVEL=debug node scripts/automation/next-phase.js"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
