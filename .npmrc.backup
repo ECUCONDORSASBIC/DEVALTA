@@ -1,0 +1,59 @@
+# Configuración PNPM para ALTAMEDICA Medical Platform
+# Resuelve conflictos de versionado y garantiza compatibilidad
+
+# Control de resolución de dependencias críticas
+overrides:
+  # Next.js version lock para estabilidad médica
+  "next": "14.2.15"
+  
+  # React ecosystem alignment
+  "react": "18.3.1"
+  "react-dom": "18.3.1"
+  "@types/react": "18.3.11" 
+  "@types/react-dom": "18.3.5"
+  
+  # TypeScript compatibility lock
+  "typescript": "5.8.3"
+
+# Configuración de hoisting para monorepo médico
+shamefully-hoist=false
+strict-peer-dependencies=false
+auto-install-peers=true
+
+# Configuración de caché optimizada para desarrollo médico
+store-dir=.pnpm-store
+cache-dir=.pnpm-cache
+
+# Registro para dependencias médicas críticas
+registry=https://registry.npmjs.org/
+
+# Configuración de workspace
+link-workspace-packages=true
+prefer-workspace-packages=true
+
+# Configuración de seguridad para entorno médico
+audit-level=moderate
+fund=false
+
+# Optimizaciones de rendimiento
+side-effects-cache=true
+side-effects-cache-readonly=false
+
+# Configuración de logging para auditoría
+loglevel=info
+
+# Configuración de resolución para dependencias anidadas
+resolution-mode=highest
+
+# Configuración específica para aplicaciones médicas
+public-hoist-pattern[]=
+  "@types/*"
+  "eslint*"
+  "prettier*"
+
+# Exclusiones de hoisting para dependencias críticas
+shamefully-hoist-exclude[]=
+  "next"
+  "react"
+  "react-dom"
+  "typescript"

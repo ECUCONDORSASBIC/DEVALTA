@@ -1,0 +1,51 @@
+{
+  "name": "@altamedica/medical-components",
+  "version": "1.0.0",
+  "description": "Componentes médicos UI para ALTAMEDICA - React components",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "medical",
+    "healthcare",
+    "react",
+    "components",
+    "ui",
+    "hipaa"
+  ],
+  "author": "ALTAMEDICA Development Team",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "react": "19.1.0",
+    "lucide-react": "^0.522.0",
+    "date-fns": "^2.30.0",
+    "@altamedica/medical-types": "workspace:*",
+    "@altamedica/medical-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.8",
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  }
+}

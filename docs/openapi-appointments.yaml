@@ -1,0 +1,201 @@
+openapi: 3.0.3
+info:
+  title: Altamedica API - Citas Médicas
+  version: 1.0.0
+  description: |
+    API REST para la gestión de citas médicas (appointments) en Altamedica.
+    Incluye creación, consulta, actualización y cancelación de citas, con integración a usuarios, médicos y telemedicina.
+servers:
+  - url: /api/v1/appointments
+    description: Endpoint principal de citas
+paths:
+  /:
+    get:
+      summary: Listar citas
+      description: Obtiene una lista paginada de citas, filtrable por doctor, paciente, estado, tipo y fechas.
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20 }
+        - in: query
+          name: doctorId
+          schema: { type: string }
+        - in: query
+          name: patientId
+          schema: { type: string }
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [scheduled, confirmed, in_progress, completed, cancelled, no_show, all]
+            default: all
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [consultation, follow_up, emergency, routine_checkup, specialist, all]
+            default: all
+        - in: query
+          name: startDate
+          schema: { type: string, format: date-time }
+        - in: query
+          name: endDate
+          schema: { type: string, format: date-time }
+      responses:
+        '200':
+          description: Lista de citas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Appointment'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+  post:
+      summary: Crear nueva cita
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAppointmentRequest'
+      responses:
+        '201':
+          description: Cita creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '400':
+          description: Error de validación
+  /{id}:
+    get:
+      summary: Obtener detalles de una cita
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Detalles de la cita
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '404':
+          description: Cita no encontrada
+    put:
+      summary: Actualizar cita
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAppointmentRequest'
+      responses:
+        '200':
+          description: Cita actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '400':
+          description: Error de validación
+        '404':
+          description: Cita no encontrada
+    delete:
+      summary: Cancelar cita
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: Cita cancelada exitosamente
+        '404':
+          description: Cita no encontrada
+components:
+  schemas:
+    Appointment:
+      type: object
+      properties:
+        id: { type: string }
+        doctorId: { type: string }
+        patientId: { type: string }
+        scheduledAt: { type: string, format: date-time }
+        estimatedDuration: { type: integer }
+        type: { type: string }
+        reason: { type: string }
+        symptoms:
+          type: array
+          items: { type: string }
+        notes: { type: string }
+        priority: { type: string }
+        status: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        doctor:
+          type: object
+          properties:
+            id: { type: string }
+            firstName: { type: string }
+            lastName: { type: string }
+            email: { type: string }
+            licenseNumber: { type: string }
+            specialties:
+              type: array
+              items: { type: string }
+        patient:
+          type: object
+          properties:
+            id: { type: string }
+            firstName: { type: string }
+            lastName: { type: string }
+            email: { type: string }
+            phone: { type: string }
+            dateOfBirth: { type: string, format: date }
+    CreateAppointmentRequest:
+      type: object
+      required: [doctorId, patientId, scheduledAt, estimatedDuration, type, reason]
+      properties:
+        doctorId: { type: string }
+        patientId: { type: string }
+        scheduledAt: { type: string, format: date-time }
+        estimatedDuration: { type: integer, default: 30 }
+        type: { type: string, enum: [consultation, follow_up, emergency, routine_checkup, specialist] }
+        reason: { type: string }
+        symptoms:
+          type: array
+          items: { type: string }
+        notes: { type: string }
+        priority: { type: string, enum: [low, normal, high, urgent], default: normal }
+    UpdateAppointmentRequest:
+      type: object
+      properties:
+        status: { type: string, enum: [scheduled, confirmed, in_progress, completed, cancelled, no_show] }
+        notes: { type: string }
+        reason: { type: string }
+        symptoms:
+          type: array
+          items: { type: string }
+    PaginationMeta:
+      type: object
+      properties:
+        page: { type: integer }
+        limit: { type: integer }
+        total: { type: integer } 

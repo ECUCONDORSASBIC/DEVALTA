@@ -1,0 +1,241 @@
+{
+  "title": "Altamedica Medical Platform Dashboard",
+  "description": "Dashboard de monitoreo médico para cumplimiento HIPAA",
+  "widgets": [
+    {
+      "definition": {
+        "type": "group",
+        "title": "🔒 Seguridad Médica",
+        "widgets": [
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.access.attempts{service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Intentos de Acceso",
+              "type": "query_value"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.access.denied{service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Accesos Denegados",
+              "type": "query_value"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.phi.access{service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Accesos a PHI",
+              "type": "query_value"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.security.incidents{service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Incidentes de Seguridad",
+              "type": "query_value"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "group",
+        "title": "📊 Performance Médica",
+        "widgets": [
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "avg:altamedica.medical.response.time{service:medical-system}",
+                  "display_type": "line"
+                }
+              ],
+              "title": "Tiempo de Respuesta Promedio",
+              "type": "timeseries"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.errors.total{service:medical-system}",
+                  "display_type": "line"
+                }
+              ],
+              "title": "Errores Totales",
+              "type": "timeseries"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "avg:altamedica.medical.encryption.duration{service:medical-system}",
+                  "display_type": "line"
+                }
+              ],
+              "title": "Tiempo de Encriptación",
+              "type": "timeseries"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "group",
+        "title": "🏥 Auditoría HIPAA",
+        "widgets": [
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.audit.total_events{service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Eventos de Auditoría",
+              "type": "query_value"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "avg:altamedica.medical.compliance.score{service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Puntuación de Cumplimiento",
+              "type": "query_value"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.security.suspicious_activity{service:medical-system}",
+                  "display_type": "line"
+                }
+              ],
+              "title": "Actividad Sospechosa",
+              "type": "timeseries"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "group",
+        "title": "💚 Health Checks",
+        "widgets": [
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "avg:altamedica.medical.health_check.total{service:medical-system}",
+                  "display_type": "line"
+                }
+              ],
+              "title": "Tiempo de Health Check",
+              "type": "timeseries"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.health_check.memory{service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Health Check Memoria",
+              "type": "query_value"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.health_check.encryption{service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Health Check Encriptación",
+              "type": "query_value"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "group",
+        "title": "🔔 Alertas",
+        "widgets": [
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.security.incidents{severity:critical,service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Alertas Críticas",
+              "type": "query_value"
+            }
+          },
+          {
+            "definition": {
+              "requests": [
+                {
+                  "q": "sum:altamedica.medical.security.incidents{severity:high,service:medical-system}",
+                  "display_type": "number"
+                }
+              ],
+              "title": "Alertas Altas",
+              "type": "query_value"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "layout_type": "ordered",
+  "is_read_only": false,
+  "notify_list": [],
+  "template_variables": [
+    {
+      "name": "service",
+      "prefix": "service",
+      "default": "medical-system"
+    },
+    {
+      "name": "environment",
+      "prefix": "env",
+      "default": "production"
+    }
+  ]
+} 

@@ -1,0 +1,39 @@
+{
+  "name": "@altamedica/ai-providers",
+  "version": "1.0.0",
+  "description": "Capa de abstracción para múltiples proveedores de LLM en AltaMedica",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "clean": "rm -rf dist",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "openai": "^4.67.0",
+    "@anthropic-ai/sdk": "^0.33.0",
+    "google-generativeai": "^0.21.0",
+    "cohere-ai": "^7.15.0",
+    "winston": "^3.17.0",
+    "zod": "^3.25.67",
+    "dotenv": "^16.5.0",
+    "crypto-js": "^4.2.0",
+    "node-cache": "^5.1.2",
+    "rate-limiter-flexible": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/node": "^20.19.1",
+    "typescript": "^5.8.3",
+    "vitest": "^1.0.0",
+    "@altamedica/typescript-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "@altamedica/types": "workspace:*",
+    "@altamedica/shared": "workspace:*"
+  }
+}

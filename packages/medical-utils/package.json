@@ -1,0 +1,47 @@
+{
+  "name": "@altamedica/medical-utils",
+  "version": "1.0.0",
+  "description": "Utilidades médicas para Argentina - Validaciones, encriptación PHI, formateo",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "medical",
+    "healthcare",
+    "argentina",
+    "hipaa",
+    "utils",
+    "validation",
+    "encryption"
+  ],
+  "author": "ALTAMEDICA Development Team",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "date-fns": "^2.30.0",
+    "@altamedica/medical-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.0",
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEVALTAMEDICA MCP Monitor - Dashboard</title>
+    
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Bootstrap para estilos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 20px auto;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 1400px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--primary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-card.success {
+            border-left-color: var(--success-color);
+        }
+
+        .metric-card.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        .metric-card.danger {
+            border-left-color: var(--danger-color);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .metric-title {
+            font-size: 1.1rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .metric-icon {
+            font-size: 2rem;
+            opacity: 0.7;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-online { background-color: var(--success-color); }
+        .status-warning { background-color: var(--warning-color); }
+        .status-offline { background-color: var(--danger-color); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .agent-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .agent-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .header-title {
+            background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .update-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+
+        .alert-item {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            color: #991b1b;
+        }
+
+        .prediction-item {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            color: #0c4a6e;
+        }
+
+        .recommendation-item {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            color: #14532d;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="dashboard-container">
+            <!-- Header -->
+            <div class="header-title">
+                <i class="fas fa-brain"></i> DEVALTAMEDICA MCP MONITOR
+                <div style="font-size: 1rem; color: #6b7280; margin-top: 10px;">
+                    <span class="status-indicator status-online"></span>
+                    Sistema Activo - Última actualización: <span id="lastUpdate">--</span>
+                </div>
+            </div>
+
+            <!-- Indicador de actualización -->
+            <div class="update-indicator" id="updateIndicator" style="opacity: 0;">
+                <i class="fas fa-sync-alt fa-spin"></i> Actualizando datos...
+            </div>
+            
+            <!-- Contenedor de alertas de error -->
+            <div id="errorAlerts" class="mb-3"></div>
+
+            <!-- Navegación por pestañas -->
+            <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                        <i class="fas fa-tachometer-alt"></i> Resumen General
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="agents-tab" data-bs-toggle="tab" data-bs-target="#agents" type="button" role="tab">
+                        <i class="fas fa-users"></i> Agentes
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="platform-tab" data-bs-toggle="tab" data-bs-target="#platform" type="button" role="tab">
+                        <i class="fas fa-server"></i> Plataforma
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="compliance-tab" data-bs-toggle="tab" data-bs-target="#compliance" type="button" role="tab">
+                        <i class="fas fa-shield-alt"></i> Compliance
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="intelligence-tab" data-bs-toggle="tab" data-bs-target="#intelligence" type="button" role="tab">
+                        <i class="fas fa-lightbulb"></i> Inteligencia
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Contenido de las pestañas -->
+            <div class="tab-content" id="dashboardTabContent">
+                
+                <!-- Pestaña: Resumen General -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <div class="row">
+                        <!-- Métricas principales -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="metric-card success">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="metric-title">Salud del Sistema</div>
+                                        <div class="metric-value text-success" id="systemHealth">--</div>
+                                        <small class="text-muted">Estado general</small>
+                                    </div>
+                                    <i class="fas fa-heartbeat metric-icon text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <div class="metric-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="metric-title">Rendimiento Promedio</div>
+                                        <div class="metric-value text-primary" id="avgPerformance">--</div>
+                                        <small class="text-muted">Todos los agentes</small>
+                                    </div>
+                                    <i class="fas fa-chart-line metric-icon text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <div class="metric-card warning">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="metric-title">Compliance HIPAA</div>
+                                        <div class="metric-value text-warning" id="hipaaScore">--</div>
+                                        <small class="text-muted">Puntuación actual</small>
+                                    </div>
+                                    <i class="fas fa-shield-alt metric-icon text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <div class="metric-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="metric-title">Usuarios Activos</div>
+                                        <div class="metric-value text-info" id="activeUsers">--</div>
+                                        <small class="text-muted">En la plataforma</small>
+                                    </div>
+                                    <i class="fas fa-users metric-icon text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de performance en tiempo real -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="metric-card">
+                                <h5><i class="fas fa-chart-area"></i> Performance en Tiempo Real</h5>
+                                <div class="chart-container">
+                                    <canvas id="performanceChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertas recientes -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="metric-card danger">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Alertas Recientes</h5>
+                                <div id="alertsList">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="metric-card">
+                                <h5><i class="fas fa-info-circle"></i> Estado del Monitor</h5>
+                                <div id="monitorStatus">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña: Agentes -->
+                <div class="tab-pane fade" id="agents" role="tabpanel">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="metric-card">
+                                <h5><i class="fas fa-brain"></i> Análisis Cognitivo de Agentes</h5>
+                                <div id="agentsList">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de rendimiento por agente -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="metric-card">
+                                <h5><i class="fas fa-chart-bar"></i> Rendimiento por Agente</h5>
+                                <div class="chart-container">
+                                    <canvas id="agentsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña: Plataforma -->
+                <div class="tab-pane fade" id="platform" role="tabpanel">
+                    <div class="row">
+                        <!-- Métricas técnicas -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="metric-card">
+                                <div class="metric-title">Tiempo Respuesta API</div>
+                                <div class="metric-value text-primary" id="apiResponseTime">--</div>
+                                <small class="text-muted">milisegundos</small>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6">
+                            <div class="metric-card success">
+                                <div class="metric-title">Rendimiento Base de Datos</div>
+                                <div class="metric-value text-success" id="dbPerformance">--</div>
+                                <small class="text-muted">porcentaje</small>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6">
+                            <div class="metric-card warning">
+                                <div class="metric-title">Tasa de Errores</div>
+                                <div class="metric-value text-warning" id="errorRate">--</div>
+                                <small class="text-muted">porcentaje</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de métricas de plataforma -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="metric-card">
+                                <h5><i class="fas fa-server"></i> Métricas de Infraestructura</h5>
+                                <div class="chart-container">
+                                    <canvas id="platformChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña: Compliance -->
+                <div class="tab-pane fade" id="compliance" role="tabpanel">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="metric-card">
+                                <h5><i class="fas fa-shield-alt"></i> Estado de Compliance HIPAA</h5>
+                                <div id="complianceStatus">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña: Inteligencia -->
+                <div class="tab-pane fade" id="intelligence" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="metric-card">
+                                <h5><i class="fas fa-crystal-ball"></i> Predicciones</h5>
+                                <div id="predictionsList">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="metric-card">
+                                <h5><i class="fas fa-lightbulb"></i> Recomendaciones</h5>
+                                <div id="recommendationsList">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Negociaciones recientes -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="metric-card">
+                                <h5><i class="fas fa-handshake"></i> Negociaciones Automáticas</h5>
+                                <div id="negotiationsList">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dashboard Logic -->
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+{
+  "metadata": {
+    "reportId": "post-deploy-1751567621706",
+    "generatedAt": "2025-07-03T18:33:41.706Z",
+    "generationTimeMs": 3,
+    "version": "1.0.0",
+    "type": "post-deploy-assessment"
+  },
+  "intelligence": {
+    "success": true,
+    "timestamp": "2025-07-03T18:33:41.703Z",
+    "function": "get_intelligence_report",
+    "arguments": {
+      "timeRange": 3600000
+    },
+    "result": {
+      "systemHealth": "operational",
+      "performanceScore": 85,
+      "issues": [],
+      "recommendations": [
+        {
+          "type": "performance",
+          "description": "Consider implementing Redis caching for frequently accessed data"
+        },
+        {
+          "type": "monitoring",
+          "description": "Set up additional alerts for database connection pool usage"
+        }
+      ]
+    }
+  },
+  "system": {
+    "deployment": {
+      "timestamp": "2025-07-03T18:33:41.704Z",
+      "version": "1.0.0",
+      "environment": "production"
+    },
+    "system": {
+      "nodeVersion": "v24.2.0",
+      "platform": "win32",
+      "memory": {
+        "rss": 54751232,
+        "heapTotal": 6574080,
+        "heapUsed": 5069096,
+        "external": 1886649,
+        "arrayBuffers": 31496
+      },
+      "uptime": 0.0538244
+    },
+    "services": {
+      "firebase": {
+        "status": "operational",
+        "responseTime": 150
+      },
+      "api_server": {
+        "status": "operational",
+        "responseTime": 200
+      },
+      "frontend_apps": {
+        "status": "operational",
+        "responseTime": 300
+      },
+      "database": {
+        "status": "operational",
+        "responseTime": 100
+      }
+    },
+    "performance": {
+      "apiResponseTime": 250,
+      "pageLoadTime": 1200,
+      "errorRate": 0.02,
+      "throughput": 450,
+      "databaseQueryTime": 80,
+      "cacheHitRate": 0.85
+    }
+  },
+  "assessment": {
+    "overallScore": 85,
+    "status": "healthy",
+    "healthChecks": {
+      "services": "operational",
+      "performance": "good",
+      "reliability": "stable",
+      "security": "compliant"
+    },
+    "summary": "Deployment assessment completed with score 85/100. System status: healthy."
+  },
+  "alerts": [],
+  "recommendations": [
+    {
+      "category": "monitoring",
+      "priority": "low",
+      "title": "Enhance Monitoring Coverage",
+      "description": "Add more detailed performance metrics and user experience tracking",
+      "estimatedImpact": "Better visibility into system health and user satisfaction"
+    }
+  ],
+  "nextActions": [
+    {
+      "action": "Monitor system performance for the next 4 hours",
+      "deadline": "2025-07-03T22:33:41.706Z",
+      "responsible": "DevOps Team"
+    },
+    {
+      "action": "Review error logs and address any critical issues",
+      "deadline": "2025-07-03T20:33:41.706Z",
+      "responsible": "Engineering Team"
+    },
+    {
+      "action": "Schedule next deployment health check",
+      "deadline": "2025-07-04T18:33:41.706Z",
+      "responsible": "Release Manager"
+    }
+  ]
+}

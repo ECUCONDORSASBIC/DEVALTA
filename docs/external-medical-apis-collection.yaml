@@ -1,0 +1,1192 @@
+openapi: 3.0.3
+info:
+  title: External Medical APIs Collection - Altamedica Integration
+  version: 1.0.0
+  description: |
+    Comprehensive catalog of external medical APIs for integration with the Altamedica platform.
+    This collection includes FHIR servers, HL7 brokers, drug databases, and IoMT device gateways
+    with detailed authentication schemes, rate limits, and data schemas.
+    
+    **Compliance**: HIPAA, GDPR, FHIR R4, HL7 v2.5
+    **Security**: OAuth2, mTLS, API Keys
+    **Rate Limiting**: Various limits per provider
+    
+  contact:
+    name: Altamedica Integration Team
+    email: integration@altamedica.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.altamedica.com/external
+    description: Altamedica External API Gateway
+  - url: https://staging-api.altamedica.com/external
+    description: Staging Environment
+
+tags:
+  - name: FHIR Servers
+    description: Fast Healthcare Interoperability Resources servers
+  - name: HL7 Brokers
+    description: Health Level 7 message brokers and gateways
+  - name: Drug Databases
+    description: Pharmaceutical and drug interaction databases
+  - name: IoMT Gateways
+    description: Internet of Medical Things device gateways
+  - name: Laboratory Systems
+    description: Laboratory information management systems
+  - name: Imaging Systems
+    description: Medical imaging and DICOM systems
+
+security:
+  - OAuth2: []
+  - ApiKeyAuth: []
+  - mTLS: []
+
+paths:
+  # FHIR SERVER ENDPOINTS
+  /fhir/hapi-fhir-server:
+    get:
+      tags: [FHIR Servers]
+      summary: Connect to HAPI FHIR Server
+      description: |
+        Connect to the open-source HAPI FHIR server for patient data exchange.
+        
+        **Provider**: HAPI FHIR
+        **Base URL**: https://hapi.fhir.org/baseR4
+        **Version**: FHIR R4
+        **Rate Limit**: 1000 requests/hour
+        **Authentication**: None (public server)
+        
+      parameters:
+        - $ref: '#/components/parameters/ResourceType'
+        - $ref: '#/components/parameters/PatientId'
+        - $ref: '#/components/parameters/Count'
+      responses:
+        '200':
+          description: FHIR Bundle response
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/FHIRBundle'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+      security:
+        - ApiKeyAuth: []
+
+  /fhir/epic-sandbox:
+    get:
+      tags: [FHIR Servers]
+      summary: Connect to Epic FHIR Sandbox
+      description: |
+        Connect to Epic's FHIR sandbox environment for testing EHR integrations.
+        
+        **Provider**: Epic Systems
+        **Base URL**: https://fhir.epic.com/interconnect-fhir-oauth
+        **Version**: FHIR R4
+        **Rate Limit**: 120 requests/minute
+        **Authentication**: OAuth2 with SMART on FHIR
+        
+      parameters:
+        - $ref: '#/components/parameters/ResourceType'
+        - $ref: '#/components/parameters/PatientId'
+      responses:
+        '200':
+          description: Epic FHIR response
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/FHIRBundle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+      security:
+        - OAuth2: [patient/*.read, user/*.read]
+
+  /fhir/cerner-sandbox:
+    get:
+      tags: [FHIR Servers]
+      summary: Connect to Cerner FHIR Sandbox
+      description: |
+        Connect to Cerner's FHIR sandbox for healthcare data integration.
+        
+        **Provider**: Cerner Corporation (Oracle Health)
+        **Base URL**: https://fhir-ehr-code.cerner.com/r4/ec2458f2-1e24-41c8-b71b-0e701af7583d
+        **Version**: FHIR R4
+        **Rate Limit**: 60 requests/minute
+        **Authentication**: OAuth2 with SMART on FHIR
+        
+      responses:
+        '200':
+          description: Cerner FHIR response
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/FHIRBundle'
+      security:
+        - OAuth2: [patient/*.read, user/*.read]
+
+  # HL7 BROKER ENDPOINTS
+  /hl7/mirth-connect:
+    post:
+      tags: [HL7 Brokers]
+      summary: Send HL7 v2.5 message via Mirth Connect
+      description: |
+        Send HL7 v2.5 messages through Mirth Connect integration engine.
+        
+        **Provider**: NextGen Healthcare (Mirth Connect)
+        **Protocol**: MLLP over TCP/IP
+        **Version**: HL7 v2.5
+        **Rate Limit**: 500 messages/minute
+        **Authentication**: mTLS with client certificates
+        
+      requestBody:
+        required: true
+        content:
+          application/hl7-v2:
+            schema:
+              $ref: '#/components/schemas/HL7Message'
+      responses:
+        '200':
+          description: HL7 ACK message
+          content:
+            application/hl7-v2:
+              schema:
+                $ref: '#/components/schemas/HL7ACK'
+        '400':
+          description: Invalid HL7 message format
+      security:
+        - mTLS: []
+
+  /hl7/integration-engine:
+    post:
+      tags: [HL7 Brokers]
+      summary: Process HL7 through Integration Engine
+      description: |
+        Process HL7 messages through healthcare integration engine.
+        
+        **Provider**: Rhapsody Integration Engine
+        **Supported Messages**: ADT, ORM, ORU, SIU
+        **Rate Limit**: 1000 messages/hour
+        **Authentication**: OAuth2 + API Key
+        
+      requestBody:
+        required: true
+        content:
+          application/hl7-v2:
+            schema:
+              $ref: '#/components/schemas/HL7Message'
+      responses:
+        '200':
+          description: Message processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessingResult'
+      security:
+        - OAuth2: [hl7.write]
+        - ApiKeyAuth: []
+
+  # DRUG DATABASE ENDPOINTS
+  /drugs/rxnorm:
+    get:
+      tags: [Drug Databases]
+      summary: Query RxNorm Drug Database
+      description: |
+        Query the RxNorm database for drug information and interactions.
+        
+        **Provider**: National Library of Medicine (NIH)
+        **Base URL**: https://rxnav.nlm.nih.gov/REST
+        **Rate Limit**: 20 requests/second
+        **Authentication**: None (public API)
+        
+      parameters:
+        - name: name
+          in: query
+          description: Drug name to search
+          required: true
+          schema:
+            type: string
+            example: "aspirin"
+        - name: allsrc
+          in: query
+          description: Include all sources
+          schema:
+            type: string
+            enum: ["0", "1"]
+            default: "0"
+      responses:
+        '200':
+          description: Drug information found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RxNormResponse'
+        '404':
+          description: Drug not found
+
+  /drugs/fda-orange-book:
+    get:
+      tags: [Drug Databases]
+      summary: Query FDA Orange Book
+      description: |
+        Query FDA Orange Book for approved drug products.
+        
+        **Provider**: U.S. Food and Drug Administration
+        **Base URL**: https://api.fda.gov/drug/drugsfda.json
+        **Rate Limit**: 240 requests/minute (4/second)
+        **Authentication**: API Key (optional, increases limits)
+        
+      parameters:
+        - name: search
+          in: query
+          description: Search query for drug products
+          required: true
+          schema:
+            type: string
+            example: "brand_name:lipitor"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+      responses:
+        '200':
+          description: FDA drug product information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FDADrugResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /drugs/first-databank:
+    get:
+      tags: [Drug Databases]
+      summary: Query First Databank Drug Database
+      description: |
+        Query First Databank for comprehensive drug information and interactions.
+        
+        **Provider**: First Databank (FDB)
+        **Authentication**: OAuth2 + Client Credentials
+        **Rate Limit**: 1000 requests/hour
+        **Cost**: Commercial license required
+        
+      parameters:
+        - name: ndc
+          in: query
+          description: National Drug Code
+          schema:
+            type: string
+            pattern: "^[0-9]{11}$"
+        - name: drug_name
+          in: query
+          description: Drug name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Drug information and interactions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FDBDrugResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+      security:
+        - OAuth2: [drug.read]
+
+  # IOMT DEVICE GATEWAYS
+  /iomt/philips-healthsuite:
+    post:
+      tags: [IoMT Gateways]
+      summary: Connect to Philips HealthSuite
+      description: |
+        Connect to Philips HealthSuite Digital Platform for IoMT device data.
+        
+        **Provider**: Philips Healthcare
+        **Protocol**: HTTPS REST API
+        **Authentication**: OAuth2 + mTLS
+        **Rate Limit**: 100 requests/minute
+        **Devices**: Patient monitors, ventilators, infusion pumps
+        
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IoMTDataRequest'
+      responses:
+        '200':
+          description: Device data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhilipsDeviceData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - OAuth2: [device.read]
+        - mTLS: []
+
+  /iomt/ge-healthcare:
+    get:
+      tags: [IoMT Gateways]
+      summary: Connect to GE Healthcare Edison Platform
+      description: |
+        Connect to GE Healthcare Edison platform for medical device integration.
+        
+        **Provider**: GE Healthcare
+        **Platform**: Edison Intelligence Platform
+        **Authentication**: OAuth2 + API Key
+        **Rate Limit**: 200 requests/minute
+        **Devices**: Imaging equipment, monitoring devices
+        
+      parameters:
+        - name: device_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: data_type
+          in: query
+          schema:
+            type: string
+            enum: [vital_signs, imaging, alerts]
+            default: vital_signs
+      responses:
+        '200':
+          description: GE Healthcare device data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GEDeviceData'
+      security:
+        - OAuth2: [healthcare.read]
+        - ApiKeyAuth: []
+
+  /iomt/medtronic-carelink:
+    get:
+      tags: [IoMT Gateways]
+      summary: Connect to Medtronic CareLink
+      description: |
+        Connect to Medtronic CareLink for diabetes and cardiac device data.
+        
+        **Provider**: Medtronic
+        **Platform**: CareLink Personal API
+        **Authentication**: OAuth2 with PKCE
+        **Rate Limit**: 60 requests/hour
+        **Devices**: Insulin pumps, CGMs, pacemakers, ICDs
+        
+      parameters:
+        - name: patient_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: device_type
+          in: query
+          schema:
+            type: string
+            enum: [insulin_pump, cgm, pacemaker, icd]
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Medtronic device data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedtronicDeviceData'
+      security:
+        - OAuth2: [patient.read, device.read]
+
+  # LABORATORY SYSTEMS
+  /lab/labcorp-api:
+    get:
+      tags: [Laboratory Systems]
+      summary: Connect to LabCorp API
+      description: |
+        Connect to LabCorp laboratory services API for test results.
+        
+        **Provider**: Laboratory Corporation of America (LabCorp)
+        **Authentication**: OAuth2 + mTLS
+        **Rate Limit**: 500 requests/hour
+        **Data Format**: HL7 FHIR R4, HL7 v2.5
+        
+      parameters:
+        - name: patient_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: test_type
+          in: query
+          schema:
+            type: string
+            enum: [blood_work, urinalysis, pathology, genetics]
+        - name: date_range
+          in: query
+          schema:
+            type: string
+            pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}:[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+      responses:
+        '200':
+          description: Laboratory test results
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/LabResults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - OAuth2: [lab.read]
+        - mTLS: []
+
+  /lab/quest-diagnostics:
+    get:
+      tags: [Laboratory Systems]
+      summary: Connect to Quest Diagnostics API
+      description: |
+        Connect to Quest Diagnostics laboratory services.
+        
+        **Provider**: Quest Diagnostics
+        **Authentication**: OAuth2 + Client Certificates
+        **Rate Limit**: 300 requests/hour
+        **Standards**: HL7 FHIR R4, HL7 v2.5
+        
+      parameters:
+        - name: patient_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: result_type
+          in: query
+          schema:
+            type: string
+            enum: [final, preliminary, corrected]
+            default: final
+      responses:
+        '200':
+          description: Quest laboratory results
+          content:
+            application/fhir+json:
+              schema:
+                $ref: '#/components/schemas/QuestLabResults'
+      security:
+        - OAuth2: [laboratory.read]
+        - mTLS: []
+
+  # IMAGING SYSTEMS
+  /imaging/dicom-server:
+    get:
+      tags: [Imaging Systems]
+      summary: Connect to DICOM Server
+      description: |
+        Connect to DICOM server for medical imaging data.
+        
+        **Protocol**: DICOM C-FIND, C-MOVE, C-STORE
+        **Authentication**: DICOM security profiles
+        **Rate Limit**: 50 studies/hour
+        **Standards**: DICOM 3.0, IHE profiles
+        
+      parameters:
+        - name: study_instance_uid
+          in: query
+          schema:
+            type: string
+        - name: patient_id
+          in: query
+          schema:
+            type: string
+        - name: modality
+          in: query
+          schema:
+            type: string
+            enum: [CT, MR, US, XR, DX, CR, MG, PT, NM]
+      responses:
+        '200':
+          description: DICOM study metadata
+          content:
+            application/dicom+json:
+              schema:
+                $ref: '#/components/schemas/DICOMStudy'
+      security:
+        - mTLS: []
+
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: OAuth2 with SMART on FHIR or standard OAuth2 flows
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.provider.com/oauth/authorize
+          tokenUrl: https://auth.provider.com/oauth/token
+          scopes:
+            patient/*.read: Read patient data
+            user/*.read: Read user data
+            hl7.write: Write HL7 messages
+            drug.read: Read drug information
+            device.read: Read device data
+            healthcare.read: Read healthcare data
+            lab.read: Read laboratory data
+            laboratory.read: Read laboratory results
+        clientCredentials:
+          tokenUrl: https://auth.provider.com/oauth/token
+          scopes:
+            system/*.read: System-level read access
+            system/*.write: System-level write access
+
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for accessing external medical APIs
+
+    mTLS:
+      type: mutualTLS
+      description: Mutual TLS authentication using client certificates
+
+  parameters:
+    ResourceType:
+      name: resource_type
+      in: query
+      description: FHIR resource type
+      schema:
+        type: string
+        enum: [Patient, Observation, Condition, MedicationRequest, DiagnosticReport]
+        default: Patient
+
+    PatientId:
+      name: patient_id
+      in: query
+      description: Patient identifier
+      schema:
+        type: string
+        example: "12345"
+
+    Count:
+      name: _count
+      in: query
+      description: Number of results to return
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  responses:
+    Unauthorized:
+      description: Authentication required or invalid credentials
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "unauthorized"
+              message:
+                type: string
+                example: "Invalid or missing authentication credentials"
+
+    RateLimitExceeded:
+      description: Rate limit exceeded
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+          description: Request limit per hour
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+          description: Remaining requests in current period
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+          description: Time when rate limit resets (Unix timestamp)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "rate_limit_exceeded"
+              message:
+                type: string
+                example: "Rate limit exceeded. Try again later."
+
+  schemas:
+    FHIRBundle:
+      type: object
+      description: FHIR Bundle resource containing healthcare data
+      properties:
+        resourceType:
+          type: string
+          example: "Bundle"
+        id:
+          type: string
+        meta:
+          type: object
+          properties:
+            lastUpdated:
+              type: string
+              format: date-time
+        type:
+          type: string
+          enum: [document, message, transaction, transaction-response, batch, batch-response, history, searchset, collection]
+        total:
+          type: integer
+        entry:
+          type: array
+          items:
+            type: object
+            properties:
+              fullUrl:
+                type: string
+              resource:
+                type: object
+                description: FHIR resource (Patient, Observation, etc.)
+
+    HL7Message:
+      type: object
+      description: HL7 v2.5 message structure
+      properties:
+        message_type:
+          type: string
+          enum: [ADT, ORM, ORU, SIU, MDM]
+          example: "ADT"
+        message_control_id:
+          type: string
+          example: "MSG001"
+        sending_application:
+          type: string
+          example: "ALTAMEDICA"
+        receiving_application:
+          type: string
+          example: "HIS"
+        message_datetime:
+          type: string
+          format: date-time
+        segments:
+          type: array
+          items:
+            type: object
+            properties:
+              segment_type:
+                type: string
+                example: "MSH"
+              fields:
+                type: array
+                items:
+                  type: string
+
+    HL7ACK:
+      type: object
+      description: HL7 ACK (acknowledgment) message
+      properties:
+        message_control_id:
+          type: string
+        acknowledgment_code:
+          type: string
+          enum: [AA, AE, AR, CA, CE, CR]
+        text_message:
+          type: string
+
+    ProcessingResult:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error, warning]
+        message_id:
+          type: string
+        processed_at:
+          type: string
+          format: date-time
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              severity:
+                type: string
+                enum: [error, warning, info]
+
+    RxNormResponse:
+      type: object
+      description: RxNorm drug database response
+      properties:
+        drugGroup:
+          type: object
+          properties:
+            name:
+              type: string
+            conceptGroup:
+              type: array
+              items:
+                type: object
+                properties:
+                  tty:
+                    type: string
+                    description: Term type
+                  conceptProperties:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rxcui:
+                          type: string
+                        name:
+                          type: string
+                        synonym:
+                          type: string
+                        tty:
+                          type: string
+                        language:
+                          type: string
+                        suppress:
+                          type: string
+
+    FDADrugResponse:
+      type: object
+      description: FDA Orange Book drug response
+      properties:
+        meta:
+          type: object
+          properties:
+            disclaimer:
+              type: string
+            terms:
+              type: string
+            license:
+              type: string
+            last_updated:
+              type: string
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              application_number:
+                type: string
+              sponsor_name:
+                type: string
+              brand_name:
+                type: string
+              generic_name:
+                type: string
+              dosage_form:
+                type: string
+              route:
+                type: string
+              marketing_status:
+                type: string
+
+    FDBDrugResponse:
+      type: object
+      description: First Databank drug information response
+      properties:
+        drug_id:
+          type: string
+        name:
+          type: string
+        generic_name:
+          type: string
+        brand_names:
+          type: array
+          items:
+            type: string
+        dosage_forms:
+          type: array
+          items:
+            type: string
+        routes:
+          type: array
+          items:
+            type: string
+        interactions:
+          type: array
+          items:
+            type: object
+            properties:
+              interacting_drug:
+                type: string
+              severity:
+                type: string
+                enum: [minor, moderate, major, contraindicated]
+              description:
+                type: string
+
+    IoMTDataRequest:
+      type: object
+      description: Request for IoMT device data
+      properties:
+        device_id:
+          type: string
+        patient_id:
+          type: string
+        data_types:
+          type: array
+          items:
+            type: string
+            enum: [vital_signs, device_status, alerts, measurements]
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+
+    PhilipsDeviceData:
+      type: object
+      description: Philips HealthSuite device data
+      properties:
+        device_id:
+          type: string
+        device_type:
+          type: string
+          enum: [patient_monitor, ventilator, infusion_pump]
+        patient_id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        vital_signs:
+          type: object
+          properties:
+            heart_rate:
+              type: object
+              properties:
+                value:
+                  type: integer
+                unit:
+                  type: string
+                  example: "bpm"
+            blood_pressure:
+              type: object
+              properties:
+                systolic:
+                  type: integer
+                diastolic:
+                  type: integer
+                unit:
+                  type: string
+                  example: "mmHg"
+            oxygen_saturation:
+              type: object
+              properties:
+                value:
+                  type: number
+                unit:
+                  type: string
+                  example: "%"
+        alerts:
+          type: array
+          items:
+            type: object
+            properties:
+              alert_type:
+                type: string
+              severity:
+                type: string
+                enum: [low, medium, high, critical]
+              message:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+
+    GEDeviceData:
+      type: object
+      description: GE Healthcare Edison platform device data
+      properties:
+        device_serial:
+          type: string
+        device_model:
+          type: string
+        facility_id:
+          type: string
+        patient_id:
+          type: string
+        acquisition_time:
+          type: string
+          format: date-time
+        data:
+          type: object
+          description: Device-specific data structure
+
+    MedtronicDeviceData:
+      type: object
+      description: Medtronic CareLink device data
+      properties:
+        device_serial:
+          type: string
+        device_type:
+          type: string
+          enum: [insulin_pump, cgm, pacemaker, icd]
+        patient_id:
+          type: string
+        reading_time:
+          type: string
+          format: date-time
+        glucose_data:
+          type: object
+          properties:
+            glucose_value:
+              type: number
+            unit:
+              type: string
+              example: "mg/dL"
+            trend_arrow:
+              type: string
+              enum: [up, down, stable, rising, falling]
+        insulin_data:
+          type: object
+          properties:
+            basal_rate:
+              type: number
+            bolus_amount:
+              type: number
+            total_daily_dose:
+              type: number
+        cardiac_data:
+          type: object
+          properties:
+            heart_rate:
+              type: integer
+            pacing_percentage:
+              type: number
+            battery_status:
+              type: string
+
+    LabResults:
+      type: object
+      description: Laboratory test results in FHIR format
+      properties:
+        resourceType:
+          type: string
+          example: "DiagnosticReport"
+        id:
+          type: string
+        status:
+          type: string
+          enum: [registered, partial, preliminary, final, corrected, cancelled]
+        category:
+          type: array
+          items:
+            type: object
+            properties:
+              coding:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    system:
+                      type: string
+                    code:
+                      type: string
+                    display:
+                      type: string
+        code:
+          type: object
+          properties:
+            coding:
+              type: array
+              items:
+                type: object
+                properties:
+                  system:
+                    type: string
+                  code:
+                    type: string
+                  display:
+                    type: string
+        subject:
+          type: object
+          properties:
+            reference:
+              type: string
+              example: "Patient/12345"
+        effectiveDateTime:
+          type: string
+          format: date-time
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              reference:
+                type: string
+                example: "Observation/lab-result-1"
+
+    QuestLabResults:
+      type: object
+      description: Quest Diagnostics laboratory results
+      allOf:
+        - $ref: '#/components/schemas/LabResults'
+        - type: object
+          properties:
+            performer:
+              type: array
+              items:
+                type: object
+                properties:
+                  reference:
+                    type: string
+                    example: "Organization/quest-diagnostics"
+
+    DICOMStudy:
+      type: object
+      description: DICOM study metadata
+      properties:
+        study_instance_uid:
+          type: string
+        study_date:
+          type: string
+          format: date
+        study_time:
+          type: string
+        accession_number:
+          type: string
+        patient_id:
+          type: string
+        patient_name:
+          type: string
+        modality:
+          type: string
+        study_description:
+          type: string
+        series:
+          type: array
+          items:
+            type: object
+            properties:
+              series_instance_uid:
+                type: string
+              series_number:
+                type: integer
+              modality:
+                type: string
+              series_description:
+                type: string
+              number_of_instances:
+                type: integer
+
+x-rate-limits:
+  providers:
+    hapi-fhir:
+      limit: 1000
+      period: hour
+      burst: 100
+    epic-sandbox:
+      limit: 120
+      period: minute
+      burst: 10
+    cerner-sandbox:
+      limit: 60
+      period: minute
+      burst: 5
+    fda-api:
+      limit: 240
+      period: minute
+      burst: 4
+    rxnorm:
+      limit: 20
+      period: second
+      burst: 5
+    first-databank:
+      limit: 1000
+      period: hour
+      burst: 50
+    philips-healthsuite:
+      limit: 100
+      period: minute
+      burst: 10
+    ge-healthcare:
+      limit: 200
+      period: minute
+      burst: 20
+    medtronic-carelink:
+      limit: 60
+      period: hour
+      burst: 5
+    labcorp:
+      limit: 500
+      period: hour
+      burst: 25
+    quest-diagnostics:
+      limit: 300
+      period: hour
+      burst: 15
+
+x-compliance:
+  standards:
+    - HIPAA
+    - GDPR
+    - FHIR R4
+    - HL7 v2.5
+    - DICOM 3.0
+    - IHE
+  security_profiles:
+    - SMART on FHIR
+    - OAuth2 with PKCE
+    - mTLS
+    - SAML 2.0
+  audit_requirements:
+    - Access logging
+    - Data lineage
+    - Consent management
+    - Data retention policies
+
+x-integration-patterns:
+  patterns:
+    - RESTful APIs
+    - FHIR Bulk Data Export
+    - HL7 MLLP
+    - WebSocket subscriptions
+    - Event-driven architecture
+    - API Gateway pattern
+  data_formats:
+    - FHIR JSON
+    - FHIR XML
+    - HL7 v2.5
+    - DICOM JSON
+    - CDA documents
+    - JSON
+    - XML
+
+x-monitoring:
+  metrics:
+    - API response times
+    - Rate limit utilization
+    - Error rates
+    - Authentication failures
+    - Data volume
+    - Compliance violations
+  alerting:
+    - Rate limit warnings
+    - Authentication failures
+    - Data quality issues
+    - Service availability
+    - Compliance violations

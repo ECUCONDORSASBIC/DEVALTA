@@ -1,0 +1,4 @@
+Prueba de operaciones de archivo
+Creado el: 2025-01-03
+Editado el: 2025-01-03 - Prueba de edición exitosa
+Propósito: Verificar capacidades de escritura, edición y eliminación

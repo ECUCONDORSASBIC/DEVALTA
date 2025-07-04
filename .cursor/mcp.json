@@ -1,0 +1,15 @@
+{
+    "mcpServers": {},
+    "tools": [
+      {
+        "id": "enhanced-multi-agent-mcp",
+        "name": "Enhanced Multi-Agent MCP",
+        "command": "node",
+        "args": [
+          "./mcp-servers/enhanced-multi-agent-mcp.js"
+        ],
+        "cwd": ".",
+        "env": {}
+      }
+    ]
+  }

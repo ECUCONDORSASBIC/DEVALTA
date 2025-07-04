@@ -1,0 +1,97 @@
+{
+  "mcpServers": {
+    "enhanced-multi-agent": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\Eduardo\\Documents\\devaltamedica\\mcp-servers\\enhanced-multi-agent-mcp.js"
+      ],
+      "env": {
+        "ALTAMEDICA_ENV": "development",
+        "MCP_WORKSPACE": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+        "NODE_ENV": "development",
+        "MCP_PRIMARY_AGENT": "true",
+        "MCP_ORCHESTRATOR_PRIORITY": "1",
+        "CLAUDE_CONTEXT": "true"
+      }
+    },
+    "altamedica-mcp-tools": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\Eduardo\\Documents\\devaltamedica\\altamedica-mcp-tools.js"
+      ],
+      "env": {
+        "ALTAMEDICA_ENV": "development",
+        "MCP_WORKSPACE": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+        "NODE_ENV": "development",
+        "CLAUDE_CONTEXT": "true"
+      }
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "ALTAMEDICA_ENV": "development",
+        "MCP_WORKSPACE": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+        "NODE_ENV": "development"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\Eduardo\\Documents\\devaltamedica"
+      ],
+      "env": {
+        "ALTAMEDICA_ENV": "development",
+        "MCP_WORKSPACE": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+        "NODE_ENV": "development"
+      }
+    },
+    "context-memory": {
+      "command": "node",
+      "args": ["C:\\Users\\Eduardo\\Documents\\devaltamedica\\mcp-protected\\servers\\context-memory-mcp.js"],
+      "env": {
+        "ALTAMEDICA_ENV": "development",
+        "MCP_WORKSPACE": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+        "NODE_ENV": "development"
+      }
+    },
+    "ai-flow-orchestrator": {
+      "command": "node",
+      "args": ["C:\\Users\\Eduardo\\Documents\\devaltamedica\\mcp-protected\\servers\\ai-flow-orchestrator-mcp.js"],
+      "env": {
+        "ALTAMEDICA_ENV": "development",
+        "MCP_WORKSPACE": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+        "NODE_ENV": "development"
+      }
+    },
+    "multi-agent-composer": {
+      "command": "node",
+      "args": ["C:\\Users\\Eduardo\\Documents\\devaltamedica\\mcp-protected\\servers\\multi-agent-composer-mcp.js"],
+      "env": {
+        "ALTAMEDICA_ENV": "development",
+        "MCP_WORKSPACE": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+        "NODE_ENV": "development"
+      }
+    },
+    "codebase-intelligence": {
+      "command": "node",
+      "args": ["C:\\Users\\Eduardo\\Documents\\devaltamedica\\mcp-protected\\servers\\codebase-intelligence-mcp.js"],
+      "env": {
+        "ALTAMEDICA_ENV": "development",
+        "MCP_WORKSPACE": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+        "NODE_ENV": "development"
+      }
+    },
+    "smart-completion": {
+      "command": "node",
+      "args": ["C:\\Users\\Eduardo\\Documents\\devaltamedica\\mcp-protected\\servers\\smart-completion-mcp.js"],
+      "env": {
+        "ALTAMEDICA_ENV": "development",
+        "MCP_WORKSPACE": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}

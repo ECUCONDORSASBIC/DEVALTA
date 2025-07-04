@@ -1,0 +1,57 @@
+{
+  "name": "fhir-r4-server-template",
+  "version": "1.0.0",
+  "description": "FHIR R4 Node.js server with SMART-on-FHIR authentication",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:compliance": "jest --testNamePattern='compliance'",
+    "lint": "eslint src/ --fix",
+    "validate-fhir": "node scripts/validate-fhir.js",
+    "setup": "node scripts/setup.js"
+  },
+  "keywords": ["fhir", "r4", "smart-on-fhir", "healthcare", "hl7"],
+  "author": "AltaMedica",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.1",
+    "fhir-kit-client": "^1.9.0",
+    "node-fhir-server-core": "^2.2.14",
+    "joi": "^17.11.0",
+    "axios": "^1.6.0",
+    "bcryptjs": "^2.4.3",
+    "express-rate-limit": "^7.1.5",
+    "compression": "^1.7.4",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "nodemon": "^3.0.1",
+    "eslint": "^8.54.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/server.js"
+    ],
+    "coverageReporters": ["text", "lcov", "html"],
+    "testMatch": ["**/__tests__/**/*.js", "**/?(*.)+(spec|test).js"]
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
