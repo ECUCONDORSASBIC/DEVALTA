@@ -1,0 +1,160 @@
+name: 🔒 Security Audit - Vulnerabilidades y Compliance
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Ejecutar diariamente a las 6:00 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Permite ejecución manual
+
+jobs:
+  security-audit:
+    name: 🔍 Auditoría de Seguridad
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: 📦 Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9.0.0
+        
+    - name: 📦 Instalar dependencias
+      run: pnpm install --frozen-lockfile
+      
+    - name: 🔒 Ejecutar auditoría de seguridad
+      id: audit
+      run: |
+        echo "🔍 Iniciando auditoría de vulnerabilidades..."
+        echo "📅 Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+        echo "🌿 Branch: ${{ github.ref_name }}"
+        echo "👤 Usuario: ${{ github.actor }}"
+        echo ""
+        
+        # Ejecutar pnpm audit y capturar salida
+        AUDIT_OUTPUT=$(pnpm audit --json 2>/dev/null || echo '{"error": "Audit failed"}')
+        echo "$AUDIT_OUTPUT" > audit-report.json
+        
+        # Extraer métricas de vulnerabilidades
+        if [ -f audit-report.json ]; then
+          CRITICAL=$(echo "$AUDIT_OUTPUT" | jq -r '.metadata.vulnerabilities.critical // 0')
+          HIGH=$(echo "$AUDIT_OUTPUT" | jq -r '.metadata.vulnerabilities.high // 0')
+          MODERATE=$(echo "$AUDIT_OUTPUT" | jq -r '.metadata.vulnerabilities.moderate // 0')
+          LOW=$(echo "$AUDIT_OUTPUT" | jq -r '.metadata.vulnerabilities.low // 0')
+          
+          echo "📊 RESUMEN DE VULNERABILIDADES:"
+          echo "   🔴 Críticas: $CRITICAL"
+          echo "   🟠 Altas: $HIGH"
+          echo "   🟡 Moderadas: $MODERATE"
+          echo "   🟢 Bajas: $LOW"
+          echo ""
+          
+          # Determinar si hay vulnerabilidades críticas o altas
+          TOTAL_CRITICAL_HIGH=$((CRITICAL + HIGH))
+          
+          if [ $TOTAL_CRITICAL_HIGH -gt 0 ]; then
+            echo "🚨 VULNERABILIDADES CRÍTICAS/ALTAS DETECTADAS"
+            echo "❌ El workflow fallará para prevenir despliegues inseguros"
+            echo "📋 Revisar el reporte completo y aplicar fixes"
+            exit 1
+          else
+            echo "✅ No se detectaron vulnerabilidades críticas o altas"
+            echo "✅ El workflow continúa exitosamente"
+          fi
+        else
+          echo "❌ Error: No se pudo generar el reporte de auditoría"
+          exit 1
+        fi
+        
+    - name: 📋 Subir reporte de auditoría
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-audit-report-${{ github.run_number }}
+        path: audit-report.json
+        retention-days: 30
+        
+    - name: 📧 Notificar resultado
+      if: always()
+      run: |
+        if [ ${{ job.status }} == 'failure' ]; then
+          echo "🚨 AUDITORÍA DE SEGURIDAD FALLÓ"
+          echo "📧 Se recomienda configurar notificaciones automáticas"
+          echo "🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        else
+          echo "✅ AUDITORÍA DE SEGURIDAD EXITOSA"
+          echo "📅 Próxima ejecución automática: mañana a las 6:00 AM UTC"
+        fi
+
+  compliance-check:
+    name: 🏥 Verificación de Compliance HIPAA
+    runs-on: ubuntu-latest
+    needs: security-audit
+    if: needs.security-audit.result == 'success'
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: 📦 Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9.0.0
+        
+    - name: 📦 Instalar dependencias
+      run: pnpm install --frozen-lockfile
+      
+    - name: 🏥 Verificar estado de emergencia
+      run: |
+        echo "🏥 Verificando estado de compliance HIPAA..."
+        
+        # Verificar si existe el archivo de estado de emergencia
+        if [ -f "EMERGENCY_HIPAA_STATE.json" ]; then
+          echo "✅ Archivo de estado de emergencia encontrado"
+          
+          # Verificar APIs deshabilitadas
+          if grep -r "EMERGENCY HIPAA: API DISABLED" apps/api-server/src/app/api/; then
+            echo "✅ APIs no compliant deshabilitadas"
+          else
+            echo "⚠️ Algunas APIs podrían no estar deshabilitadas"
+          fi
+          
+          # Verificar telemedicina deshabilitada
+          if grep -r "EMERGENCY HIPAA: TELEMEDICINE DISABLED" apps/patients/src/; then
+            echo "✅ Telemedicina deshabilitada"
+          else
+            echo "⚠️ Algunos componentes de telemedicina podrían no estar deshabilitados"
+          fi
+          
+          # Verificar datos mock deshabilitados
+          if grep -r "EMERGENCY HIPAA: MOCK DATA DISABLED" apps/; then
+            echo "✅ Datos mock deshabilitados"
+          else
+            echo "⚠️ Algunos datos mock podrían no estar deshabilitados"
+          fi
+          
+        else
+          echo "❌ Archivo de estado de emergencia NO encontrado"
+          echo "⚠️ Se recomienda ejecutar el script de emergencia"
+        fi
+        
+        echo ""
+        echo "📋 RECORDATORIO:"
+        echo "   - El sistema NO es seguro para producción"
+        echo "   - Se requiere auditoría externa antes del despliegue"
+        echo "   - Implementar compliance completo antes de lanzar" 
