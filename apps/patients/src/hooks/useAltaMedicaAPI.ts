@@ -60,10 +60,28 @@ class AltaMedicaAPIClient {
 
   // 🔐 AUTENTICACIÓN
   async login(email: string, password: string) {
+    // Cargar Firebase dinámicamente para evitar SSR issues
+    const {
+      initializeFirebase,
+      signInWithEmailAndPassword,
+      getFirebaseAuth,
+    } = await import('@altamedica/firebase');
+
+    // Asegurar inicialización
+    initializeFirebase();
+    const auth = getFirebaseAuth();
+
+    // Autenticar con Firebase (email / password)
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const idToken = await userCredential.user.getIdToken();
+
+    // Enviar idToken al backend para obtener perfil y/o claims
     const response = await fetch(`${this.baseURL}/auth/login`, {
       method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify({ email, password }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ idToken }),
     });
 
     if (!response.ok) {
@@ -71,10 +89,11 @@ class AltaMedicaAPIClient {
     }
 
     const data = await response.json();
-    this.token = data.token;
-    
+
+    // Guardar idToken para futuras peticiones (Bearer)
+    this.token = idToken;
     if (typeof window !== 'undefined') {
-      localStorage.setItem('altamedica_token', this.token!);
+      localStorage.setItem('altamedica_token', this.token);
     }
 
     return data;
@@ -82,6 +101,15 @@ class AltaMedicaAPIClient {
 
   async logout() {
     try {
+      const { getFirebaseAuth, signOut } = await import('@altamedica/firebase');
+      try {
+        const auth = getFirebaseAuth();
+        await signOut(auth);
+      } catch {
+        /* ignore signOut errors */
+      }
+
+      // Notificar al backend (opcional)
       await fetch(`${this.baseURL}/auth/logout`, {
         method: 'POST',
         headers: this.getHeaders(),

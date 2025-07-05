@@ -1,0 +1,31 @@
+{
+  "system": {
+    "status": "EMERGENCY_MODE",
+    "safeForProduction": false,
+    "nextSteps": [
+      "Implementar base de datos real",
+      "Conectar autenticación real",
+      "Implementar backend de telemedicina",
+      "Auditoría de seguridad externa"
+    ],
+    "requiresAudit": true
+  },
+  "emergency": {
+    "severity": "CRITICAL",
+    "timestamp": "2025-07-05 14:29:27",
+    "reason": "HIPAA Compliance Emergency",
+    "activated": true,
+    "actions": [
+      "APIs no compliant deshabilitadas",
+      "Telemedicina deshabilitada",
+      "Datos mock deshabilitados"
+    ]
+  },
+  "compliance": {
+    "gdpr": "DISABLED",
+    "audit": "ENABLED",
+    "hipaa": "DISABLED",
+    "fhir": "DISABLED",
+    "encryption": "ENABLED"
+  }
+}

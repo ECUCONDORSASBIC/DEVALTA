@@ -5,6 +5,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import rateLimit from './rate-limit'
+import { adminAuth } from '@altamedica/firebase'
 
 // Headers de seguridad obligatorios
 const SECURITY_HEADERS = {
@@ -163,17 +164,23 @@ export async function authenticateRequest(request: NextRequest): Promise<{
       }
     }
     
-    // TODO: Implementar verificación real con Firebase
-    // const decodedToken = await adminAuth.verifyIdToken(token)
-    
-    return {
-      isAuthenticated: false,
-      error: 'Token inválido'
+    // Verificar token con Firebase
+    try {
+      const decodedToken = await adminAuth.verifyIdToken(token)
+      return {
+        isAuthenticated: true,
+        user: decodedToken
+      }
+    } catch (err) {
+      return {
+        isAuthenticated: false,
+        error: 'Token inválido'
+      }
     }
   } catch (error: unknown) {
     return {
       isAuthenticated: false,
-      error: `Error de autenticación: ${error instanceof Error ? (error as any).message : 'Unknown'}`
+      error: `Error de autenticación: ${error instanceof Error ? error.message : 'Unknown'}`
     }
   }
 }
@@ -181,7 +188,8 @@ export async function authenticateRequest(request: NextRequest): Promise<{
 /**
  * Middleware principal de seguridad
  */
-export function withSecurity(handler: (request: NextRequest, ...args: any[]) => Promise<Response>
+export function withSecurity(
+  handler: (request: NextRequest, ...args: any[]) => Promise<Response>
 ) {
   return async (request: NextRequest, ...args: any[]) => {
     // 1. Rate limiting
@@ -192,20 +200,20 @@ export function withSecurity(handler: (request: NextRequest, ...args: any[]) => 
         { status: 429 }
       )
     }
-    
+
     // 2. Validar input si hay body
     if (request.method !== 'GET' && request.method !== 'DELETE') {
       try {
         const body = await request.clone().json()
         const validation = validateInput(body)
-        
+
         if (!validation.isValid) {
           return NextResponse.json(
-            { 
-              success: false, 
-              error: 'Datos de entrada inválidos', 
+            {
+              success: false,
+              error: 'Datos de entrada inválidos',
               code: 'INVALID_INPUT',
-              details: validation.errors 
+              details: validation.errors
             },
             { status: 400 }
           )
@@ -214,15 +222,15 @@ export function withSecurity(handler: (request: NextRequest, ...args: any[]) => 
         // Body no es JSON o está vacío - continuar
       }
     }
-    
+
     // 3. Ejecutar handler original
     const response = await handler(request, ...args)
-    
+
     // 4. Agregar headers de seguridad
     for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
       response.headers.set(key, value)
     }
-    
+
     return response
   }
 }
@@ -231,30 +239,30 @@ export function withSecurity(handler: (request: NextRequest, ...args: any[]) => 
  * Middleware de autorización por roles
  */
 export function requireRole(allowedRoles: string[]) {
-  return function(
+  return function (
     handler: (request: NextRequest, user: any, ...args: any[]) => Promise<Response>
   ) {
     return async (request: NextRequest, ...args: any[]) => {
       const auth = await authenticateRequest(request)
-      
+
       if (!auth.isAuthenticated) {
         return NextResponse.json(
           { success: false, error: auth.error, code: 'UNAUTHORIZED' },
           { status: 401 }
         )
       }
-      
-      if (!allowedRoles.includes(auth.user.role)) {
+
+      if (!allowedRoles.includes((auth.user as any).role)) {
         return NextResponse.json(
-          { 
-            success: false, 
-            error: 'Acceso denegado - rol insuficiente', 
-            code: 'FORBIDDEN' 
+          {
+            success: false,
+            error: 'Acceso denegado - rol insuficiente',
+            code: 'FORBIDDEN'
           },
           { status: 403 }
         )
       }
-      
+
       return handler(request, auth.user, ...args)
     }
   }

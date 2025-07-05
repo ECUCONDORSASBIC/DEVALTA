@@ -18,6 +18,7 @@ import {
   desencriptarDatosPHI,
   generarNumeroHistoriaClinica
 } from '@/lib/medical-utils'
+import prisma from '@altamedica/database'
 
 // Esquemas de validación Zod
 const esquemaPaciente = z.object({
@@ -69,10 +70,6 @@ const esquemaPaginacion = z.object({
   direccionOrden: z.enum(['ASC', 'DESC']).default('DESC')
 })
 
-// Simulación de base de datos en memoria (reemplazar por Prisma/DB real)
-let pacientesDB: PacienteBase[] = []
-let contadorPacientes = 1
-
 // Función para registrar auditoría HIPAA
 const registrarAuditoriaHIPAA = async (
   accion: string,
@@ -98,73 +95,48 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   
   try {
-    // Validar parámetros de paginación
     const paginacionValidada = esquemaPaginacion.parse({
       pagina: parseInt(searchParams.get('pagina') || '1'),
-      tamanoPagina: parseInt(searchParams.get('tamanoPagina') || '10'),
-      ordenarPor: searchParams.get('ordenarPor') || 'fechaUltimaActualizacion',
-      direccionOrden: searchParams.get('direccionOrden') || 'DESC'
+      tamanoPagina: parseInt(searchParams.get('tamanoPagina') || '10')
     })
 
-    // Aplicar filtros si existen
-    let pacientesFiltrados = [...pacientesDB]
-    
     const filtros = {
-      nombres: searchParams.get('nombres'),
-      apellidos: searchParams.get('apellidos'),
-      numeroDocumento: searchParams.get('numeroDocumento'),
-      numeroHistoriaClinica: searchParams.get('numeroHistoriaClinica')
+      nombres: searchParams.get('nombres') || undefined,
+      apellidos: searchParams.get('apellidos') || undefined,
+      numeroDocumento: searchParams.get('numeroDocumento') || undefined,
+      numeroHistoriaClinica: searchParams.get('numeroHistoriaClinica') || undefined
     }
 
-    if (filtros.nombres) {
-      pacientesFiltrados = pacientesFiltrados.filter(p => 
-        p.nombres.toLowerCase().includes(filtros.nombres!.toLowerCase())
-      )
-    }
+    const where: any = {}
+    if (filtros.nombres) where.nombres = { contains: filtros.nombres, mode: 'insensitive' }
+    if (filtros.apellidos) where.apellidos = { contains: filtros.apellidos, mode: 'insensitive' }
+    if (filtros.numeroDocumento) where.numeroDocumento = filtros.numeroDocumento
+    if (filtros.numeroHistoriaClinica) where.numeroHistoriaClinica = filtros.numeroHistoriaClinica
 
-    if (filtros.apellidos) {
-      pacientesFiltrados = pacientesFiltrados.filter(p => 
-        p.apellidos.toLowerCase().includes(filtros.apellidos!.toLowerCase())
-      )
-    }
+    const totalElementos = await prisma.paciente.count({ where })
 
-    if (filtros.numeroDocumento) {
-      pacientesFiltrados = pacientesFiltrados.filter(p => 
-        p.numeroDocumento.includes(filtros.numeroDocumento!)
-      )
-    }
+    const pacientesPaginados = await prisma.paciente.findMany({
+      where,
+      skip: (paginacionValidada.pagina - 1) * paginacionValidada.tamanoPagina,
+      take: paginacionValidada.tamanoPagina,
+      orderBy: { fechaUltimaActualizacion: 'desc' }
+    })
 
-    if (filtros.numeroHistoriaClinica) {
-      pacientesFiltrados = pacientesFiltrados.filter(p => 
-        p.numeroHistoriaClinica.includes(filtros.numeroHistoriaClinica!)
-      )
-    }
-
-    // Aplicar paginación
-    const totalElementos = pacientesFiltrados.length
-    const totalPaginas = Math.ceil(totalElementos / paginacionValidada.tamanoPagina)
-    const inicio = (paginacionValidada.pagina - 1) * paginacionValidada.tamanoPagina
-    const fin = inicio + paginacionValidada.tamanoPagina
-
-    const pacientesPaginados = pacientesFiltrados.slice(inicio, fin)
-
-    // Desencriptar datos sensibles para la respuesta (solo los necesarios)
-    const pacientesRespuesta = pacientesPaginados.map(paciente => ({
-      ...paciente,
-      telefono: paciente.telefono ? desencriptarDatosPHI(paciente.telefono) : undefined,
-      email: paciente.email ? desencriptarDatosPHI(paciente.email) : undefined
+    const pacientesRespuesta = pacientesPaginados.map((p: any) => ({
+      ...p,
+      telefono: p.telefono ? desencriptarDatosPHI(p.telefono) : undefined,
+      email: p.email ? desencriptarDatosPHI(p.email) : undefined
     }))
 
     const respuesta: RespuestaPaginada<PacienteBase> = {
       datos: pacientesRespuesta,
       totalElementos,
-      totalPaginas,
+      totalPaginas: Math.ceil(totalElementos / paginacionValidada.tamanoPagina),
       paginaActual: paginacionValidada.pagina,
       tamanoPagina: paginacionValidada.tamanoPagina
     }
 
     await registrarAuditoriaHIPAA('ACCESO_PACIENTES', 'pacientes_list', request, 'EXITOSO')
-
     return NextResponse.json(respuesta)
 
   } catch (error) {
@@ -187,19 +159,17 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    
-    // Validar datos del paciente
     const datosValidados = esquemaPaciente.parse(body)
 
-    // Verificar que no exista un paciente con el mismo documento
-    const pacienteExistente = pacientesDB.find(p => 
-      p.numeroDocumento === datosValidados.numeroDocumento && 
-      p.tipoDocumento === datosValidados.tipoDocumento
-    )
+    const pacienteExistente = await prisma.paciente.findFirst({
+      where: {
+        tipoDocumento: datosValidados.tipoDocumento,
+        numeroDocumento: datosValidados.numeroDocumento
+      }
+    })
 
     if (pacienteExistente) {
       await registrarAuditoriaHIPAA('CREACION_PACIENTE', `documento_${datosValidados.numeroDocumento}`, request, 'FALLIDO')
-      
       return NextResponse.json(
         {
           exito: false,
@@ -212,12 +182,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Crear nuevo paciente
-    const nuevoPaciente: PacienteBase = {
-      id: `PAC_${contadorPacientes.toString().padStart(6, '0')}`,
+    const nuevoPacienteData = {
+      id: `PAC_${Date.now()}`,
       numeroHistoriaClinica: generarNumeroHistoriaClinica(),
       ...datosValidados,
-      // Encriptar datos sensibles
       telefono: datosValidados.telefono ? encriptarDatosPHI(datosValidados.telefono) : undefined,
       email: datosValidados.email ? encriptarDatosPHI(datosValidados.email) : undefined,
       fechaCreacion: new Date(),
@@ -225,10 +193,8 @@ export async function POST(request: NextRequest) {
       estadoPaciente: 'ACTIVO'
     }
 
-    pacientesDB.push(nuevoPaciente)
-    contadorPacientes++
+    const nuevoPaciente = await prisma.paciente.create({ data: nuevoPacienteData })
 
-    // Desencriptar para la respuesta
     const pacienteRespuesta = {
       ...nuevoPaciente,
       telefono: nuevoPaciente.telefono ? desencriptarDatosPHI(nuevoPaciente.telefono) : undefined,
@@ -299,11 +265,10 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const datosValidados = esquemaPaciente.partial().parse(body)
 
-    // Buscar paciente existente
-    const indicePaciente = pacientesDB.findIndex(p => p.id === pacienteId)
-    if (indicePaciente === -1) {
+    const pacienteExistente = await prisma.paciente.findUnique({ where: { id: pacienteId } })
+
+    if (!pacienteExistente) {
       await registrarAuditoriaHIPAA('ACTUALIZACION_PACIENTE', pacienteId, request, 'FALLIDO')
-      
       return NextResponse.json(
         {
           exito: false,
@@ -316,18 +281,20 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Actualizar paciente
-    const pacienteActualizado: PacienteBase = {
-      ...pacientesDB[indicePaciente],
-      ...datosValidados,
-      telefono: datosValidados.telefono ? encriptarDatosPHI(datosValidados.telefono) : pacientesDB[indicePaciente].telefono,
-      email: datosValidados.email ? encriptarDatosPHI(datosValidados.email) : pacientesDB[indicePaciente].email,
-      fechaUltimaActualizacion: new Date()
-    }
+    const pacienteActualizado = await prisma.paciente.update({
+      where: { id: pacienteId },
+      data: {
+        ...datosValidados,
+        telefono: datosValidados.telefono
+          ? encriptarDatosPHI(datosValidados.telefono)
+          : pacienteExistente.telefono,
+        email: datosValidados.email
+          ? encriptarDatosPHI(datosValidados.email)
+          : pacienteExistente.email,
+        fechaUltimaActualizacion: new Date()
+      }
+    })
 
-    pacientesDB[indicePaciente] = pacienteActualizado
-
-    // Desencriptar para la respuesta
     const pacienteRespuesta = {
       ...pacienteActualizado,
       telefono: pacienteActualizado.telefono ? desencriptarDatosPHI(pacienteActualizado.telefono) : undefined,

@@ -84,7 +84,12 @@
     "post-deploy:report": "node scripts/generate-post-deploy-report.js",
     "automation:next-phase": "node scripts/automation/next-phase.js",
     "automation:next-phase:dry-run": "node scripts/automation/next-phase.js --dry-run",
-    "automation:next-phase:debug": "node scripts/automation/next-phase.js --debug"
+    "automation:next-phase:debug": "node scripts/automation/next-phase.js --debug",
+    "emergency:disable-non-compliant": "powershell -ExecutionPolicy Bypass -File scripts/emergency-hipaa-compliance.ps1",
+    "emergency:disable-non-compliant:dry-run": "powershell -ExecutionPolicy Bypass -File scripts/emergency-hipaa-compliance.ps1 -DryRun",
+    "emergency:status": "node scripts/check-emergency-status.js",
+    "compliance:audit": "node altamedica-core/scripts/medical-compliance-check.js",
+    "security:audit": "pnpm audit && npx snyk test"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

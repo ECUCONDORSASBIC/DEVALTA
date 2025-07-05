@@ -26,3 +26,4 @@ packages:
   - 'packages/tailwind-config'
   - 'packages/typescript-config'
   - 'packages/claude-config-manager'
+  - 'packages/database'

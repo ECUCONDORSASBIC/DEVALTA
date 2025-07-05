@@ -1,0 +1,11 @@
+{
+  "extends": "../../configs/typescript-config/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true,
+    "module": "ESNext",
+    "moduleResolution": "Node"
+  },
+  "include": ["src"]
+}
