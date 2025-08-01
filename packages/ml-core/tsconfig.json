@@ -1,0 +1,17 @@
+{
+  "extends": "@alta/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    { "path": "../types" },
+    { "path": "../core" },
+    { "path": "../firebase" },
+    { "path": "../logger" }
+  ]
+}

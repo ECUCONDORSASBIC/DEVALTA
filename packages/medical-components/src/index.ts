@@ -1,2 +1,4 @@
 // Exportación principal de componentes médicos ALTAMEDICA
-export * from './info-paciente'
+export * from './MedicalDesignSystem';
+export { MedicalDataTable } from './components/DashboardStandard';
+export * from './info-paciente';

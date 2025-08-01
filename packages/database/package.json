@@ -7,10 +7,12 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "prisma generate && tsc -p tsconfig.json",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "dev": "prisma migrate dev --name init && ts-node-dev --respawn src/index.ts"
+    "dev": "echo 'Database package - development mode (no server needed)'",
+    "dev:watch": "ts-node-dev --respawn src/index.ts",
+    "dev:migrate": "prisma migrate dev --name init"
   },
   "dependencies": {
     "@prisma/client": "^5.5.0"

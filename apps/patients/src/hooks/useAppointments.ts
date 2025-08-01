@@ -3,9 +3,12 @@
 // CONSERVADOR: Complementa sistema existente, funcionalidad granular
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { medicalService } from '../services';
+import { medicalService } from '../services/MedicalService'; // Corrected import
 import type { Appointment, PaginatedResponse } from '../types';
 import type { AppointmentFilters } from '../services/MedicalService';
+
+// ... (el resto del archivo permanece igual)
+
 
 // 📝 TIPOS ESPECIALIZADOS PARA CITAS
 export interface UseAppointmentState {

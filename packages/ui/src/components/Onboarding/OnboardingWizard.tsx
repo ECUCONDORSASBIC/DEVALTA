@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Check, X } from "lucide-react";
-import { cn } from "@altamedica/ui";
+import { cn } from "../../utils/cn";
 
 export interface OnboardingStep {
   id: string;

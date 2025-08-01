@@ -1,23 +1,33 @@
-import { adminAuth, adminDb } from '@altamedica/firebase';
-import { createErrorResponse, createSuccessResponse } from '@altamedica/shared';
-import { RegisterSchema } from '@altamedica/types';
+import { getAuthAdmin, getFirestoreAdmin } from '@/lib/firebase-admin';
+import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
+import { RegisterSchema } from '@/lib/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { authRateLimit, withRateLimit } from '@/middleware/rateLimiter';
 
 async function registerHandler(request: NextRequest) {
   try {
+    // Get Firebase instances
+    const adminAuth = getAuthAdmin();
+    const adminDb = getFirestoreAdmin();
+    
+    if (!adminAuth || !adminDb) {
+      return NextResponse.json(
+        createErrorResponse('FIREBASE_ERROR', 'Firebase no está disponible'),
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     
     // Validate input using Zod schema
     const validatedData = RegisterSchema.parse(body);
-    const { email, password, firstName, lastName, role, phoneNumber } = validatedData;
+    const { email, password, name, role } = validatedData;
 
     // Create user in Firebase Auth
     const userRecord = await adminAuth.createUser({
       email,
       password,
-      displayName: `${firstName} ${lastName}`,
-      phoneNumber,
+      displayName: name,
       emailVerified: false,
     });
 
@@ -32,10 +42,8 @@ async function registerHandler(request: NextRequest) {
     const userProfile = {
       uid: userRecord.uid,
       email,
-      firstName,
-      lastName,
+      name,
       role,
-      phoneNumber: phoneNumber || null,
       createdAt: new Date(),
       updatedAt: new Date(),
       emailVerified: false,
@@ -77,7 +85,7 @@ async function registerHandler(request: NextRequest) {
     } else if (role === 'admin') {
       await adminDb.collection('companies').doc(userRecord.uid).set({
         userId: userRecord.uid,
-        companyName: `${firstName} ${lastName}`,
+        companyName: name,
         industry: null,
         size: null,
         description: null,
@@ -104,44 +112,54 @@ async function registerHandler(request: NextRequest) {
       message: 'Usuario registrado exitosamente',
     };
 
-    return NextResponse.json(createSuccessResponse(responseData), { status: 201 });
+    return NextResponse.json({
+      success: true,
+      message: 'Usuario registrado exitosamente',
+      data: responseData
+    }, { status: 201 });
   } catch (error: any) {
     console.error('Registration error:', error);
 
     // Handle Firebase Auth errors
     if (error.code === 'auth/email-already-exists') {
-      return NextResponse.json(
-        createErrorResponse('EMAIL_EXISTS', 'El email ya está registrado'),
-        { status: 409 }
-      );
+      return NextResponse.json({
+        success: false,
+        message: 'EMAIL_EXISTS',
+        details: 'El email ya está registrado'
+      }, { status: 409 });
     }
 
     if (error.code === 'auth/invalid-email') {
-      return NextResponse.json(
-        createErrorResponse('INVALID_EMAIL', 'Email inválido'),
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: false,
+        message: 'INVALID_EMAIL',
+        details: 'Email inválido'
+      }, { status: 400 });
     }
 
     if (error.code === 'auth/weak-password') {
-      return NextResponse.json(
-        createErrorResponse('WEAK_PASSWORD', 'La contraseña debe tener al menos 6 caracteres'),
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: false,
+        message: 'WEAK_PASSWORD',
+        details: 'La contraseña debe tener al menos 6 caracteres'
+      }, { status: 400 });
     }
 
     // Handle Zod validation errors
     if (error.name === 'ZodError') {
-      return NextResponse.json(
-        createErrorResponse('VALIDATION_ERROR', 'Datos de entrada inválidos', { validationErrors: error.errors }),
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: false,
+        message: 'VALIDATION_ERROR',
+        details: 'Datos de entrada inválidos',
+        validationErrors: error.errors
+      }, { status: 400 });
     }
 
-    return NextResponse.json(
-      createErrorResponse('REGISTRATION_FAILED', 'Error en el registro'),
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: false,
+      message: 'REGISTRATION_FAILED',
+      details: 'Error en el registro'
+    }, { status: 500 });
   }
 }
 

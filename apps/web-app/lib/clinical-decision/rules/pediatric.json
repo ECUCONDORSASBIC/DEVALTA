@@ -1,0 +1,165 @@
+[
+  {
+    "id": "pediatric-respiratory-1",
+    "conditions": {
+      "ageRange": ["<1", "1-5", "6-12", "13-17"],
+      "symptoms": ["chest", "cough", "fever", "difficulty_breathing"]
+    },
+    "questions": [
+      {
+        "id": "fever-duration",
+        "text": "¿Cuántos días lleva con fiebre?",
+        "pediatricText": "¿Cuántos días ha tenido fiebre el niño/a?",
+        "type": "slider",
+        "range": {"min": 0, "max": 14, "step": 1},
+        "required": true,
+        "category": "symptom"
+      },
+      {
+        "id": "breathing-difficulty",
+        "text": "¿Presenta dificultad para respirar?",
+        "pediatricText": "¿El niño/a tiene dificultad para respirar?",
+        "type": "radio",
+        "options": [
+          {"value": "none", "label": "No"},
+          {"value": "mild", "label": "Leve"},
+          {"value": "moderate", "label": "Moderada"},
+          {"value": "severe", "label": "Severa"}
+        ],
+        "required": true,
+        "category": "symptom"
+      },
+      {
+        "id": "feeding-issues",
+        "text": "¿Presenta problemas para alimentarse?",
+        "pediatricText": "¿El niño/a rechaza el alimento o tiene problemas para comer?",
+        "type": "checkbox",
+        "required": false,
+        "category": "symptom"
+      }
+    ],
+    "diagnoses": [
+      {
+        "code": "J20.9",
+        "name": "Bronquitis aguda",
+        "probability": 0.6,
+        "urgency": "medium",
+        "reasoning": ["Tos con fiebre", "Edad pediátrica", "Síntomas respiratorios"]
+      },
+      {
+        "code": "J12.9",
+        "name": "Neumonía viral",
+        "probability": 0.3,
+        "urgency": "high",
+        "reasoning": ["Fiebre persistente", "Dificultad respiratoria", "Edad de riesgo"]
+      }
+    ]
+  },
+  {
+    "id": "pediatric-abdominal-1",
+    "conditions": {
+      "ageRange": ["1-5", "6-12", "13-17"],
+      "symptoms": ["abdomen", "abdominal_pain", "vomiting", "diarrhea"]
+    },
+    "questions": [
+      {
+        "id": "pain-location",
+        "text": "¿Dónde se localiza el dolor?",
+        "pediatricText": "¿En qué parte de la barriga le duele?",
+        "type": "radio",
+        "options": [
+          {"value": "diffuse", "label": "Todo el abdomen"},
+          {"value": "epigastric", "label": "Parte superior"},
+          {"value": "periumbilical", "label": "Alrededor del ombligo"},
+          {"value": "right_lower", "label": "Parte inferior derecha"},
+          {"value": "left_lower", "label": "Parte inferior izquierda"}
+        ],
+        "required": true,
+        "category": "symptom"
+      },
+      {
+        "id": "vomiting-frequency",
+        "text": "¿Cuántas veces ha vomitado en las últimas 24 horas?",
+        "type": "slider",
+        "range": {"min": 0, "max": 20, "step": 1},
+        "required": true,
+        "category": "symptom"
+      },
+      {
+        "id": "dehydration-signs",
+        "text": "Signos de deshidratación",
+        "type": "multiselect",
+        "options": [
+          {"value": "dry_mouth", "label": "Boca seca"},
+          {"value": "no_tears", "label": "Llora sin lágrimas"},
+          {"value": "sunken_eyes", "label": "Ojos hundidos"},
+          {"value": "decreased_urination", "label": "Orina poco"}
+        ],
+        "required": false,
+        "category": "symptom"
+      }
+    ],
+    "diagnoses": [
+      {
+        "code": "K52.9",
+        "name": "Gastroenteritis",
+        "probability": 0.7,
+        "urgency": "medium",
+        "reasoning": ["Vómitos y diarrea", "Edad pediátrica", "Patrón típico"]
+      },
+      {
+        "code": "K35.8",
+        "name": "Apendicitis aguda",
+        "probability": 0.15,
+        "urgency": "critical",
+        "reasoning": ["Dolor abdominal", "Localización específica", "Requiere evaluación urgente"]
+      }
+    ]
+  },
+  {
+    "id": "pediatric-ear-pain",
+    "conditions": {
+      "ageRange": ["<1", "1-5", "6-12", "13-17"],
+      "symptoms": ["ear", "ear_pain", "fever"]
+    },
+    "questions": [
+      {
+        "id": "ear-affected",
+        "text": "¿Qué oído está afectado?",
+        "pediatricText": "¿Cuál oído le duele al niño/a?",
+        "type": "radio",
+        "options": [
+          {"value": "left", "label": "Izquierdo"},
+          {"value": "right", "label": "Derecho"},
+          {"value": "both", "label": "Ambos"}
+        ],
+        "required": true,
+        "category": "symptom"
+      },
+      {
+        "id": "ear-discharge",
+        "text": "¿Hay secreción del oído?",
+        "type": "checkbox",
+        "required": false,
+        "category": "symptom"
+      },
+      {
+        "id": "recent-cold",
+        "text": "¿Ha tenido resfriado recientemente?",
+        "type": "checkbox",
+        "required": false,
+        "category": "history"
+      }
+    ],
+    "diagnoses": [
+      {
+        "code": "H66.9",
+        "name": "Otitis media aguda",
+        "probability": 0.8,
+        "urgency": "medium",
+        "reasoning": ["Dolor de oído con fiebre", "Edad de mayor incidencia", "Antecedente de resfriado"]
+      }
+    ]
+  }
+]
+

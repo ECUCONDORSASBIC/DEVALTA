@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSuccessResponse, createErrorResponse } from '@altamedica/shared';
-import { adminAuth, adminDb } from '@altamedica/firebase';
+import { createSuccessResponse, createErrorResponse } from '@/lib/response-helpers';
+import { adminAuth, adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { 
   FinOpsEstimator, 

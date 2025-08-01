@@ -1,3 +1,10 @@
+// ==================== SCRIPT DESACTIVADO ====================
+console.log('⚠️  Script desactivado: fix-all-tailwind-turbo.js no realiza ninguna acción.');
+process.exit(0);
+// ============================================================
+
+// El resto del código queda comentado para evitar cualquier ejecución accidental.
+/*
 #!/usr/bin/env node
 
 import fs from 'fs';
@@ -339,4 +346,5 @@ function main() {
   console.log('4. Ejecuta "npm run dev" en las aplicaciones para verificar');
 }
 
-main(); 
+main();
+*/ 

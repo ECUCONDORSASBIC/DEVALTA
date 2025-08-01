@@ -1,0 +1,150 @@
+# ===== ARCHIVOS Y DIRECTORIOS PARA EXCLUIR DEL BUILD =====
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# Build outputs
+.next/
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+*.log.*
+apps/*/*.log
+apps/*/logs/
+
+# Desarrollo local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+cypress/videos/
+cypress/screenshots/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Cache
+.cache/
+.turbo/
+.eslintcache
+
+# Documentación y archivos de desarrollo
+README*.md
+CHANGELOG.md
+*.md
+docs/
+documentation/
+
+# Archivos de configuración específicos del desarrollo
+.editorconfig
+.eslintrc*
+.prettierrc*
+tsconfig.json
+jest.config.*
+cypress.config.*
+vitest.config.*
+
+# Archivos de Docker (evitar recursión)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Archivos específicos de apps que no son necesarios en runtime
+apps/*/cypress/
+apps/*/tests/
+apps/*/test/
+apps/*/__tests__/
+apps/*/scripts/
+apps/*/docs/
+
+# Archivos grandes de desarrollo
+public/videos/
+public/models/
+*.mp4
+*.glb
+*.gltf
+*.fbx
+
+# Backups y archivos temporales
+*.backup
+*.bak
+*.old
+*.orig
+
+# Certificados de desarrollo
+*.pem
+certificates/
+
+# Archivos de análisis
+analysis-output/
+audit-results/
+*.analysis
+*.report
+
+# Archivos de configuración de herramientas
+.cursor/
+.vscode/
+cspell.json
+keyboard-results.json
+responsive-results.json
+accessibility-results.json
+
+# Scripts de desarrollo específicos
+scripts/
+tools/
+fix-*.js
+fix-*.mjs
+check-*.js
+test-*.js
+audit*.js
+
+# Archivos de migración y setup
+migration/
+setup/
+init/
+
+# Monorepo specific
+apps/*/.turbo/
+packages/*/.turbo/
+apps/*/node_modules/
+packages/*/node_modules/

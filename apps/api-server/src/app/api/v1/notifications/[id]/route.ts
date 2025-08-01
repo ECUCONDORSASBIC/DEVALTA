@@ -1,208 +1,141 @@
 /**
- * 🔔 INDIVIDUAL NOTIFICATION API
- * 
- * GET /api/v1/notifications/[id] - Get specific notification
- * PUT /api/v1/notifications/[id]/read - Mark notification as read
- * DELETE /api/v1/notifications/[id] - Delete notification
+ * 🔔 NOTIFICATIONS API - INDIVIDUAL NOTIFICATION
+ * Endpoints para gestionar una notificación específica.
+ * GET, PUT, DELETE /api/v1/notifications/[id]
+ * @version 2.0.0
+ * @author Altamedica
  */
 
-import { verifyAuthToken } from '@/lib/simple-auth';
-import { getFirestore } from 'firebase-admin/firestore';
 import { NextRequest, NextResponse } from 'next/server';
-
-const db = getFirestore();
+import { z } from 'zod';
+import { createAuthenticatedRoute, AuthContext } from '@/lib/middleware/UnifiedAuth';
+import { notificationService, NotificationSchema } from '@/services/notification.service';
+import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
 
 /**
- * GET /api/v1/notifications/[id]
- * Get specific notification (owner only)
+ * @summary Obtiene una notificación por su ID.
+ * @handler GET
+ * @protected
  */
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    // Verify authentication
-    const authResult = await verifyAuthToken(request);
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({
-        success: false,
-        error: 'Authentication required'
-      }, { status: 401 });
-    }
+export const GET = createAuthenticatedRoute(
+  async (request: NextRequest, { params }: { params: { id: string } }) => {
+    try {
+      const authContext = (request as any).authContext as AuthContext;
+      const notification = await notificationService.findById(params.id, authContext.user!);
 
-    const resolvedParams = await params;
-    const { id } = resolvedParams;
-
-    const notificationDoc = await db.collection('notifications').doc(id).get();
-    
-    if (!notificationDoc.exists) {
-      return NextResponse.json({
-        success: false,
-        error: 'Notification not found'
-      }, { status: 404 });
-    }
-
-    const notificationData = notificationDoc.data();
-
-    // Check if user owns this notification
-    const isOwner = notificationData?.recipient_id === authResult.user.id || 
-                   notificationData?.recipient_id === 'all';
-    const isAdmin = authResult.user.role === 'admin';
-
-    if (!isOwner && !isAdmin) {
-      return NextResponse.json({
-        success: false,
-        error: 'Access denied'
-      }, { status: 403 });
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        id: notificationDoc.id,
-        ...notificationData
+      if (!notification) {
+        return NextResponse.json(
+          createErrorResponse('Notificación no encontrada o sin permisos.', 'NOT_FOUND'),
+          { status: 404 }
+        );
       }
-    });
 
-  } catch (error: unknown) {
-    console.error('Notification fetch error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to fetch notification'
-    }, { status: 500 });
+      return NextResponse.json(createSuccessResponse(notification));
+    } catch (error: unknown) {
+      console.error(`Error en GET /notifications/${(params as any)?.id}:`, error);
+      return NextResponse.json(
+        createErrorResponse('Error al obtener la notificación.', 'INTERNAL_SERVER_ERROR'),
+        { status: 500 }
+      );
+    }
+  },
+  {
+    allowedRoles: ['doctor', 'patient', 'admin', 'company', 'nurse'],
+    auditAction: 'notification_read',
   }
-}
+);
 
 /**
- * PUT /api/v1/notifications/[id]
- * Update notification (mark as read, etc.)
+ * @summary Actualiza el estado de una notificación (ej. marcar como leída).
+ * @handler PUT
+ * @protected
  */
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    // Verify authentication
-    const authResult = await verifyAuthToken(request);
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({
-        success: false,
-        error: 'Authentication required'
-      }, { status: 401 });
-    }
+export const PUT = createAuthenticatedRoute(
+  async (request: NextRequest, { params }: { params: { id: string } }) => {
+    try {
+      const authContext = (request as any).authContext as AuthContext;
+      const body = await request.json();
+      
+      // Solo permitimos la actualización del estado.
+      const validatedData = NotificationSchema.pick({ status: true }).parse(body);
 
-    const resolvedParams = await params;
-    const { id } = resolvedParams;
-    const body = await request.json();
+      const updatedNotification = await notificationService.update(params.id, validatedData, authContext.user!);
 
-    // Get existing notification
-    const notificationDoc = await db.collection('notifications').doc(id).get();
-    
-    if (!notificationDoc.exists) {
-      return NextResponse.json({
-        success: false,
-        error: 'Notification not found'
-      }, { status: 404 });
-    }
+      return NextResponse.json(createSuccessResponse(updatedNotification));
+    } catch (error: unknown) {
+      console.error(`Error en PUT /notifications/${(params as any)?.id}:`, error);
 
-    const notificationData = notificationDoc.data();
-
-    // Check if user owns this notification
-    const isOwner = notificationData?.recipient_id === authResult.user.id || 
-                   notificationData?.recipient_id === 'all';
-    const isAdmin = authResult.user.role === 'admin';
-
-    if (!isOwner && !isAdmin) {
-      return NextResponse.json({
-        success: false,
-        error: 'Access denied'
-      }, { status: 403 });
-    }
-
-    // Prepare update data
-    const updates: Record<string, unknown> = {
-      updated_at: new Date().toISOString()
-    };
-
-    // Handle marking as read
-    if (body.is_read !== undefined) {
-      updates.is_read = body.is_read;
-      if (body.is_read) {
-        updates.read_at = new Date().toISOString();
-      } else {
-        updates.read_at = null;
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          createErrorResponse('Datos de entrada inválidos. Solo se puede actualizar el "status".', 'VALIDATION_ERROR', { validationErrors: error.errors }),
+          { status: 400 }
+        );
       }
+      if (error instanceof Error && error.message === 'NOT_FOUND') {
+        return NextResponse.json(
+          createErrorResponse('Notificación no encontrada.', 'NOT_FOUND'),
+          { status: 404 }
+        );
+      }
+      if (error instanceof Error && error.message === 'FORBIDDEN') {
+        return NextResponse.json(
+          createErrorResponse('No tiene permisos para modificar este recurso.', 'FORBIDDEN'),
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json(
+        createErrorResponse('Error al actualizar la notificación.', 'INTERNAL_SERVER_ERROR'),
+        { status: 500 }
+      );
     }
-
-    // Update notification
-    await db.collection('notifications').doc(id).update(updates);
-
-    // Get updated data
-    const updatedDoc = await db.collection('notifications').doc(id).get();
-    const updatedData = { id: updatedDoc.id, ...updatedDoc.data() };
-
-    return NextResponse.json({
-      success: true,
-      data: updatedData,
-      message: 'Notification updated successfully'
-    });
-
-  } catch (error: unknown) {
-    console.error('Notification update error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to update notification'
-    }, { status: 500 });
+  },
+  {
+    allowedRoles: ['doctor', 'patient', 'admin', 'company', 'nurse'],
+    auditAction: 'notification_update',
   }
-}
+);
 
 /**
- * DELETE /api/v1/notifications/[id]
- * Delete notification (owner or admin only)
+ * @summary Elimina (archiva) una notificación.
+ * @handler DELETE
+ * @protected
  */
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {  try {
-    // Verify authentication
-    const authResult = await verifyAuthToken(request);
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({
-        success: false,
-        error: 'Authentication required'
-      }, { status: 401 });
+export const DELETE = createAuthenticatedRoute(
+  async (request: NextRequest, { params }: { params: { id:string } }) => {
+    try {
+      const authContext = (request as any).authContext as AuthContext;
+      const success = await notificationService.delete(params.id, authContext.user!);
+
+      if (!success) {
+        return NextResponse.json(
+          createErrorResponse('Notificación no encontrada.', 'NOT_FOUND'),
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(createSuccessResponse({
+        message: 'Notificación archivada exitosamente.',
+        id: params.id
+      }));
+    } catch (error: unknown) {
+      console.error(`Error en DELETE /notifications/${(params as any)?.id}:`, error);
+      
+      if (error instanceof Error && error.message === 'FORBIDDEN') {
+        return NextResponse.json(
+          createErrorResponse('No tiene permisos para eliminar este recurso.', 'FORBIDDEN'),
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json(
+        createErrorResponse('Error al archivar la notificación.', 'INTERNAL_SERVER_ERROR'),
+        { status: 500 }
+      );
     }
-
-    const { id } = await params;
-
-    // Get existing notification
-    const notificationDoc = await db.collection('notifications').doc(id).get();
-    
-    if (!notificationDoc.exists) {
-      return NextResponse.json({
-        success: false,
-        error: 'Notification not found'
-      }, { status: 404 });
-    }
-
-    const notificationData = notificationDoc.data();
-
-    // Check if user owns this notification
-    const isOwner = notificationData?.recipient_id === authResult.user.id || 
-                   notificationData?.recipient_id === 'all';
-    const isAdmin = authResult.user.role === 'admin';
-
-    if (!isOwner && !isAdmin) {
-      return NextResponse.json({
-        success: false,
-        error: 'Access denied'
-      }, { status: 403 });
-    }
-
-    // Delete notification
-    await db.collection('notifications').doc(id).delete();
-
-    return NextResponse.json({
-      success: true,
-      message: 'Notification deleted successfully'
-    });
-
-  } catch (error: unknown) {
-    console.error('Notification deletion error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to delete notification'
-    }, { status: 500 });
+  },
+  {
+    allowedRoles: ['doctor', 'patient', 'admin', 'company', 'nurse'],
+    auditAction: 'notification_delete',
   }
-}
+);

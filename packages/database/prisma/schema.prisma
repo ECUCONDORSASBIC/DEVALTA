@@ -28,4 +28,79 @@ model Paciente {
   fechaCreacion             DateTime @default(now())
   fechaUltimaActualizacion  DateTime @updatedAt
   estadoPaciente            String
+  
+  // Relaciones con telemedicina
+  sesionesTelemedicina      TelemedicineSession[] @relation("PacienteSesiones")
+}
+
+model Doctor {
+  id                        String   @id @default(cuid())
+  nombres                   String
+  apellidos                 String
+  email                     String   @unique
+  telefono                  String?
+  numeroLicencia            String   @unique
+  especialidad              String
+  certificaciones           Json?
+  experienciaAnios          Int?
+  fechaCreacion             DateTime @default(now())
+  fechaUltimaActualizacion  DateTime @updatedAt
+  estadoDoctor              String   @default("activo")
+  
+  // Relaciones con telemedicina
+  sesionesTelemedicina      TelemedicineSession[] @relation("DoctorSesiones")
+}
+
+model TelemedicineSession {
+  id                        String   @id @default(cuid())
+  roomId                    String   @unique
+  patientId                 String
+  doctorId                  String
+  status                    TelemedicineStatus @default(SCHEDULED)
+  scheduledAt               DateTime
+  startedAt                 DateTime?
+  endedAt                   DateTime?
+  duration                  Int?     // duración en milisegundos
+  notes                     String?
+  recordingUrl              String?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  
+  // Relaciones
+  patient                   Paciente @relation("PacienteSesiones", fields: [patientId], references: [id])
+  doctor                    Doctor   @relation("DoctorSesiones", fields: [doctorId], references: [id])
+  chatMessages              ChatMessage[]
+  
+  @@index([patientId])
+  @@index([doctorId])
+  @@index([status])
+  @@index([scheduledAt])
+}
+
+model ChatMessage {
+  id                        String   @id @default(cuid())
+  sessionId                 String
+  senderId                  String
+  senderType                SenderType
+  message                   String
+  timestamp                 DateTime @default(now())
+  
+  // Relaciones
+  session                   TelemedicineSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@index([timestamp])
+}
+
+enum TelemedicineStatus {
+  SCHEDULED
+  WAITING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum SenderType {
+  PATIENT
+  DOCTOR
 }

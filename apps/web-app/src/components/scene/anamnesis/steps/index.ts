@@ -1,5 +1,0 @@
-export { ConsentStep } from './ConsentStep'
-export { PersonalDataStep } from './PersonalDataStep'
-export { SymptomLocationStep } from './SymptomLocationStep'
-export { SymptomDetailsStep } from './SymptomDetailsStep'
-export { ReviewStep } from './ReviewStep'

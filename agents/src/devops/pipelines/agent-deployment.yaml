@@ -1,0 +1,168 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devops-agent-pipeline
+  namespace: altamedica
+data:
+  pipeline.yaml: |
+    stages:
+      - name: validate
+        jobs:
+          - name: lint
+            script: |
+              echo "Running linting checks..."
+              pnpm run lint:agents
+          - name: type-check
+            script: |
+              echo "Running type checks..."
+              pnpm run type-check:agents
+          - name: security-scan
+            script: |
+              echo "Running security scans..."
+              trivy fs . --severity HIGH,CRITICAL
+              
+      - name: test
+        jobs:
+          - name: unit-tests
+            script: |
+              echo "Running unit tests..."
+              pnpm run test:unit:agents -- --coverage
+          - name: integration-tests
+            script: |
+              echo "Running integration tests..."
+              pnpm run test:integration:agents
+          - name: contract-tests
+            script: |
+              echo "Running contract tests..."
+              pnpm run test:contract:agents
+          - name: chaos-tests
+            script: |
+              echo "Running chaos tests..."
+              pnpm run test:chaos:agents
+            when:
+              branch: [main, develop]
+              
+      - name: build
+        jobs:
+          - name: build-images
+            parallel: true
+            matrix:
+              agent: [auth, routing, security, monitoring, devops]
+            script: |
+              echo "Building ${agent} agent image..."
+              docker build -t altamedica/${agent}-agent:${BUILD_ID} \
+                --build-arg VERSION=${VERSION} \
+                --build-arg COMMIT=${GIT_COMMIT} \
+                -f agents/src/${agent}/Dockerfile \
+                agents/
+          - name: scan-images
+            parallel: true
+            matrix:
+              agent: [auth, routing, security, monitoring, devops]
+            script: |
+              echo "Scanning ${agent} agent image..."
+              trivy image altamedica/${agent}-agent:${BUILD_ID}
+              
+      - name: deploy
+        jobs:
+          - name: deploy-staging
+            script: |
+              echo "Deploying to staging..."
+              kubectl apply -f agents/k8s/staging/
+              kubectl set image deployment/*-agent *-agent=altamedica/*-agent:${BUILD_ID} -n staging
+              kubectl rollout status deployment -n staging
+            when:
+              branch: develop
+          - name: deploy-production
+            script: |
+              echo "Deploying to production..."
+              kubectl apply -f agents/k8s/production/
+              kubectl set image deployment/*-agent *-agent=altamedica/*-agent:${BUILD_ID} -n production
+              kubectl rollout status deployment -n production
+            when:
+              branch: main
+              manual: true
+              
+      - name: verify
+        jobs:
+          - name: health-checks
+            script: |
+              echo "Running health checks..."
+              for agent in auth routing security monitoring devops; do
+                curl -f http://${agent}-agent:${agent_port}/health || exit 1
+              done
+          - name: smoke-tests
+            script: |
+              echo "Running smoke tests..."
+              pnpm run test:smoke:agents
+          - name: performance-baseline
+            script: |
+              echo "Running performance baseline..."
+              k6 run agents/tests/performance/baseline.js
+              
+      - name: observability
+        jobs:
+          - name: setup-monitoring
+            script: |
+              echo "Setting up monitoring..."
+              kubectl apply -f agents/k8s/monitoring/prometheus-rules.yaml
+              kubectl apply -f agents/k8s/monitoring/grafana-dashboards.yaml
+          - name: setup-tracing
+            script: |
+              echo "Setting up distributed tracing..."
+              kubectl apply -f agents/k8s/monitoring/otel-collector.yaml
+              kubectl apply -f agents/k8s/monitoring/jaeger.yaml
+          - name: setup-logging
+            script: |
+              echo "Setting up centralized logging..."
+              kubectl apply -f agents/k8s/monitoring/fluent-bit.yaml
+              kubectl apply -f agents/k8s/monitoring/elasticsearch.yaml
+              
+    notifications:
+      slack:
+        webhook: ${SLACK_WEBHOOK_URL}
+        channels:
+          - "#devops-alerts"
+          - "#agent-deployments"
+        events:
+          - pipeline.started
+          - pipeline.failed
+          - pipeline.succeeded
+          - stage.failed
+          
+      email:
+        smtp:
+          host: smtp.altamedica.com
+          port: 587
+          secure: true
+        recipients:
+          - devops@altamedica.com
+          - platform-team@altamedica.com
+        events:
+          - pipeline.failed
+          - deploy.production.started
+          - deploy.production.completed
+          
+    rollback:
+      automatic:
+        enabled: true
+        conditions:
+          - health_check_failures > 3
+          - error_rate > 0.05
+          - response_time_p95 > 2000
+        delay: 5m
+        
+    metrics:
+      collectors:
+        - prometheus
+        - datadog
+      custom:
+        - name: deployment_duration
+          type: histogram
+          help: "Duration of deployment stages"
+        - name: test_coverage
+          type: gauge
+          help: "Test coverage percentage"
+        - name: agent_availability
+          type: gauge
+          help: "Agent availability status"

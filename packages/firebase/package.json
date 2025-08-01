@@ -3,8 +3,34 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Shared Firebase configuration and utilities for ALTAMEDICA APIs",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    },
+    "./client-only": {
+      "import": "./dist/src/client-only.js",
+      "types": "./dist/src/client-only.d.ts"
+    },
+    "./src/config-production": {
+      "import": "./dist/src/config-production.js",
+      "types": "./dist/src/config-production.d.ts"
+    },
+    "./src/config": {
+      "import": "./dist/src/config.js",
+      "types": "./dist/src/config.d.ts"
+    },
+    "./src/client": {
+      "import": "./dist/src/client.js",
+      "types": "./dist/src/client.d.ts"
+    },
+    "./src/admin": {
+      "import": "./dist/src/admin.js",
+      "types": "./dist/src/admin.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],

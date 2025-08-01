@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@altamedica/firebase/src/config-production';
+import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 
 interface ForgotPasswordState {
@@ -15,6 +14,7 @@ interface ForgotPasswordState {
 }
 
 const ForgotPasswordForm: React.FC = () => {
+  const { resetPassword } = useAuth();
   const [state, setState] = useState<ForgotPasswordState>({
     email: '',
     isLoading: false,
@@ -43,7 +43,7 @@ const ForgotPasswordForm: React.FC = () => {
     updateState({ isLoading: true, error: '' });
 
     try {
-      await sendPasswordResetEmail(auth, state.email);
+      await resetPassword(state.email);
       updateState({ 
         success: true, 
         emailSent: true, 
@@ -52,18 +52,9 @@ const ForgotPasswordForm: React.FC = () => {
     } catch (error: any) {
       let errorMessage = 'Error al enviar el email de recuperación';
       
-      switch (error.code) {
-        case 'auth/user-not-found':
-          errorMessage = 'No existe una cuenta con este email';
-          break;
-        case 'auth/invalid-email':
-          errorMessage = 'Email inválido';
-          break;
-        case 'auth/too-many-requests':
-          errorMessage = 'Demasiados intentos. Intenta más tarde';
-          break;
-        default:
-          errorMessage = error.message || 'Error desconocido';
+      // El contexto ya maneja los errores específicos
+      if (error.message) {
+        errorMessage = error.message;
       }
       
       updateState({ error: errorMessage, isLoading: false });
@@ -128,9 +119,64 @@ const ForgotPasswordForm: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-3xl shadow-2xl p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+      <div className="flex min-h-screen">
+        {/* Mitad Izquierda - Información */}
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-cyan-600 p-12 items-center justify-center">
+          <div className="max-w-lg text-white">
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold mb-4">🏥 AltaMedica</h1>
+              <h2 className="text-2xl font-semibold mb-6">Recuperación Segura</h2>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <Mail className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Proceso Seguro</h3>
+                  <p className="text-blue-100">Utilizamos encriptación de nivel médico para proteger tu información personal y clínica.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <CheckCircle className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Acceso Rápido</h3>
+                  <p className="text-blue-100">Recupera tu acceso en minutos y vuelve a gestionar tu salud sin interrupciones.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <AlertCircle className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Soporte 24/7</h3>
+                  <p className="text-blue-100">Nuestro equipo médico-técnico está disponible para ayudarte en cualquier momento.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-12 p-6 bg-white/10 rounded-2xl backdrop-blur-sm">
+              <p className="text-sm text-blue-100 italic">
+                "La seguridad de tus datos médicos es nuestra prioridad. Cada proceso está diseñado 
+                cumpliendo estándares internacionales de protección sanitaria."
+              </p>
+              <div className="mt-4 text-sm font-medium">
+                - Equipo de Seguridad AltaMedica
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mitad Derecha - Funcionalidad */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+          <div className="max-w-md w-full">
+            <div className="bg-white rounded-3xl shadow-2xl p-8">
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Mail className="h-8 w-8 text-white" />
@@ -209,10 +255,13 @@ const ForgotPasswordForm: React.FC = () => {
               </Link>
             </div>
           </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ForgotPasswordForm; 
+export default ForgotPasswordForm;
+export { ForgotPasswordForm };

@@ -1,200 +1,90 @@
-import { adminDb } from '@altamedica/firebase';
-import { createErrorResponse, createPaginationMeta, createSuccessResponse, validatePagination } from '@altamedica/shared';
-import { CreatePatientProfileSchema } from '@altamedica/types';
+/**
+ * 🧑‍⚕️ PATIENTS API - COLLECTION
+ * Endpoints para gestionar la colección de pacientes.
+ * GET, POST /api/v1/patients
+ * @version 2.0.0
+ * @author Altamedica
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createAuthenticatedRoute, AuthContext } from '@/lib/middleware/UnifiedAuth';
+import { patientService, CreatePatientSchema } from '@/services/patient.service';
+import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
 
-// Schema para query parameters de búsqueda de pacientes
-const PatientSearchSchema = z.object({
-  page: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  limit: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  gender: z.enum(['male', 'female', 'other']).optional(),
-  bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
-  city: z.string().optional(),
-  search: z.string().optional(),
-  isActive: z.string().optional().transform(val => val === 'true'),
-  hasInsurance: z.string().optional().transform(val => val === 'true'),
-});
+/**
+ * @summary Obtiene una lista de todos los pacientes.
+ * @description Devuelve una lista de todos los pacientes. Requiere rol de 'doctor' o 'admin'.
+ * @handler GET
+ * @protected
+ */
+export const GET = createAuthenticatedRoute(
+  async (request: NextRequest) => {
+    try {
+      const authContext = (request as any).authContext as AuthContext;
+      const patients = await patientService.getAllPatients(authContext.user!);
 
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const queryParams = Object.fromEntries(searchParams.entries());
-    
-    // Validar parámetros de búsqueda
-    const searchData = PatientSearchSchema.parse(queryParams);
-    const { page, limit } = validatePagination({
-      page: searchData.page,
-      limit: searchData.limit,
-    });
-
-    // Construir query de Firestore
-    let query: any = adminDb.collection('patients');
-
-    // Aplicar filtros
-    if (searchData.gender) {
-      query = (query as any).where('gender', '==', searchData.gender);
+      return NextResponse.json(createSuccessResponse(patients));
+    } catch (error: unknown) {
+      console.error('Error en GET /patients:', error);
+      if (error instanceof Error && error.message === 'FORBIDDEN') {
+        return NextResponse.json(
+          createErrorResponse('No tiene permisos para ver la lista de pacientes.', 'FORBIDDEN'),
+          { status: 403 }
+        );
+      }
+      return NextResponse.json(
+        createErrorResponse('Error al obtener los pacientes.', 'INTERNAL_SERVER_ERROR'),
+        { status: 500 }
+      );
     }
+  },
+  {
+    allowedRoles: ['admin', 'doctor'],
+    auditAction: 'patients_list',
+  }
+);
 
-    if (searchData.bloodType) {
-      query = (query as any).where('bloodType', '==', searchData.bloodType);
-    }    if (searchData.isActive !== undefined) {
-      query = (query as any).where('isActive', '==', searchData.isActive);
-    }// Ordenar por fecha de creación (usar lowercase para índices)
-    query = (query as any).orderBy('createdAt', 'desc');
-
-    // Obtener total de documentos para paginación
-    const totalSnapshot = await query.get();
-    const total = totalSnapshot.size;
-
-    // Aplicar paginación
-    const offset = (page - 1) * limit;
-    query = (query as any).offset(offset).limit(limit);
-
-    const snapshot = await query.get();
-    const patients = [];
-
-    for (const doc of snapshot.docs) {
-      const patientData = doc.data();
+/**
+ * @summary Crea un nuevo paciente.
+ * @description Registra un nuevo paciente en el sistema. Requiere rol de 'doctor' o 'admin'.
+ * @handler POST
+ * @protected
+ */
+export const POST = createAuthenticatedRoute(
+  async (request: NextRequest) => {
+    try {
+      const authContext = (request as any).authContext as AuthContext;
+      const body = await request.json();
       
-      // Aplicar filtro de búsqueda por texto (post-query)
-      if (searchData.search) {
-        const searchTerm = searchData.search.toLowerCase();
-        const searchableText = `${patientData.firstName ?? ''} ${patientData.lastName ?? ''} ${patientData.email ?? ''}`.toLowerCase();
-        
-        if (!searchableText.includes(searchTerm)) {
-          continue;
-        }
+      const validatedData = CreatePatientSchema.parse(body);
+
+      const newPatient = await patientService.createPatient(validatedData, authContext.user!);
+
+      return NextResponse.json(createSuccessResponse(newPatient), { status: 201 });
+
+    } catch (error: unknown) {
+      console.error('Error en POST /patients:', error);
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          createErrorResponse('Datos de entrada inválidos.', 'VALIDATION_ERROR', { validationErrors: error.errors }),
+          { status: 400 }
+        );
       }
-
-      // Aplicar filtro de seguro (post-query)
-      if (searchData.hasInsurance !== undefined) {
-        const hasInsurance = patientData.insurance && Object.keys(patientData.insurance).length > 0;
-        if (searchData.hasInsurance && !hasInsurance) continue;
-        if (!searchData.hasInsurance && hasInsurance) continue;
+      if (error instanceof Error && error.message === 'FORBIDDEN') {
+        return NextResponse.json(
+          createErrorResponse('No tiene permisos para crear pacientes.', 'FORBIDDEN'),
+          { status: 403 }
+        );
       }
-
-      // Obtener datos del usuario asociado
-      const userDoc = await adminDb.collection('users').doc(doc.id).get();
-      const userData = userDoc.data();
-
-      if (userData) {
-        patients.push({
-          id: doc.id,
-          ...patientData,
-          // Incluir datos del usuario (datos no sensibles)
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          email: userData.email,
-          phone: userData.phone,
-          avatar: userData.avatar,
-          isActive: userData.isActive,
-          createdAt: (patientData as any).createdAt?.toDate?.() ?? (patientData as any).createdAt,
-          updatedAt: patientData.updatedAt?.toDate?.() ?? patientData.updatedAt,
-        });
-      }
-    }
-
-    // Crear metadata de paginación
-    const meta = createPaginationMeta(page, limit, total);
-
-    return NextResponse.json(
-      createSuccessResponse(patients, { ...meta }),
-      { status: 200 }
-    );
-  } catch (error: unknown) {
-    console.error('Error fetching patients:', error);
-    
-    if (error instanceof z.ZodError) {
       return NextResponse.json(
-        createErrorResponse('VALIDATION_ERROR', 'Parámetros de búsqueda inválidos', { validationErrors: error.errors }),
-        { status: 400 }
+        createErrorResponse('Error al crear el paciente.', 'INTERNAL_SERVER_ERROR'),
+        { status: 500 }
       );
     }
-
-    return NextResponse.json(
-      createErrorResponse('FETCH_PATIENTS_FAILED', 'Error al obtener lista de pacientes'),
-      { status: 500 }
-    );
+  },
+  {
+    allowedRoles: ['admin', 'doctor'],
+    auditAction: 'patient_create',
   }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json(
-        createErrorResponse('UNAUTHORIZED', 'Token de autorización requerido'),
-        { status: 401 }
-      );
-    }
-
-    const body = await request.json();
-    
-    // Validar datos del paciente
-    const patientData = CreatePatientProfileSchema.parse(body);
-
-    // Verificar que el usuario existe y es paciente
-    const userDoc = await adminDb.collection('users').doc(body.uid).get();
-    if (!userDoc.exists) {
-      return NextResponse.json(
-        createErrorResponse('USER_NOT_FOUND', 'Usuario no encontrado'),
-        { status: 404 }
-      );
-    }
-
-    const userData = userDoc.data();
-    if (userData?.role !== 'patient') {
-      return NextResponse.json(
-        createErrorResponse('INVALID_ROLE', 'El usuario debe tener rol de paciente'),
-        { status: 400 }
-      );
-    }
-
-    // Verificar que no existe un perfil de paciente para este usuario
-    const existingPatient = await adminDb.collection('patients').doc(body.uid).get();
-    if (existingPatient.exists) {
-      return NextResponse.json(
-        createErrorResponse('PATIENT_PROFILE_EXISTS', 'Ya existe un perfil de paciente para este usuario'),
-        { status: 409 }
-      );
-    }    // Crear el perfil de paciente (usar lowercase para consistencia)
-    const now = new Date();
-    const patientProfile = {
-      ...patientData,
-      isactive: true,
-      createdat: now,
-      updatedat: now,
-    };
-
-    await adminDb.collection('patients').doc(body.uid).set(patientProfile);
-
-    return NextResponse.json(
-      createSuccessResponse({
-        id: body.uid,
-        ...patientProfile,
-        // Incluir datos del usuario
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        email: userData.email,
-        phone: userData.phone,
-        avatar: userData.avatar,
-      }),
-      { status: 201 }
-    );
-  } catch (error: unknown) {
-    console.error('Error creating patient profile:', error);
-    
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        createErrorResponse('VALIDATION_ERROR', 'Datos del paciente inválidos', { validationErrors: error.errors }),
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      createErrorResponse('CREATE_PATIENT_FAILED', 'Error al crear perfil de paciente'),
-      { status: 500 }
-    );
-  }
-}
+);

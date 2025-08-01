@@ -4,20 +4,42 @@
   "description": "Shared utilities and helpers for ALTAMEDICA APIs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "dev": "tsc --watch",
+    "export-anamnesis": "node dist/services/anamnesis-shared-service.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./auth": "./dist/auth/index.js",
+    "./anamnesis": "./dist/types/anamnesis-shared.js",
+    "./anamnesis-service": "./dist/services/anamnesis-shared-service.js"
   },
   "dependencies": {
     "@altamedica/types": "workspace:*",
-    "zod": "^3.22.0"
+    "@sentry/node": "^7.120.3",
+    "@sentry/tracing": "^7.120.3",
+    "firebase": "^10.14.1",
+    "jsonwebtoken": "^9.0.2",
+    "pino": "^8.16.1",
+    "pino-pretty": "^10.2.3"
   },
+
   "devDependencies": {
-    "typescript": "^5.8.3",
-    "@types/node": "^20.10.0"
+    "@types/jest": "^29.5.0",
+    "@types/jsonwebtoken": "^9.0.4",
+    "@types/node": "^20.10.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.8.3"
   }
 }

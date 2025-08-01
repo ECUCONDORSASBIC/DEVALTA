@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Tailwind CSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="p-8">
+            <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
+                Test de Tailwind CSS
+            </div>
+            <h1 class="block mt-1 text-lg leading-tight font-medium text-black">
+                ¿Se ven los colores correctamente?
+            </h1>
+            <p class="mt-2 text-gray-500">
+                Si este texto tiene colores y estilos, Tailwind funciona.
+            </p>
+            
+            <!-- Test de colores específicos -->
+            <div class="mt-4 grid grid-cols-2 gap-4">
+                <div class="bg-blue-500 text-white p-4 rounded">
+                    Azul (bg-blue-500)
+                </div>
+                <div class="bg-green-500 text-white p-4 rounded">
+                    Verde (bg-green-500)
+                </div>
+                <div class="bg-red-500 text-white p-4 rounded">
+                    Rojo (bg-red-500)
+                </div>
+                <div class="bg-purple-500 text-white p-4 rounded">
+                    Púrpura (bg-purple-500)
+                </div>
+            </div>
+            
+            <!-- Test de utilidades -->
+            <div class="mt-6 space-y-2">
+                <div class="text-center text-xl font-bold">
+                    Texto centrado y grande
+                </div>
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded">
+                    <span>Flexbox</span>
+                    <span class="bg-primary-500 text-white px-3 py-1 rounded">
+                        Color personalizado
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

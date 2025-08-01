@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:all:*)",
+      "Bash(npm install:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm install:*)",
+      "Bash(docker:*)",
+      "Bash(curl:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(npm run build:*)",
+      "Bash(sed:*)"
+    ],
+    "deny": []
+  }
+}

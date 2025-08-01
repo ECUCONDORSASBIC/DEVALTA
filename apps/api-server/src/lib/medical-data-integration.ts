@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import { createHash } from 'crypto';
-import { adminDb } from '@altamedica/firebase';
+import { adminDb } from '@/lib/firebase-admin';
 
 // Esquemas FHIR R4 simplificados para AltaMedica
 export const FHIRPatientSchema = z.object({

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(pnpm install:*)",
+      "Bash(npm install)"
+    ],
+    "deny": []
+  }
+}

@@ -9,15 +9,16 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-// Comentado temporalmente hasta que Firebase esté configurado correctamente
-// import {
-//   onAuthStateChanged,
-//   signInWithEmailAndPassword as firebaseSignIn,
-//   createUserWithEmailAndPassword as firebaseSignUp,
-//   signOut as firebaseSignOut,
-//   User as FirebaseUser,
-// } from "firebase/auth";
-// import { doc, getDoc, setDoc } from "firebase/firestore";
+import dynamic from 'next/dynamic';
+
+// Lazy loading para Firebase Auth - solo se carga cuando sea necesario
+const FirebaseAuth = dynamic(() => import('firebase/auth'), {
+  ssr: false
+});
+
+const FirebaseFirestore = dynamic(() => import('firebase/firestore'), {
+  ssr: false
+});
 
 // Importar la configuración local de Firebase
 // import { auth, db } from "../lib/firebase";

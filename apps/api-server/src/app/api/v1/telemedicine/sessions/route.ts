@@ -1,278 +1,445 @@
-import { adminDb } from '@altamedica/firebase';
-import { createErrorResponse, createPaginationMeta, createSuccessResponse, validatePagination } from '@altamedica/shared';
-import { DocumentData, Query } from 'firebase-admin/firestore';
+/**
+ * 📹 TELEMEDICINE SESSIONS API - ALTAMEDICA (REFACTORED)
+ * Endpoint refactorizado usando Service Pattern + Unified Auth
+ * IMPLEMENTADO: Era uno de los endpoints faltantes críticos para videollamadas
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
+import { createAuthenticatedRoute } from '@/lib/middleware/UnifiedAuth';
+import { createSuccessResponse, createErrorResponse } from '@/lib/response-helpers';
+import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 
-// Schema para crear sesión de telemedicina
-const CreateTelemedicineSessionSchema = z.object({
-  appointmentId: z.string().min(1, 'ID de cita requerido'),
-  doctorId: z.string().min(1, 'ID de doctor requerido'),
-  patientId: z.string().min(1, 'ID de paciente requerido'),
-  sessionType: z.enum(['video', 'audio', 'chat']).default('video'),
-  provider: z.enum(['webrtc', 'agora', 'zoom', 'google_meet']).default('webrtc'),
-  scheduledDuration: z.number().min(5).max(180).default(30), // minutos
-  title: z.string().optional(),
-  notes: z.string().optional(),
-});
+export const dynamic = "force-dynamic";
 
-// Schema para búsqueda de sesiones
-const TelemedicineQuerySchema = z.object({
-  page: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  limit: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  status: z.enum(['scheduled', 'active', 'completed', 'cancelled', 'all']).optional().default('all'),
+// Schema for telemedicine session queries
+const SessionSearchSchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(20),
+  status: z.enum(['scheduled', 'active', 'completed', 'cancelled', 'all']).default('all'),
+  provider: z.enum(['webrtc', 'agora', 'zoom', 'google_meet', 'all']).default('all'),
   doctorId: z.string().optional(),
   patientId: z.string().optional(),
-  sessionType: z.enum(['video', 'audio', 'chat', 'all']).optional().default('all'),
-  provider: z.enum(['webrtc', 'agora', 'zoom', 'google_meet', 'all']).optional().default('all'),
+  appointmentId: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
+  sortBy: z.string().default('createdAt'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc')
+});
+
+// Schema for creating telemedicine sessions
+const CreateTelemedicineSessionSchema = z.object({
+  appointmentId: z.string().min(1, 'Appointment ID is required'),
+  doctorId: z.string().min(1, 'Doctor ID is required'),
+  patientId: z.string().min(1, 'Patient ID is required'),
+  provider: z.enum(['webrtc', 'agora', 'zoom', 'google_meet']).default('webrtc'),
+  type: z.enum(['consultation', 'follow_up', 'emergency', 'second_opinion']).default('consultation'),
+  estimatedDuration: z.number().min(5).max(180).default(30),
+  isRecorded: z.boolean().default(false),
+  allowScreenShare: z.boolean().default(true),
+  chatEnabled: z.boolean().default(true),
+  qualitySettings: z.object({
+    videoQuality: z.enum(['low', 'medium', 'high', 'hd']).default('high'),
+    audioQuality: z.enum(['low', 'medium', 'high']).default('high'),
+    adaptiveBitrate: z.boolean().default(true)
+  }).optional(),
+  metadata: z.object({
+    sessionReason: z.string().optional(),
+    specialRequirements: z.string().optional(),
+    emergencyContact: z.string().optional()
+  }).optional()
 });
 
 /**
  * GET /api/v1/telemedicine/sessions
- * Lista sesiones de telemedicina con filtros avanzados
+ * List telemedicine sessions with role-based filtering
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  try {
-    const { searchParams } = new URL(request.url);
-    const queryParams = Object.fromEntries(searchParams.entries());
-    
-    const queryData = TelemedicineQuerySchema.parse(queryParams);
-    const { page, limit } = validatePagination({
-      page: queryData.page,
-      limit: queryData.limit,
-    });    // Construir query base
-    let query: Query<DocumentData> = adminDb.collection('telemedicine_sessions');
+export const GET = createAuthenticatedRoute(
+  async (request: NextRequest, authContext) => {
+    try {
+      const { searchParams } = new URL(request.url);
+      const searchData = SessionSearchSchema.parse(Object.fromEntries(searchParams));
+      
+      const { page, limit, status, provider, doctorId, patientId, appointmentId, startDate, endDate, sortBy, sortOrder } = searchData;
+      const offset = (page - 1) * limit;
 
-    // Aplicar filtros
-    if ((queryData as any).doctorId) {
-      query = (query as any).where('doctorId', '==', (queryData as any).doctorId);
-    }
+      // Build query
+      let query: any = adminDb.collection('telemedicine_sessions');
 
-    if ((queryData as any).patientId) {
-      query = (query as any).where('patientId', '==', (queryData as any).patientId);
-    }
+      // Apply role-based filtering
+      if (authContext.user.role === 'doctor') {
+        query = query.where('doctorId', '==', authContext.user.uid);
+      } else if (authContext.user.role === 'patient') {
+        query = query.where('patientId', '==', authContext.user.uid);
+      }
 
-    if ((queryData as any).status !== 'all') {
-      query = (query as any).where('status', '==', (queryData as any).status);
-    }
+      // Apply additional filters
+      if (status !== 'all') {
+        query = query.where('status', '==', status);
+      }
+      if (provider !== 'all') {
+        query = query.where('provider', '==', provider);
+      }
+      if (doctorId && authContext.user.role !== 'doctor') {
+        query = query.where('doctorId', '==', doctorId);
+      }
+      if (patientId && authContext.user.role !== 'patient') {
+        query = query.where('patientId', '==', patientId);
+      }
+      if (appointmentId) {
+        query = query.where('appointmentId', '==', appointmentId);
+      }
 
-    if (queryData.sessionType !== 'all') {
-      query = (query as any).where('sessionType', '==', queryData.sessionType);
-    }
+      // Date filtering
+      if (startDate) {
+        query = query.where('scheduledAt', '>=', new Date(startDate));
+      }
+      if (endDate) {
+        query = query.where('scheduledAt', '<=', new Date(endDate));
+      }
 
-    if (queryData.provider !== 'all') {
-      query = (query as any).where('provider', '==', queryData.provider);
-    }
+      // Order and paginate
+      query = query.orderBy('scheduledAt', sortOrder).offset(offset).limit(limit);
 
-    // Filtros de fecha
-    if (queryData.startDate) {
-      query = (query as any).where('scheduledAt', '>=', new Date(queryData.startDate));
-    }
+      const snapshot = await query.get();
 
-    if (queryData.endDate) {
-      query = (query as any).where('scheduledAt', '<=', new Date(queryData.endDate));
-    }
+      // Process sessions with related data
+      const sessions = [];
+      const doctorIds = new Set();
+      const patientIds = new Set();
+      const appointmentIds = new Set();
 
-    // Ordenar por fecha de programación
-    query = (query as any).orderBy('scheduledAt', 'desc');
+      for (const doc of snapshot.docs) {
+        const data = doc.data();
+        sessions.push({
+          id: doc.id,
+          ...data,
+          scheduledAt: data.scheduledAt?.toDate() || data.scheduledAt,
+          startedAt: data.startedAt?.toDate() || data.startedAt,
+          endedAt: data.endedAt?.toDate() || data.endedAt,
+          createdAt: data.createdAt?.toDate() || data.createdAt,
+          updatedAt: data.updatedAt?.toDate() || data.updatedAt
+        });
+        
+        doctorIds.add(data.doctorId);
+        patientIds.add(data.patientId);
+        if (data.appointmentId) appointmentIds.add(data.appointmentId);
+      }
 
-    // Obtener total para paginación
-    const totalSnapshot = await query.get();
-    const total = totalSnapshot.size;
-
-    // Aplicar paginación
-    const offset = (page - 1) * limit;
-    query = (query as any).offset(offset).limit(limit);
-
-    const snapshot = await query.get();
-    const sessions = [];
-
-    for (const doc of snapshot.docs) {
-      const sessionData = doc.data();
-
-      // Obtener información del doctor y paciente
-      const [doctorDoc, patientDoc, appointmentDoc] = await Promise.all([
-        adminDb.collection('users').doc((sessionData as any).doctorId).get(),
-        adminDb.collection('users').doc((sessionData as any).patientId).get(),
-        adminDb.collection('appointments').doc(sessionData.appointmentId).get(),
+      // OPTIMIZATION: Batch fetch related data
+      const [doctorsData, patientsData, appointmentsData] = await Promise.all([
+        batchFetchUsers([...doctorIds], 'doctor'),
+        batchFetchUsers([...patientIds], 'patient'),
+        batchFetchAppointments([...appointmentIds])
       ]);
 
-      const doctorData = doctorDoc.exists ? doctorDoc.data() : null;
-      const patientData = patientDoc.exists ? patientDoc.data() : null;
-      const appointmentData = appointmentDoc.exists ? appointmentDoc.data() : null;
+      // Enrich sessions with related data
+      const enrichedSessions = sessions.map(session => ({
+        ...session,
+        doctor: doctorsData.get(session.doctorId),
+        patient: patientsData.get(session.patientId),
+        appointment: session.appointmentId ? appointmentsData.get(session.appointmentId) : null,
+        joinUrls: generateJoinUrls(session.id, session.provider, session.providerConfig || {})
+      }));
 
-      sessions.push({
-        id: doc.id,
-        ...sessionData,
-        scheduledAt: (sessionData as any).scheduledAt?.toDate?.() ?? (sessionData as any).scheduledAt,
-        startedAt: sessionData.startedAt?.toDate?.() ?? sessionData.startedAt,
-        endedAt: sessionData.endedAt?.toDate?.() ?? sessionData.endedAt,
-        createdAt: (sessionData as any).createdAt?.toDate?.() ?? (sessionData as any).createdAt,
-        updatedAt: sessionData.updatedAt?.toDate?.() ?? sessionData.updatedAt,
-        // Información del doctor
-        doctor: doctorData ? {
-          id: (sessionData as any).doctorId,
-          firstName: doctorData.firstName,
-          lastName: doctorData.lastName,
-          email: doctorData.email,
-          avatar: doctorData.avatar,
-        } : null,
-        // Información del paciente
-        patient: patientData ? {
-          id: (sessionData as any).patientId,
-          firstName: patientData.firstName,
-          lastName: patientData.lastName,
-          email: patientData.email,
-          avatar: patientData.avatar,
-        } : null,
-        // Información de la cita
-        appointment: appointmentData ? {
-          id: sessionData.appointmentId,
-          type: (appointmentData as any).type,
-          status: (appointmentData as any).status,
-          scheduledAt: (appointmentData as any).scheduledAt?.toDate?.() ?? (appointmentData as any).scheduledAt,
-        } : null,
-      });
-    }
+      // Get total count
+      const totalQuery = adminDb.collection('telemedicine_sessions');
+      const totalSnapshot = await totalQuery.get();
 
-    const meta = createPaginationMeta(page, limit, total);    return NextResponse.json(
-      createSuccessResponse(sessions, meta as unknown as Record<string, unknown>),
-      { status: 200 }
-    );
-  } catch (error: unknown) {
-    console.error('Error fetching telemedicine sessions:', error);
+      return NextResponse.json(
+        createSuccessResponse(enrichedSessions, {
+          total: totalSnapshot.size,
+          page,
+          limit,
+          hasNext: offset + limit < totalSnapshot.size,
+          hasPrev: page > 1
+        })
+      );
+
+    } catch (error) {
+      console.error('Error in GET /telemedicine/sessions:', error);
+      
       if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        createErrorResponse('VALIDATION_ERROR', 'Parámetros de búsqueda inválidos', { errors: error.errors }),
-        { status: 400 }
-      );
-    }
+        return NextResponse.json(
+          createErrorResponse('VALIDATION_ERROR', 'Invalid query parameters', {
+            validationErrors: error.errors
+          }),
+          { status: 400 }
+        );
+      }
 
-    return NextResponse.json(
-      createErrorResponse('FETCH_SESSIONS_FAILED', 'Error al obtener sesiones de telemedicina'),
-      { status: 500 }
-    );
-  }
-}
-
-/**
- * POST /api/v1/telemedicine/sessions
- * Crear nueva sesión de telemedicina
- */
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
-    const body = await request.json();
-    const sessionData = CreateTelemedicineSessionSchema.parse(body);
-
-    // Verificar que la cita existe y no tiene sesión activa
-    const appointmentDoc = await adminDb.collection('appointments').doc(sessionData.appointmentId).get();
-    if (!appointmentDoc.exists) {
       return NextResponse.json(
-        createErrorResponse('APPOINTMENT_NOT_FOUND', 'Cita no encontrada'),
-        { status: 404 }
-      );
-    }    const appointmentInfo = appointmentDoc.data();
-    
-    if (!appointmentInfo) {
-      return NextResponse.json(
-        createErrorResponse('APPOINTMENT_DATA_ERROR', 'No se pudo obtener información de la cita'),
+        createErrorResponse('INTERNAL_ERROR', 'Error fetching telemedicine sessions'),
         { status: 500 }
       );
     }
+  },
+  {
+    allowedRoles: ['admin', 'doctor', 'patient', 'nurse'],
+    auditAction: 'telemedicine_sessions_accessed',
+    rateLimitKey: 'telemedicine_sessions'
+  }
+);
 
-    // Verificar que el doctor y paciente coinciden con la cita
-    if ((appointmentInfo as any).doctorId !== (sessionData as any).doctorId || (appointmentInfo as any).patientId !== (sessionData as any).patientId) {
+/**
+ * POST /api/v1/telemedicine/sessions
+ * Create new telemedicine session
+ */
+export const POST = createAuthenticatedRoute(
+  async (request: NextRequest, authContext) => {
+    try {
+      const body = await request.json();
+      const sessionData = CreateTelemedicineSessionSchema.parse(body);
+
+      // Verify appointment exists and user has permission
+      const appointmentDoc = await adminDb.collection('appointments').doc(sessionData.appointmentId).get();
+      if (!appointmentDoc.exists) {
+        return NextResponse.json(
+          createErrorResponse('APPOINTMENT_NOT_FOUND', 'Appointment not found'),
+          { status: 404 }
+        );
+      }
+
+      const appointmentInfo = appointmentDoc.data()!;
+
+      // Verify user has permission to create session for this appointment
+      if (authContext.user.role === 'doctor' && appointmentInfo.doctorId !== authContext.user.uid) {
+        return NextResponse.json(
+          createErrorResponse('PERMISSION_DENIED', 'Cannot create session for another doctor\'s appointment'),
+          { status: 403 }
+        );
+      }
+      if (authContext.user.role === 'patient' && appointmentInfo.patientId !== authContext.user.uid) {
+        return NextResponse.json(
+          createErrorResponse('PERMISSION_DENIED', 'Cannot create session for another patient\'s appointment'),
+          { status: 403 }
+        );
+      }
+
+      // Verify participants match appointment
+      if (appointmentInfo.doctorId !== sessionData.doctorId || appointmentInfo.patientId !== sessionData.patientId) {
+        return NextResponse.json(
+          createErrorResponse('APPOINTMENT_MISMATCH', 'Session participants do not match appointment'),
+          { status: 400 }
+        );
+      }
+
+      // Check for existing active session
+      const existingSessionQuery = await adminDb
+        .collection('telemedicine_sessions')
+        .where('appointmentId', '==', sessionData.appointmentId)
+        .where('status', 'in', ['scheduled', 'active'])
+        .get();
+
+      if (!existingSessionQuery.empty) {
+        return NextResponse.json(
+          createErrorResponse('SESSION_EXISTS', 'Active session already exists for this appointment'),
+          { status: 409 }
+        );
+      }
+
+      // Generate provider-specific configuration
+      const providerConfig = generateProviderConfig(sessionData.provider);
+      const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      // Create telemedicine session
+      const newSession = {
+        ...sessionData,
+        sessionId,
+        status: 'scheduled',
+        scheduledAt: appointmentInfo.scheduledAt,
+        providerConfig,
+        participants: {
+          doctor: {
+            id: sessionData.doctorId,
+            joinedAt: null,
+            leftAt: null,
+            isConnected: false,
+            connectionQuality: 'unknown'
+          },
+          patient: {
+            id: sessionData.patientId,
+            joinedAt: null,
+            leftAt: null,
+            isConnected: false,
+            connectionQuality: 'unknown'
+          }
+        },
+        metrics: {
+          totalDuration: 0,
+          actualDuration: 0,
+          averageConnectionQuality: 'unknown',
+          interruptions: 0,
+          reconnections: 0,
+          dataTransferred: 0
+        },
+        recording: {
+          isEnabled: sessionData.isRecorded,
+          recordingId: null,
+          recordingUrl: null,
+          recordingStatus: 'none'
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        startedAt: null,
+        endedAt: null,
+        createdBy: authContext.user.uid
+      };
+
+      const sessionRef = await adminDb.collection('telemedicine_sessions').add(newSession);
+
+      // Update appointment with session reference
+      await adminDb.collection('appointments').doc(sessionData.appointmentId).update({
+        telemedicineSessionId: sessionRef.id,
+        hasTelemedicine: true,
+        type: 'telemedicine',
+        updatedAt: new Date()
+      });
+
+      // Create notifications for participants
+      const joinUrls = generateJoinUrls(sessionRef.id, sessionData.provider, providerConfig);
+
+      // Notify doctor
+      await adminDb.collection('notifications').add({
+        userId: sessionData.doctorId,
+        type: 'telemedicine_session_created',
+        title: 'Nueva Sesión de Telemedicina',
+        message: `Sesión de telemedicina creada para cita programada`,
+        data: {
+          sessionId: sessionRef.id,
+          appointmentId: sessionData.appointmentId,
+          patientId: sessionData.patientId,
+          joinUrl: joinUrls.doctor,
+          scheduledAt: appointmentInfo.scheduledAt
+        },
+        isRead: false,
+        createdAt: new Date()
+      });
+
+      // Notify patient
+      await adminDb.collection('notifications').add({
+        userId: sessionData.patientId,
+        type: 'telemedicine_session_created',
+        title: 'Sesión de Telemedicina Programada',
+        message: `Tu consulta médica por videollamada está lista`,
+        data: {
+          sessionId: sessionRef.id,
+          appointmentId: sessionData.appointmentId,
+          doctorId: sessionData.doctorId,
+          joinUrl: joinUrls.patient,
+          scheduledAt: appointmentInfo.scheduledAt
+        },
+        isRead: false,
+        createdAt: new Date()
+      });
+
+      // Audit log for HIPAA compliance
+      await adminDb.collection('audit_logs').add({
+        action: 'telemedicine_session_created',
+        userId: authContext.user.uid,
+        resourceType: 'telemedicine_session',
+        resourceId: sessionRef.id,
+        details: {
+          appointmentId: sessionData.appointmentId,
+          doctorId: sessionData.doctorId,
+          patientId: sessionData.patientId,
+          provider: sessionData.provider,
+          isRecorded: sessionData.isRecorded,
+          estimatedDuration: sessionData.estimatedDuration
+        },
+        timestamp: new Date(),
+        ipAddress: getClientIP(request),
+        userAgent: request.headers.get('user-agent')
+      });
+
       return NextResponse.json(
-        createErrorResponse('APPOINTMENT_MISMATCH', 'El doctor o paciente no coincide con la cita'),
-        { status: 400 }
+        createSuccessResponse({
+          id: sessionRef.id,
+          ...newSession,
+          joinUrls
+        }),
+        { status: 201 }
+      );
+
+    } catch (error) {
+      console.error('Error in POST /telemedicine/sessions:', error);
+      
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          createErrorResponse('VALIDATION_ERROR', 'Invalid session data', {
+            validationErrors: error.errors
+          }),
+          { status: 400 }
+        );
+      }
+
+      return NextResponse.json(
+        createErrorResponse('INTERNAL_ERROR', 'Error creating telemedicine session'),
+        { status: 500 }
       );
     }
+  },
+  {
+    allowedRoles: ['admin', 'doctor', 'patient'],
+    auditAction: 'telemedicine_session_created',
+    rateLimitKey: 'telemedicine_session_create'
+  }
+);
 
-    // Verificar que no existe una sesión activa para esta cita
-    const existingSessionQuery = await adminDb
-      .collection('telemedicine_sessions')
-      .where('appointmentId', '==', sessionData.appointmentId)
-      .where('status', 'in', ['scheduled', 'active'])
+// Helper functions
+async function batchFetchUsers(userIds: string[], userType: 'doctor' | 'patient'): Promise<Map<string, any>> {
+  if (userIds.length === 0) return new Map();
+
+  const usersMap = new Map();
+  const chunks = chunkArray([...userIds], 10);
+
+  for (const chunk of chunks) {
+    const usersSnapshot = await adminDb.collection('users')
+      .where('__name__', 'in', chunk.map(id => adminDb.collection('users').doc(id)))
       .get();
 
-    if (!existingSessionQuery.empty) {
-      return NextResponse.json(
-        createErrorResponse('SESSION_EXISTS', 'Ya existe una sesión activa para esta cita'),
-        { status: 409 }
-      );
+    for (const doc of usersSnapshot.docs) {
+      const userData = doc.data();
+      usersMap.set(doc.id, {
+        id: doc.id,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phone: userData.phone
+      });
     }
-
-    // Generar datos específicos del proveedor
-    const providerConfig = generateProviderConfig(sessionData.provider);
-
-    // Crear sesión de telemedicina
-    const newSession = {
-      ...sessionData,
-      status: 'scheduled',
-      scheduledAt: (appointmentInfo as any).scheduledAt,
-      providerConfig,
-      participants: {
-        doctor: {
-          id: (sessionData as any).doctorId,
-          joinedAt: null,
-          leftAt: null,
-          isConnected: false,
-        },
-        patient: {
-          id: (sessionData as any).patientId,
-          joinedAt: null,
-          leftAt: null,
-          isConnected: false,
-        },
-      },
-      metrics: {
-        totalDuration: 0,
-        actualDuration: 0,
-        connectionQuality: 'unknown',
-        interruptions: 0,
-      },
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      startedAt: null,
-      endedAt: null,
-    };
-
-    const docRef = await adminDb.collection('telemedicine_sessions').add(newSession);
-
-    // Actualizar la cita con el ID de la sesión
-    await adminDb.collection('appointments').doc(sessionData.appointmentId).update({
-      telemedicineSessionId: docRef.id,
-      hasTelemedicine: true,
-      updatedAt: new Date(),
-    });
-
-    return NextResponse.json(
-      createSuccessResponse({
-        id: docRef.id,
-        ...newSession,
-        joinUrls: generateJoinUrls(docRef.id, sessionData.provider, providerConfig),
-      }),
-      { status: 201 }
-    );
-  } catch (error: unknown) {
-    console.error('Error creating telemedicine session:', error);
-      if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        createErrorResponse('VALIDATION_ERROR', 'Datos de sesión inválidos', { errors: error.errors }),
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      createErrorResponse('CREATE_SESSION_FAILED', 'Error al crear sesión de telemedicina'),
-      { status: 500 }
-    );
   }
+
+  return usersMap;
 }
 
-// Función auxiliar para generar configuración del proveedor
+async function batchFetchAppointments(appointmentIds: string[]): Promise<Map<string, any>> {
+  if (appointmentIds.length === 0) return new Map();
+
+  const appointmentsMap = new Map();
+  const chunks = chunkArray([...appointmentIds], 10);
+
+  for (const chunk of chunks) {
+    const appointmentsSnapshot = await adminDb.collection('appointments')
+      .where('__name__', 'in', chunk.map(id => adminDb.collection('appointments').doc(id)))
+      .get();
+
+    for (const doc of appointmentsSnapshot.docs) {
+      const appointmentData = doc.data();
+      appointmentsMap.set(doc.id, {
+        id: doc.id,
+        scheduledAt: appointmentData.scheduledAt?.toDate() || appointmentData.scheduledAt,
+        type: appointmentData.type,
+        status: appointmentData.status,
+        duration: appointmentData.duration,
+        reason: appointmentData.reason
+      });
+    }
+  }
+
+  return appointmentsMap;
+}
+
 function generateProviderConfig(provider: string) {
   const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -283,72 +450,121 @@ function generateProviderConfig(provider: string) {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
           { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun2.l.google.com:19302' }
         ],
         constraints: {
-          video: { width: 1280, height: 720 },
-          audio: true,
+          video: { 
+            width: { ideal: 1280 }, 
+            height: { ideal: 720 },
+            frameRate: { ideal: 30 }
+          },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
         },
+        dataChannel: {
+          ordered: true,
+          maxRetransmits: 3
+        }
       };
 
     case 'agora':
       return {
         appId: process.env.AGORA_APP_ID || 'demo-app-id',
         channelName: sessionId,
-        token: null, // Se genera dinámicamente en join
+        token: null, // Generated dynamically on join
         uid: null,
+        settings: {
+          codec: 'vp8',
+          mode: 'rtc',
+          role: 'host'
+        }
       };
 
     case 'zoom':
       return {
-        meetingNumber: sessionId,
+        meetingNumber: sessionId.replace(/[^0-9]/g, '').substring(0, 10),
         password: Math.random().toString(36).substr(2, 8),
-        signature: null, // Se genera dinámicamente
+        signature: null, // Generated dynamically
+        settings: {
+          audio: 'both',
+          video: 'both',
+          leaveUrl: process.env.NEXT_PUBLIC_APP_URL + '/telemedicine/complete'
+        }
       };
 
     case 'google_meet':
       return {
         meetCode: sessionId.replace(/_/g, '-'),
         calendarEventId: null,
+        settings: {
+          allowExternalParticipants: false,
+          recordingEnabled: false
+        }
       };
 
     default:
-      return { sessionId };
+      return { 
+        sessionId,
+        provider: 'custom',
+        settings: {}
+      };
   }
 }
 
-// Función auxiliar para generar URLs de acceso
 function generateJoinUrls(sessionId: string, provider: string, config: any) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   switch (provider) {
     case 'webrtc':
       return {
-        doctor: `${baseUrl}/telemedicine/join/${sessionId}?role=doctor`,
-        patient: `${baseUrl}/telemedicine/join/${sessionId}?role=patient`,
+        doctor: `${baseUrl}/telemedicine/webrtc/${sessionId}?role=doctor&roomId=${config.roomId}`,
+        patient: `${baseUrl}/telemedicine/webrtc/${sessionId}?role=patient&roomId=${config.roomId}`
       };
 
     case 'agora':
       return {
-        doctor: `${baseUrl}/telemedicine/agora/${sessionId}?role=doctor`,
-        patient: `${baseUrl}/telemedicine/agora/${sessionId}?role=patient`,
+        doctor: `${baseUrl}/telemedicine/agora/${sessionId}?role=doctor&channel=${config.channelName}`,
+        patient: `${baseUrl}/telemedicine/agora/${sessionId}?role=patient&channel=${config.channelName}`
       };
 
     case 'zoom':
       return {
-        doctor: `https://zoom.us/j/${config.meetingNumber}?pwd=${config.password}&role=host`,
-        patient: `https://zoom.us/j/${config.meetingNumber}?pwd=${config.password}&role=participant`,
+        doctor: `https://zoom.us/j/${config.meetingNumber}?pwd=${config.password}&role=1`,
+        patient: `https://zoom.us/j/${config.meetingNumber}?pwd=${config.password}&role=0`
       };
 
     case 'google_meet':
       return {
-        doctor: `https://meet.google.com/${config.meetCode}?role=host`,
-        patient: `https://meet.google.com/${config.meetCode}?role=participant`,
+        doctor: `https://meet.google.com/${config.meetCode}?authuser=0&hs=179`,
+        patient: `https://meet.google.com/${config.meetCode}?authuser=0&hs=179`
       };
 
     default:
       return {
-        doctor: `${baseUrl}/telemedicine/generic/${sessionId}?role=doctor`,
-        patient: `${baseUrl}/telemedicine/generic/${sessionId}?role=patient`,
+        doctor: `${baseUrl}/telemedicine/session/${sessionId}?role=doctor`,
+        patient: `${baseUrl}/telemedicine/session/${sessionId}?role=patient`
       };
   }
+}
+
+function chunkArray<T>(array: T[], size: number): T[][] {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+}
+
+function getClientIP(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  const realIP = request.headers.get('x-real-ip');
+  
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  
+  return realIP || 'unknown';
 }

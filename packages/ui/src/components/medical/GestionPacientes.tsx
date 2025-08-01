@@ -23,7 +23,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react'
-import { usePacientes } from '@/hooks/useMedical'
+import { usePacientes } from '@altamedica/core'
 import { 
   validarDNI, 
   validarTelefonoArgentino, 
@@ -35,8 +35,8 @@ import {
   calcularEdad,
   enmascararDatosSensibles,
   PROVINCIAS_ARGENTINA
-} from '@/lib/medical-utils'
-import { PacienteBase, ProvinciaArgentina } from '@/types/medical'
+} from '@altamedica/core'
+import { PacienteBase, ProvinciaArgentina } from '@altamedica/core'
 
 interface FiltrosBusqueda {
   nombres: string
@@ -608,3 +608,4 @@ const GestionPacientes: React.FC = () => {
 }
 
 export default GestionPacientes
+export { GestionPacientes }

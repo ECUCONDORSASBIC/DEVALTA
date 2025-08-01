@@ -2,7 +2,7 @@
 // Request deduplication + Cache integration + Performance monitoring
 
 import { NextRequest, NextResponse } from 'next/server'
-import { medicalCache } from '../cache/MedicalCacheManager'
+import { medicalCache } from '@altamedica/medical-cache'
 
 // Tipos para el middleware de optimización
 interface RequestMetrics {
@@ -234,7 +234,7 @@ export async function optimizeApiRequest(
             statusCode: 200,
             endpoint: pathname,
             method,
-            userId
+            userId: userId || undefined
           })
         }
         
@@ -256,7 +256,10 @@ export async function optimizeApiRequest(
         response = await pending.promise
         
         // Clonar la respuesta para este request
-        const clonedResponse = response.clone()
+        const clonedResponse = NextResponse.json(await response.clone().json(), {
+          status: response.status,
+          headers: response.headers
+        })
         return clonedResponse
       } else {
         // Request muy antigua, eliminar del mapa
@@ -365,7 +368,7 @@ export async function optimizeApiRequest(
       statusCode: response.status,
       endpoint: pathname,
       method,
-      userId
+      userId: userId || undefined
     })
   }
 

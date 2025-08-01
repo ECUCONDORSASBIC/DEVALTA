@@ -4,7 +4,7 @@
  * GET /api/v1/analytics/custom-reports - Listar reportes generados
  */
 
-import { adminAuth } from '@altamedica/firebase';
+import { adminAuth } from '@/lib/firebase-admin';
 import { NextRequest, NextResponse } from 'next/server';
 import {
     getSchemaByReportType,

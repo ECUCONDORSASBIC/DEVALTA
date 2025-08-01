@@ -1,1 +1,6 @@
-export * from './../doctors/postcss.config';
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};

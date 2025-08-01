@@ -3,7 +3,7 @@
  * Servicio principal para gestión de historiales médicos
  */
 
-import { adminDb } from '@altamedica/firebase';
+import { adminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { validateMedicalRecordCompleteness } from './schemas';
 import {

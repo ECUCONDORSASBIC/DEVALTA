@@ -1,6 +1,9 @@
 {
   "projects": {
-    "default": "altamedica-apis",
+    "default": "altamedic-20f69",
+    "development": "altamedic-20f69",
+    "staging": "altamedic-20f69",
+    "production": "altamedic-20f69",
     "altamedicadev": "altamedic-20f69"
   },
   "targets": {

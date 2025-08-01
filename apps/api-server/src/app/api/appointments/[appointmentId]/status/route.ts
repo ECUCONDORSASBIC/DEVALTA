@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuthToken } from '@/lib/auth';
+import { verifyAuth } from '@/lib/auth';
 import { db } from '@/lib/firebase-admin';
 
 export async function PATCH(

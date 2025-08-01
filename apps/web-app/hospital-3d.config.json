@@ -1,0 +1,15 @@
+{
+  "hospital": {
+    "originalPath": "public/models/hospital.glb",
+    "optimizedPath": "assets/models/optimized/",
+    "targetSize": "5MB",
+    "lodLevels": [
+      "high",
+      "medium",
+      "low"
+    ],
+    "compressionLevel": 10,
+    "textureFormat": "webp",
+    "maxTextureSize": 1024
+  }
+}

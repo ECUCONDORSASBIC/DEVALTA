@@ -23,14 +23,14 @@ import {
   ChevronRight,
   Search
 } from 'lucide-react'
-import { useCitasMedicas, usePacientes } from '@/hooks/useMedical'
+import { useCitasMedicas, usePacientes } from '@altamedica/core'
 import { 
   formatearFecha,
   formatearTelefono,
   esHorarioLaboral,
   obtenerProximaFechaLaboral
-} from '@/lib/medical-utils'
-import { CitaMedica, PacienteBase, TipoCita, EstadoCita } from '@/types/medical'
+} from '@altamedica/core'
+import { CitaMedica, PacienteBase, TipoCita, EstadoCita } from '@altamedica/core'
 import { format, addDays, startOfWeek, endOfWeek, isSameDay, addHours, setHours } from 'date-fns'
 import { es } from 'date-fns/locale'
 
@@ -682,3 +682,4 @@ const GestionCitas: React.FC = () => {
 }
 
 export default GestionCitas
+export { GestionCitas }

@@ -96,7 +96,7 @@ export const medicalStorage = {
   },
 
   getPatientData: <T>(patientId: string): T | null => {
-    return storage.get<T>(`patient_${patientId}`);
+    return storage.get(`patient_${patientId}`) as T | null;
   },
 
   // Medical Records
@@ -105,7 +105,7 @@ export const medicalStorage = {
   },
 
   getMedicalRecords: (patientId: string): any[] => {
-    return storage.get<any[]>(`medical_records_${patientId}`, []);
+    return storage.get(`medical_records_${patientId}`) || [];
   },
 
   // Prescriptions
@@ -114,7 +114,7 @@ export const medicalStorage = {
   },
 
   getPrescriptions: (patientId: string): any[] => {
-    return storage.get<any[]>(`prescriptions_${patientId}`, []);
+    return storage.get(`prescriptions_${patientId}`) || [];
   },
 
   // Appointments
@@ -123,7 +123,7 @@ export const medicalStorage = {
   },
 
   getAppointments: (patientId: string): any[] => {
-    return storage.get<any[]>(`appointments_${patientId}`, []);
+    return storage.get(`appointments_${patientId}`) || [];
   },
 
   // Lab Results
@@ -132,7 +132,7 @@ export const medicalStorage = {
   },
 
   getLabResults: (patientId: string): any[] => {
-    return storage.get<any[]>(`lab_results_${patientId}`, []);
+    return storage.get(`lab_results_${patientId}`) || [];
   },
 
   // User Preferences
@@ -141,7 +141,7 @@ export const medicalStorage = {
   },
 
   getUserPreferences: <T>(userId: string): T | null => {
-    return storage.get<T>(`user_preferences_${userId}`);
+    return storage.get(`user_preferences_${userId}`) as T | null;
   },
 
   // Clear all medical data for a patient
@@ -242,7 +242,7 @@ export const secureStorage = {
 
   getSecure: <T>(key: string, defaultValue?: T): T | null => {
     try {
-      const encrypted = storage.get<string>(`secure_${key}`);
+      const encrypted = storage.get(`secure_${key}`);
       if (!encrypted) return defaultValue || null;
 
       const decrypted = secureStorage.decrypt(encrypted);

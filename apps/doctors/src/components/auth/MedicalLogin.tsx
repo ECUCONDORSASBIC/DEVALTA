@@ -7,6 +7,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+// Lazy loading para Firebase Auth - solo se carga cuando sea necesario
+const FirebaseAuth = dynamic(() => import('firebase/auth'), {
+  ssr: false
+});
+
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { firebaseService } from '@/services/firebase-service';
 

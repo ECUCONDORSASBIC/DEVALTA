@@ -1,0 +1,295 @@
+/* 🏥 Estilos personalizados para Anamnesis 3D - Altamedica */
+
+/* Variables de color azul celeste */
+:root {
+  --sky-50: #f0f9ff;
+  --sky-100: #e0f2fe;
+  --sky-200: #bae6fd;
+  --sky-300: #7dd3fc;
+  --sky-400: #38bdf8;
+  --sky-500: #0ea5e9;
+  --sky-600: #0284c7;
+  --sky-700: #0369a1;
+  --sky-800: #075985;
+  --sky-900: #0c4a6e;
+  
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a8a;
+  
+  --cyan-50: #ecfeff;
+  --cyan-100: #cffafe;
+  --cyan-200: #a5f3fc;
+  --cyan-300: #67e8f9;
+  --cyan-400: #22d3ee;
+  --cyan-500: #06b6d4;
+  --cyan-600: #0891b2;
+  --cyan-700: #0e7490;
+  --cyan-800: #155e75;
+  --cyan-900: #164e63;
+}
+
+/* Animaciones personalizadas */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+/* Clases utilitarias */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Estilos para la página patient3d */
+.patient3d-page {
+  background: linear-gradient(135deg, var(--sky-400) 0%, var(--blue-500) 50%, var(--cyan-600) 100%) !important;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Eliminar overlays y partículas innecesarias */
+.patient3d-page::before {
+  display: none !important;
+}
+
+/* Header médico */
+.medical-header {
+  background: rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor de interfaz */
+.interface-container {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Indicador de progreso */
+.progress-indicator {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+}
+
+/* Tarjeta de información */
+.info-card {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+}
+
+/* Botón médico */
+.btn-medical {
+  background: linear-gradient(135deg, var(--sky-500) 0%, var(--cyan-600) 100%);
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-medical:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.4);
+}
+
+.btn-medical:active {
+  transform: translateY(0);
+}
+
+/* Efectos de profundidad */
+.depth-layer-1 {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.depth-layer-2 {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.depth-layer-3 {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+/* Responsive Design - Mobile First */
+@media (max-width: 767px) {
+  .patient3d-page {
+    background: linear-gradient(135deg, var(--sky-500) 0%, var(--blue-600) 50%, var(--cyan-700) 100%);
+  }
+  
+  .medical-header {
+    padding: 0.5rem 1rem;
+  }
+  
+  .btn-medical {
+    font-size: 0.875rem;
+    padding: 0.75rem 1.5rem;
+  }
+  
+  /* Sidebar móvil */
+  .sidebar-mobile {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+  }
+  
+  /* Panel central móvil */
+  .panel-mobile {
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    border-radius: 0;
+  }
+  
+  /* Navegación móvil */
+  .nav-mobile {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .nav-mobile button {
+    width: 100%;
+    padding: 0.75rem;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .patient3d-page {
+    background: linear-gradient(135deg, var(--sky-400) 0%, var(--blue-500) 50%, var(--cyan-600) 100%);
+  }
+  
+  .medical-header {
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .btn-medical {
+    font-size: 1rem;
+    padding: 1rem 2rem;
+  }
+  
+  /* Sidebar tablet */
+  .sidebar-tablet {
+    width: 16rem;
+  }
+  
+  /* Panel central tablet */
+  .panel-tablet {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+  
+  /* Navegación tablet */
+  .nav-tablet {
+    gap: 1rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .patient3d-page {
+    background: linear-gradient(135deg, var(--sky-400) 0%, var(--blue-500) 50%, var(--cyan-600) 100%);
+  }
+  
+  .medical-header {
+    padding: 1rem 1.5rem;
+  }
+  
+  .btn-medical {
+    font-size: 1.125rem;
+    padding: 1rem 2rem;
+  }
+  
+  /* Sidebar desktop */
+  .sidebar-desktop {
+    width: 20rem;
+  }
+  
+  /* Panel central desktop */
+  .panel-desktop {
+    max-width: 32rem;
+    padding: 2.5rem;
+  }
+  
+  /* Navegación desktop */
+  .nav-desktop {
+    gap: 1.5rem;
+  }
+}
+
+/* Utilidades responsive */
+.text-responsive {
+  font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+}
+
+.padding-responsive {
+  padding: clamp(1rem, 3vw, 2.5rem);
+}
+
+.margin-responsive {
+  margin: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+/* Animaciones responsive */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-pulse-glow,
+  .animate-shimmer {
+    animation: none;
+  }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-contrast: high) {
+  .patient3d-page {
+    background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #1e3a8a 100%);
+  }
+  
+  .btn-medical {
+    background: #1e40af;
+    border: 2px solid #ffffff;
+  }
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .patient3d-page {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%);
+  }
+} 

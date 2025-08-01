@@ -1,0 +1,26 @@
+{
+  "mcpConfig": {
+    "name": "windows-mcp",
+    "description": "Configuración MCP para entorno Windows con UV",
+    "version": "1.0.0",
+    "environment": {
+      "uvPath": "C:\\Users\\Eduardo\\AppData\\Roaming\\Python\\Python313\\Scripts\\uv.exe",
+      "pythonPath": "C:\\Python313\\python.exe",
+      "workspaceRoot": "C:\\Users\\Eduardo\\Documents\\devaltamedica",
+      "logLevel": "info"
+    },
+    "dependencies": {
+      "uv": ">=0.1.0",
+      "python": ">=3.8.0"
+    },
+    "startup": {
+      "checkDependencies": true,
+      "autoInstall": false,
+      "timeout": 30000
+    },
+    "fallbackOptions": {
+      "usePip": true,
+      "useCondaIfAvailable": true
+    }
+  }
+} 

@@ -6,228 +6,204 @@
  * DELETE /api/v1/job-listings/[id] - Close/remove job listing
  */
 
-import { verifyAuthToken } from '@/lib/simple-auth';
-import { getFirestore } from 'firebase-admin/firestore';
 import { NextRequest, NextResponse } from 'next/server';
 
-const db = getFirestore();
+// Lazy load Firebase to prevent build errors
+async function getDb() {
+  try {
+    const { getFirestore } = await import('firebase-admin/firestore');
+    return getFirestore();
+  } catch (error) {
+    console.error('Failed to load Firestore:', error);
+    return null;
+  }
+}
+
+// Lazy load auth verification
+async function verifyAuth(request: NextRequest) {
+  try {
+    const { verifyAuthToken } = await import('@/lib/simple-auth');
+    return await verifyAuthToken(request);
+  } catch (error) {
+    console.error('Failed to verify auth:', error);
+    return { isValid: false, user: null };
+  }
+}
 
 /**
  * GET /api/v1/job-listings/[id]
  * Get specific job listing with application stats
  */
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { id } = await params;
+    const db = await getDb();
+    if (!db) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Database service unavailable' 
+      }, { status: 503 });
+    }
 
-    const jobDoc = await db.collection('job_listings').doc(id).get();
+    const { id } = params;
+    
+    const jobRef = db.collection('job_listings').doc(id);
+    const jobDoc = await jobRef.get();
     
     if (!jobDoc.exists) {
-      return NextResponse.json({
-        success: false,
-        error: 'Job listing not found'
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Job listing not found' 
       }, { status: 404 });
     }
-
-    const jobData = { id: jobDoc.id, ...jobDoc.data() };
-
-    // Get application statistics (if requested)
-    const includeStats = new URL(request.url).searchParams.get('include_stats') === 'true';
     
-    if (includeStats) {
-      const applicationsSnapshot = await db.collection('job_applications')
-        .where('job_listing_id', '==', id)
-        .get();
+    const jobData = { id: jobDoc.id, ...jobDoc.data() };
+    
+    // Get application count
+    const applicationsSnapshot = await db.collection('job_applications')
+      .where('jobListingId', '==', id)
+      .count()
+      .get();
       
-      const applications = applicationsSnapshot.docs.map((doc: any) => doc.data());
-      
-      const stats = {
-        total_applications: applications.length,
-        status_breakdown: {
-          pending: applications.filter((app: any) => app.status === 'pending').length,
-          reviewing: applications.filter((app: any) => app.status === 'reviewing').length,
-          interviewed: applications.filter((app: any) => app.status === 'interviewed').length,
-          hired: applications.filter((app: any) => app.status === 'hired').length,
-          rejected: applications.filter((app: any) => app.status === 'rejected').length
-        },
-        recent_applications: applications.slice(0, 5)
-      };
-
-      (jobData as any).application_stats = stats;
-    }
-
     return NextResponse.json({
       success: true,
-      data: jobData
+      data: {
+        ...jobData,
+        applicationCount: applicationsSnapshot.data().count
+      }
     });
-
-  } catch (error: unknown) {
-    console.error('Job listing fetch error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to fetch job listing'
+  } catch (error: any) {
+    console.error('Error fetching job listing:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message 
     }, { status: 500 });
   }
 }
 
 /**
  * PUT /api/v1/job-listings/[id]
- * Update job listing (Company/Admin only)
+ * Update job listing (recruiters only)
  */
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // Verify authentication
-    const authResult = await verifyAuthToken(request);
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({
-        success: false,
-        error: 'Authentication required'
+    const authResult = await verifyAuth(request);
+    if (!authResult.isValid) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Unauthorized' 
       }, { status: 401 });
     }
 
-    const { id } = await params;
-    const body = await request.json();
-
-    // Get existing job listing
-    const jobDoc = await db.collection('job_listings').doc(id).get();
+    const db = await getDb();
+    if (!db) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Database service unavailable' 
+      }, { status: 503 });
+    }
+    
+    const { id } = params;
+    const updates = await request.json();
+    
+    // Verify ownership or admin
+    const jobRef = db.collection('job_listings').doc(id);
+    const jobDoc = await jobRef.get();
     
     if (!jobDoc.exists) {
-      return NextResponse.json({
-        success: false,
-        error: 'Job listing not found'
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Job listing not found' 
       }, { status: 404 });
     }
-
+    
     const jobData = jobDoc.data();
-
-    // Check permissions
-    const isAdmin = authResult.user.role === 'admin';
-    const isCompanyOwner = authResult.user.role === 'company' && 
-                          authResult.user.company_id === jobData?.company?.id;
-
-    if (!isAdmin && !isCompanyOwner) {
-      return NextResponse.json({
-        success: false,
-        error: 'Insufficient permissions'
+    if (jobData?.companyId !== authResult.user?.companyId && authResult.user?.role !== 'admin') {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Unauthorized to update this listing' 
       }, { status: 403 });
-    }    // Prepare update data
-    const updates: Record<string, unknown> = {
-      updated_at: new Date().toISOString()
-    };
-
-    // Update allowed fields
-    const allowedFields = [
-      'title', 'description', 'location', 'position', 
-      'requirements', 'benefits', 'status', 'expires_at'
-    ];
-
-    for (const field of allowedFields) {
-      if (body[field] !== undefined) {
-        updates[field] = body[field];
-      }
     }
-
-    // Validate status changes
-    if ((body as any).status && !['active', 'paused', 'closed', 'filled'].includes((body as any).status)) {
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid status value'
-      }, { status: 400 });
-    }
-
-    // Update job listing
-    await db.collection('job_listings').doc(id).update(updates);
-
-    // Get updated data
-    const updatedDoc = await db.collection('job_listings').doc(id).get();
-    const updatedData = { id: updatedDoc.id, ...updatedDoc.data() };
-
+    
+    // Update listing
+    await jobRef.update({
+      ...updates,
+      updatedAt: new Date().toISOString()
+    });
+    
+    const updatedDoc = await jobRef.get();
+    
     return NextResponse.json({
       success: true,
-      data: updatedData,
-      message: 'Job listing updated successfully'
+      data: { id: updatedDoc.id, ...updatedDoc.data() }
     });
-
-  } catch (error: unknown) {
-    console.error('Job listing update error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to update job listing'
+  } catch (error: any) {
+    console.error('Error updating job listing:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message 
     }, { status: 500 });
   }
 }
 
 /**
  * DELETE /api/v1/job-listings/[id]
- * Close/remove job listing (Company/Admin only)
+ * Close/remove job listing (soft delete)
  */
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // Verify authentication
-    const authResult = await verifyAuthToken(request);
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({
-        success: false,
-        error: 'Authentication required'
+    const authResult = await verifyAuth(request);
+    if (!authResult.isValid) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Unauthorized' 
       }, { status: 401 });
     }
 
-    const { id } = await params;
-
-    // Get existing job listing
-    const jobDoc = await db.collection('job_listings').doc(id).get();
+    const db = await getDb();
+    if (!db) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Database service unavailable' 
+      }, { status: 503 });
+    }
+    
+    const { id } = params;
+    
+    // Verify ownership or admin
+    const jobRef = db.collection('job_listings').doc(id);
+    const jobDoc = await jobRef.get();
     
     if (!jobDoc.exists) {
-      return NextResponse.json({
-        success: false,
-        error: 'Job listing not found'
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Job listing not found' 
       }, { status: 404 });
     }
-
+    
     const jobData = jobDoc.data();
-
-    // Check permissions
-    const isAdmin = authResult.user.role === 'admin';
-    const isCompanyOwner = authResult.user.role === 'company' && 
-                          authResult.user.company_id === jobData?.company?.id;
-
-    if (!isAdmin && !isCompanyOwner) {
-      return NextResponse.json({
-        success: false,
-        error: 'Insufficient permissions'
+    if (jobData?.companyId !== authResult.user?.companyId && authResult.user?.role !== 'admin') {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Unauthorized to delete this listing' 
       }, { status: 403 });
     }
-
-    // Check if permanent deletion is requested
-    const permanent = new URL(request.url).searchParams.get('permanent') === 'true';
-
-    if (permanent && authResult.user.role === 'admin') {
-      // Permanent deletion (admin only)
-      await db.collection('job_listings').doc(id).delete();
-      
-      return NextResponse.json({
-        success: true,
-        message: 'Job listing permanently deleted'
-      });
-    } else {
-      // Soft delete - mark as closed
-      await db.collection('job_listings').doc(id).update({
-        status: 'closed',
-        updated_at: new Date().toISOString(),
-        closed_at: new Date().toISOString()
-      });
-
-      return NextResponse.json({
-        success: true,
-        message: 'Job listing closed successfully'
-      });
-    }
-
-  } catch (error: unknown) {
-    console.error('Job listing deletion error:', error);
+    
+    // Soft delete - mark as closed
+    await jobRef.update({
+      status: 'closed',
+      closedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+    
     return NextResponse.json({
-      success: false,
-      error: 'Failed to delete job listing'
+      success: true,
+      message: 'Job listing closed successfully'
+    });
+  } catch (error: any) {
+    console.error('Error deleting job listing:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message 
     }, { status: 500 });
   }
 }

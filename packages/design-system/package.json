@@ -1,36 +1,60 @@
 {
   "name": "@altamedica/design-system",
-  "version": "0.1.0",
-  "private": false,
-  "type": "module",
+  "version": "1.0.0",
+  "description": "Sistema de diseño compartido para microservicios de Altamedica con azul celeste consistente",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./styles": "./src/styles/global.css",
+    "./tailwind": "./tailwind.config.js"
   },
+  "files": [
+    "dist",
+    "src",
+    "tailwind.config.js"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+  },
+  "keywords": [
+    "altamedica",
+    "design-system",
+    "ui",
+    "components",
+    "theme",
+    "tailwind",
+    "medical",
+    "healthcare"
+  ],
+  "author": "Altamedica Team",
+  "license": "MIT",
   "peerDependencies": {
-    "react": ">=18",
-    "react-dom": ">=18"
-  },
-  "dependencies": {
-    "classnames": "^2.5.1",
-    "@headlessui/react": "^1.7.18"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.5.9",
-    "@tailwindcss/typography": "^0.5.9",
-    "@types/classnames": "^2.3.4",
-    "@types/react": "^18.2.39",
-    "@types/react-dom": "^18.2.17",
-    "tailwindcss": "^3.4.0",
-    "typescript": "^5.4.0"
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "eslint": "^8.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "tailwindcss": "^3.0.0",
+    "tsup": "^7.0.0",
+    "typescript": "^5.0.0"
   },
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "tsc -w -p tsconfig.json",
-    "prepublishOnly": "pnpm run build"
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
   }
 }

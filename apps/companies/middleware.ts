@@ -1,14 +1,18 @@
-// @ts-nocheck
-import { NextRequest, NextResponse } from 'next/server';
+import { createSSOMiddleware, ssoMiddlewareConfig } from '@altamedica/shared/auth';
 
-export function middleware(request: NextRequest) {
-  const proto = request.headers.get('x-forwarded-proto');
-  if (proto && proto !== 'https') {
-    const url = request.nextUrl.clone();
-    url.protocol = 'https:';
-    return NextResponse.redirect(url);
-  }
-  return NextResponse.next();
-}
+// Configuración del middleware SSO para companies-app
+const middleware = createSSOMiddleware({
+  appName: 'companies',
+  publicPaths: [
+    '/api/health',
+    '/_next',
+    '/favicon.ico',
+    '/public',
+  ],
+  loginPath: process.env.NODE_ENV === 'production' 
+    ? 'https://altamedica.com/login' 
+    : 'http://localhost:3000/login'
+});
 
-export const config = { matcher: '/:path*' };
+export default middleware;
+export const config = ssoMiddlewareConfig;

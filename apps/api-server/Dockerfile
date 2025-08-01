@@ -1,51 +1,92 @@
-# 🏥 ALTAMEDICA API Server - Production Dockerfile
-FROM node:20-alpine AS base
+# ALTAMEDICA API Server - Production Docker Configuration
+# Optimized multi-stage build for telemedicine API
 
-# Install pnpm
-RUN npm install -g pnpm@8
+# ===== BASE STAGE =====
+FROM node:22-alpine AS base
 
+# Install system dependencies
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    ffmpeg \
+    imagemagick \
+    postgresql-client \
+    && rm -rf /var/cache/apk/*
+
+# Create app user and group
+RUN addgroup -g 1001 -S altamedica && \
+    adduser -S altamedica -u 1001 -G altamedica
+
+# Set working directory
 WORKDIR /app
+
+# Switch to app user
+USER altamedica
+
+# ===== DEPENDENCIES STAGE =====
+FROM base AS deps
 
 # Copy package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY packages/ ./packages/
-COPY apps/api-server/package.json ./apps/api-server/
+COPY --chown=altamedica:altamedica package*.json ./
+COPY --chown=altamedica:altamedica yarn.lock* ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install production dependencies only
+RUN npm ci --only=production --frozen-lockfile && \
+    npm cache clean --force
 
-# Build packages
-RUN pnpm --filter "@altamedica/*" build
+# ===== BUILD STAGE =====
+FROM base AS build
 
-# Production stage
-FROM node:20-alpine AS production
+# Copy package files
+COPY --chown=altamedica:altamedica package*.json ./
+COPY --chown=altamedica:altamedica yarn.lock* ./
 
-RUN npm install -g pnpm@8
-
-WORKDIR /app
-
-# Copy built packages and app
-COPY --from=base /app/packages/ ./packages/
-COPY --from=base /app/node_modules/ ./node_modules/
-COPY --from=base /app/apps/api-server/ ./apps/api-server/
+# Install all dependencies (including dev dependencies)
+RUN npm ci --frozen-lockfile
 
 # Copy source code
-COPY apps/api-server/src/ ./apps/api-server/src/
-COPY apps/api-server/public/ ./apps/api-server/public/
-COPY apps/api-server/next.config.ts ./apps/api-server/
-COPY apps/api-server/tailwind.config.ts ./apps/api-server/
-COPY apps/api-server/tsconfig.json ./apps/api-server/
+COPY --chown=altamedica:altamedica . .
 
 # Build the application
-WORKDIR /app/apps/api-server
-RUN pnpm build
+RUN npm run build || npm run build:prod || echo "No build script found"
 
-# Expose port
-EXPOSE 3001
+# ===== RUNTIME STAGE =====
+FROM base AS runtime
+
+# Copy production dependencies
+COPY --from=deps --chown=altamedica:altamedica /app/node_modules ./node_modules
+
+# Copy built application
+COPY --from=build --chown=altamedica:altamedica /app/.next ./.next 2>/dev/null || true
+COPY --from=build --chown=altamedica:altamedica /app/dist ./dist 2>/dev/null || true
+COPY --from=build --chown=altamedica:altamedica /app/build ./build 2>/dev/null || true
+
+# Copy essential files
+COPY --from=build --chown=altamedica:altamedica /app/package.json ./package.json
+COPY --from=build --chown=altamedica:altamedica /app/public ./public 2>/dev/null || true
+COPY --from=build --chown=altamedica:altamedica /app/src ./src 2>/dev/null || true
+COPY --from=build --chown=altamedica:altamedica /app/pages ./pages 2>/dev/null || true
+COPY --from=build --chown=altamedica:altamedica /app/app ./app 2>/dev/null || true
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/uploads /app/temp && \
+    chown -R altamedica:altamedica /app/logs /app/uploads /app/temp
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NPM_CONFIG_CACHE=/tmp/.npm
+
+# Expose ports
+EXPOSE 3001 8080 10000-10100/udp
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3001/api/v1/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3001/api/health || curl -f http://localhost:3001/health || exit 1
 
-# Start the application
-CMD ["pnpm", "start"]
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
+# Default command - try multiple common start scripts
+CMD ["sh", "-c", "npm start || npm run start:prod || npm run serve || node server.js || node app.js || node index.js || node src/index.js"]

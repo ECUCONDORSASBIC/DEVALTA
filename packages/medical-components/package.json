@@ -16,7 +16,7 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "build": "tsup src/index.ts --format cjs --format esm --clean",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",

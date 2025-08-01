@@ -3,10 +3,10 @@
  * Tests críticos de seguridad
  * Límite PROACTIVO: 250 líneas
  */
-import { describe, test, expect, beforeAll } from 'vitest'
-import { validateInput, authenticateRequest } from '../lib/security'
+import { beforeAll, describe, expect, test } from '@jest/globals'
 import { NextRequest } from 'next/server'
-import { testUtils, securityTestHelpers } from './test-utils'
+import { authenticateRequest, validateInput } from '../lib/security'
+import { securityTestHelpers, testUtils } from './test-utils'
 
 describe('Security Tests', () => {
   beforeAll(() => {

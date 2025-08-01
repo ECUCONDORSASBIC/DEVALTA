@@ -3,7 +3,7 @@
 
 'use client'
 
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import React, { useRef, useState, useEffect, useCallback, memo } from 'react'
 
 // Tipos para métricas de performance
 interface PerformanceMetrics {
@@ -391,7 +391,7 @@ export const useMedicalPerformance = (
   componentName: string,
   config?: Partial<MedicalPerformanceConfig>
 ) => {
-  const monitor = useRef<MedicalPerformanceMonitor>()
+  const monitor = useRef<MedicalPerformanceMonitor | null>(null)
   const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null)
   const renderStart = useRef<number>(0)
 
@@ -468,7 +468,7 @@ export const MedicalPerformanceDashboard: React.FC<{
 
   if (!metrics) return null
 
-  const positionClasses = {
+  const positionClasses: Record<string, string> = {
     'top-left': 'top-4 left-4',
     'top-right': 'top-4 right-4',
     'bottom-left': 'bottom-4 left-4',
@@ -476,7 +476,7 @@ export const MedicalPerformanceDashboard: React.FC<{
   }
 
   return (
-    <div className={`fixed z-50 ${positionClasses[position]}`}>
+    <div className={`fixed z-50 ${positionClasses[position] || positionClasses['bottom-right']}`}>
       <div className={`bg-white rounded-lg shadow-lg border transition-all duration-300 ${
         isVisible ? 'opacity-100 scale-100' : 'opacity-80 scale-95'
       }`}>

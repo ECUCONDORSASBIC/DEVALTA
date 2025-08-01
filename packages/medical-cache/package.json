@@ -1,0 +1,26 @@
+{
+  "name": "@altamedica/medical-cache",
+  "version": "1.0.0",
+  "description": "Gestor de caché médico optimizado y reutilizable para Altamedica.",
+  "main": "dist/MedicalCacheManager.js",
+  "types": "dist/MedicalCacheManager.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "echo 'No tests yet'"
+  },
+  "keywords": [
+    "cache",
+    "medical",
+    "altamedica"
+  ],
+  "author": "Equipo Altamedica",
+  "license": "MIT",
+  "dependencies": {
+    "lru-cache": "^10.2.0"
+  },
+  "devDependencies": {}
+} 

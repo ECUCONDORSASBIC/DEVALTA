@@ -1,43 +1,19 @@
-import type { ApiResponse } from '@altamedica/types';
-import { z } from 'zod';
+/**
+ * 🏥 ALTAMEDICA SHARED PACKAGE
+ * Versión simplificada para resolver problemas de dependencias
+ */
 
-// API Response helpers
-export function createSuccessResponse<T>(data: T, meta?: Record<string, unknown>): ApiResponse {
-  return {
-    success: true,
-    timestamp: new Date().toISOString(),
-    data,
-    ...(meta && { meta }),
-  };
+// ============================================================================
+// TIPOS BÁSICOS
+// ============================================================================
+
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  meta?: Record<string, unknown>;
 }
 
-export function createErrorResponse(code: string, message: string, details?: Record<string, unknown>): ApiResponse {
-  return {
-    success: false,
-    timestamp: new Date().toISOString(),
-    error: {
-      code,
-      message,
-      details,
-    },
-  };
-}
-
-// Validation helpers
-export function validateSchema<T>(schema: z.ZodSchema<T>, data: unknown): { success: true; data: T } | { success: false; error: string } {
-  try {
-    const validatedData = schema.parse(data);
-    return { success: true, data: validatedData };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join(', ');
-      return { success: false, error: errorMessage };
-    }
-    return { success: false, error: 'Validation failed' };
-  }
-}
-
-// Pagination helpers
 export interface PaginationParams {
   page?: number;
   limit?: number;
@@ -50,23 +26,78 @@ export interface PaginationMeta {
   totalPages: number;
 }
 
+export interface ValidationError {
+  errors: Array<{
+    path: (string | number)[];
+    message: string;
+  }>;
+}
+
+export interface SchemaValidator<T> {
+  parse(data: unknown): T;
+}
+
+export interface Logger {
+  info(message: string, data?: Record<string, unknown>): void;
+  warn(message: string, data?: Record<string, unknown>): void;
+  error(message: string, error?: Error | unknown): void;
+  debug(message: string, data?: Record<string, unknown>): void;
+}
+
+// ============================================================================
+// FUNCIONES DE UTILIDAD
+// ============================================================================
+
+export function createSuccessResponse<T>(data: T, meta?: Record<string, unknown>): ApiResponse<T> {
+  return {
+    success: true,
+    data,
+    meta
+  };
+}
+
+export function createErrorResponse(code: string, message: string, details?: Record<string, unknown>): ApiResponse {
+  return {
+    success: false,
+    error: message,
+    meta: { code, details }
+  };
+}
+
+export function validateSchema<T>(
+  schema: SchemaValidator<T>, 
+  data: unknown
+): { success: true; data: T } | { success: false; error: string } {
+  try {
+    const result = schema.parse(data);
+    return { success: true, data: result };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Validation failed' 
+    };
+  }
+}
+
 export function validatePagination(params: PaginationParams): { page: number; limit: number } {
   const page = Math.max(1, params.page || 1);
-  const limit = Math.min(100, Math.max(1, params.limit || 10));
+  const limit = Math.min(100, Math.max(1, params.limit || 20));
   return { page, limit };
 }
 
 export function createPaginationMeta(page: number, limit: number, total: number): PaginationMeta {
-  const totalPages = Math.ceil(total / limit);
   return {
     page,
     limit,
     total,
-    totalPages,
+    totalPages: Math.ceil(total / limit)
   };
 }
 
-// Date helpers
+// ============================================================================
+// FUNCIONES DE FECHA
+// ============================================================================
+
 export function formatDate(date: Date): string {
   return date.toISOString();
 }
@@ -76,7 +107,7 @@ export function parseDate(dateString: string): Date {
 }
 
 export function isValidDate(date: Date): boolean {
-  return date instanceof Date && !isNaN(date.getTime());
+  return !isNaN(date.getTime());
 }
 
 export function addDays(date: Date, days: number): Date {
@@ -98,9 +129,7 @@ export function addMinutes(date: Date, minutes: number): Date {
 }
 
 export function isSameDay(date1: Date, date2: Date): boolean {
-  return date1.getFullYear() === date2.getFullYear() &&
-         date1.getMonth() === date2.getMonth() &&
-         date1.getDate() === date2.getDate();
+  return date1.toDateString() === date2.toDateString();
 }
 
 export function isToday(date: Date): boolean {
@@ -108,39 +137,45 @@ export function isToday(date: Date): boolean {
 }
 
 export function isFuture(date: Date): boolean {
-  return date.getTime() > Date.now();
+  return date > new Date();
 }
 
 export function isPast(date: Date): boolean {
-  return date.getTime() < Date.now();
+  return date < new Date();
 }
 
-// String helpers
+// ============================================================================
+// FUNCIONES DE STRING
+// ============================================================================
+
 export function generateId(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  return Math.random().toString(36).substr(2, 9);
 }
 
 export function slugify(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\w ]+/g, '')
-    .replace(/ +/g, '-');
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 export function capitalize(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 export function capitalizeWords(text: string): string {
-  return text.split(' ').map(capitalize).join(' ');
+  return text.replace(/\b\w/g, l => l.toUpperCase());
 }
 
 export function truncate(text: string, length: number): string {
-  if (text.length <= length) return text;
-  return text.substring(0, length) + '...';
+  return text.length > length ? text.substring(0, length) + '...' : text;
 }
 
-// Array helpers
+// ============================================================================
+// FUNCIONES DE ARRAY
+// ============================================================================
+
 export function unique<T>(array: T[]): T[] {
   return [...new Set(array)];
 }
@@ -167,7 +202,10 @@ export function groupBy<T, K extends string | number | symbol>(
   }, {} as Record<K, T[]>);
 }
 
-// Object helpers
+// ============================================================================
+// FUNCIONES DE OBJETO
+// ============================================================================
+
 export function omit<T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
   keys: K[]
@@ -190,16 +228,19 @@ export function pick<T extends Record<string, unknown>, K extends keyof T>(
   return result;
 }
 
-// Number helpers
+// ============================================================================
+// FUNCIONES DE NÚMERO
+// ============================================================================
+
 export function formatCurrency(amount: number, currency = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency,
+    currency
   }).format(amount);
 }
 
 export function formatNumber(num: number): string {
-  return new Intl.NumberFormat('en-US').format(num);
+  return new Intl.NumberFormat().format(num);
 }
 
 export function clamp(num: number, min: number, max: number): number {
@@ -210,7 +251,10 @@ export function round(num: number, decimals = 2): number {
   return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
 
-// Async helpers
+// ============================================================================
+// FUNCIONES ASÍNCRONAS
+// ============================================================================
+
 export function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -220,22 +264,21 @@ export async function retry<T>(
   retries = 3,
   delayMs = 1000
 ): Promise<T> {
-  let lastError: Error | undefined;
-  for (let i = 0; i <= retries; i++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error as Error;
-      if (i < retries) {
-        await delay(delayMs);
-      }
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries > 0) {
+      await delay(delayMs);
+      return retry(fn, retries - 1, delayMs);
     }
+    throw error;
   }
-  
-  throw lastError || new Error('Retry failed');
 }
 
-// Error helpers
+// ============================================================================
+// CLASES DE ERROR
+// ============================================================================
+
 export class AppError extends Error {
   constructor(
     public code: string,
@@ -276,13 +319,9 @@ export class ForbiddenError extends AppError {
   }
 }
 
-// Logger
-export interface Logger {
-  info(message: string, data?: Record<string, unknown>): void;
-  warn(message: string, data?: Record<string, unknown>): void;
-  error(message: string, error?: Error | unknown): void;
-  debug(message: string, data?: Record<string, unknown>): void;
-}
+// ============================================================================
+// LOGGER
+// ============================================================================
 
 export class ConsoleLogger implements Logger {
   info(message: string, data?: Record<string, unknown>): void {
@@ -304,30 +343,11 @@ export class ConsoleLogger implements Logger {
   }
 }
 
-// Authentication helpers
-export async function verifyAuthToken(token: string): Promise<{ uid: string; email: string; role?: string } | null> {
-  try {
-    // Esta función debería implementar la verificación real del token
-    // Por ahora, implementamos una verificación mock para desarrollo
-    if (!token || token === 'invalid') {
-      return null;
-    }
-    
-    // En un entorno real, aquí verificarías el token con Firebase Auth
-    // const decodedToken = await admin.auth().verifyIdToken(token);
-    // return { uid: decodedToken.uid, email: decodedToken.email };
-    
-    // Mock implementation para desarrollo
-    return {
-      uid: 'mock-user-id',
-      email: 'test@example.com',
-      role: 'doctor'
-    };
-  } catch (error) {
-    logger.error('Error verifying auth token', error);
-    return null;
-  }
-}
+export const consoleLogger = new ConsoleLogger();
+
+// ============================================================================
+// FUNCIONES DE AUTENTICACIÓN BÁSICAS
+// ============================================================================
 
 export function extractBearerToken(authHeader: string | null): string | null {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -336,15 +356,40 @@ export function extractBearerToken(authHeader: string | null): string | null {
   return authHeader.substring(7);
 }
 
-export async function authenticateRequest(authHeader: string | null): Promise<{ uid: string; email: string; role?: string } | null> {
+export function verifyAuthToken(token: string): { uid: string; email: string; userType: string } {
+  // Implementación básica - en producción usar Firebase Admin
+  consoleLogger.warn('Using basic authentication - implement Firebase Admin in production');
+  
+  // Simular verificación de token
+  if (!token || token.length < 10) {
+    throw new Error('Invalid token');
+  }
+  
+  return {
+    uid: 'temp-uid',
+    email: 'temp@example.com',
+    userType: 'user'
+  };
+}
+
+export async function authenticateRequest(authHeader: string | null): Promise<{ uid: string; email: string; userType: string } | null> {
   const token = extractBearerToken(authHeader);
   if (!token) {
     return null;
   }
-  return verifyAuthToken(token);
+  
+  try {
+    return verifyAuthToken(token);
+  } catch (error) {
+    consoleLogger.error('Error verifying auth token', error);
+    return null;
+  }
 }
 
-// Firestore helpers para manejo de documentos con tipos
+// ============================================================================
+// FUNCIONES DE FIRESTORE BÁSICAS
+// ============================================================================
+
 export interface FirestoreTimestamp {
   toDate(): Date;
 }
@@ -357,15 +402,12 @@ export interface FirestoreDocumentData {
 
 export function convertFirestoreTimestamps<T extends FirestoreDocumentData>(data: T): T {
   const converted = { ...data };
-  
-  // Convertir timestamps de Firestore a Date objects
   if (converted.createdAt && typeof converted.createdAt === 'object' && 'toDate' in converted.createdAt) {
     converted.createdAt = (converted.createdAt as FirestoreTimestamp).toDate();
   }
   if (converted.updatedAt && typeof converted.updatedAt === 'object' && 'toDate' in converted.updatedAt) {
     converted.updatedAt = (converted.updatedAt as FirestoreTimestamp).toDate();
   }
-  
   return converted;
 }
 
@@ -382,4 +424,58 @@ export function processFirestoreDoc<T extends FirestoreDocumentData>(doc: Firest
   };
 }
 
-export const logger = new ConsoleLogger();
+// ============================================================================
+// EXPORTACIONES DE AUTH
+// ============================================================================
+
+// Exportar toda la funcionalidad de auth
+export * from './auth';
+
+// ============================================================================
+// EXPORTACIONES POR DEFECTO
+// ============================================================================
+
+export default {
+  createSuccessResponse,
+  createErrorResponse,
+  validateSchema,
+  validatePagination,
+  createPaginationMeta,
+  formatDate,
+  parseDate,
+  isValidDate,
+  addDays,
+  addHours,
+  addMinutes,
+  isSameDay,
+  isToday,
+  isFuture,
+  isPast,
+  generateId,
+  slugify,
+  capitalize,
+  capitalizeWords,
+  truncate,
+  unique,
+  chunk,
+  groupBy,
+  omit,
+  pick,
+  formatCurrency,
+  formatNumber,
+  clamp,
+  round,
+  delay,
+  retry,
+  AppError,
+  ValidationError,
+  NotFoundError,
+  UnauthorizedError,
+  ForbiddenError,
+  ConsoleLogger,
+  consoleLogger,
+  extractBearerToken,
+  authenticateRequest,
+  convertFirestoreTimestamps,
+  processFirestoreDoc
+};

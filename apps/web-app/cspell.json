@@ -62,7 +62,17 @@
     "Dimensiones",
     "Limpiar",
     "agregar",
-    "cámara"
+    "cámara",
+    "Atiéndete",
+    "Telemedicina",
+    "MEMOIZADOS",
+    "ALTAMEDICA",
+    "Altamedica",
+    "chequeos",
+    "Geolocalizada",
+    "Encriptación",
+    "Inmersiva",
+    "inmersiva"
   ],
   "ignorePaths": [
     "node_modules/**",

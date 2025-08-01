@@ -1,6 +1,7 @@
 "use client";
-// 🔐 HOOK DE AUTENTICACIÓN ALTAMEDICA - VERSIÓN SIMPLIFICADA
-// Implementación temporal sin Firebase para resolver errores
+
+// Este archivo es un módulo ESM (import/export). No se detectan incompatibilidades de módulos en este archivo.
+// Si usas este hook en entornos CJS, puede haber incompatibilidades.
 
 import {
   useState,
@@ -9,6 +10,22 @@ import {
   createContext,
   ReactNode,
 } from "react";
+import { auth, db } from "../lib/firebase";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  User as FirebaseUser,
+  updateProfile as fbUpdateProfile,
+  getIdToken,
+} from "firebase/auth";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 
 // Mantener TODOS los tipos existentes sin cambios
 export interface User {
@@ -61,7 +78,6 @@ const AuthContext = createContext<{
   hasRole: (role: string | string[]) => boolean;
 } | null>(null);
 
-// 🏗️ PROVIDER SIMPLIFICADO - Implementación mock temporal
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
@@ -71,102 +87,108 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     error: null,
   });
 
+  // Sincronizar estado de Firebase Auth
   useEffect(() => {
-    // Verificar estado inicial
-    const checkInitialAuth = async () => {
-      try {
-        // Intentar recuperar de localStorage
-        const storedUser =
-          localStorage.getItem("altamedica_user") ||
-          sessionStorage.getItem("altamedica_user");
-        const token =
-          localStorage.getItem("altamedica_token") ||
-          sessionStorage.getItem("altamedica_token");
-
-        if (storedUser && token) {
-          const user = JSON.parse(storedUser);
-          setAuthState({
-            user,
-            token,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-          });
-        } else {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const token = await getIdToken(firebaseUser);
+        // Obtener perfil de usuario y paciente
+        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+        let userData = userDoc.exists() ? userDoc.data() : null;
+        // Si no existe, forzar logout por seguridad
+        if (!userData) {
+          await signOut(auth);
           setAuthState({
             user: null,
             token: null,
             isAuthenticated: false,
             isLoading: false,
-            error: null,
+            error: "Usuario no encontrado en base de datos",
           });
+          return;
         }
-      } catch (error) {
+        // Consultar perfil de paciente real
+        let patientProfile = null;
+        try {
+          const res = await fetch(`/api/v1/patients/${firebaseUser.uid}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            patientProfile = await res.json();
+          }
+        } catch {}
+        setAuthState({
+          user: { ...userData, patientId: firebaseUser.uid },
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        });
+      } else {
         setAuthState({
           user: null,
           token: null,
           isAuthenticated: false,
           isLoading: false,
-          error: "Error verificando autenticación",
+          error: null,
         });
       }
-    };
-
-    checkInitialAuth();
+    });
+    return () => unsubscribe();
   }, []);
 
   const login = async (credentials: LoginCredentials) => {
+    setAuthState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
-      setAuthState((prev) => ({ ...prev, isLoading: true, error: null }));
-
-      // Simular delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const mockUser: User = {
-        id: "mock-user-id",
-        email: credentials.email,
-        firstName: "Mock",
-        lastName: "User",
-        role: "patient",
-        patientId: "mock-patient-id",
-        permissions: ["read:own_records", "write:own_appointments"],
-        isActive: true,
-      };
-
-      const mockToken = "mock-jwt-token";
-
-      // Guardar en localStorage
+      const userCred = await signInWithEmailAndPassword(
+        auth,
+        credentials.email,
+        credentials.password
+      );
+      const token = await getIdToken(userCred.user);
+      // Sincronizar usuario y perfil
+      const userDoc = await getDoc(doc(db, "users", userCred.user.uid));
+      if (!userDoc.exists()) throw new Error("Usuario no encontrado en base de datos");
+      const userData = userDoc.data();
+      // Consultar perfil de paciente real
+      let patientProfile = null;
+      try {
+        const res = await fetch(`/api/v1/patients/${userCred.user.uid}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) patientProfile = await res.json();
+      } catch {}
+      // Guardar en storage
       if (credentials.rememberMe) {
-        localStorage.setItem("altamedica_token", mockToken);
-        localStorage.setItem("altamedica_user", JSON.stringify(mockUser));
+        localStorage.setItem("altamedica_token", token);
+        localStorage.setItem("altamedica_user", JSON.stringify(userData));
       } else {
-        sessionStorage.setItem("altamedica_token", mockToken);
-        sessionStorage.setItem("altamedica_user", JSON.stringify(mockUser));
+        sessionStorage.setItem("altamedica_token", token);
+        sessionStorage.setItem("altamedica_user", JSON.stringify(userData));
       }
-
       setAuthState({
-        user: mockUser,
-        token: mockToken,
+        user: { ...userData, patientId: userCred.user.uid },
+        token,
         isAuthenticated: true,
         isLoading: false,
         error: null,
       });
-    } catch (error) {
+    } catch (error: any) {
       setAuthState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : "Error en login",
+        error: error.message || "Error en login",
       }));
       throw error;
     }
   };
 
   const logout = async () => {
+    await signOut(auth);
     localStorage.removeItem("altamedica_token");
     localStorage.removeItem("altamedica_user");
     sessionStorage.removeItem("altamedica_token");
     sessionStorage.removeItem("altamedica_user");
-
     setAuthState({
       user: null,
       token: null,
@@ -177,40 +199,83 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (data: RegisterData) => {
+    setAuthState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
-      setAuthState((prev) => ({ ...prev, isLoading: true, error: null }));
-
-      // Simular delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const mockUser: User = {
-        id: "mock-user-id",
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        role: "patient",
-        patientId: "mock-patient-id",
-        permissions: ["read:own_records", "write:own_appointments"],
-        isActive: true,
+      // 1. Crear usuario en Firebase Auth
+      const userCred = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      // 2. Actualizar perfil en Firebase Auth
+      await fbUpdateProfile(userCred.user, {
+        displayName: `${data.firstName} ${data.lastName}`,
+        phoneNumber: data.phoneNumber,
+      });
+      // 3. Crear usuario en Firestore si no existe
+      const userRef = doc(db, "users", userCred.user.uid);
+      const userDoc = await getDoc(userRef);
+      if (!userDoc.exists()) {
+        await setDoc(userRef, {
+          id: userCred.user.uid,
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          role: "patient",
+          permissions: ["read:own_records", "write:own_appointments"],
+          isActive: true,
+          phoneNumber: data.phoneNumber || null,
+          lastLogin: new Date().toISOString(),
+        });
+      }
+      // 4. Crear perfil de paciente en backend
+      const token = await getIdToken(userCred.user);
+      const patientProfile = {
+        dateOfBirth: data.dateOfBirth,
+        gender: "male", // TODO: pedir en formulario
+        // ...otros campos opcionales
       };
-
-      const mockToken = "mock-jwt-token";
-
-      localStorage.setItem("altamedica_token", mockToken);
-      localStorage.setItem("altamedica_user", JSON.stringify(mockUser));
-
+      const res = await fetch("/api/v1/patients", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...patientProfile, uid: userCred.user.uid }),
+      });
+      if (!res.ok) {
+        throw new Error("Error creando perfil de paciente");
+      }
+      // Guardar en storage
+      localStorage.setItem("altamedica_token", token);
+      localStorage.setItem(
+        "altamedica_user",
+        JSON.stringify({
+          id: userCred.user.uid,
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          role: "patient",
+        })
+      );
       setAuthState({
-        user: mockUser,
-        token: mockToken,
+        user: {
+          id: userCred.user.uid,
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          role: "patient",
+        },
+        token,
         isAuthenticated: true,
         isLoading: false,
         error: null,
       });
-    } catch (error) {
+    } catch (error: any) {
       setAuthState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : "Error en registro",
+        error: error.message || "Error en registro",
       }));
       throw error;
     }

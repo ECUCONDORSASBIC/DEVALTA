@@ -21,9 +21,19 @@ let app: any;
 let auth: any;
 let db: any;
 let storage: any;
+let initialized = false;
 
-// Inicializar Firebase solo una vez
+// Inicializar Firebase solo una vez y solo en el cliente
 function initializeFirebaseApp() {
+  // Solo inicializar en el cliente
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  if (initialized) {
+    return app;
+  }
+
   if (getApps().length === 0) {
     app = initializeApp(firebaseConfig);
   } else {
@@ -38,7 +48,7 @@ function initializeFirebaseApp() {
   // Solo conectar emuladores si está explícitamente habilitado
   const useEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true';
   
-  if (useEmulator && typeof window !== 'undefined') {
+  if (useEmulator) {
     console.log('🔧 Conectando a emuladores Firebase...');
     
     try {
@@ -67,13 +77,46 @@ function initializeFirebaseApp() {
     console.log('🚀 Usando Firebase en producción');
   }
 
+  initialized = true;
   return app;
 }
 
-// Inicializar automáticamente
+// Función para obtener instancias de Firebase de manera lazy
+function getFirebaseAuth() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  if (!initialized) {
+    initializeFirebaseApp();
+  }
+  return auth;
+}
+
+function getFirebaseDb() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  if (!initialized) {
+    initializeFirebaseApp();
+  }
+  return db;
+}
+
+function getFirebaseStorage() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  if (!initialized) {
+    initializeFirebaseApp();
+  }
+  return storage;
+}
+
+// Inicializar automáticamente solo en el cliente
 if (typeof window !== 'undefined') {
   initializeFirebaseApp();
 }
 
-export { auth, db, storage };
+// Exportar las instancias usando getters para lazy loading
+export { getFirebaseAuth as auth, getFirebaseDb as db, getFirebaseStorage as storage };
 export default app;

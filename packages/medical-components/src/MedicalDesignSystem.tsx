@@ -444,30 +444,3 @@ export function AppointmentStatus({ status, time, duration }: AppointmentStatusP
   )
 }
 
-// ============================================================================
-// EXPORTACIONES
-// ============================================================================
-
-export {
-  MedicalTokens,
-  MedicalThemeProvider,
-  useMedicalTheme,
-  MedicalButton,
-  MedicalCard,
-  MedicalBadge,
-  MedicalInput,
-  VitalSigns,
-  AppointmentStatus
-}
-
-export default {
-  MedicalTokens,
-  MedicalThemeProvider,
-  useMedicalTheme,
-  MedicalButton,
-  MedicalCard,
-  MedicalBadge,
-  MedicalInput,
-  VitalSigns,
-  AppointmentStatus
-}

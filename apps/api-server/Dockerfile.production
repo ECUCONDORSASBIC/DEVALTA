@@ -1,0 +1,118 @@
+# 🏥 ALTAMEDICA - DOCKER PARA PRODUCCIÓN MÉDICA
+# Multi-stage build optimizado para aplicaciones de salud
+
+# ==========================================
+# STAGE 1: Base con Node.js optimizado
+# ==========================================
+FROM node:18-alpine AS base
+
+RUN npm install -g pnpm@9
+
+# Instalar dependencias del sistema necesarias para producción médica
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+# Configurar usuario no-root para seguridad
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+# Variables de entorno para optimización
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+# ==========================================
+# STAGE 2: Dependencias y build
+# ==========================================
+FROM base AS deps
+
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
+COPY packages/ ./packages/
+COPY configs/ ./configs/
+COPY apps/api-server/package.json ./apps/api-server/
+
+# Instalar pnpm y dependencias
+RUN npm install -g pnpm@latest
+RUN pnpm install --no-frozen-lockfile --prod
+
+# ==========================================
+# STAGE 3: Builder
+# ==========================================
+FROM base AS builder
+
+WORKDIR /app
+
+# Copiar dependencias del stage anterior
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copiar código fuente
+COPY . .
+
+# Variables de build para producción médica
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+# Build de la aplicación API Server
+RUN npm install -g pnpm@latest
+WORKDIR /app/apps/api-server
+RUN pnpm build
+
+# ==========================================
+# STAGE 4: Runner (Producción)
+# ==========================================
+FROM base AS runner
+
+WORKDIR /app/apps/api-server
+
+# Copiar ejecutables y configuraciones
+COPY --from=builder --chown=nextjs:nodejs /app/apps/api-server/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/api-server/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/api-server/.next/static ./.next/static
+
+# Crear directorios necesarios para logs y datos médicos
+RUN mkdir -p /app/logs /app/temp /app/uploads /app/backups
+RUN chown -R nextjs:nodejs /app
+
+# Configurar permisos de seguridad médica
+RUN chmod 755 /app
+RUN chmod -R 600 /app/logs
+RUN chmod -R 700 /app/temp
+RUN chmod -R 600 /app/uploads
+RUN chmod -R 600 /app/backups
+
+# Cambiar a usuario no-root
+USER nextjs
+
+# Exponer puerto
+EXPOSE 3000
+
+# Variables de entorno de runtime
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Health check para Kubernetes/Docker Swarm
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3000/api/v1/health?simple=true || exit 1
+
+# Comando principal con dumb-init para manejo correcto de señales
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "server.js"]
+
+# ==========================================
+# LABELS para metadata médica
+# ==========================================
+LABEL org.opencontainers.image.title="AltaMedica API Server"
+LABEL org.opencontainers.image.description="Servidor de APIs médicas con compliance HIPAA"
+LABEL org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.vendor="AltaMedica"
+LABEL org.opencontainers.image.licenses="Proprietary"
+LABEL medical.compliance.hipaa="true"
+LABEL medical.compliance.fhir="R4"
+LABEL medical.encryption.phi="AES-256-GCM"
+LABEL security.scan.required="true"

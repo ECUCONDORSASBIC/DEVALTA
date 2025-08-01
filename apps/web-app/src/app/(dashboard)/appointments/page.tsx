@@ -168,7 +168,7 @@ export default function AppointmentsPage() {
 
           <Card>
             <CardContent className="p-4 flex items-end">
-              <Button variant="outline" className="w-full">
+              <Button className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2">
                 <Filter className="h-4 w-4 mr-2" />
                 Más Filtros
               </Button>
@@ -308,19 +308,19 @@ export default function AppointmentsPage() {
                         
                         <div className="flex space-x-2">
                           {appointment.status === 'confirmed' && (
-                            <Button size="sm" variant="outline">
+                            <Button className="px-3 py-1 text-sm border border-gray-300 bg-white hover:bg-gray-50 text-gray-700">
                               Iniciar
                             </Button>
                           )}
                           
                           {appointment.isVideoCall && appointment.status !== 'cancelled' && (
-                            <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                            <Button className="px-3 py-1 text-sm bg-purple-600 hover:bg-purple-700 text-white">
                               <Video className="h-4 w-4 mr-1" />
                               Unirse
                             </Button>
                           )}
                           
-                          <Button size="sm" variant="outline">
+                          <Button className="px-3 py-1 text-sm border border-gray-300 bg-white hover:bg-gray-50 text-gray-700">
                             Editar
                           </Button>
                         </div>

@@ -3,11 +3,11 @@
 // Implementado por Lead Frontend Developer para ecosistema Altamedica
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createErrorResponse, createSuccessResponse } from '@altamedica/shared';
+import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
 import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
 import Redis from 'ioredis';
-import { admin } from '@altamedica/firebase';
+import { admin } from '@/lib/firebase-admin';
 import os from 'os';
 
 // Configuración de Redis para caché y rate limiting

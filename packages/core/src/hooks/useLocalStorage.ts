@@ -49,7 +49,7 @@ export function useSessionStorage<T>(
   // Get from session storage then parse stored json or return initialValue
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
-      const item = storage.getSession<T>(key);
+      const item = sessionStorage.get(key);
       return item !== null ? item : initialValue;
     } catch (error) {
       console.error(`Error reading sessionStorage key "${key}":`, error);
@@ -69,7 +69,7 @@ export function useSessionStorage<T>(
         setStoredValue(valueToStore);
 
         // Save to session storage
-        storage.setSession(key, valueToStore);
+        sessionStorage.set(key, valueToStore);
       } catch (error) {
         console.error(`Error setting sessionStorage key "${key}":`, error);
       }
@@ -81,7 +81,7 @@ export function useSessionStorage<T>(
   const removeValue = useCallback(() => {
     try {
       setStoredValue(initialValue);
-      storage.removeSession(key);
+      sessionStorage.remove(key);
     } catch (error) {
       console.error(`Error removing sessionStorage key "${key}":`, error);
     }
@@ -98,7 +98,7 @@ export function useSecureStorage<T>(
 ): [T, (value: T | ((val: T) => T)) => void, () => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
-      const item = storage.get<T>(`secure_${key}`);
+      const item = storage.get(`secure_${key}`);
       return item !== null ? item : initialValue;
     } catch (error) {
       console.error(`Error reading secure storage key "${key}":`, error);
@@ -167,7 +167,7 @@ export function useStorageWithTTL<T>(
 ): [T | null, (value: T) => void, () => void] {
   const [storedValue, setStoredValue] = useState<T | null>(() => {
     try {
-      const item = storage.get<{ data: T; timestamp: number }>(key);
+      const item = storage.get(key) as { data: T; timestamp: number } | null;
       if (!item) return null;
 
       const now = Date.now();

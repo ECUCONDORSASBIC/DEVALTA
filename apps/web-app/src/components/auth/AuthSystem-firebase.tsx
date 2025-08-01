@@ -2,17 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { Shield, Star, CheckCircle, Heart, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  onAuthStateChanged,
-  updateProfile,
-  User as FirebaseUser
-} from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from '@altamedica/firebase/src/config-production';
+import dynamic from 'next/dynamic';
+
+// Importación directa de Firebase Auth (sin dynamic loading para evitar errores)
+import * as FirebaseAuth from 'firebase/auth';
+import * as FirebaseFirestore from 'firebase/firestore';
+
+// Configuración centralizada de Firebase
+import { auth, db } from '../../config/firebase';
+
 import Link from 'next/link';
+import { getDashboardUrl } from '../../config/app-urls';
+import { prepareAuthRedirect } from '../../services/shared-auth';
 
 interface AuthState {
   step: 'login' | 'register' | 'twoFactor' | 'complete';
@@ -73,7 +74,7 @@ const AuthSystemFirebase: React.FC = () => {
     phoneValid: false
   });
 
-  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<FirebaseAuth.User | null>(null);
 
   const updateAuthState = (updates: Partial<AuthState>) => {
     setAuthState(prev => ({ ...prev, ...updates }));
@@ -81,10 +82,25 @@ const AuthSystemFirebase: React.FC = () => {
 
   // Monitorear estado de autenticación
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = FirebaseAuth.onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       if (user && user.emailVerified) {
-        updateAuthState({ step: 'complete' });
+        // Obtener el perfil del usuario desde Firestore
+        try {
+          const userDoc = await FirebaseFirestore.getDoc(FirebaseFirestore.doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data() as UserProfile;
+            updateAuthState({ 
+              step: 'complete',
+              userType: userData.userType 
+            });
+          } else {
+            updateAuthState({ step: 'complete' });
+          }
+        } catch (error) {
+          console.error('Error al obtener perfil de usuario:', error);
+          updateAuthState({ step: 'complete' });
+        }
       }
     });
 
@@ -174,7 +190,7 @@ const AuthSystemFirebase: React.FC = () => {
   };
 
   // Crear perfil de usuario en Firestore
-  const createUserProfile = async (user: FirebaseUser): Promise<void> => {
+  const createUserProfile = async (user: FirebaseAuth.User): Promise<void> => {
     const userProfile: UserProfile = {
       uid: user.uid,
       email: user.email!,
@@ -187,10 +203,10 @@ const AuthSystemFirebase: React.FC = () => {
       createdAt: new Date().toISOString(),
     };
 
-    await setDoc(doc(db, 'users', user.uid), userProfile);
+    await FirebaseFirestore.setDoc(FirebaseFirestore.doc(db, 'users', user.uid), userProfile);
     
     // Actualizar perfil de Firebase Auth
-    await updateProfile(user, {
+    await FirebaseAuth.updateProfile(user, {
       displayName: `${authState.firstName} ${authState.lastName}`
     });
   };
@@ -202,7 +218,7 @@ const AuthSystemFirebase: React.FC = () => {
     updateAuthState({ isLoading: true, error: '' });
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
+      const userCredential = await FirebaseAuth.signInWithEmailAndPassword(
         auth, 
         authState.email, 
         authState.password
@@ -218,11 +234,22 @@ const AuthSystemFirebase: React.FC = () => {
         return;
       }
 
-      // Verificar si el usuario tiene 2FA habilitado
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists() && userDoc.data().twoFactorEnabled) {
-        updateAuthState({ step: 'twoFactor', isLoading: false });
+      // Obtener el perfil del usuario desde Firestore
+      const userDoc = await FirebaseFirestore.getDoc(FirebaseFirestore.doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data() as UserProfile;
+        
+        // Actualizar el estado con el tipo de usuario
+        updateAuthState({ userType: userData.userType });
+        
+        // Verificar si el usuario tiene 2FA habilitado
+        if (userData.twoFactorEnabled) {
+          updateAuthState({ step: 'twoFactor', isLoading: false });
+        } else {
+          updateAuthState({ step: 'complete', isLoading: false });
+        }
       } else {
+        // Si no existe el perfil (caso raro), usar el tipo por defecto
         updateAuthState({ step: 'complete', isLoading: false });
       }
 
@@ -260,7 +287,7 @@ const AuthSystemFirebase: React.FC = () => {
     updateAuthState({ isLoading: true, error: '' });
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
+      const userCredential = await FirebaseAuth.createUserWithEmailAndPassword(
         auth, 
         authState.email, 
         authState.password
@@ -272,7 +299,7 @@ const AuthSystemFirebase: React.FC = () => {
       await createUserProfile(user);
 
       // Enviar email de verificación
-      await sendEmailVerification(user);
+      await FirebaseAuth.sendEmailVerification(user);
 
       updateAuthState({ 
         step: 'complete', 
@@ -328,7 +355,7 @@ const AuthSystemFirebase: React.FC = () => {
     if (!currentUser) return;
 
     try {
-      await sendEmailVerification(currentUser);
+      await FirebaseAuth.sendEmailVerification(currentUser);
       updateAuthState({ error: 'Email de verificación reenviado' });
     } catch (error) {
       updateAuthState({ error: 'Error al enviar email de verificación' });
@@ -465,7 +492,27 @@ const AuthSystemFirebase: React.FC = () => {
             
             <div className="space-y-4">
               <button 
-                onClick={() => window.location.href = '/dashboard'}
+onClick={async () => {
+                  const dashboardUrl = getDashboardUrl(authState.userType);
+                  
+                  // Preparar datos del usuario para compartir con el microservicio
+                  if (currentUser) {
+                    await prepareAuthRedirect(
+                      {
+                        uid: currentUser.uid,
+                        email: currentUser.email || '',
+                        userType: authState.userType,
+                        firstName: authState.firstName || currentUser.displayName?.split(' ')[0] || '',
+                        lastName: authState.lastName || currentUser.displayName?.split(' ')[1] || '',
+                        emailVerified: currentUser.emailVerified
+                      },
+                      dashboardUrl
+                    );
+                  } else {
+                    // Fallback: redirección directa si no hay usuario
+                    window.location.href = dashboardUrl;
+                  }
+                }}
                 className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl text-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
               >
                 Ir a mi Dashboard

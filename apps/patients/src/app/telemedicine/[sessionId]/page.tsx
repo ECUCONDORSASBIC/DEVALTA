@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { VideoCall } from "../../../components/telemedicine/VideoCall";
-import { ChatPanel } from "../../../components/telemedicine/ChatPanel";
-import { SessionControls } from "../../../components/telemedicine/SessionControls";
-import { User, Calendar, Clock, ArrowLeft } from "lucide-react";
+import VideoCall from "../../../components/telemedicine/VideoCall";
+import ChatPanel from "../../../components/telemedicine/ChatPanel";
+import SessionControls from "../../../components/telemedicine/SessionControls";
+import { User, Calendar, Clock, ArrowLeft, AlertCircle } from "lucide-react";
 
 // Datos mock para la sesión
 const sessionMock = {
@@ -20,9 +20,28 @@ const sessionMock = {
 
 export default function TelemedicineSessionPage() {
   const router = useRouter();
+  const [sessionStatus, setSessionStatus] = useState("waiting");
+  const [error, setError] = useState<string | null>(null);
+
+  const handleEndCall = () => {
+    setSessionStatus("ended");
+    // Aquí se podría agregar lógica para finalizar la sesión
+    console.log("Sesión finalizada");
+  };
+
+  const handleError = (errorMessage: string) => {
+    setError(errorMessage);
+    console.error("Error en la sesión:", errorMessage);
+  };
+
+  const handleSendMessage = (message: string) => {
+    console.log("Mensaje enviado:", message);
+    // Aquí se podría agregar lógica para enviar mensajes
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <div className="bg-white border-b shadow-sm px-4 py-4 flex items-center space-x-4">
         <button
           onClick={() => router.back()}
@@ -31,10 +50,21 @@ export default function TelemedicineSessionPage() {
           <ArrowLeft className="w-5 h-5 text-blue-600" />
         </button>
         <h1 className="text-xl font-bold text-gray-900 flex items-center">
-          <VideoCall.Icon className="w-6 h-6 mr-2 text-blue-600" />
+          <User className="w-6 h-6 mr-2 text-blue-600" />
           Sesión de Telemedicina
         </h1>
       </div>
+
+      {/* Error Alert */}
+      {error && (
+        <div className="max-w-5xl mx-auto px-4 py-2">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center space-x-2">
+            <AlertCircle className="w-5 h-5 text-red-500" />
+            <span className="text-red-700 text-sm">{error}</span>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Panel principal: Videollamada y controles */}
         <div className="lg:col-span-2 space-y-6">
@@ -56,20 +86,32 @@ export default function TelemedicineSessionPage() {
                 </div>
               </div>
             </div>
-            <VideoCall sessionId={sessionMock.id} />
+            
+            {/* Componente de Videollamada */}
+            <VideoCall 
+              sessionId={sessionMock.id} 
+              onEndCall={handleEndCall}
+              onError={handleError}
+            />
+            
+            {/* Controles de Sesión */}
             <SessionControls
               sessionId={sessionMock.id}
-              status={sessionMock.status}
+              status={sessionStatus}
             />
           </div>
         </div>
+
         {/* Panel lateral: Chat */}
         <div className="space-y-6">
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Chat en tiempo real
             </h2>
-            <ChatPanel sessionId={sessionMock.id} />
+            <ChatPanel 
+              sessionId={sessionMock.id}
+              onSendMessage={handleSendMessage}
+            />
           </div>
         </div>
       </div>

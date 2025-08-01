@@ -1,5 +1,5 @@
 {
-  "extends": "../../configs/base/tsconfig.base.json",
+  "extends": "../configs/base/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
@@ -12,7 +12,11 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -24,10 +28,26 @@
     "noEmitOnError": false,
     "isolatedModules": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@altamedica/types": [
+        "../types/src"
+      ],
+      "@altamedica/types/*": [
+        "../types/src/*"
+      ],
+      "@altamedica/core": [
+        "../core/src"
+      ],
+      "@altamedica/core/*": [
+        "../core/src/*"
+      ]
     }
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "dist",

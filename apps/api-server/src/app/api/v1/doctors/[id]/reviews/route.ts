@@ -1,5 +1,5 @@
-import { adminDb } from '@altamedica/firebase';
-import { createErrorResponse, createPaginationMeta, createSuccessResponse, validatePagination } from '@altamedica/shared';
+import { adminDb } from '@/lib/firebase-admin';
+import { createErrorResponse, createPaginationMeta, createSuccessResponse, validatePagination } from '@/lib/response-helpers';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

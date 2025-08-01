@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { RouteGuard } from '@/components/auth';
 import { useAuth, useUserPermissions } from '@/contexts/AuthContext';
+import AuthGuard from '@/components/auth/AuthGuard';
 import { 
   Heart, 
   Calendar, 
@@ -19,7 +19,7 @@ import {
 
 const DashboardPage: React.FC = () => {
   const { user, userProfile, signOut } = useAuth();
-  const { userType, isAdmin, isDoctor, isPatient, isCompany } = useUserPermissions();
+  const { hasPermission, isAdmin, isDoctor, isPatient, isCompany } = useUserPermissions();
 
   const handleSignOut = async () => {
     try {
@@ -31,23 +31,19 @@ const DashboardPage: React.FC = () => {
   };
 
   const getDashboardTitle = () => {
-    switch (userType) {
-      case 'admin': return 'Panel de Administración';
-      case 'doctor': return 'Panel Médico';
-      case 'patient': return 'Mi Portal de Salud';
-      case 'company': return 'Portal Empresarial';
-      default: return 'Dashboard';
-    }
+    if (isAdmin()) return 'Panel de Administración';
+    if (isDoctor()) return 'Panel Médico';
+    if (isPatient()) return 'Mi Portal de Salud';
+    if (isCompany()) return 'Portal Empresarial';
+    return 'Dashboard';
   };
 
   const getDashboardIcon = () => {
-    switch (userType) {
-      case 'admin': return <Shield className="h-8 w-8" />;
-      case 'doctor': return <Stethoscope className="h-8 w-8" />;
-      case 'patient': return <Heart className="h-8 w-8" />;
-      case 'company': return <Building2 className="h-8 w-8" />;
-      default: return <UserCheck className="h-8 w-8" />;
-    }
+    if (isAdmin()) return <Shield className="h-8 w-8" />;
+    if (isDoctor()) return <Stethoscope className="h-8 w-8" />;
+    if (isPatient()) return <Heart className="h-8 w-8" />;
+    if (isCompany()) return <Building2 className="h-8 w-8" />;
+    return <UserCheck className="h-8 w-8" />;
   };
 
   const getQuickActions = () => {
@@ -61,9 +57,8 @@ const DashboardPage: React.FC = () => {
       }
     ];
 
-    switch (userType) {
-      case 'admin':
-        return [
+    if (isAdmin()) {
+      return [
           {
             title: 'Gestión de Usuarios',
             description: 'Administrar usuarios del sistema',
@@ -80,8 +75,9 @@ const DashboardPage: React.FC = () => {
           },
           ...commonActions
         ];
+    }
 
-      case 'doctor':
+    if (isDoctor()) {
         return [
           {
             title: 'Mis Pacientes',
@@ -99,8 +95,9 @@ const DashboardPage: React.FC = () => {
           },
           ...commonActions
         ];
+    }
 
-      case 'patient':
+    if (isPatient()) {
         return [
           {
             title: 'Mis Citas',
@@ -118,8 +115,9 @@ const DashboardPage: React.FC = () => {
           },
           ...commonActions
         ];
+    }
 
-      case 'company':
+    if (isCompany()) {
         return [
           {
             title: 'Empleados',
@@ -137,14 +135,13 @@ const DashboardPage: React.FC = () => {
           },
           ...commonActions
         ];
-
-      default:
-        return commonActions;
     }
+
+    return commonActions;
   };
 
   return (
-    <RouteGuard requireAuth={true}>
+    <AuthGuard requireAuth={true}>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
         {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200">
@@ -171,7 +168,7 @@ const DashboardPage: React.FC = () => {
                     <p className="text-sm font-medium text-gray-900">
                       {userProfile?.firstName} {userProfile?.lastName}
                     </p>
-                    <p className="text-xs text-gray-600 capitalize">{userProfile?.userType}</p>
+                    <p className="text-xs text-gray-600 capitalize">{userProfile?.role}</p>
                   </div>
                   
                   <button
@@ -190,12 +187,12 @@ const DashboardPage: React.FC = () => {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Welcome Section */}
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="welcome-section">
+            <h3 className="welcome-title">
               ¡Bienvenido, {userProfile?.firstName}!
-            </h2>
-            <p className="text-gray-600">
-              Gestiona tu {userType === 'patient' ? 'salud' : 'trabajo'} de manera eficiente con ALTAMEDICA
+            </h3>
+            <p className="welcome-subtitle">
+              Gestiona tu {isPatient() ? 'salud' : 'trabajo'} de manera eficiente con ALTAMEDICA
             </p>
           </div>
 
@@ -232,7 +229,7 @@ const DashboardPage: React.FC = () => {
                 <div>
                   <p className="text-gray-600 text-sm">Email</p>
                   <p className="text-2xl font-bold text-green-600">
-                    {userProfile?.emailVerified ? 'Verificado' : 'Pendiente'}
+                    {user?.emailVerified ? 'Verificado' : 'Pendiente'}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -305,7 +302,7 @@ const DashboardPage: React.FC = () => {
           </div>
         </main>
       </div>
-    </RouteGuard>
+    </AuthGuard>
   );
 };
 

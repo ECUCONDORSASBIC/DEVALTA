@@ -1,5 +1,5 @@
-import { adminAuth } from '@altamedica/firebase';
-import { createErrorResponse, createSuccessResponse } from '@altamedica/shared';
+import { adminAuth } from '@/lib/firebase-admin';
+import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {

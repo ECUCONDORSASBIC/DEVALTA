@@ -29,7 +29,7 @@ import {
   Activity,
   Stethoscope,
 } from "lucide-react";
-import { cn } from "../../../core/src/utils/cn";
+import { cn } from "@altamedica/core";
 import { EnhancedValueProposition } from "./EnhancedValueProposition";
 
 interface CompanyData {

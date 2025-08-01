@@ -1,0 +1,141 @@
+/* Leaflet CSS customizations for AltaMedica */
+@import 'leaflet/dist/leaflet.css';
+
+/* Fix for marker icons */
+.leaflet-marker-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Custom popup styles */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.leaflet-popup-tip {
+  background: white !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-top: none !important;
+  border-right: none !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+/* Custom marker styles */
+.custom-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-marker div {
+  transition: all 0.3s ease;
+}
+
+.custom-marker:hover div {
+  transform: scale(1.1);
+}
+
+/* Animation for urgent markers */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Ensure map controls are visible */
+.leaflet-control-zoom {
+  background: white !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.leaflet-control-zoom a {
+  background: white !important;
+  border: none !important;
+  color: #374151 !important;
+  font-weight: bold !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: #f3f4f6 !important;
+  color: #1f2937 !important;
+}
+
+/* Attribution styling */
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 4px !important;
+  font-size: 10px !important;
+}
+
+/* Custom styles for demo map */
+.demo-map-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.demo-map-container .leaflet-container {
+  font-family: inherit !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .leaflet-popup-content-wrapper {
+    max-width: 250px !important;
+  }
+  
+  .leaflet-control-zoom {
+    transform: scale(0.9);
+  }
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+  .leaflet-tile {
+    filter: brightness(0.8) contrast(1.2) saturate(0.8);
+  }
+}
+
+/* Loading state */
+.map-loading {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  position: relative;
+}
+
+.map-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}

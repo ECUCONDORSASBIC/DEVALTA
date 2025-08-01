@@ -1,47 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSuccessResponse } from '@altamedica/shared';
+import { captureMessage } from '@/lib/sentry';
 
 export async function GET(request: NextRequest) {
   try {
-    // Health check básico para el ecosistema Altamedica
-    const healthStatus = {
+    // Capturar métrica de health check
+    captureMessage('Health check realizado', 'info', {
+      timestamp: new Date().toISOString(),
+      userAgent: request.headers.get('user-agent'),
+    });
+
+    const healthData = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      services: {
-        api: { status: 'healthy', latency: 0 },
-        database: { status: 'healthy', latency: 0 },
-        cache: { status: 'healthy', latency: 0 }
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      version: process.env.APP_VERSION || '1.0.0',
+      environment: process.env.NODE_ENV || 'development',
+      checks: {
+        database: 'healthy', // TODO: Verificar conexión real
+        redis: 'healthy',    // TODO: Verificar conexión real
+        sentry: process.env.SENTRY_DSN ? 'configured' : 'not-configured',
       },
-      metrics: {
-        uptime: Math.floor(process.uptime()),
-        memory: {
-          used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
-          total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
-          unit: 'MB'
-        },
-        environment: process.env.NODE_ENV || 'development',
-        platform: 'altamedica',
-        service: 'api-server'
-      }
     };
-    
-    return NextResponse.json(
-      createSuccessResponse('Health check completed', healthStatus),
-      { 
-        status: 200,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      }
-    );
+
+    return NextResponse.json({
+      success: true,
+      data: healthData,
+    });
   } catch (error) {
+    // Capturar error en Sentry
+    captureMessage('Health check falló', 'error', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+    });
+
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Health check failed',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        timestamp: new Date().toISOString(),
       },
       { status: 500 }
     );

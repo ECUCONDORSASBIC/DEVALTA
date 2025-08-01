@@ -79,6 +79,10 @@ mcp-config-local.json
 *.temp
 logs/
 backups/
+*.log
+*.pid
+*.log.*
+*.pid.*
 
 # Vercel
 .vercel
@@ -93,3 +97,6 @@ Desktop.ini
 .fseventsd
 .fuse_hidden*
 .nfs*
+
+# Local configuration (contains sensitive data)
+CLAUDE.local.md

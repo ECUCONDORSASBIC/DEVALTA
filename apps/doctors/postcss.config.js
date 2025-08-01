@@ -1,1 +1,6 @@
-export * from './../api-server/postcss.config';
+export default {
+  plugins: {
+    '@tailwindcss/postcss': {},
+    autoprefixer: {},
+  },
+};

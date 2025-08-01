@@ -1,9 +1,10 @@
 import { performance } from './config';
-import { trace, Trace } from 'firebase/performance';
+import { trace } from 'firebase/performance';
+import type { PerformanceTrace } from 'firebase/performance';
 
 export class PerformanceMonitor {
   private static instance: PerformanceMonitor;
-  private traces: Map<string, Trace> = new Map();
+  private traces: Map<string, PerformanceTrace> = new Map();
 
   static getInstance(): PerformanceMonitor {
     if (!PerformanceMonitor.instance) {

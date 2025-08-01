@@ -1,0 +1,111 @@
+# 🤖 ALTAMEDICA Medical AI Agents - Production Container
+# Optimizado para telemedicina con TensorFlow.js y NLP médico
+FROM node:22-alpine AS base
+
+# Instalar dependencias del sistema para TensorFlow.js y OpenCV
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    curl \
+    ca-certificates \
+    && apk add --no-cache --virtual .build-deps \
+    linux-headers
+
+# Configurar directorio de trabajo
+WORKDIR /app
+
+# Instalar pnpm con versión específica
+RUN npm install -g pnpm@10.13.1
+
+# Copiar configuración del workspace
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
+COPY packages/ ./packages/
+
+# Copiar configuración específica de agentes
+COPY agents/package.json ./agents/
+COPY agents/tsconfig.json ./agents/
+
+# Instalar dependencias (incluyendo TensorFlow.js optimizado)
+ENV TENSORFLOW_ENV=node
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+RUN pnpm install --frozen-lockfile
+
+# Etapa de construcción especializada para AI médica
+FROM base AS medical-builder
+
+# Copiar código fuente de agentes
+COPY agents/src/ ./agents/src/
+COPY agents/config/ ./agents/config/
+COPY agents/docs/ ./agents/docs/
+
+# Construir TypeScript
+WORKDIR /app/agents
+RUN pnpm build
+
+# Descargar y optimizar modelos médicos AI (simulación)
+RUN mkdir -p models && \
+    echo '{"model": "medical-diagnosis-v1.0", "size": "15MB"}' > models/medical-diagnosis.json && \
+    echo '{"model": "cardiovascular-risk-v1.0", "size": "8MB"}' > models/cardiovascular-risk.json && \
+    echo '{"model": "medical-nlp-es-v1.0", "size": "12MB"}' > models/medical-nlp.json
+
+# Etapa de producción - Imagen final optimizada
+FROM node:22-alpine AS production
+
+# Instalar solo dependencias de runtime
+RUN apk add --no-cache \
+    curl \
+    ca-certificates \
+    dumb-init \
+    && addgroup -g 1001 -S nodejs \
+    && adduser -S altamedica -u 1001
+
+# Configurar variables de entorno para AI médica
+ENV NODE_ENV=production
+ENV TENSORFLOW_ENV=node
+ENV ALTAMEDICA_AI_MODE=medical
+ENV ALTAMEDICA_COMPLIANCE=hipaa
+ENV PORT=3006
+
+WORKDIR /app
+
+# Copiar dependencias instaladas
+COPY --from=base --chown=altamedica:nodejs /app/node_modules ./node_modules
+COPY --from=base --chown=altamedica:nodejs /app/packages ./packages
+
+# Copiar aplicación construida
+COPY --from=medical-builder --chown=altamedica:nodejs /app/agents/dist ./agents/dist
+COPY --from=medical-builder --chown=altamedica:nodejs /app/agents/models ./agents/models
+COPY --from=medical-builder --chown=altamedica:nodejs /app/agents/config ./agents/config
+
+# Copiar scripts de inicio
+COPY --chown=altamedica:nodejs agents/start-all-agents.js ./agents/
+COPY --chown=altamedica:nodejs agents/package.json ./agents/
+
+# Crear directorio para logs y datos temporales
+RUN mkdir -p /app/logs /app/temp && \
+    chown -R altamedica:nodejs /app/logs /app/temp
+
+# Cambiar a usuario no-root (HIPAA compliance)
+USER altamedica
+
+# Configurar health check especializado para AI médica
+HEALTHCHECK --interval=30s --timeout=15s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health/ai-medical || exit 1
+
+# Exponer puerto para servicios AI
+EXPOSE ${PORT}
+
+# Configurar volúmenes para modelos y logs
+VOLUME ["/app/logs", "/app/temp"]
+
+# Comando de inicio con dumb-init para manejo correcto de señales
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "agents/start-all-agents.js"]
+
+# Metadata del contenedor
+LABEL maintainer="AltaMedica Team <dev@altamedica.com>"
+LABEL description="AI Medical Agents for Telemedicine Platform"
+LABEL version="1.0.0"
+LABEL compliance="HIPAA"
+LABEL ai-capabilities="TensorFlow.js,Medical-NLP,Risk-Analysis,Diagnosis-Support"

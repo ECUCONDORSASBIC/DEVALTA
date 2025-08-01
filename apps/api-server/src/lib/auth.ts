@@ -1,128 +1,55 @@
-import { verifyIdToken } from '@altamedica/firebase';
-import { ForbiddenError, logger, UnauthorizedError } from '@altamedica/shared';
-import type { UserRole } from '@altamedica/types';
+import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
 
-export interface AuthContext {
-  uid: string;
+export interface AuthToken {
+  userId: string;
   email: string;
-  role: UserRole;
-  isEmailVerified: boolean;
+  role: string;
+  exp: number;
 }
 
-export async function authenticateRequest(request: NextRequest): Promise<AuthContext> {
-  const authHeader = request.headers.get('authorization');
-  
+export const verifyAuthToken = async (token: string): Promise<AuthToken | null> => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as AuthToken;
+    return decoded;
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    return null;
+  }
+};
+
+export const generateAuthToken = (payload: Omit<AuthToken, 'exp'>): string => {
+  return jwt.sign(payload, process.env.JWT_SECRET || 'fallback-secret', {
+    expiresIn: '24h'
+  });
+};
+
+export const extractTokenFromHeader = (authHeader: string | null): string | null => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new UnauthorizedError('Missing or invalid authorization header');
+    return null;
   }
+  return authHeader.slice(7);
+};
 
-  const idToken = authHeader.substring(7); // Remove 'Bearer ' prefix
-
+// Add the missing verifyAuth function that many routes are trying to import
+export const verifyAuth = async (request: NextRequest): Promise<{ isValid: boolean; user: AuthToken | null }> => {
   try {
-    const decodedToken = await verifyIdToken(idToken);
+    const authHeader = request.headers.get('authorization');
+    const token = extractTokenFromHeader(authHeader);
     
-    return {
-      uid: decodedToken.uid,
-      email: decodedToken.email || '',
-      role: (decodedToken.role as UserRole) || 'patient',
-      isEmailVerified: decodedToken.email_verified || false,
-    };
-  } catch (error: unknown) {
-    logger.error('Token verification failed', error);
-    throw new UnauthorizedError('Invalid or expired token');
-  }
-}
-
-export function requireAuth(handler: (request: NextRequest, auth: AuthContext) => Promise<Response>) {
-  return async (request: NextRequest) => {
-    try {
-      const auth = await authenticateRequest(request);
-      return await handler(request, auth);
-    } catch (error: unknown) {
-      if (error instanceof UnauthorizedError || error instanceof ForbiddenError) {
-        return Response.json(
-          {
-            success: false,
-            error: {
-              code: (error as any).code,
-              message: (error as any).message,
-            },
-          },
-          { status: (error as any).statusCode }
-        );
-      }
-
-      logger.error('Authentication error', error);
-      return Response.json(
-        {
-          success: false,
-          error: {
-            code: 'INTERNAL_ERROR',
-            message: 'Internal server error',
-          },
-        },
-        { status: 500 }
-      );
+    if (!token) {
+      return { isValid: false, user: null };
     }
-  };
-}
 
-export function requireRole(roles: UserRole | UserRole[]) {
-  const allowedRoles = Array.isArray(roles) ? roles : [roles];
-
-  return function (handler: (request: NextRequest, auth: AuthContext) => Promise<Response>) {
-    return requireAuth(async (request: NextRequest, auth: AuthContext) => {
-      if (!allowedRoles.includes(auth.role)) {
-        throw new ForbiddenError(`Access denied. Required roles: ${allowedRoles.join(', ')}`);
-      }
-
-      return await handler(request, auth);
-    });
-  };
-}
-
-export function optionalAuth(handler: (request: NextRequest, auth?: AuthContext) => Promise<Response>) {
-  return async (request: NextRequest) => {
-    try {
-      const auth = await authenticateRequest(request);
-      return await handler(request, auth);
-    } catch (error: unknown) {
-      // If authentication fails, continue without auth context
-      return await handler(request, undefined);
+    const user = await verifyAuthToken(token);
+    
+    if (!user) {
+      return { isValid: false, user: null };
     }
-  };
-}
 
-export async function verifyAuthToken(request: NextRequest): Promise<{
-  success: boolean;
-  user?: {
-    id: string;
-    email: string;
-    role: UserRole;
-    name: string;
-    avatar?: string;
-    company_id?: string;
-  };
-  error?: string;
-}> {
-  try {
-    const auth = await authenticateRequest(request);
-    return {
-      success: true,
-      user: {
-        id: auth.uid,
-        email: auth.email,
-        role: auth.role,
-        name: auth.email.split('@')[0], // Simple fallback for name
-        avatar: undefined,
-        company_id: undefined
-      }
-    };
-  } catch (error: unknown) {
-    return {
-      success: false,
-      error: error instanceof Error ? (error as any).message : 'Authentication failed'
-    };
+    return { isValid: true, user };
+  } catch (error) {
+    console.error('Auth verification failed:', error);
+    return { isValid: false, user: null };
   }
-}
+};

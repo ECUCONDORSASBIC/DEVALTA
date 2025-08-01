@@ -4,7 +4,7 @@
  * Max lines: 250 (PROACTIVO standard)
  */
 
-import { adminAuth } from '@altamedica/firebase';
+import { adminAuth } from '@/lib/firebase-admin';
 import { NextRequest, NextResponse } from 'next/server';
 import { MedicalRecordExecutionContext } from './types';
 

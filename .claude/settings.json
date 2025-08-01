@@ -1,0 +1,204 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "description": "Valida lectura de archivos grandes para evitar límites 429",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/validate_file_read.sh",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "description": "Validación de seguridad HIPAA antes de editar",
+        "hooks": [
+          {
+            "type": "command", 
+            "command": "./scripts/hooks/hipaa_security_check.py",
+            "timeout": 20
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "description": "Valida comandos bash en contexto médico",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/validate_bash_command.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Glob",
+        "description": "Optimiza búsquedas en monorepo grande",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/optimize_glob_search.py",
+            "timeout": 25
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__altamedica__.*",
+        "description": "Valida herramientas MCP de AltaMedica",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/validate_mcp_tools.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "description": "Valida código generado para estándares médicos",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/validate_medical_code.py",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "description": "Monitorea uso de subagentes y suggest optimizations",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/monitor_subagent_usage.sh",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__altamedica__.*",
+        "description": "Post-procesa resultados de herramientas MCP",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/process_mcp_results.py",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": ".*",
+        "description": "Añade contexto de AI model selection y security",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/ai_model_advisor.py",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "description": "Verifica completitud de análisis médicos críticos",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/check_medical_analysis_completeness.py",
+            "timeout": 25
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": ".*",
+        "description": "Alertas personalizadas para AltaMedica",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/hooks/altamedica_notifications.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "mcp": {
+    "servers": [
+      {
+        "name": "altamedica-medical-ai",
+        "transport": {
+          "type": "stdio",
+          "command": "node",
+          "args": ["./mcp-servers/servers/medical-ai-server-simple.js"]
+        },
+        "enabled": true,
+        "description": "Servidor MCP para AI médica de AltaMedica (Simple)"
+      },
+      {
+        "name": "altamedica-webrtc-metrics",
+        "transport": {
+          "type": "stdio",
+          "command": "node",
+          "args": ["./mcp-servers/servers/webrtc-metrics-server-simple.js"]
+        },
+        "enabled": true,
+        "description": "Servidor MCP para métricas WebRTC (Simple)"
+      },
+      {
+        "name": "altamedica-hipaa-compliance",
+        "transport": {
+          "type": "stdio", 
+          "command": "node",
+          "args": ["./mcp-servers/servers/hipaa-compliance-server-simple.js"]
+        },
+        "enabled": true,
+        "description": "Servidor MCP para compliance HIPAA (Simple)"
+      }
+    ]
+  },
+  "debug": {
+    "enabled": true,
+    "logLevel": "info",
+    "logHookEvents": true,
+    "logMCPEvents": true
+  },
+  "security": {
+    "allowedDirectories": [
+      "./apps/",
+      "./packages/",
+      "./docs/",
+      "./scripts/",
+      "./mcp-servers/"
+    ],
+    "blockedPatterns": [
+      "*.key",
+      "*.pem", 
+      "**/patient-data/**",
+      "**/medical-records/**",
+      "**/.env.production",
+      "**/firebase-admin-key.json"
+    ],
+    "mcpSecurity": {
+      "validateInputs": true,
+      "sanitizeOutputs": true,
+      "auditLogging": true,
+      "hipaaCompliance": true
+    }
+  },
+  "performance": {
+    "maxConcurrentMCPCalls": 5,
+    "mcpTimeout": 30000,
+    "cacheEnabled": true,
+    "cacheTTL": 300
+  }
+}

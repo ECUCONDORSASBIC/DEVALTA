@@ -1,0 +1,23 @@
+import { defineConfig } from 'tsup';
+
+export default defineConfig({
+  entry: ['src/index.ts'],
+  format: ['cjs', 'esm'],
+  dts: true,
+  splitting: false,
+  sourcemap: true,
+  clean: true,
+  treeshake: true,
+  external: [
+    '@langchain/core',
+    '@langchain/openai',
+    '@pinecone-database/pinecone',
+    '@tensorflow/tfjs-node',
+    'openai',
+    'natural',
+    'compromise',
+    'fhir',
+    'ioredis',
+    'zod'
+  ]
+}); 

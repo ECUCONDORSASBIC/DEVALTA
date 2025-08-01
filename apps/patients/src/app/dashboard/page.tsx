@@ -1,4 +1,9 @@
 /**
+ * Este archivo es un módulo ESM (import/export). No se detectan incompatibilidades de módulos en este archivo.
+ * Si usas este dashboard en entornos CJS, puede haber incompatibilidades.
+ */
+
+/**
  * page.tsx - Dashboard de Paciente Mejorado y Robusto
  * Proyecto: Altamedica Pacientes
  * Diseño: Refactorización conservadora con componentes corporativos
@@ -119,7 +124,7 @@ export default function PatientDashboardImproved() {
   const { authState, logout } = useAuth();
   const { patientData, loading: patientLoading } = usePatientData();
 
-  // 📊 Estado del dashboard con gestión robusta
+  // Estado del dashboard
   const [dashboardState, setDashboardState] = useState<DashboardState>({
     appointments: [],
     recentRecords: [],
@@ -132,183 +137,87 @@ export default function PatientDashboardImproved() {
     lastUpdated: null,
   });
 
-  // 🔄 Efecto de inicialización
+  // Estado de errores y loading global
+  const [globalError, setGlobalError] = useState<string | null>(null);
+
+  // Efecto de inicialización
   useEffect(() => {
     loadDashboardData();
   }, []);
 
-  // 📡 Función principal de carga de datos
+  // Función principal de carga de datos reales
   const loadDashboardData = useCallback(async (isRefresh = false) => {
+    if (!authState?.user || !authState.token) return;
+    setDashboardState((prev) => ({
+      ...prev,
+      isLoading: !isRefresh,
+      isRefreshing: isRefresh,
+      errors: [],
+    }));
+    setGlobalError(null);
     try {
+      // 1. Citas
+      const appointmentsRes = await fetch(`/api/v1/appointments?patientId=${authState.user.id}&limit=5`, {
+        headers: { Authorization: `Bearer ${authState.token}` },
+      });
+      const appointmentsJson = await appointmentsRes.json();
+      if (!appointmentsRes.ok) throw new Error(appointmentsJson?.error || 'Error al cargar citas');
+      const appointments = appointmentsJson.data || [];
+
+      // 2. Historial médico
+      const recordsRes = await fetch(`/api/v1/medical-records?patientId=${authState.user.id}&limit=5`, {
+        headers: { Authorization: `Bearer ${authState.token}` },
+      });
+      const recordsJson = await recordsRes.json();
+      if (!recordsRes.ok) throw new Error(recordsJson?.error || 'Error al cargar historial médico');
+      const recentRecords = recordsJson.data || [];
+
+      // 3. Notificaciones
+      const notificationsRes = await fetch(`/api/v1/notifications?limit=5`, {
+        headers: { Authorization: `Bearer ${authState.token}` },
+      });
+      const notificationsJson = await notificationsRes.json();
+      if (!notificationsRes.ok) throw new Error(notificationsJson?.error || 'Error al cargar notificaciones');
+      const notifications = notificationsJson.data?.notifications || [];
+      const notificationsCount = notificationsJson.data?.unread_count || 0;
+
+      // 4. Telemedicina (opcional, si existe endpoint)
+      let telemedicineSessions = [];
+      try {
+        const teleRes = await fetch(`/api/v1/telemedicine/sessions?patientId=${authState.user.id}&limit=5`, {
+          headers: { Authorization: `Bearer ${authState.token}` },
+        });
+        if (teleRes.ok) {
+          const teleJson = await teleRes.json();
+          telemedicineSessions = teleJson.data || [];
+        }
+      } catch {}
+
       setDashboardState((prev) => ({
         ...prev,
-        isLoading: !isRefresh,
-        isRefreshing: isRefresh,
+        appointments,
+        recentRecords,
+        notifications: notificationsCount,
+        isLoading: false,
+        isRefreshing: false,
+        lastUpdated: new Date().toISOString(),
         errors: [],
       }));
-
-      // Simulación robusta de datos con validación
-      // En producción, estas serían llamadas a las APIs implementadas
-
-      const mockAppointments: Appointment[] = [
-        {
-          id: "apt-001",
-          doctorName: "Dr. Carlos García López",
-          specialty: "Cardiología",
-          date: "2025-06-27",
-          time: "10:00",
-          type: "consultation",
-          status: "confirmed",
-          location: "Consultorio 205, 2do Piso",
-          notes: "Control post-operatorio de bypass",
-        },
-        {
-          id: "apt-002",
-          doctorName: "Dra. María Elena Ruiz",
-          specialty: "Medicina General",
-          date: "2025-07-02",
-          time: "14:30",
-          type: "follow_up",
-          status: "scheduled",
-          location: "Telemedicina",
-          notes: "Revisión de resultados de laboratorio",
-        },
-        {
-          id: "apt-003",
-          doctorName: "Dr. Roberto Silva",
-          specialty: "Endocrinología",
-          date: "2025-07-05",
-          time: "09:15",
-          type: "consultation",
-          status: "scheduled",
-          location: "Consultorio 110, 1er Piso",
-        },
-      ];
-
-      const mockRecords: MedicalRecord[] = [
-        {
-          id: "rec-001",
-          date: "2025-06-15",
-          doctorName: "Dr. Carlos García López",
-          specialty: "Cardiología",
-          diagnosis: "Control post-operatorio - Bypass coronario",
-          notes:
-            "Evolución satisfactoria. Presión arterial controlada. Continuar con medicación actual y controles mensuales.",
-          attachments: [
-            "electrocardiograma_15-06-2025.pdf",
-            "rayos_x_torax.pdf",
-          ],
-          priority: "medium",
-        },
-        {
-          id: "rec-002",
-          date: "2025-06-10",
-          doctorName: "Dra. Ana López",
-          specialty: "Medicina General",
-          diagnosis: "Análisis de rutina - Resultados normales",
-          notes:
-            "Hemograma completo dentro de parámetros normales. Glucemia en ayunas: 95 mg/dl. Perfil lipídico: óptimo.",
-          priority: "low",
-        },
-      ];
-
-      const mockPrescriptions: Prescription[] = [
-        {
-          id: "presc-001",
-          medication: "Losartán 50mg",
-          dosage: "1 tableta",
-          frequency: "Cada 24 horas por la mañana",
-          prescribedBy: "Dr. Carlos García López",
-          date: "2025-06-15",
-          endDate: "2025-09-15",
-          status: "active",
-          instructions:
-            "Tomar con el estómago vacío, preferiblemente 30 minutos antes del desayuno",
-          remainingDoses: 85,
-        },
-        {
-          id: "presc-002",
-          medication: "Aspirina 100mg",
-          dosage: "1 tableta",
-          frequency: "Cada 24 horas por la noche",
-          prescribedBy: "Dr. Carlos García López",
-          date: "2025-06-15",
-          status: "active",
-          instructions:
-            "Tomar después de la cena para evitar molestias gástricas",
-          remainingDoses: 90,
-        },
-        {
-          id: "presc-003",
-          medication: "Atorvastatina 20mg",
-          dosage: "1 tableta",
-          frequency: "Cada 24 horas por la noche",
-          prescribedBy: "Dr. Carlos García López",
-          date: "2025-06-15",
-          endDate: "2025-12-15",
-          status: "active",
-          instructions: "Tomar por las noches. Evitar el consumo de pomelo.",
-          remainingDoses: 175,
-        },
-      ];
-
-      const mockHealthMetrics: HealthMetrics = {
-        bloodPressure: {
-          systolic: 125,
-          diastolic: 82,
-          date: "2025-06-25",
-          status: "normal",
-        },
-        heartRate: {
-          value: 72,
-          date: "2025-06-25",
-          status: "normal",
-        },
-        weight: {
-          value: 75.5,
-          date: "2025-06-20",
-          trend: "stable",
-        },
-        lastCheckup: "2025-06-15",
-      };
-
-      // Simulación de delay de red
-      await new Promise((resolve) =>
-        setTimeout(resolve, isRefresh ? 500 : 1200)
-      );
-
-      setDashboardState((prev) => ({
-        ...prev,
-        appointments: mockAppointments,
-        recentRecords: mockRecords,
-        activePrescriptions: mockPrescriptions,
-        healthMetrics: mockHealthMetrics,
-        notifications: 3,
-        isLoading: false,
-        isRefreshing: false,
-        lastUpdated: new Date().toLocaleString("es-AR"),
-      }));
-    } catch (error) {
-      const dashboardError: DashboardError = {
-        code: "DASHBOARD_LOAD_ERROR",
-        message:
-          error instanceof Error
-            ? error.message
-            : "Error desconocido al cargar dashboard",
-        severity: "high",
-        timestamp: new Date().toISOString(),
-      };
-
+    } catch (error: any) {
+      setGlobalError(error.message || 'Error general al cargar el dashboard');
       setDashboardState((prev) => ({
         ...prev,
         isLoading: false,
         isRefreshing: false,
-        errors: [...prev.errors, dashboardError],
+        errors: [{
+          code: 'DASHBOARD_LOAD_ERROR',
+          message: error.message || 'Error general al cargar el dashboard',
+          severity: 'high',
+          timestamp: new Date().toISOString(),
+        }],
       }));
-
-      console.error("Error loading dashboard data:", error);
     }
-  }, []);
+  }, [authState?.user, authState?.token]);
 
   // 🔄 Función de refresco manual
   const handleRefresh = useCallback(() => {

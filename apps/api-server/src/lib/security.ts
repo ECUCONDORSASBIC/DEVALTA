@@ -5,7 +5,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import rateLimit from './rate-limit'
-import { adminAuth } from '@altamedica/firebase'
+import { adminAuth } from '@/lib/firebase-admin'
 
 // Headers de seguridad obligatorios
 const SECURITY_HEADERS = {

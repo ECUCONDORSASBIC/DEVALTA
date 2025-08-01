@@ -11,8 +11,12 @@ packages:
   
   # 🏢 ROOT - Servicios Centrales y Administración
   - 'apps/api-server'
+  - 'apps/signaling-server'
   - 'apps/development'
   - 'apps/anthropic-simulator'
+  
+  # 🏥 CORE - Sistema Principal de AltaMedica
+  - 'altamedica-core'
   
   # 📦 PACKAGES - Bibliotecas Compartidas
   - 'packages/core'
@@ -27,3 +31,6 @@ packages:
   - 'packages/typescript-config'
   - 'packages/claude-config-manager'
   - 'packages/database'
+  - 'packages/medical-cache'
+  - 'packages/mobile-app'
+  - 'packages/telemedicine-core'

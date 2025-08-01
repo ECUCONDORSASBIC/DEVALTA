@@ -5,6 +5,7 @@
 
 import axios from 'axios';
 import { User } from 'firebase/auth';
+import { logger, medicalLogger } from '@altamedica/shared';
 
 // Configuración de la API
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -153,7 +154,7 @@ class DoctorService {
       const response = await this.api.get(`/doctors/profile/${userId}`);
       return response.data;
     } catch (error) {
-      console.error('Error obteniendo perfil del doctor:', error);
+      medicalLogger.critical('Error obteniendo perfil del doctor', { userId, error: error.message });
       throw new Error('No se pudo obtener el perfil del doctor');
     }
   }
@@ -166,7 +167,7 @@ class DoctorService {
       const response = await this.api.put(`/doctors/profile/${userId}`, profileData);
       return response.data;
     } catch (error) {
-      console.error('Error actualizando perfil del doctor:', error);
+      medicalLogger.critical('Error actualizando perfil del doctor', { userId, error: error.message });
       throw new Error('No se pudo actualizar el perfil del doctor');
     }
   }
@@ -179,7 +180,7 @@ class DoctorService {
       const response = await this.api.get(`/doctors/${userId}/stats`);
       return response.data;
     } catch (error) {
-      console.error('Error obteniendo estadísticas del doctor:', error);
+      medicalLogger.critical('Error obteniendo estadísticas del doctor', { userId, error: error.message });
       throw new Error('No se pudieron obtener las estadísticas');
     }
   }
@@ -192,7 +193,7 @@ class DoctorService {
       const response = await this.api.get(`/doctors/${userId}/appointments/today`);
       return response.data;
     } catch (error) {
-      console.error('Error obteniendo citas del día:', error);
+      medicalLogger.critical('Error obteniendo citas del día', { userId, error: error.message });
       throw new Error('No se pudieron obtener las citas del día');
     }
   }

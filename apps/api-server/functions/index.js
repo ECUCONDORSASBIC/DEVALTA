@@ -10,7 +10,7 @@ initializeApp();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: true }));
+app.use(cors({ origin: [/localhost:(3000|3002|3003|3004|3005)$/], credentials: true }));
 app.use(express.json());
 
 // Health check endpoint

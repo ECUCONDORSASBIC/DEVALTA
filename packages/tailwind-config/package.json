@@ -1,8 +1,9 @@
 {
-    "name": "@repo/tailwind-config",
+    "name": "@altamedica/tailwind-config",
     "version": "0.0.0",
     "private": true,
-    "main": "index.js",
+    "main": "index.cjs",
+    "type": "module",
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.7",
         "@tailwindcss/typography": "^0.5.10",

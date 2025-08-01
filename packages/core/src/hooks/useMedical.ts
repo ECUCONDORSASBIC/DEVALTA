@@ -1,15 +1,15 @@
 // Hooks personalizados para gestión de pacientes
 // Incluye: validación HIPAA, encriptación PHI, auditoria automática
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { 
-  PacienteBase, 
-  CitaMedica, 
-  RespuestaAPI, 
+import { useState, useCallback } from 'react'
+import {
+  PacienteBase,
+  CitaMedica,
+  RespuestaAPI,
   ParametrosPaginacion,
   RespuestaPaginada,
   RegistroAuditoria
-} from '@/types/medical'
+} from '@altamedica/types'
 
 // Hook principal para gestión de pacientes
 export const usePacientes = () => {

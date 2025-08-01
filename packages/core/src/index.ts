@@ -6,23 +6,16 @@
  */
 
 // Utils
-export * from "./utils/cn";
-export * from "./utils/validation";
-export * from "./utils/formatting";
-export * from "./utils/storage";
-export * from "./utils/medical-utils";
+export * from "./utils";
 
 // Hooks
-export * from "./hooks/useLocalStorage";
-export * from "./hooks/useDebounce";
-export * from "./hooks/useMediaQuery";
-export * from "./hooks/useMedical";
+export * from "./hooks";
 
 // Components
 export * from "./components/Button";
 export * from "./components/Card";
 export * from "./components/Loading";
-export * from "./components/MedicalPerformanceMonitor";
+export { default as MedicalPerformanceMonitor, MedicalPerformanceDashboard } from "./components/MedicalPerformanceMonitor";
 
 // Middleware
 export * from "./middleware/ApiOptimizationMiddleware";
@@ -30,6 +23,13 @@ export * from "./middleware/ApiOptimizationMiddleware";
 // Types
 export * from "./types/common";
 export * from "./types/api";
+export type { 
+  PacienteBase, 
+  CitaMedica, 
+  TipoCita, 
+  EstadoCita, 
+  ProvinciaArgentina 
+} from "@altamedica/types";
 
 // Constants
 export * from "./constants/medical";

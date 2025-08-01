@@ -7,8 +7,11 @@
     "declarationMap": true,
     "composite": true,
     "noEmit": false,
+    "types": ["node"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@altamedica/types": ["../types/src"],
+      "@altamedica/types/*": ["../types/src/*"]
     }
   },
   "references": [

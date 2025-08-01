@@ -6,7 +6,7 @@
  * DELETE /api/v1/medical-records - Eliminar historial médico
  */
 
-import { adminAuth } from '@altamedica/firebase';
+import { adminAuth } from '@/lib/firebase-admin';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   validateCreateMedicalRecord,

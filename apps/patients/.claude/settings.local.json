@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(./build-docker.sh:*)"
+    ],
+    "deny": []
+  }
+}

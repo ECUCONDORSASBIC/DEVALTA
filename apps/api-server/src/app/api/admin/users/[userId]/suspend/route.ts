@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuthToken } from '@/lib/auth';
+import { verifyAuth } from '@/lib/auth';
 import { db } from '@/lib/firebase-admin';
 
 export async function PATCH(
@@ -8,7 +8,7 @@ export async function PATCH(
 ) {
   try {
     // Verificar autenticación
-    const user = await verifyAuthToken(request);
+    const user = await verifyAuth(request);
     if (!user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }

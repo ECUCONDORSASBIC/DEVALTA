@@ -107,12 +107,12 @@ export default function AnalyticsPage() {
               ))}
             </select>
             
-            <Button variant="outline">
+            <Button className="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2">
               <Filter className="h-4 w-4 mr-2" />
               Filtros
             </Button>
             
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2">
               <Download className="h-4 w-4 mr-2" />
               Exportar
             </Button>

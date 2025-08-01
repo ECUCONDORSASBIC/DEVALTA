@@ -4,8 +4,8 @@
  * POST /api/v1/ai/risk-assessment
  */
 
-import { adminDb } from '@altamedica/firebase';
-import { createErrorResponse, createSuccessResponse } from '@altamedica/shared';
+import { adminDb } from '@/lib/firebase-admin';
+import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

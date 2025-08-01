@@ -1,0 +1,73 @@
+{
+  "port": 3008,
+  "host": "localhost",
+  "name": "devops-agent",
+  "logLevel": "info",
+  "corsOrigins": ["http://localhost:3000", "https://altamedica.com"],
+  "enableWebSocket": false,
+  "enableMetrics": true,
+  "healthCheckInterval": 30000,
+  "ci": {
+    "provider": "github",
+    "webhook": {
+      "secret": "your-webhook-secret-here",
+      "events": ["push", "pull_request", "release"]
+    }
+  },
+  "build": {
+    "commands": [
+      "npm install",
+      "npm run build",
+      "npm run test"
+    ],
+    "timeout": 300000,
+    "environment": {
+      "NODE_ENV": "production",
+      "BUILD_VERSION": "1.0.0"
+    }
+  },
+  "test": {
+    "commands": [
+      "npm run test:unit",
+      "npm run test:integration",
+      "npm run test:e2e"
+    ],
+    "timeout": 600000,
+    "coverage": {
+      "enabled": true,
+      "threshold": 80
+    }
+  },
+  "deploy": {
+    "strategy": "rolling",
+    "environments": {
+      "development": {
+        "url": "https://dev.altamedica.com",
+        "branch": "develop",
+        "variables": {
+          "NODE_ENV": "development",
+          "API_URL": "https://api-dev.altamedica.com",
+          "COMMAND": "docker-compose up -d"
+        }
+      },
+      "staging": {
+        "url": "https://staging.altamedica.com",
+        "branch": "staging",
+        "variables": {
+          "NODE_ENV": "staging",
+          "API_URL": "https://api-staging.altamedica.com",
+          "COMMAND": "docker-compose -f docker-compose.staging.yml up -d"
+        }
+      },
+      "production": {
+        "url": "https://altamedica.com",
+        "branch": "main",
+        "variables": {
+          "NODE_ENV": "production",
+          "API_URL": "https://api.altamedica.com",
+          "COMMAND": "docker-compose -f docker-compose.production.yml up -d"
+        }
+      }
+    }
+  }
+}

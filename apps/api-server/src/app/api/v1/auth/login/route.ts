@@ -1,39 +1,59 @@
-import { adminAuth, adminDb } from '@altamedica/firebase';
-import { createErrorResponse, createSuccessResponse } from '@altamedica/shared';
-import { VerifyTokenSchema } from '@altamedica/types';
+import { getAuthAdmin, getFirestoreAdmin } from '@/lib/firebase-admin';
+import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
+import { VerifyTokenSchema } from '@/lib/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { withSecurity } from '@/lib/security';
 import { authRateLimit, withRateLimit } from '@/middleware/rateLimiter';
+import { 
+  createSSOToken, 
+  setSSOCookies, 
+  getRedirectURLForUserType 
+} from '@altamedica/shared/auth';
+import { UserType } from '@altamedica/shared';
 
 async function loginHandler(request: NextRequest) {
   try {
+    // Get Firebase instances
+    const adminAuth = getAuthAdmin();
+    const adminDb = getFirestoreAdmin();
+    
+    if (!adminAuth || !adminDb) {
+      return NextResponse.json({
+        success: false,
+        message: 'FIREBASE_ERROR',
+        details: 'Firebase no está disponible'
+      }, { status: 503 });
+    }
+
     const body = await request.json();
     
     // Validate input using Zod schema
-    const { idToken } = VerifyTokenSchema.parse(body);
+    const { token } = VerifyTokenSchema.parse(body);
 
     // Verify the Firebase ID token
-    const decodedToken = await adminAuth.verifyIdToken(idToken);
+    const decodedToken = await adminAuth.verifyIdToken(token);
     const { uid, email } = decodedToken;
 
     // Get user profile from Firestore
     const userDoc = await adminDb.collection('users').doc(uid).get();
     
     if (!userDoc.exists) {
-      return NextResponse.json(
-        createErrorResponse('USER_NOT_FOUND', 'Usuario no encontrado'),
-        { status: 404 }
-      );
+      return NextResponse.json({
+        success: false,
+        message: 'USER_NOT_FOUND',
+        details: 'Usuario no encontrado'
+      }, { status: 404 });
     }
 
     const userData = userDoc.data();
 
     // Check if user is active
     if (!userData?.isActive) {
-      return NextResponse.json(
-        createErrorResponse('USER_INACTIVE', 'Usuario inactivo'),
-        { status: 403 }
-      );
+      return NextResponse.json({
+        success: false,
+        message: 'USER_INACTIVE',
+        details: 'Usuario inactivo'
+      }, { status: 403 });
     }
 
     // Update user metadata
@@ -62,24 +82,53 @@ async function loginHandler(request: NextRequest) {
       altamedicaUser: true,
     });
 
+    // Map role to UserType
+    const userTypeMap: Record<string, UserType> = {
+      'patient': UserType.PATIENT,
+      'doctor': UserType.DOCTOR,
+      'company': UserType.COMPANY,
+      'admin': UserType.ADMIN,
+    };
+    
+    const userType = userTypeMap[userData.role] || UserType.PATIENT;
+
+    // Create SSO tokens
+    const { accessToken, refreshToken } = await createSSOToken({
+      uid,
+      email: email || userData.email,
+      userType,
+      roles: [userData.role],
+      permissions: userData.permissions || [],
+    });
+
+    // Get redirect URL based on user type
+    const redirectUrl = getRedirectURLForUserType(userType);
+
     const responseData = {
       user: {
         uid,
         email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
+        name: userData.name,
         role: userData.role,
         emailVerified: userData.emailVerified,
-        phoneNumber: userData.phoneNumber,
         isActive: userData.isActive,
         metadata: userData.metadata,
       },
       roleProfile,
       customToken,
-      message: 'Login exitoso',
+      redirectUrl,
     };
 
-    return NextResponse.json(createSuccessResponse(responseData), { status: 200 });
+    const response = NextResponse.json({
+      success: true,
+      message: 'Login exitoso',
+      data: responseData
+    }, { status: 200 });
+
+    // Set SSO cookies
+    setSSOCookies(response, accessToken, refreshToken);
+
+    return response;
   } catch (error: any) {
     console.error('Login error:', error);
 

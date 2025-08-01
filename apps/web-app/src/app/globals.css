@@ -1,40 +1,23 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Estilos personalizados */
-@layer base {
-  html {
-    font-family: 'Inter', system-ui, sans-serif;
-  }
-  
-  body {
-    @apply bg-gray-50 text-gray-900;
-  }
+/* Leaflet CSS - necesario para el mapa */
+@import 'leaflet/dist/leaflet.css';
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
 }
 
-@layer components {
-  .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-  }
-  
-  .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-  }
-  
-  .card {
-    @apply bg-white rounded-lg shadow-md border border-gray-200;
-  }
-  
-  .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
-  }
-  
-  .nav-link {
-    @apply text-gray-600 hover:text-primary-600 transition-colors duration-200;
-  }
-  
-  .nav-link-active {
-    @apply text-primary-600 font-medium;
-  }
+/* Fix para iconos de Leaflet */
+.leaflet-container {
+  font-family: inherit;
+}
+
+/* Asegurar que los controles del mapa sean visibles */
+.leaflet-control-container .leaflet-top,
+.leaflet-control-container .leaflet-bottom {
+  z-index: 1000 !important;
 }

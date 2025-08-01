@@ -1,0 +1,242 @@
+{
+  "templates": {
+    "root": {
+      "name": "@altamedica/root",
+      "version": "1.0.0",
+      "private": true,
+      "description": "Sistema de telemedicina profesional con WebRTC, IA médica y compliance HIPAA - Workspace Root",
+      "packageManager": "pnpm@10.13.1",
+      "author": "Eduardo Altamedica",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/eduardo-altamedica/telemedicine-demo.git"
+      },
+      "bugs": {
+        "url": "https://github.com/eduardo-altamedica/telemedicine-demo/issues"
+      },
+      "homepage": "https://github.com/eduardo-altamedica/telemedicine-demo#readme",
+      "keywords": [
+        "telemedicina",
+        "webrtc",
+        "ai",
+        "hipaa",
+        "accesibilidad",
+        "react",
+        "nextjs"
+      ]
+    },
+    
+    "app": {
+      "name": "@altamedica/{APP_NAME}",
+      "version": "1.0.0",
+      "description": "{APP_DESCRIPTION}",
+      "private": true,
+      "author": "Eduardo Altamedica",
+      "license": "MIT",
+      "keywords": [
+        "telemedicine",
+        "altamedica",
+        "healthcare",
+        "nextjs",
+        "react"
+      ],
+      "scripts": {
+        "dev": "next dev --port {PORT}",
+        "build": "next build",
+        "start": "next start --port {PORT}",
+        "lint": "next lint",
+        "lint:fix": "next lint --fix",
+        "type-check": "tsc --noEmit",
+        "test": "vitest",
+        "test:watch": "vitest --watch",
+        "test:coverage": "vitest --coverage",
+        "clean": "rm -rf .next dist coverage"
+      },
+      "dependencies": {
+        "next": "^15.3.4",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "clsx": "^2.1.1",
+        "tailwind-merge": "^3.3.1",
+        "lucide-react": "^0.469.0"
+      },
+      "devDependencies": {
+        "@types/node": "^20.19.1",
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.0.0",
+        "@typescript-eslint/eslint-plugin": "^8.35.0",
+        "@typescript-eslint/parser": "^8.35.0",
+        "autoprefixer": "^10.4.16",
+        "eslint": "^8.57.1",
+        "eslint-config-next": "^15.0.0",
+        "eslint-plugin-react-hooks": "^4.6.2",
+        "postcss": "^8.4.32",
+        "prettier": "^3.1.0",
+        "tailwindcss": "^3.4.0",
+        "typescript": "^5.8.3",
+        "vitest": "^2.1.8"
+      }
+    },
+
+    "package": {
+      "name": "@altamedica/{PACKAGE_NAME}",
+      "version": "1.0.0",
+      "description": "{PACKAGE_DESCRIPTION}",
+      "main": "dist/index.js",
+      "types": "dist/index.d.ts",
+      "files": [
+        "dist"
+      ],
+      "author": "Eduardo Altamedica",
+      "license": "MIT",
+      "keywords": [
+        "altamedica",
+        "healthcare",
+        "medical",
+        "typescript"
+      ],
+      "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf dist",
+        "type-check": "tsc --noEmit",
+        "test": "vitest",
+        "test:watch": "vitest --watch",
+        "test:coverage": "vitest --coverage"
+      },
+      "devDependencies": {
+        "@types/node": "^20.19.1",
+        "typescript": "^5.8.3",
+        "vitest": "^1.6.1"
+      },
+      "peerDependencies": {
+        "react": "^18.0.0 || ^19.0.0",
+        "react-dom": "^18.0.0 || ^19.0.0"
+      },
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "import": "./dist/index.js",
+          "require": "./dist/index.js"
+        }
+      }
+    }
+  },
+
+  "standardDependencies": {
+    "medical": {
+      "dependencies": {
+        "@altamedica/types": "workspace:*",
+        "@altamedica/core": "workspace:*",
+        "zod": "^3.25.67"
+      }
+    },
+    "ui": {
+      "dependencies": {
+        "@altamedica/ui": "workspace:*",
+        "@altamedica/design-system": "workspace:*",
+        "framer-motion": "^12.23.6"
+      }
+    },
+    "firebase": {
+      "dependencies": {
+        "@altamedica/firebase": "workspace:*",
+        "firebase-admin": "^12.7.0"
+      }
+    },
+    "webrtc": {
+      "dependencies": {
+        "socket.io-client": "^4.8.1",
+        "ws": "^8.18.0"
+      },
+      "devDependencies": {
+        "@types/ws": "^8.5.10"
+      }
+    }
+  },
+
+  "workspaceDependencyStandardization": {
+    "preferredFormat": "workspace:*",
+    "exceptions": {
+      "@altamedica/shared": "workspace:*"
+    }
+  },
+
+  "optionalStandardizations": {
+    "normalizeVersions": true,
+    "standardizeWorkspaceDeps": true,
+    "addMissingScripts": true,
+    "updateDependencyVersions": false,
+    "preserveCustomConfigurations": true
+  },
+
+  "fieldsToPreserve": [
+    "type",
+    "main", 
+    "files",
+    "exports",
+    "peerDependencies"
+  ],
+
+  "appConfigurations": {
+    "web-app": {
+      "port": 3000,
+      "description": "AltaMedica main web application and authentication gateway",
+      "version": "0.1.0",
+      "preserveScripts": ["dev", "test:e2e", "test:e2e:open", "cypress:open", "cypress:run"],
+      "customScripts": {
+        "dev": "next dev"
+      }
+    },
+    "api-server": {
+      "port": 3001,
+      "description": "API Server for Altamedica telemedicine platform",
+      "preserveScripts": ["build"],
+      "customScripts": {
+        "build": "node build-no-lint.js"
+      }
+    },
+    "doctors": {
+      "port": 3002,
+      "description": "ALTAMEDICA Doctors Management - Medical professionals platform",
+      "preserveScripts": ["signaling", "dev:full"],
+      "customScripts": {
+        "signaling": "node scripts/start-signaling.js",
+        "dev:full": "concurrently \"pnpm signaling\" \"pnpm dev\""
+      }
+    },
+    "patients": {
+      "port": 3003,
+      "description": "ALTAMEDICA Patients Portal - Healthcare access platform"
+    },
+    "companies": {
+      "port": 3004,
+      "description": "ALTAMEDICA Companies Portal - B2B healthcare marketplace",
+      "preserveScripts": ["dev", "dev:http", "dev:https"],
+      "customScripts": {
+        "dev": "node server-fixed.js",
+        "dev:http": "next dev --port 3004",
+        "dev:https": "node https-server.js"
+      }
+    },
+    "admin": {
+      "port": 3005,
+      "description": "ALTAMEDICA Admin Panel - System administration dashboard",
+      "customScripts": {
+        "dev": "next dev --turbopack --port 3005"
+      }
+    },
+    "signaling-server": {
+      "port": 8888,
+      "description": "WebRTC signaling server for telemedicine video calls"
+    }
+  },
+
+  "versionConstraints": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0",
+    "next": "^15.3.4",
+    "react": "^19.0.0",
+    "typescript": "^5.8.3"
+  }
+}

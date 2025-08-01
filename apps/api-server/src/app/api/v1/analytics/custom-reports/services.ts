@@ -3,7 +3,7 @@
  * Lógica de negocio para generación de reportes médicos
  */
 
-import { adminDb } from '@altamedica/firebase';
+import { adminDb } from '@/lib/firebase-admin';
 import {
     CustomReportRequest,
     PerformanceMetrics,

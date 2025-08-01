@@ -1,0 +1,58 @@
+{
+  "port": 3002,
+  "host": "localhost",
+  "name": "routing-agent",
+  "logLevel": "info",
+  "corsOrigins": ["http://localhost:3000", "https://altamedica.com"],
+  "enableWebSocket": false,
+  "enableMetrics": true,
+  "healthCheckInterval": 30000,
+  "services": {
+    "auth-service": {
+      "url": "http://localhost:3001",
+      "port": 3001,
+      "healthCheck": "/health"
+    },
+    "patient-service": {
+      "url": "http://localhost:3003",
+      "port": 3003,
+      "healthCheck": "/health"
+    },
+    "doctor-service": {
+      "url": "http://localhost:3004",
+      "port": 3004,
+      "healthCheck": "/health"
+    },
+    "admin-service": {
+      "url": "http://localhost:3005",
+      "port": 3005,
+      "healthCheck": "/health"
+    }
+  },
+  "routes": {
+    "auth-login": {
+      "path": "/auth/login",
+      "service": "auth-service",
+      "requiresAuth": false,
+      "roles": []
+    },
+    "patient-dashboard": {
+      "path": "/patient/dashboard",
+      "service": "patient-service",
+      "requiresAuth": true,
+      "roles": ["patient"]
+    },
+    "doctor-dashboard": {
+      "path": "/doctor/dashboard",
+      "service": "doctor-service",
+      "requiresAuth": true,
+      "roles": ["doctor"]
+    },
+    "admin-dashboard": {
+      "path": "/admin/dashboard",
+      "service": "admin-service",
+      "requiresAuth": true,
+      "roles": ["admin"]
+    }
+  }
+}

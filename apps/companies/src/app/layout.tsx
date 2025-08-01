@@ -1,5 +1,11 @@
 import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 import './globals.css'
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
 
 export const metadata: Metadata = {
   title: 'ALTAMEDICA Companies',
@@ -13,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body>
+      <body className={inter.variable}>
         <main className="min-h-screen">
           {children}
         </main>

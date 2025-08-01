@@ -1,488 +1,779 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
 import {
-  Activity,
-  Heart,
-  Thermometer,
-  Scale,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-} from "lucide-react";
+    Activity,
+    AlertTriangle,
+    CheckCircle,
+    Droplets,
+    Edit,
+    Heart,
+    LineChart,
+    Minus,
+    Plus,
+    Trash2,
+    TrendingDown,
+    TrendingUp,
+    User,
+    Weight,
+    Zap
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface HealthMetric {
   id: string;
-  type:
-    | "bloodPressure"
-    | "heartRate"
-    | "weight"
-    | "temperature"
-    | "bloodSugar"
-    | "oxygenSaturation";
+  name: string;
   value: number;
   unit: string;
+  category: string;
   date: string;
   time: string;
-  status: "normal" | "elevated" | "high" | "low" | "critical";
+  trend: 'up' | 'down' | 'stable';
+  status: 'normal' | 'warning' | 'critical';
+  targetRange: {
+    min: number;
+    max: number;
+  };
   notes?: string;
+  source: 'manual' | 'device' | 'lab';
 }
 
-interface BloodPressureMetric {
-  systolic: number;
-  diastolic: number;
-  date: string;
-  time: string;
-  status: "normal" | "elevated" | "high" | "low" | "critical";
+interface MetricCategory {
+  name: string;
+  icon: React.ReactNode;
+  color: string;
+  metrics: HealthMetric[];
 }
 
 export default function HealthMetricsPage() {
-  const [selectedPeriod, setSelectedPeriod] = useState<
-    "week" | "month" | "year"
-  >("week");
-  const [selectedMetric, setSelectedMetric] = useState<string>("all");
+  const [metrics, setMetrics] = useState<HealthMetric[]>([]);
+  const [filteredMetrics, setFilteredMetrics] = useState<HealthMetric[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('7d');
+  const [viewMode, setViewMode] = useState<'dashboard' | 'list' | 'chart'>('dashboard');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedMetric, setSelectedMetric] = useState<HealthMetric | null>(null);
+  const [categories, setCategories] = useState<MetricCategory[]>([]);
 
-  // Mock data
-  const bloodPressureData: BloodPressureMetric[] = [
-    {
-      systolic: 120,
-      diastolic: 80,
-      date: "2025-01-27",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      systolic: 125,
-      diastolic: 82,
-      date: "2025-01-26",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      systolic: 118,
-      diastolic: 78,
-      date: "2025-01-25",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      systolic: 130,
-      diastolic: 85,
-      date: "2025-01-24",
-      time: "08:00",
-      status: "elevated",
-    },
-    {
-      systolic: 122,
-      diastolic: 81,
-      date: "2025-01-23",
-      time: "08:00",
-      status: "normal",
-    },
-  ];
+  // Formulario para agregar/editar métrica
+  const [formData, setFormData] = useState({
+    name: '',
+    value: '',
+    unit: '',
+    category: '',
+    notes: ''
+  });
 
-  const heartRateData: HealthMetric[] = [
-    {
-      id: "1",
-      type: "heartRate",
-      value: 72,
-      unit: "bpm",
-      date: "2025-01-27",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      id: "2",
-      type: "heartRate",
-      value: 75,
-      unit: "bpm",
-      date: "2025-01-26",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      id: "3",
-      type: "heartRate",
-      value: 68,
-      unit: "bpm",
-      date: "2025-01-25",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      id: "4",
-      type: "heartRate",
-      value: 82,
-      unit: "bpm",
-      date: "2025-01-24",
-      time: "08:00",
-      status: "elevated",
-    },
-    {
-      id: "5",
-      type: "heartRate",
-      value: 70,
-      unit: "bpm",
-      date: "2025-01-23",
-      time: "08:00",
-      status: "normal",
-    },
-  ];
+  useEffect(() => {
+    loadHealthMetrics();
+  }, []);
 
-  const weightData: HealthMetric[] = [
-    {
-      id: "1",
-      type: "weight",
-      value: 75.2,
-      unit: "kg",
-      date: "2025-01-27",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      id: "2",
-      type: "weight",
-      value: 75.5,
-      unit: "kg",
-      date: "2025-01-26",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      id: "3",
-      type: "weight",
-      value: 75.8,
-      unit: "kg",
-      date: "2025-01-25",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      id: "4",
-      type: "weight",
-      value: 76.1,
-      unit: "kg",
-      date: "2025-01-24",
-      time: "08:00",
-      status: "normal",
-    },
-    {
-      id: "5",
-      type: "weight",
-      value: 75.9,
-      unit: "kg",
-      date: "2025-01-23",
-      time: "08:00",
-      status: "normal",
-    },
-  ];
+  useEffect(() => {
+    filterMetrics();
+    groupMetricsByCategory();
+  }, [metrics, selectedCategory, selectedPeriod]);
+
+  const loadHealthMetrics = async () => {
+    try {
+      // Simulación de datos - en producción usarías tus APIs
+      const mockMetrics: HealthMetric[] = [
+        {
+          id: '1',
+          name: 'Presión Arterial Sistólica',
+          value: 120,
+          unit: 'mmHg',
+          category: 'Cardiovascular',
+          date: '2025-01-15',
+          time: '08:30',
+          trend: 'stable',
+          status: 'normal',
+          targetRange: { min: 90, max: 140 },
+          source: 'manual'
+        },
+        {
+          id: '2',
+          name: 'Presión Arterial Diastólica',
+          value: 80,
+          unit: 'mmHg',
+          category: 'Cardiovascular',
+          date: '2025-01-15',
+          time: '08:30',
+          trend: 'stable',
+          status: 'normal',
+          targetRange: { min: 60, max: 90 },
+          source: 'manual'
+        },
+        {
+          id: '3',
+          name: 'Frecuencia Cardíaca',
+          value: 72,
+          unit: 'bpm',
+          category: 'Cardiovascular',
+          date: '2025-01-15',
+          time: '08:30',
+          trend: 'down',
+          status: 'normal',
+          targetRange: { min: 60, max: 100 },
+          source: 'device'
+        },
+        {
+          id: '4',
+          name: 'Peso',
+          value: 70.5,
+          unit: 'kg',
+          category: 'Antropométricas',
+          date: '2025-01-15',
+          time: '07:00',
+          trend: 'down',
+          status: 'normal',
+          targetRange: { min: 60, max: 80 },
+          source: 'device'
+        },
+        {
+          id: '5',
+          name: 'Temperatura',
+          value: 36.8,
+          unit: '°C',
+          category: 'Vitales',
+          date: '2025-01-15',
+          time: '08:00',
+          trend: 'stable',
+          status: 'normal',
+          targetRange: { min: 36.0, max: 37.5 },
+          source: 'device'
+        },
+        {
+          id: '6',
+          name: 'Glucemia',
+          value: 95,
+          unit: 'mg/dL',
+          category: 'Metabólicas',
+          date: '2025-01-15',
+          time: '07:30',
+          trend: 'down',
+          status: 'normal',
+          targetRange: { min: 70, max: 100 },
+          source: 'lab'
+        },
+        {
+          id: '7',
+          name: 'Oxigenación',
+          value: 98,
+          unit: '%',
+          category: 'Respiratorias',
+          date: '2025-01-15',
+          time: '08:15',
+          trend: 'stable',
+          status: 'normal',
+          targetRange: { min: 95, max: 100 },
+          source: 'device'
+        },
+        {
+          id: '8',
+          name: 'Pasos Diarios',
+          value: 8500,
+          unit: 'pasos',
+          category: 'Actividad',
+          date: '2025-01-15',
+          time: '23:59',
+          trend: 'up',
+          status: 'normal',
+          targetRange: { min: 8000, max: 12000 },
+          source: 'device'
+        }
+      ];
+
+      setMetrics(mockMetrics);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading health metrics:', error);
+      setLoading(false);
+    }
+  };
+
+  const filterMetrics = () => {
+    let filtered = metrics;
+
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(metric => metric.category === selectedCategory);
+    }
+
+    // Filtrar por período
+    const now = new Date();
+    const periodDays = parseInt(selectedPeriod.replace('d', ''));
+    const cutoffDate = new Date(now.getTime() - (periodDays * 24 * 60 * 60 * 1000));
+    
+    filtered = filtered.filter(metric => new Date(metric.date) >= cutoffDate);
+
+    setFilteredMetrics(filtered);
+  };
+
+  const groupMetricsByCategory = () => {
+    const categoryMap = new Map<string, HealthMetric[]>();
+    
+    filteredMetrics.forEach(metric => {
+      if (!categoryMap.has(metric.category)) {
+        categoryMap.set(metric.category, []);
+      }
+      categoryMap.get(metric.category)!.push(metric);
+    });
+
+    const groupedCategories: MetricCategory[] = Array.from(categoryMap.entries()).map(([name, metrics]) => ({
+      name,
+      icon: getCategoryIcon(name),
+      color: getCategoryColor(name),
+      metrics
+    }));
+
+    setCategories(groupedCategories);
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'Cardiovascular': return <Heart className="w-6 h-6" />;
+      case 'Antropométricas': return <Weight className="w-6 h-6" />;
+      case 'Vitales': return <Activity className="w-6 h-6" />;
+      case 'Metabólicas': return <Zap className="w-6 h-6" />;
+      case 'Respiratorias': return <Droplets className="w-6 h-6" />;
+      case 'Actividad': return <User className="w-6 h-6" />;
+      default: return <Activity className="w-6 h-6" />;
+    }
+  };
+
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      'Cardiovascular': 'bg-red-100 text-red-800',
+      'Antropométricas': 'bg-blue-100 text-blue-800',
+      'Vitales': 'bg-green-100 text-green-800',
+      'Metabólicas': 'bg-purple-100 text-purple-800',
+      'Respiratorias': 'bg-yellow-100 text-yellow-800',
+      'Actividad': 'bg-indigo-100 text-indigo-800'
+    };
+    return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "normal":
-        return "text-green-600 bg-green-100";
-      case "elevated":
-        return "text-yellow-600 bg-yellow-100";
-      case "high":
-        return "text-orange-600 bg-orange-100";
-      case "low":
-        return "text-blue-600 bg-blue-100";
-      case "critical":
-        return "text-red-600 bg-red-100";
-      default:
-        return "text-gray-600 bg-gray-100";
+      case 'normal': return 'bg-green-100 text-green-800';
+      case 'warning': return 'bg-yellow-100 text-yellow-800';
+      case 'critical': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "normal":
-        return "Normal";
-      case "elevated":
-        return "Elevado";
-      case "high":
-        return "Alto";
-      case "low":
-        return "Bajo";
-      case "critical":
-        return "Crítico";
-      default:
-        return "Desconocido";
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'up': return <TrendingUp className="w-4 h-4 text-green-600" />;
+      case 'down': return <TrendingDown className="w-4 h-4 text-red-600" />;
+      case 'stable': return <Minus className="w-4 h-4 text-gray-400" />;
+      default: return <Minus className="w-4 h-4 text-gray-400" />;
     }
   };
 
-  const getTrendIcon = (current: number, previous: number) => {
-    if (current > previous)
-      return <TrendingUp className="w-4 h-4 text-red-500" />;
-    if (current < previous)
-      return <TrendingDown className="w-4 h-4 text-green-500" />;
-    return <Minus className="w-4 h-4 text-gray-500" />;
+  const isValueNormal = (metric: HealthMetric) => {
+    return metric.value >= metric.targetRange.min && metric.value <= metric.targetRange.max;
   };
 
-  const getMetricIcon = (type: string) => {
-    switch (type) {
-      case "bloodPressure":
-        return <Activity className="w-6 h-6 text-blue-600" />;
-      case "heartRate":
-        return <Heart className="w-6 h-6 text-red-600" />;
-      case "weight":
-        return <Scale className="w-6 h-6 text-purple-600" />;
-      case "temperature":
-        return <Thermometer className="w-6 h-6 text-orange-600" />;
-      default:
-        return <Activity className="w-6 h-6 text-gray-600" />;
-    }
+  const getLatestMetric = (category: string) => {
+    const categoryMetrics = metrics.filter(m => m.category === category);
+    return categoryMetrics.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
   };
 
-  const currentBP = bloodPressureData[0];
-  const currentHR = heartRateData[0];
-  const currentWeight = weightData[0];
+  const handleAddMetric = () => {
+    setFormData({
+      name: '',
+      value: '',
+      unit: '',
+      category: '',
+      notes: ''
+    });
+    setShowAddModal(true);
+  };
+
+  const handleEditMetric = (metric: HealthMetric) => {
+    setSelectedMetric(metric);
+    setFormData({
+      name: metric.name,
+      value: metric.value.toString(),
+      unit: metric.unit,
+      category: metric.category,
+      notes: metric.notes || ''
+    });
+    setShowEditModal(true);
+  };
+
+  const handleSubmitMetric = () => {
+    // Implementar guardado de métrica
+    console.log('Saving metric:', formData);
+    setShowAddModal(false);
+    setShowEditModal(false);
+  };
+
+  const handleDeleteMetric = (metricId: string) => {
+    // Implementar eliminación de métrica
+    console.log('Deleting metric:', metricId);
+  };
+
+  const metricCategories = Array.from(new Set(metrics.map(m => m.category))).sort();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando métricas de salud...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Métricas de Salud
-          </h1>
-          <p className="text-gray-600">
-            Seguimiento de tus indicadores vitales
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Agregar Medición
-          </button>
-        </div>
-      </div>
-
-      {/* Filtros */}
-      <div className="flex gap-4 mb-6">
-        <select
-          value={selectedPeriod}
-          onChange={(e) => setSelectedPeriod(e.target.value as any)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="week">Última Semana</option>
-          <option value="month">Último Mes</option>
-          <option value="year">Último Año</option>
-        </select>
-        <select
-          value={selectedMetric}
-          onChange={(e) => setSelectedMetric(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="all">Todas las Métricas</option>
-          <option value="bloodPressure">Presión Arterial</option>
-          <option value="heartRate">Frecuencia Cardíaca</option>
-          <option value="weight">Peso</option>
-          <option value="temperature">Temperatura</option>
-        </select>
-      </div>
-
-      {/* Métricas Principales */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* Presión Arterial */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              {getMetricIcon("bloodPressure")}
-              <h3 className="text-lg font-semibold text-gray-900">
-                Presión Arterial
-              </h3>
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Métricas de Salud</h1>
+              <p className="text-gray-600 mt-1">Monitorea y gestiona tus indicadores de salud</p>
             </div>
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(currentBP.status)}`}
+            <button
+              onClick={handleAddMetric}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
-              {getStatusLabel(currentBP.status)}
-            </span>
-          </div>
-
-          <div className="text-center mb-4">
-            <div className="text-3xl font-bold text-gray-900">
-              {currentBP.systolic}/{currentBP.diastolic}
-            </div>
-            <div className="text-sm text-gray-600">mmHg</div>
-          </div>
-
-          <div className="text-xs text-gray-500 text-center">
-            Última medición:{" "}
-            {new Date(currentBP.date).toLocaleDateString("es-ES")}{" "}
-            {currentBP.time}
-          </div>
-        </div>
-
-        {/* Frecuencia Cardíaca */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              {getMetricIcon("heartRate")}
-              <h3 className="text-lg font-semibold text-gray-900">
-                Frecuencia Cardíaca
-              </h3>
-            </div>
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(currentHR.status)}`}
-            >
-              {getStatusLabel(currentHR.status)}
-            </span>
-          </div>
-
-          <div className="text-center mb-4">
-            <div className="text-3xl font-bold text-gray-900">
-              {currentHR.value}
-            </div>
-            <div className="text-sm text-gray-600">{currentHR.unit}</div>
-          </div>
-
-          <div className="text-xs text-gray-500 text-center">
-            Última medición:{" "}
-            {new Date(currentHR.date).toLocaleDateString("es-ES")}{" "}
-            {currentHR.time}
-          </div>
-        </div>
-
-        {/* Peso */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              {getMetricIcon("weight")}
-              <h3 className="text-lg font-semibold text-gray-900">Peso</h3>
-            </div>
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(currentWeight.status)}`}
-            >
-              {getStatusLabel(currentWeight.status)}
-            </span>
-          </div>
-
-          <div className="text-center mb-4">
-            <div className="text-3xl font-bold text-gray-900">
-              {currentWeight.value}
-            </div>
-            <div className="text-sm text-gray-600">{currentWeight.unit}</div>
-          </div>
-
-          <div className="text-xs text-gray-500 text-center">
-            Última medición:{" "}
-            {new Date(currentWeight.date).toLocaleDateString("es-ES")}{" "}
-            {currentWeight.time}
+              <Plus className="w-4 h-4 mr-2" />
+              Agregar Métrica
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Gráficos y Tablas */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Presión Arterial - Tabla */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Historial Presión Arterial
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-2">Fecha</th>
-                  <th className="text-left py-2">Sistólica</th>
-                  <th className="text-left py-2">Diastólica</th>
-                  <th className="text-left py-2">Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bloodPressureData.map((reading, index) => (
-                  <tr key={index} className="border-b border-gray-100">
-                    <td className="py-2">
-                      {new Date(reading.date).toLocaleDateString("es-ES")}
-                    </td>
-                    <td className="py-2 font-medium">{reading.systolic}</td>
-                    <td className="py-2 font-medium">{reading.diastolic}</td>
-                    <td className="py-2">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(reading.status)}`}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Controles */}
+        <div className="bg-white rounded-lg shadow p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">Todas las categorías</option>
+                  {metricCategories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Período</label>
+                <select
+                  value={selectedPeriod}
+                  onChange={(e) => setSelectedPeriod(e.target.value)}
+                  className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="1d">Último día</option>
+                  <option value="7d">Última semana</option>
+                  <option value="30d">Último mes</option>
+                  <option value="90d">Últimos 3 meses</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setViewMode('dashboard')}
+                className={`px-3 py-1 text-sm rounded-md ${
+                  viewMode === 'dashboard'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-3 py-1 text-sm rounded-md ${
+                  viewMode === 'list'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Lista
+              </button>
+              <button
+                onClick={() => setViewMode('chart')}
+                className={`px-3 py-1 text-sm rounded-md ${
+                  viewMode === 'chart'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Gráficos
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Vista Dashboard */}
+        {viewMode === 'dashboard' && (
+          <div className="space-y-8">
+            {/* Resumen general */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Normales</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {filteredMetrics.filter(m => m.status === 'normal').length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <div className="p-2 bg-yellow-100 rounded-lg">
+                    <AlertTriangle className="w-6 h-6 text-yellow-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Advertencias</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {filteredMetrics.filter(m => m.status === 'warning').length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <div className="p-2 bg-red-100 rounded-lg">
+                    <AlertTriangle className="w-6 h-6 text-red-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Críticos</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {filteredMetrics.filter(m => m.status === 'critical').length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <Activity className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Total</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      {filteredMetrics.length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Métricas por categoría */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {metricCategories.map((category) => {
+                const latestMetric = getLatestMetric(category);
+                if (!latestMetric) return null;
+
+                return (
+                  <div key={category} className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className={`p-2 rounded-lg ${getCategoryColor(category)}`}>
+                          {getCategoryIcon(category)}
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900">{category}</h3>
+                      </div>
+                      <button
+                        onClick={() => setSelectedCategory(category)}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                       >
-                        {getStatusLabel(reading.status)}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        Ver todas
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">{latestMetric.name}</span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg font-semibold text-gray-900">
+                            {latestMetric.value} {latestMetric.unit}
+                          </span>
+                          {getTrendIcon(latestMetric.trend)}
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">
+                          Rango: {latestMetric.targetRange.min}-{latestMetric.targetRange.max} {latestMetric.unit}
+                        </span>
+                        <span className={`px-2 py-1 rounded-full ${getStatusColor(latestMetric.status)}`}>
+                          {latestMetric.status}
+                        </span>
+                      </div>
+                      
+                      <div className="text-xs text-gray-500">
+                        Última medición: {new Date(latestMetric.date).toLocaleDateString('es-ES')} a las {latestMetric.time}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Frecuencia Cardíaca - Tabla */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Historial Frecuencia Cardíaca
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-2">Fecha</th>
-                  <th className="text-left py-2">Frecuencia</th>
-                  <th className="text-left py-2">Estado</th>
-                  <th className="text-left py-2">Tendencia</th>
-                </tr>
-              </thead>
-              <tbody>
-                {heartRateData.map((reading, index) => (
-                  <tr key={reading.id} className="border-b border-gray-100">
-                    <td className="py-2">
-                      {new Date(reading.date).toLocaleDateString("es-ES")}
-                    </td>
-                    <td className="py-2 font-medium">
-                      {reading.value} {reading.unit}
-                    </td>
-                    <td className="py-2">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(reading.status)}`}
-                      >
-                        {getStatusLabel(reading.status)}
-                      </span>
-                    </td>
-                    <td className="py-2">
-                      {index < heartRateData.length - 1 &&
-                        getTrendIcon(
-                          reading.value,
-                          heartRateData[index + 1].value
-                        )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* Vista Lista */}
+        {viewMode === 'list' && (
+          <div className="space-y-6">
+            {metricCategories.map((category) => (
+              <div key={category.name} className="bg-white rounded-lg shadow">
+                <div className="p-6 border-b border-gray-200">
+                  <div className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-lg ${category.color}`}>
+                      {category.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
+                      <p className="text-sm text-gray-600">{category.metrics.length} métricas</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="divide-y divide-gray-200">
+                  {category.metrics.map((metric) => (
+                    <div key={metric.id} className="p-6 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <h4 className="text-lg font-medium text-gray-900">{metric.name}</h4>
+                            <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(metric.status)}`}>
+                              {metric.status}
+                            </span>
+                            {getTrendIcon(metric.trend)}
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <span className="text-gray-600">Valor:</span>
+                              <p className="font-medium">{metric.value} {metric.unit}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">Rango objetivo:</span>
+                              <p className="font-medium">{metric.targetRange.min}-{metric.targetRange.max} {metric.unit}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">Fecha:</span>
+                              <p className="font-medium">{new Date(metric.date).toLocaleDateString('es-ES')}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">Hora:</span>
+                              <p className="font-medium">{metric.time}</p>
+                            </div>
+                          </div>
+                          {metric.notes && (
+                            <div className="mt-3 p-3 bg-blue-50 rounded-md">
+                              <p className="text-sm text-blue-800">{metric.notes}</p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-2 ml-4">
+                          <button
+                            onClick={() => handleEditMetric(metric)}
+                            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteMetric(metric.id)}
+                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
+
+        {/* Vista Gráficos */}
+        {viewMode === 'chart' && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Análisis de Tendencias</h3>
+            <div className="text-center py-12">
+              <LineChart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">Los gráficos estarán disponibles próximamente</p>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Información Adicional */}
-      <div className="mt-8 bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Información de Salud
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="font-medium text-gray-900 mb-2">Rangos Normales</h4>
-            <ul className="space-y-1 text-sm text-gray-600">
-              <li>• Presión Arterial: 90/60 - 120/80 mmHg</li>
-              <li>• Frecuencia Cardíaca: 60-100 bpm</li>
-              <li>• Temperatura: 36.5°C - 37.5°C</li>
-              <li>• Oxigenación: 95-100%</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-900 mb-2">Recomendaciones</h4>
-            <ul className="space-y-1 text-sm text-gray-600">
-              <li>• Mide tu presión arterial por la mañana</li>
-              <li>• Mantén un registro diario de tus mediciones</li>
-              <li>• Consulta a tu médico si hay cambios significativos</li>
-              <li>• Mantén un estilo de vida saludable</li>
-            </ul>
+      {/* Modal para agregar métrica */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-md w-full mx-4">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Agregar Métrica</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Ej: Presión Arterial"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Valor</label>
+                    <input
+                      type="number"
+                      value={formData.value}
+                      onChange={(e) => setFormData({...formData, value: e.target.value})}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="120"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Unidad</label>
+                    <input
+                      type="text"
+                      value={formData.unit}
+                      onChange={(e) => setFormData({...formData, unit: e.target.value})}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="mmHg"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">Seleccionar categoría</option>
+                    {metricCategories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Notas (opcional)</label>
+                  <textarea
+                    value={formData.notes}
+                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                    rows={3}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Observaciones adicionales..."
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-end space-x-3 mt-6">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSubmitMetric}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Modal para editar métrica */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-md w-full mx-4">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Editar Métrica</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Valor</label>
+                    <input
+                      type="number"
+                      value={formData.value}
+                      onChange={(e) => setFormData({...formData, value: e.target.value})}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Unidad</label>
+                    <input
+                      type="text"
+                      value={formData.unit}
+                      onChange={(e) => setFormData({...formData, unit: e.target.value})}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    {metricCategories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Notas</label>
+                  <textarea
+                    value={formData.notes}
+                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                    rows={3}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-end space-x-3 mt-6">
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSubmitMetric}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Actualizar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 {
-  "extends": "../../configs/base/tsconfig.base.json",
+  "extends": "../configs/base/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
@@ -8,9 +8,22 @@
     "composite": true,
     "noEmit": false,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@altamedica/types": [
+        "../types/src"
+      ],
+      "@altamedica/types/*": [
+        "../types/src/*"
+      ]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

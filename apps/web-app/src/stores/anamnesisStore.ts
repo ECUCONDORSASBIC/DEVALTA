@@ -1,7 +1,14 @@
 'use client'
 import { create } from 'zustand'
 import { devtools, subscribeWithSelector } from 'zustand/middleware'
-import { Vector3 } from 'three'
+import { Vector3 } from 'three';
+import {
+  ClinicalContext,
+  Question,
+  DiagnosisSuggestion,
+  getAgeRange
+} from '../../lib/clinical-decision/types';
+import { ClinicalDecisionEngine } from '../../lib/clinical-decision/clinical-decision-engine';
 
 // Anamnesis step types
 export interface AnamnesisStep {
@@ -76,6 +83,11 @@ interface AnamnesisStore {
   
   // Steps configuration
   steps: AnamnesisStep[]
+
+  // Clinical Decision Support
+  clinicalContext: ClinicalContext | null
+  adaptiveQuestions: Question[]
+  suggestedDx: DiagnosisSuggestion[]
   
   // Step 1: Intro & Consent
   consent: ConsentData | null
@@ -162,6 +174,11 @@ interface AnamnesisStore {
     
     // Reset
     reset: () => void
+
+    // Clinical Decision Support
+    setClinicalContext: (context: Partial<ClinicalContext>) => void
+    runDecisionEngine: () => void
+    updateAdaptiveAnswer: (questionId: string, answer: any) => void
   }
 }
 
@@ -241,6 +258,8 @@ const mockLoadPersonalData = async (patientId: string): Promise<PatientPersonalD
   }
 }
 
+const decisionEngine = new ClinicalDecisionEngine();
+
 // Create the store
 export const useAnamnesisStore = create<AnamnesisStore>()(
   devtools(
@@ -262,6 +281,10 @@ export const useAnamnesisStore = create<AnamnesisStore>()(
       highlightedBodyParts: [],
       symptomDetails: [],
       currentSymptomId: null,
+
+      clinicalContext: null,
+      adaptiveQuestions: [],
+      suggestedDx: [],
       
       reviewData: {
         patientSummary: null,
@@ -513,6 +536,9 @@ export const useAnamnesisStore = create<AnamnesisStore>()(
             highlightedBodyParts: [],
             symptomDetails: [],
             currentSymptomId: null,
+            clinicalContext: null,
+            adaptiveQuestions: [],
+            suggestedDx: [],
             reviewData: {
               patientSummary: null,
               symptomsSummary: [],
@@ -531,6 +557,43 @@ export const useAnamnesisStore = create<AnamnesisStore>()(
             },
             steps: DEFAULT_STEPS
           })
+        },
+
+        setClinicalContext: (context: Partial<ClinicalContext>) => {
+            const currentState = get();
+            const currentContext = currentState.clinicalContext || {
+                age: currentState.personalData?.age || 0,
+                gender: currentState.personalData?.gender || 'other',
+                riskFactors: [],
+                medicalHistory: currentState.personalData?.medicalHistory || [],
+                ageRange: getAgeRange(currentState.personalData?.age || 0)
+            };
+
+            set({
+                clinicalContext: {
+                    ...currentContext,
+                    ...context,
+                }
+            });
+        },
+
+        runDecisionEngine: () => {
+            const { clinicalContext } = get();
+            if (!clinicalContext) return;
+
+            const questions = decisionEngine.getAdaptiveQuestions(clinicalContext);
+            const diagnoses = decisionEngine.getSuggestedDx(clinicalContext);
+
+            set({
+                adaptiveQuestions: questions,
+                suggestedDx: diagnoses
+            });
+        },
+
+        updateAdaptiveAnswer: (questionId: string, answer: any) => {
+            // This is a placeholder for more complex logic
+            // For now, we can just log it or update a simple map of answers
+            console.log(`Answer for ${questionId}:`, answer);
         }
       }
     })),

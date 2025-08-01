@@ -1,34 +1,27 @@
 {
   "name": "@altamedica/medical-fhir",
-  "version": "1.0.0",
-  "description": "Integración FHIR para sistema médico Altamedica",
+  "version": "0.1.0",
+  "description": "FHIR R4 implementation for Altamedica medical platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "dev": "tsc -w",
+    "test": "vitest",
     "lint": "eslint src/**/*.ts",
-    "type-check": "tsc --noEmit"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@types/fhir": "^0.0.41",
     "fhir-kit-client": "^1.9.2",
-    "node-fetch": "^3.3.2"
+    "zod": "^3.25.67"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
-    "jest": "^29.7.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^1.6.1"
   },
-  "keywords": [
-    "fhir",
-    "medical",
-    "healthcare",
-    "interoperability",
-    "hl7"
-  ],
-  "author": "Altamedica Team",
-  "license": "MIT"
+  "peerDependencies": {
+    "@altamedica/core": "workspace:*",
+    "@altamedica/types": "workspace:*"
+  }
 } 

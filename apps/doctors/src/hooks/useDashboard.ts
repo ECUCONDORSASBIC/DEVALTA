@@ -36,6 +36,10 @@ export interface UseDashboardReturn {
   showNotifications: boolean;
   compactMode: boolean;
   
+  // Telemedicina
+  activeTelemedicineSession: { sessionId: string; doctorId: string; patientId: string } | null;
+  startTelemedicineSession: (appointmentId: string, patientId: string) => Promise<void>;
+  
   // Acciones
   refreshDashboard: () => Promise<void>;
   setSelectedView: (view: 'overview' | 'appointments' | 'patients' | 'alerts') => void;
@@ -78,6 +82,9 @@ export const useDashboard = (): UseDashboardReturn => {
   const [selectedView, setSelectedView] = useState<'overview' | 'appointments' | 'patients' | 'alerts'>('overview');
   const [showNotifications, setShowNotifications] = useState(false);
   const [compactMode, setCompactMode] = useState(false);
+  
+  // Estados de telemedicina
+  const [activeTelemedicineSession, setActiveTelemedicineSession] = useState<{ sessionId: string; doctorId: string; patientId: string } | null>(null);
 
   /**
    * Inicializar autenticación y cargar datos
@@ -222,6 +229,54 @@ export const useDashboard = (): UseDashboardReturn => {
   }, []);
 
   /**
+   * Iniciar sesión de telemedicina
+   */
+  const startTelemedicineSession = useCallback(async (appointmentId: string, patientId: string) => {
+    try {
+      if (!user) {
+        throw new Error('Usuario no autenticado');
+      }
+
+      // Generar ID de sesión única
+      const sessionId = `session_${Date.now()}_${appointmentId}`;
+      
+      // Crear sesión de telemedicina
+      const telemedicineSession = {
+        sessionId,
+        doctorId: user.uid,
+        patientId,
+        appointmentId,
+        startTime: new Date().toISOString(),
+        status: 'active' as const
+      };
+
+      // Guardar en Firebase (opcional)
+      try {
+        await doctorService.createTelemedicineSession(telemedicineSession);
+      } catch (err) {
+        console.warn('No se pudo guardar la sesión en Firebase:', err);
+      }
+
+      // Actualizar estado local
+      setActiveTelemedicineSession({
+        sessionId,
+        doctorId: user.uid,
+        patientId
+      });
+
+      // Actualizar estadísticas
+      setStats(prev => ({
+        ...prev,
+        telemedicineSessions: prev.telemedicineSessions + 1
+      }));
+
+    } catch (err) {
+      console.error('Error iniciando sesión de telemedicina:', err);
+      throw new Error('No se pudo iniciar la sesión de telemedicina');
+    }
+  }, [user]);
+
+  /**
    * Suscribirse a alertas en tiempo real
    */
   const subscribeToAlerts = useCallback(() => {
@@ -274,6 +329,10 @@ export const useDashboard = (): UseDashboardReturn => {
     selectedView,
     showNotifications,
     compactMode,
+    
+    // Telemedicina
+    activeTelemedicineSession,
+    startTelemedicineSession,
     
     // Acciones
     refreshDashboard,

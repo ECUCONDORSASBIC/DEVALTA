@@ -18,9 +18,9 @@ import {
   Settings,
   Shield
 } from 'lucide-react'
-import { usePacientes, useCitasMedicas } from '@/hooks/useMedical'
-import { formatearFecha, calcularEdad } from '@/lib/medical-utils'
-import { PacienteBase, CitaMedica } from '@/types/medical'
+import { usePacientes, useCitasMedicas } from '@altamedica/core'
+import { formatearFecha, calcularEdad } from '@altamedica/core'
+import { PacienteBase, CitaMedica } from '@altamedica/core'
 
 interface EstadisticaDashboard {
   titulo: string
@@ -428,3 +428,4 @@ const DashboardMedico: React.FC = () => {
 }
 
 export default DashboardMedico
+export { DashboardMedico }

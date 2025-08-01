@@ -18,7 +18,7 @@ import {
   Users,
   Clock,
   Shield,
-  Record,
+  Circle,
   StopCircle,
   Camera,
   CameraOff,
@@ -30,8 +30,7 @@ import {
   AlertCircle,
   X
 } from 'lucide-react'
-import { CitaMedica, PacienteBase } from '@/types/medical'
-import { formatearFecha, formatearTelefono } from '@/lib/medical-utils'
+import { CitaMedica, PacienteBase } from '@altamedica/core'
 
 interface SesionTelemedicina {
   citaId: string
@@ -391,7 +390,7 @@ const Telemedicina: React.FC = () => {
         <button
           className="p-4 rounded-full bg-medical-background text-medical-text hover:bg-gray-200 transition-colors"
         >
-          <Record className="w-6 h-6" />
+          <Circle className="w-6 h-6" />
         </button>
 
         {/* Compartir pantalla */}
@@ -550,3 +549,4 @@ const Telemedicina: React.FC = () => {
 }
 
 export default Telemedicina
+export { Telemedicina }

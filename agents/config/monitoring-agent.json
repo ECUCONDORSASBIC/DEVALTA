@@ -1,0 +1,70 @@
+{
+  "port": 3007,
+  "host": "localhost",
+  "name": "monitoring-agent",
+  "logLevel": "info",
+  "corsOrigins": ["http://localhost:3000", "https://altamedica.com"],
+  "enableWebSocket": true,
+  "enableMetrics": true,
+  "healthCheckInterval": 30000,
+  "metrics": {
+    "interval": 60000,
+    "retention": 7,
+    "prometheus": {
+      "enabled": true,
+      "port": 9090
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "destinations": [
+      {
+        "type": "console",
+        "config": {}
+      },
+      {
+        "type": "file",
+        "config": {
+          "filename": "logs/monitoring.log",
+          "maxSize": "10mb",
+          "maxFiles": 5
+        }
+      }
+    ]
+  },
+  "alerts": {
+    "enabled": true,
+    "thresholds": {
+      "cpu_usage": 80,
+      "memory_usage": 85,
+      "error_rate": 5,
+      "response_time": 5000
+    },
+    "channels": [
+      {
+        "type": "webhook",
+        "config": {
+          "url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+          "method": "POST"
+        }
+      },
+      {
+        "type": "email",
+        "config": {
+          "smtp": {
+            "host": "smtp.gmail.com",
+            "port": 587,
+            "secure": false,
+            "auth": {
+              "user": "your-email@gmail.com",
+              "pass": "your-app-password"
+            }
+          },
+          "from": "alerts@altamedica.com",
+          "to": ["admin@altamedica.com"]
+        }
+      }
+    ]
+  }
+}

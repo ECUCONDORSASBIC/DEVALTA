@@ -1,23 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuthToken } from '@/lib/auth';
+import { verifyAuth } from '@/lib/auth';
 import { db } from '@/lib/firebase-admin';
 
 export async function GET(request: NextRequest) {
   try {
     // Verificar autenticación
-    const user = await verifyAuthToken(request);
-    if (!user) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    const authResult = await verifyAuth(request);
+    if (!authResult.success || !authResult.user) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: authResult.statusCode || 401 });
     }
 
     // Verificar que el usuario es administrador
-    const userDoc = await db.collection('users').doc(user.uid).get();
-    if (!userDoc.exists) {
-      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
-    }
-
-    const userData = userDoc.data();
-    if (userData?.role !== 'ADMIN' && !userData?.isAdmin) {
+    const hasAdminRole = authResult.user.roles.includes('admin') || authResult.user.roles.includes('ADMIN');
+    if (!hasAdminRole) {
       return NextResponse.json({ error: 'Acceso denegado. Se requieren permisos de administrador' }, { status: 403 });
     }
 

@@ -1,9 +1,9 @@
-import { adminDb } from "@altamedica/firebase";
+import { adminDb } from "@/lib/firebase-admin";
 import {
   createErrorResponse,
   createSuccessResponse,
   validatePagination,
-} from "@altamedica/shared";
+} from "@/lib/response-helpers";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -31,12 +31,19 @@ const OrphanPatientSchema = z.object({
 });
 
 /**
- * GET /api/v1/marketplace/orphan-patients
- * Obtener lista de pacientes huérfanos
+ * GET /api/v1/marketplace
+ * Obtener lista de pacientes huérfanos o estadísticas del marketplace
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
+    
+    // Check if this is a stats request
+    if (searchParams.get("endpoint") === "stats") {
+      return await handleMarketplaceStats(searchParams);
+    }
+    
+    // Otherwise, handle as orphan patients list
     const specialty = searchParams.get("specialty");
     const urgency = searchParams.get("urgency");
     const maxBudget = searchParams.get("maxBudget");
@@ -214,12 +221,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 }
 
 /**
- * GET /api/v1/marketplace/stats
+ * Helper function for marketplace stats
  * Obtener estadísticas del marketplace
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
+async function handleMarketplaceStats(searchParams: URLSearchParams): Promise<NextResponse> {
   try {
-    const { searchParams } = new URL(request.url);
     const endpoint = searchParams.get("endpoint");
 
     if (endpoint === "stats") {

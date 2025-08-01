@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
-import './globals.css';;
-import "./globals.css";
+import './fonts.css';
+import './globals.css';
+import '../styles/telemedicine.css';
 
 export const metadata: Metadata = {
   title: "ALTAMEDICA Doctors",

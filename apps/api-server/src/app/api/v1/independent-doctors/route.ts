@@ -1,9 +1,9 @@
-import { adminDb } from "@altamedica/firebase";
+import { adminDb } from "@/lib/firebase-admin";
 import {
   createErrorResponse,
   createSuccessResponse,
   validatePagination,
-} from "@altamedica/shared";
+} from "@/lib/response-helpers";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -161,11 +161,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 /**
  * POST /api/v1/independent-doctors
- * Registrar médico como independiente
+ * Registrar médico como independiente o transición de empresa
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
+    
+    // Check if this is a transition request
+    if (body.currentEmployer && body.transitionDate) {
+      return await handleTransitionToIndependent(body);
+    }
+    
+    // Otherwise, handle as regular independent doctor registration
     const doctorData = IndependentDoctorSchema.parse(body);
 
     // Verificar que el médico existe
@@ -305,12 +312,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 }
 
 /**
- * POST /api/v1/independent-doctors/transition
+ * Helper function for transition to independent
  * Transición de empresa a independiente
  */
-export async function POST(request: NextRequest): Promise<NextResponse> {
+async function handleTransitionToIndependent(body: any): Promise<NextResponse> {
   try {
-    const body = await request.json();
     const transitionData = TransitionToIndependentSchema.parse(body);
 
     // Verificar que el médico existe y trabaja para la empresa

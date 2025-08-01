@@ -1,8 +1,8 @@
 // Forzar endpoint dinámico para compatibilidad Next.js
 export const dynamic = "force-dynamic";
 
-import { adminDb } from '@altamedica/firebase';
-import { createErrorResponse, createSuccessResponse } from '@altamedica/shared';
+import { adminDb } from '@/lib/firebase-admin';
+import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

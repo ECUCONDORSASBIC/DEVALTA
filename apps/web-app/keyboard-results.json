@@ -1,0 +1,186 @@
+{
+  "home": {
+    "url": "http://localhost:3000/",
+    "focusableElementCount": 28,
+    "focusableElements": [
+      {
+        "tagName": "A",
+        "type": null,
+        "className": "skip-link focus:outline-none focus:ring-2 focus:ring-primary-500",
+        "id": "",
+        "tabIndex": 0,
+        "ariaLabel": "",
+        "text": "Saltar al contenido principal",
+        "visible": true
+      },
+      {
+        "tagName": "A",
+        "type": null,
+        "className": "text-2xl lg:text-3xl font-bold text-primary-600 hover:text-primary-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-sm",
+        "id": "",
+        "tabIndex": 0,
+        "ariaLabel": "ALTAMEDICA - Página de inicio",
+        "text": "ALTAMEDICA",
+        "visible": true
+      },
+      {
+        "tagName": "A",
+        "type": null,
+        "className": "px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:text-primary-600 hover:bg-neutral-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
+        "id": "",
+        "tabIndex": 0,
+        "ariaLabel": "",
+        "text": "Inicio",
+        "visible": true
+      },
+      {
+        "tagName": "A",
+        "type": null,
+        "className": "px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:text-primary-600 hover:bg-neutral-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
+        "id": "",
+        "tabIndex": 0,
+        "ariaLabel": "",
+        "text": "Servicios",
+        "visible": true
+      },
+      {
+        "tagName": "A",
+        "type": null,
+        "className": "px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:text-primary-600 hover:bg-neutral-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
+        "id": "",
+        "tabIndex": 0,
+        "ariaLabel": "",
+        "text": "Especialistas",
+        "visible": true
+      }
+    ],
+    "tabNavigationIssues": [
+      {
+        "index": 1,
+        "element": "A",
+        "issue": "Focused element not in viewport"
+      }
+    ],
+    "focusVisibilityIssues": [],
+    "skipLinksFound": [
+      {
+        "text": "Saltar al contenido principal",
+        "href": "#main-content",
+        "visible": true
+      }
+    ],
+    "headingStructure": [
+      {
+        "level": 1,
+        "text": "Consultas Médicas en Video",
+        "id": ""
+      },
+      {
+        "level": 2,
+        "text": "Selecciona tu rol",
+        "id": ""
+      },
+      {
+        "level": 2,
+        "text": "Lo que Hace Único a ALTAMEDICA",
+        "id": ""
+      },
+      {
+        "level": 3,
+        "text": "Notificaciones Médicas Inteligentes",
+        "id": ""
+      },
+      {
+        "level": 3,
+        "text": "Red Médica Geolocalizada",
+        "id": ""
+      },
+      {
+        "level": 3,
+        "text": "Analytics de Salud Avanzado",
+        "id": ""
+      },
+      {
+        "level": 3,
+        "text": "Historial Médico de por Vida",
+        "id": ""
+      },
+      {
+        "level": 3,
+        "text": "¿Listo para experimentar el futuro de la medicina?",
+        "id": ""
+      },
+      {
+        "level": 2,
+        "text": "Anamnesis Inmersiva",
+        "id": ""
+      },
+      {
+        "level": 2,
+        "text": "Lo que Dicen Nuestros Usuarios",
+        "id": ""
+      },
+      {
+        "level": 2,
+        "text": "Únete al Futuro de la Medicina",
+        "id": ""
+      }
+    ],
+    "escapeKeyWorks": true,
+    "status": "FAIL"
+  },
+  "dashboard": {
+    "url": "http://localhost:3000/dashboard",
+    "focusableElementCount": 3,
+    "focusableElements": [
+      {
+        "tagName": "A",
+        "type": null,
+        "className": "skip-link focus:outline-none focus:ring-2 focus:ring-primary-500",
+        "id": "",
+        "tabIndex": 0,
+        "ariaLabel": "",
+        "text": "Saltar al contenido principal",
+        "visible": true
+      },
+      {
+        "tagName": "BUTTON",
+        "type": "submit",
+        "className": "btn-primary w-full flex items-center justify-center",
+        "id": "",
+        "tabIndex": 0,
+        "ariaLabel": "",
+        "text": "Intentar de nuevo",
+        "visible": true
+      },
+      {
+        "tagName": "BUTTON",
+        "type": "submit",
+        "className": "btn-secondary w-full flex items-center justify-center",
+        "id": "",
+        "tabIndex": 0,
+        "ariaLabel": "",
+        "text": "Ir al inicio",
+        "visible": true
+      }
+    ],
+    "tabNavigationIssues": [],
+    "focusVisibilityIssues": [],
+    "skipLinksFound": [
+      {
+        "text": "Saltar al contenido principal",
+        "href": "#main-content",
+        "visible": true
+      }
+    ],
+    "headingStructure": [
+      {
+        "level": 2,
+        "text": "Algo salió mal",
+        "id": ""
+      }
+    ],
+    "escapeKeyWorks": true,
+    "status": "PASS"
+  }
+}

@@ -8,7 +8,7 @@
  * DELETE /api/v1/lab-results - Delete lab result
  */
 
-import { adminAuth } from '@altamedica/firebase';
+import { adminAuth } from '@/lib/firebase-admin';
 import { NextRequest, NextResponse } from 'next/server';
 import {
     validateCreateLabResult,

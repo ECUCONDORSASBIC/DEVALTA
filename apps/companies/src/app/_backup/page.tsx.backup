@@ -1,0 +1,2692 @@
+'use client';
+
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, Button, Badge, Separator } from '@/components/ui';
+import { 
+  Users, 
+  UserCheck, 
+  Calendar, 
+  TrendingUp, 
+  AlertTriangle,
+  DollarSign,
+  Activity,
+  BarChart3,
+  PieChart,
+  FileText,
+  Settings,
+  Plus,
+  Briefcase,
+  MapPin,
+  Filter,
+  Search,
+  Share2,
+  Bookmark,
+  Send,
+  Eye,
+  ArrowLeft,
+  List,
+  Grid,
+  Sliders,
+  X,
+  CheckCircle,
+  Star,
+  AlertCircle,
+  Stethoscope,
+  Heart,
+  Brain,
+  Baby,
+  UserX,
+  Clock,
+  Video,
+  Phone,
+  MessageSquare,
+  Database,
+  ChartBar,
+  Target,
+  Shield,
+  Zap,
+  Thermometer,
+  Pill,
+  Syringe,
+  Microscope,
+  ActivitySquare,
+  LineChart,
+  PieChart as PieChartIcon,
+  TrendingDown,
+  Users2,
+  UserPlus,
+  CalendarDays,
+  Clock3,
+  AlertOctagon,
+  CheckCircle2,
+  XCircle,
+  PlayCircle,
+  PauseCircle,
+  StopCircle,
+  Wifi,
+  WifiOff,
+  Signal,
+  SignalHigh,
+  SignalMedium,
+  SignalLow,
+  Monitor,
+  Cpu,
+  HardDrive,
+  Wrench,
+  Tool,
+  Battery,
+  Power,
+  AlertCircle as AlertCircleIcon,
+  Thermometer as ThermometerIcon,
+  Droplets,
+  Activity as ActivityIcon,
+  Heart as HeartIcon,
+  Brain as BrainIcon,
+  Eye as EyeIcon,
+  Ear,
+  Tooth,
+  Bone,
+  Scissors,
+  Syringe as SyringeIcon,
+  Pill as PillIcon,
+  Microscope as MicroscopeIcon,
+  TestTube,
+  Flask,
+  Beaker,
+  Dropper,
+  Scale,
+  Timer,
+  Zap as ZapIcon,
+  Shield as ShieldIcon,
+  Lock,
+  Unlock,
+  Key,
+  Settings as SettingsIcon,
+  Cog,
+  Wrench as WrenchIcon,
+  Tool as ToolIcon,
+  Package,
+  Truck,
+  Home,
+  Building,
+  MapPin as MapPinIcon,
+  Navigation,
+  Compass,
+  Globe,
+  Wifi as WifiIcon,
+  Bluetooth,
+  Radio,
+  Satellite,
+  Signal as SignalIcon,
+  Battery as BatteryIcon,
+  Power as PowerIcon,
+  Plug,
+  Lightning,
+  Sun,
+  Moon,
+  Cloud,
+  CloudRain,
+  CloudLightning,
+  Wind,
+  Snowflake,
+  Umbrella,
+  ShieldCheck,
+  ShieldX,
+  ShieldAlert,
+  ShieldOff,
+  ShieldCheck as ShieldCheckIcon,
+  ShieldX as ShieldXIcon,
+  ShieldAlert as ShieldAlertIcon,
+  ShieldOff as ShieldOffIcon
+} from 'lucide-react';
+import dynamic from "next/dynamic";
+import type { LatLngTuple } from "leaflet";
+import Link from "next/link";
+
+// Importar el mapa dinámicamente
+const AltamedicaInteractiveMap = dynamic(() => import("@/components/maps/AltamedicaInteractiveMap"), { 
+  ssr: false,
+  loading: () => <div className="w-full h-64 bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">Cargando mapa...</div>
+});
+
+interface ClinicMetrics {
+  totalPatients: number;
+  activePatients: number;
+  totalDoctors: number;
+  activeDoctors: number;
+  totalAppointments: number;
+  completedAppointments: number;
+  pendingAppointments: number;
+  monthlyRevenue: number;
+  monthlyExpenses: number;
+  patientSatisfaction: number;
+  doctorSatisfaction: number;
+  telemedicineSessions: number;
+  emergencyCases: number;
+  averageWaitTime: number;
+  patientRetentionRate: number;
+}
+
+interface Patient {
+  id: string;
+  name: string;
+  age: number;
+  gender: 'male' | 'female' | 'other';
+  primaryDiagnosis: string;
+  comorbidities: string[];
+  lastVisit: string;
+  nextAppointment: string;
+  healthScore: number;
+  riskLevel: 'low' | 'medium' | 'high';
+  insuranceProvider: string;
+  contactNumber: string;
+  email: string;
+  address: string;
+  emergencyContact: string;
+  medications: string[];
+  allergies: string[];
+  bloodType: string;
+  height: number;
+  weight: number;
+  bmi: number;
+}
+
+interface Doctor {
+  id: string;
+  name: string;
+  specialty: string;
+  subSpecialty?: string;
+  status: 'online' | 'offline' | 'busy' | 'on_leave';
+  appointmentsToday: number;
+  rating: number;
+  availability: string;
+  experience: number;
+  certifications: string[];
+  languages: string[];
+  telemedicineEnabled: boolean;
+  currentSession?: {
+    patientId: string;
+    patientName: string;
+    startTime: string;
+    sessionType: 'video' | 'audio' | 'chat';
+  };
+  performanceMetrics: {
+    patientsSeen: number;
+    averageRating: number;
+    responseTime: number;
+    satisfactionScore: number;
+  };
+}
+
+interface Appointment {
+  id: string;
+  patientName: string;
+  patientId: string;
+  doctorName: string;
+  doctorId: string;
+  date: string;
+  time: string;
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
+  type: 'in_person' | 'telemedicine_video' | 'telemedicine_audio' | 'follow_up' | 'emergency';
+  specialty: string;
+  reason: string;
+  duration: number;
+  insuranceCovered: boolean;
+  copay: number;
+  notes: string;
+  symptoms: string[];
+  vitalSigns?: {
+    bloodPressure: string;
+    heartRate: number;
+    temperature: number;
+    oxygenSaturation: number;
+    weight: number;
+  };
+}
+
+interface PatientAnalytics {
+  ageDistribution: { ageGroup: string; count: number; percentage: number }[];
+  diagnosisDistribution: { diagnosis: string; count: number; percentage: number }[];
+  genderDistribution: { gender: string; count: number; percentage: number }[];
+  riskLevelDistribution: { riskLevel: string; count: number; percentage: number }[];
+  appointmentTrends: { date: string; appointments: number; telemedicine: number }[];
+  specialtyUtilization: { specialty: string; appointments: number; revenue: number }[];
+  patientRetention: { month: string; newPatients: number; returningPatients: number }[];
+  satisfactionTrends: { month: string; score: number; responses: number }[];
+}
+
+interface MedicalEquipment {
+  id: string;
+  name: string;
+  type: 'diagnostic' | 'therapeutic' | 'monitoring' | 'surgical' | 'laboratory' | 'imaging';
+  category: string;
+  brand: string;
+  model: string;
+  serialNumber: string;
+  status: 'operational' | 'maintenance' | 'out_of_service' | 'calibration_due' | 'expired';
+  location: string;
+  department: string;
+  lastCalibration: string;
+  nextCalibration: string;
+  lastMaintenance: string;
+  nextMaintenance: string;
+  utilization: number;
+  uptime: number;
+  cost: number;
+  warranty: string;
+  supplier: string;
+  purchaseDate: string;
+  expectedLifespan: number;
+  currentAge: number;
+  criticalLevel: 'low' | 'medium' | 'high' | 'critical';
+  alerts: string[];
+  specifications: {
+    power: string;
+    dimensions: string;
+    weight: string;
+    connectivity: string[];
+    certifications: string[];
+  };
+  maintenanceHistory: {
+    date: string;
+    type: 'preventive' | 'corrective' | 'calibration';
+    description: string;
+    technician: string;
+    cost: number;
+    parts: string[];
+  }[];
+  usageStats: {
+    totalHours: number;
+    dailyAverage: number;
+    peakUsage: string;
+    efficiency: number;
+  };
+}
+
+interface MarketplaceOffer {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  specialty: string;
+  type: 'job' | 'contract' | 'consultation' | 'partnership';
+  salary: string;
+  postedDate: string;
+  applications: number;
+  rating: number;
+  urgent?: boolean;
+  description: string;
+  requirements: string[];
+  benefits: string[];
+  experience: string;
+  schedule: string;
+  remote?: boolean;
+  companyLogo?: string;
+  companySize: string;
+  companyIndustry: string;
+}
+
+interface FilterState {
+  search: string;
+  location: string[];
+  specialty: string[];
+  type: string[];
+  salaryRange: [number, number];
+  experience: string[];
+  remote: boolean | null;
+  urgent: boolean;
+}
+
+type SortOption = 'recent' | 'salary' | 'applications' | 'rating';
+
+const ALL_OFFERS: MarketplaceOffer[] = [
+  {
+    id: "1",
+    title: "Cardiólogo Intervencionista",
+    company: "Hospital Italiano de Buenos Aires",
+    location: "Buenos Aires, Argentina",
+    specialty: "Cardiología",
+    type: "job",
+    salary: "USD 8,000 - 12,000",
+    postedDate: "2025-01-15",
+    applications: 12,
+    rating: 4.9,
+    urgent: true,
+    description: "Buscamos cardiólogo especializado en procedimientos intervencionistas para nuestro departamento de cardiología.",
+    requirements: [
+      "Especialidad en Cardiología",
+      "Experiencia mínima 5 años",
+      "Certificación en procedimientos intervencionistas"
+    ],
+    benefits: [
+      "Seguro médico familiar",
+      "Capacitación continua",
+      "Horario flexible"
+    ],
+    experience: "5-10 años",
+    schedule: "Tiempo completo",
+    companySize: "2500+ empleados",
+    companyIndustry: "Medicina General",
+    remote: false
+  },
+  {
+    id: "2",
+    title: "Oncólogo Médico",
+    company: "Hospital Metropolitano",
+    location: "Quito, Ecuador",
+    specialty: "Oncología",
+    type: "job",
+    salary: "USD 5,000 - 8,000",
+    postedDate: "2025-01-08",
+    applications: 11,
+    rating: 4.8,
+    description: "Oncólogo para nuestro departamento de oncología con experiencia en tratamientos innovadores.",
+    requirements: [
+      "Especialidad en Oncología",
+      "Experiencia en tratamientos innovadores",
+      "Certificación internacional"
+    ],
+    benefits: [
+      "Equipamiento de última generación",
+      "Capacitación internacional",
+      "Investigación clínica"
+    ],
+    experience: "3-7 años",
+    schedule: "Tiempo completo",
+    companySize: "1800+ empleados",
+    companyIndustry: "Medicina Integral",
+    remote: true
+  }
+  // Agregar más ofertas si es necesario
+];
+
+const SPECIALTIES = [
+  "Cardiología", "Oncología", "Neurología", "Pediatría", "Cirugía", 
+  "Ginecología", "Traumatología", "Dermatología", "Psiquiatría"
+];
+
+const LOCATIONS = [
+  "Buenos Aires, Argentina", "Quito, Ecuador", "Porto Alegre, Brasil",
+  "Santiago, Chile", "Lima, Perú", "Bogotá, Colombia"
+];
+
+const EXPERIENCES = [
+  "0-2 años", "3-5 años", "5-10 años", "10+ años"
+];
+
+const CONTRACT_TYPES = [
+  { value: 'job', label: 'Empleo' },
+  { value: 'contract', label: 'Contrato' },
+  { value: 'consultation', label: 'Consulta' },
+  { value: 'partnership', label: 'Alianza' }
+];
+
+const OfferCard = ({ offer, viewMode, onViewDetails, onApply, onSave, onShare }: {
+  offer: MarketplaceOffer;
+  viewMode: 'grid' | 'list';
+  onViewDetails: (id: string) => void;
+  onApply: (id: string) => void;
+  onSave: (id: string) => void;
+  onShare: (id: string) => void;
+}) => {
+  const isGrid = viewMode === 'grid';
+  
+  return (
+    <div 
+      role="article"
+      aria-labelledby={`offer-title-${offer.id}`}
+      className={`bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300 ${
+        isGrid ? 'p-6' : 'p-4'
+      }`}
+    >
+      <div className={`${isGrid ? 'space-y-4' : 'flex items-start gap-4'}`}>
+        <div className={`${isGrid ? 'space-y-2' : 'flex-1'}`}>
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 id={`offer-title-${offer.id}`} className={`font-semibold text-gray-900 ${isGrid ? 'text-lg' : 'text-base'}`}>
+                  {offer.title}
+                </h3>
+                {offer.urgent && (
+                  <Badge variant="destructive">Urgente</Badge>
+                )}
+              </div>
+              <p className="text-sm text-gray-600">{offer.company}</p>
+            </div>
+            <div className="flex items-center">
+              <Star className="h-4 w-4 text-yellow-500 mr-1" aria-hidden="true" />
+              <span className="text-sm font-medium">{offer.rating}</span>
+            </div>
+          </div>
+          
+          <div className={`space-y-1 text-sm text-gray-600 ${isGrid ? '' : 'flex items-center gap-4 flex-wrap'}`}>
+            <div className="flex items-center">
+              <MapPin className="w-4 h-4 mr-2 text-gray-400" aria-hidden="true" />
+              <span>{offer.location}</span>
+            </div>
+            <div className="flex items-center">
+              <Briefcase className="w-4 h-4 mr-2 text-gray-400" aria-hidden="true" />
+              <span>{offer.specialty}</span>
+            </div>
+            <div className="flex items-center">
+              <DollarSign className="w-4 h-4 mr-2 text-green-600" aria-hidden="true" />
+              <span className="font-medium">{offer.salary}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className={`flex gap-2 ${isGrid ? 'mt-4 flex-wrap' : 'flex-col'}`}>
+          <Button
+            variant="outline"
+            onClick={() => onViewDetails(offer.id)}
+            className="flex items-center justify-center"
+            aria-label={`Ver detalles de ${offer.title}`}
+          >
+            <Eye className="w-4 h-4 mr-1" />
+            Detalles
+          </Button>
+          <Button
+            variant="default"
+            onClick={() => onApply(offer.id)}
+            className="flex items-center justify-center"
+            aria-label={`Aplicar a ${offer.title}`}
+          >
+            <Send className="w-4 h-4 mr-1" />
+            Aplicar
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => onSave(offer.id)}
+            className="flex items-center justify-center"
+            aria-label={`Guardar ${offer.title}`}
+          >
+            <Bookmark className="w-4 h-4 mr-1" />
+            Guardar
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => onShare(offer.id)}
+            className="flex items-center justify-center"
+            aria-label={`Compartir ${offer.title}`}
+          >
+            <Share2 className="w-4 h-4 mr-1" />
+            Compartir
+          </Button>
+        </div>
+      </div>
+      
+      <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <span>Publicado: {new Date(offer.postedDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+          <span>{offer.applications} aplicaciones</span>
+        </div>
+        <div className="flex items-center gap-4 text-xs text-gray-500 mt-2 flex-wrap">
+          <span>Experiencia: {offer.experience}</span>
+          <span>Horario: {offer.schedule}</span>
+          {offer.remote && <span className="text-green-600">Remoto disponible</span>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function ClinicDashboard() {
+  const [metrics, setMetrics] = useState<ClinicMetrics | null>(null);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [analytics, setAnalytics] = useState<PatientAnalytics | null>(null);
+  const [equipment, setEquipment] = useState<MedicalEquipment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedView, setSelectedView] = useState<'overview' | 'patients' | 'doctors' | 'appointments' | 'telemedicine' | 'equipment' | 'analytics' | 'marketplace'>('overview');
+
+  // Estados para marketplace
+  const [filters, setFilters] = useState<FilterState>({
+    search: '',
+    location: [],
+    specialty: [],
+    type: [],
+    salaryRange: [0, 20000],
+    experience: [],
+    remote: null,
+    urgent: false
+  });
+  
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortOption, setSortOption] = useState<SortOption>('recent');
+
+  // Función para parsear salario
+  const parseSalary = useCallback((salary: string): number => {
+    const numbers = salary.match(/\d+/g)?.map(Number) || [0];
+    return numbers.length === 2 ? (numbers[0] + numbers[1]) / 2 * 1000 : numbers[0] * 1000;
+  }, []);
+
+  // Procesar ofertas
+  const processedOffers = useMemo(() => {
+    let offers = ALL_OFFERS.filter(offer => {
+      const searchLower = filters.search.toLowerCase();
+      if (searchLower && 
+          !offer.title.toLowerCase().includes(searchLower) &&
+          !offer.company.toLowerCase().includes(searchLower) &&
+          !offer.specialty.toLowerCase().includes(searchLower)) {
+        return false;
+      }
+      
+      if (filters.location.length > 0 && !filters.location.includes(offer.location)) return false;
+      if (filters.specialty.length > 0 && !filters.specialty.includes(offer.specialty)) return false;
+      if (filters.type.length > 0 && !filters.type.includes(offer.type)) return false;
+      
+      const avgSalary = parseSalary(offer.salary);
+      if (avgSalary < filters.salaryRange[0] * 1000 || avgSalary > filters.salaryRange[1] * 1000) return false;
+      
+      if (filters.experience.length > 0 && !filters.experience.includes(offer.experience)) return false;
+      if (filters.remote !== null && offer.remote !== filters.remote) return false;
+      if (filters.urgent && !offer.urgent) return false;
+      
+      return true;
+    });
+
+    offers = [...offers].sort((a, b) => {
+      switch (sortOption) {
+        case 'recent':
+          return new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime();
+        case 'salary':
+          return parseSalary(b.salary) - parseSalary(a.salary);
+        case 'applications':
+          return b.applications - a.applications;
+        case 'rating':
+          return b.rating - a.rating;
+        default:
+          return 0;
+      }
+    });
+
+    return offers;
+  }, [filters, sortOption, parseSalary]);
+
+  const handleViewDetails = (id: string) => {
+    console.log('Ver detalles de oferta:', id);
+  };
+
+  const handleApply = (id: string) => {
+    console.log('Aplicar a oferta:', id);
+  };
+
+  const handleSave = (id: string) => {
+    console.log('Guardar oferta:', id);
+  };
+
+  const handleShare = (id: string) => {
+    console.log('Compartir oferta:', id);
+  };
+
+  useEffect(() => {
+    // Simular carga de datos de clínica médica
+    setTimeout(() => {
+      setMetrics({
+        totalPatients: 2847,
+        activePatients: 2156,
+        totalDoctors: 23,
+        activeDoctors: 19,
+        totalAppointments: 89,
+        completedAppointments: 67,
+        pendingAppointments: 22,
+        monthlyRevenue: 187500,
+        monthlyExpenses: 125000,
+        patientSatisfaction: 94,
+        doctorSatisfaction: 91,
+        telemedicineSessions: 34,
+        emergencyCases: 3,
+        averageWaitTime: 12,
+        patientRetentionRate: 87
+      });
+
+      setPatients([
+        {
+          id: 'P001',
+          name: 'María González',
+          age: 45,
+          gender: 'female',
+          primaryDiagnosis: 'Diabetes Tipo 2',
+          comorbidities: ['Hipertensión', 'Obesidad'],
+          lastVisit: '2024-11-15',
+          nextAppointment: '2025-02-15',
+          healthScore: 72,
+          riskLevel: 'medium',
+          insuranceProvider: 'Seguro Médico Nacional',
+          contactNumber: '+54 11 1234-5678',
+          email: 'maria.gonzalez@email.com',
+          address: 'Av. Corrientes 1234, Buenos Aires',
+          emergencyContact: 'Carlos González - +54 11 9876-5432',
+          medications: ['Metformina 500mg', 'Losartán 50mg'],
+          allergies: ['Penicilina'],
+          bloodType: 'O+',
+          height: 165,
+          weight: 78,
+          bmi: 28.6
+        },
+        {
+          id: 'P002',
+          name: 'Carlos Rodríguez',
+          age: 62,
+          gender: 'male',
+          primaryDiagnosis: 'Enfermedad Cardiovascular',
+          comorbidities: ['Diabetes', 'Hipercolesterolemia'],
+          lastVisit: '2024-10-20',
+          nextAppointment: '2025-01-20',
+          healthScore: 65,
+          riskLevel: 'high',
+          insuranceProvider: 'Medicina Prepaga Premium',
+          contactNumber: '+54 11 2345-6789',
+          email: 'carlos.rodriguez@email.com',
+          address: 'Belgrano 567, Buenos Aires',
+          emergencyContact: 'Ana Rodríguez - +54 11 8765-4321',
+          medications: ['Atorvastatina 20mg', 'Amlodipino 5mg'],
+          allergies: ['Sulfamidas'],
+          bloodType: 'A+',
+          height: 175,
+          weight: 85,
+          bmi: 27.8
+        },
+        {
+          id: 'P003',
+          name: 'Ana Martínez',
+          age: 28,
+          gender: 'female',
+          primaryDiagnosis: 'Asma Bronquial',
+          comorbidities: ['Rinitis Alérgica'],
+          lastVisit: '2024-09-10',
+          nextAppointment: '2024-12-10',
+          healthScore: 88,
+          riskLevel: 'low',
+          insuranceProvider: 'Seguro Médico Nacional',
+          contactNumber: '+54 11 3456-7890',
+          email: 'ana.martinez@email.com',
+          address: 'Palermo 890, Buenos Aires',
+          emergencyContact: 'Luis Martínez - +54 11 7654-3210',
+          medications: ['Salbutamol inhalador', 'Fluticasona nasal'],
+          allergies: ['Polvo', 'Ácaros'],
+          bloodType: 'B+',
+          height: 160,
+          weight: 55,
+          bmi: 21.5
+        }
+      ]);
+
+      setDoctors([
+        {
+          id: 'D001',
+          name: 'Dr. Juan Pérez',
+          specialty: 'Medicina General',
+          subSpecialty: 'Medicina Familiar',
+          status: 'online',
+          appointmentsToday: 8,
+          rating: 4.8,
+          availability: 'Lun-Vie 8:00-17:00',
+          experience: 15,
+          certifications: ['Medicina General', 'Telemedicina Avanzada'],
+          languages: ['Español', 'Inglés'],
+          telemedicineEnabled: true,
+          currentSession: {
+            patientId: 'P004',
+            patientName: 'Roberto Silva',
+            startTime: '14:30',
+            sessionType: 'video'
+          },
+          performanceMetrics: {
+            patientsSeen: 156,
+            averageRating: 4.8,
+            responseTime: 2.3,
+            satisfactionScore: 92
+          }
+        },
+        {
+          id: 'D002',
+          name: 'Dra. Laura Sánchez',
+          specialty: 'Cardiología',
+          subSpecialty: 'Cardiología Intervencionista',
+          status: 'busy',
+          appointmentsToday: 5,
+          rating: 4.9,
+          availability: 'Mar-Jue 9:00-16:00',
+          experience: 12,
+          certifications: ['Cardiología', 'Ecocardiografía'],
+          languages: ['Español', 'Portugués'],
+          telemedicineEnabled: true,
+          performanceMetrics: {
+            patientsSeen: 89,
+            averageRating: 4.9,
+            responseTime: 1.8,
+            satisfactionScore: 95
+          }
+        },
+        {
+          id: 'D003',
+          name: 'Dr. Roberto Torres',
+          specialty: 'Ortopedia',
+          subSpecialty: 'Cirugía de Columna',
+          status: 'offline',
+          appointmentsToday: 0,
+          rating: 4.7,
+          availability: 'No disponible',
+          experience: 18,
+          certifications: ['Ortopedia', 'Cirugía Mínimamente Invasiva'],
+          languages: ['Español'],
+          telemedicineEnabled: false,
+          performanceMetrics: {
+            patientsSeen: 67,
+            averageRating: 4.7,
+            responseTime: 3.1,
+            satisfactionScore: 88
+          }
+        }
+      ]);
+
+      setAppointments([
+        {
+          id: 'A001',
+          patientName: 'María González',
+          patientId: 'P001',
+          doctorName: 'Dr. Juan Pérez',
+          doctorId: 'D001',
+          date: '2024-12-19',
+          time: '10:00',
+          status: 'completed',
+          type: 'telemedicine_video',
+          specialty: 'Medicina General',
+          reason: 'Control de diabetes y ajuste de medicación',
+          duration: 30,
+          insuranceCovered: true,
+          copay: 15,
+          notes: 'Paciente refiere mejor control de glucemia. Ajustar Metformina a 850mg.',
+          symptoms: ['Fatiga leve', 'Sed excesiva'],
+          vitalSigns: {
+            bloodPressure: '130/85',
+            heartRate: 72,
+            temperature: 36.8,
+            oxygenSaturation: 98,
+            weight: 78
+          }
+        },
+        {
+          id: 'A002',
+          patientName: 'Carlos Rodríguez',
+          patientId: 'P002',
+          doctorName: 'Dra. Laura Sánchez',
+          doctorId: 'D002',
+          date: '2024-12-19',
+          time: '14:30',
+          status: 'in_progress',
+          type: 'in_person',
+          specialty: 'Cardiología',
+          reason: 'Evaluación cardiológica de rutina',
+          duration: 45,
+          insuranceCovered: true,
+          copay: 25,
+          notes: 'Paciente con buen control de presión arterial',
+          symptoms: ['Dolor torácico ocasional'],
+          vitalSigns: {
+            bloodPressure: '125/80',
+            heartRate: 68,
+            temperature: 36.5,
+            oxygenSaturation: 97,
+            weight: 85
+          }
+        },
+        {
+          id: 'A003',
+          patientName: 'Ana Martínez',
+          patientId: 'P003',
+          doctorName: 'Dr. Juan Pérez',
+          doctorId: 'D001',
+          date: '2024-12-20',
+          time: '09:00',
+          status: 'scheduled',
+          type: 'telemedicine_audio',
+          specialty: 'Medicina General',
+          reason: 'Control de asma y renovación de recetas',
+          duration: 20,
+          insuranceCovered: true,
+          copay: 10,
+          notes: 'Paciente con buen control del asma',
+          symptoms: ['Tos ocasional', 'Sibilancias leves']
+        }
+      ]);
+
+      setEquipment([
+        {
+          id: 'EQ001',
+          name: 'Resonancia Magnética 3T',
+          type: 'imaging',
+          category: 'Diagnóstico por Imagen',
+          brand: 'Siemens',
+          model: 'MAGNETOM Vida',
+          serialNumber: 'RM-2024-001',
+          status: 'operational',
+          location: 'Sala de Imagenología',
+          department: 'Radiología',
+          lastCalibration: '2024-11-15',
+          nextCalibration: '2025-02-15',
+          lastMaintenance: '2024-10-20',
+          nextMaintenance: '2025-01-20',
+          utilization: 85,
+          uptime: 98.5,
+          cost: 2500000,
+          warranty: '2027-12-31',
+          supplier: 'Siemens Healthcare',
+          purchaseDate: '2022-03-15',
+          expectedLifespan: 10,
+          currentAge: 2.8,
+          criticalLevel: 'high',
+          alerts: ['Calibración próxima a vencer'],
+          specifications: {
+            power: '45 kW',
+            dimensions: '2.5m x 2.1m x 1.8m',
+            weight: '8500 kg',
+            connectivity: ['DICOM', 'PACS', 'WiFi'],
+            certifications: ['FDA', 'CE', 'ANMAT']
+          },
+          maintenanceHistory: [
+            {
+              date: '2024-10-20',
+              type: 'preventive',
+              description: 'Mantenimiento preventivo trimestral',
+              technician: 'Ing. Carlos Martínez',
+              cost: 15000,
+              parts: ['Filtros de aire', 'Lubricantes']
+            }
+          ],
+          usageStats: {
+            totalHours: 8760,
+            dailyAverage: 8.5,
+            peakUsage: '14:00-16:00',
+            efficiency: 92
+          }
+        },
+        {
+          id: 'EQ002',
+          name: 'Monitor Multiparamétrico',
+          type: 'monitoring',
+          category: 'Monitoreo de Pacientes',
+          brand: 'Philips',
+          model: 'IntelliVue MX40',
+          serialNumber: 'MM-2024-015',
+          status: 'operational',
+          location: 'UCI',
+          department: 'Cuidados Intensivos',
+          lastCalibration: '2024-12-01',
+          nextCalibration: '2025-03-01',
+          lastMaintenance: '2024-11-15',
+          nextMaintenance: '2025-02-15',
+          utilization: 95,
+          uptime: 99.2,
+          cost: 45000,
+          warranty: '2026-06-30',
+          supplier: 'Philips Healthcare',
+          purchaseDate: '2023-06-15',
+          expectedLifespan: 8,
+          currentAge: 1.5,
+          criticalLevel: 'critical',
+          alerts: ['Alta utilización', 'Mantenimiento próximo'],
+          specifications: {
+            power: '120W',
+            dimensions: '30cm x 25cm x 15cm',
+            weight: '2.5 kg',
+            connectivity: ['WiFi', 'Bluetooth', 'USB'],
+            certifications: ['FDA', 'CE', 'ISO 13485']
+          },
+          maintenanceHistory: [
+            {
+              date: '2024-11-15',
+              type: 'preventive',
+              description: 'Limpieza y calibración de sensores',
+              technician: 'Téc. Ana López',
+              cost: 2500,
+              parts: ['Sensores de oxigenación', 'Cables de conexión']
+            }
+          ],
+          usageStats: {
+            totalHours: 13140,
+            dailyAverage: 24,
+            peakUsage: 'Todo el día',
+            efficiency: 98
+          }
+        },
+        {
+          id: 'EQ003',
+          name: 'Analizador de Sangre',
+          type: 'laboratory',
+          category: 'Análisis Clínicos',
+          brand: 'Roche',
+          model: 'Cobas c501',
+          serialNumber: 'AS-2024-008',
+          status: 'maintenance',
+          location: 'Laboratorio Central',
+          department: 'Laboratorio',
+          lastCalibration: '2024-11-30',
+          nextCalibration: '2024-12-30',
+          lastMaintenance: '2024-12-10',
+          nextMaintenance: '2025-01-10',
+          utilization: 78,
+          uptime: 96.8,
+          cost: 180000,
+          warranty: '2025-12-31',
+          supplier: 'Roche Diagnostics',
+          purchaseDate: '2022-12-01',
+          expectedLifespan: 7,
+          currentAge: 2.0,
+          criticalLevel: 'medium',
+          alerts: ['En mantenimiento', 'Calibración vencida'],
+          specifications: {
+            power: '2.5 kW',
+            dimensions: '1.2m x 0.8m x 1.5m',
+            weight: '450 kg',
+            connectivity: ['LIS', 'Ethernet', 'USB'],
+            certifications: ['FDA', 'CE', 'ISO 15189']
+          },
+          maintenanceHistory: [
+            {
+              date: '2024-12-10',
+              type: 'corrective',
+              description: 'Reparación de bomba de reactivos',
+              technician: 'Ing. Roberto Silva',
+              cost: 8500,
+              parts: ['Bomba de reactivos', 'Válvulas de control']
+            }
+          ],
+          usageStats: {
+            totalHours: 17520,
+            dailyAverage: 12,
+            peakUsage: '08:00-14:00',
+            efficiency: 88
+          }
+        },
+        {
+          id: 'EQ004',
+          name: 'Desfibrilador Automático',
+          type: 'therapeutic',
+          category: 'Emergencias',
+          brand: 'Philips',
+          model: 'HeartStart FRx',
+          serialNumber: 'DF-2024-003',
+          status: 'operational',
+          location: 'Sala de Emergencias',
+          department: 'Emergencias',
+          lastCalibration: '2024-10-15',
+          nextCalibration: '2025-01-15',
+          lastMaintenance: '2024-09-20',
+          nextMaintenance: '2025-03-20',
+          utilization: 5,
+          uptime: 100,
+          cost: 35000,
+          warranty: '2026-09-30',
+          supplier: 'Philips Healthcare',
+          purchaseDate: '2023-09-15',
+          expectedLifespan: 10,
+          currentAge: 1.3,
+          criticalLevel: 'critical',
+          alerts: ['Batería baja'],
+          specifications: {
+            power: 'Batería interna',
+            dimensions: '25cm x 20cm x 8cm',
+            weight: '1.8 kg',
+            connectivity: ['WiFi', 'Bluetooth'],
+            certifications: ['FDA', 'CE', 'AHA Guidelines']
+          },
+          maintenanceHistory: [
+            {
+              date: '2024-09-20',
+              type: 'preventive',
+              description: 'Verificación de baterías y electrodos',
+              technician: 'Téc. María González',
+              cost: 1200,
+              parts: ['Electrodos', 'Batería de respaldo']
+            }
+          ],
+          usageStats: {
+            totalHours: 8760,
+            dailyAverage: 0.1,
+            peakUsage: 'Emergencias',
+            efficiency: 100
+          }
+        }
+      ]);
+
+      setLoading(false);
+    }, 1500);
+  }, []);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800';
+      case 'inactive': return 'bg-red-100 text-red-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'on_leave': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getAppointmentStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'scheduled': return 'bg-blue-100 text-blue-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      case 'no_show': return 'bg-orange-100 text-orange-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getEquipmentStatusColor = (status: string) => {
+    switch (status) {
+      case 'operational': return 'bg-green-100 text-green-800';
+      case 'maintenance': return 'bg-yellow-100 text-yellow-800';
+      case 'out_of_service': return 'bg-red-100 text-red-800';
+      case 'calibration_due': return 'bg-orange-100 text-orange-800';
+      case 'expired': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getEquipmentTypeIcon = (type: string) => {
+    switch (type) {
+      case 'diagnostic': return Monitor;
+      case 'therapeutic': return Heart;
+      case 'monitoring': return Activity;
+      case 'surgical': return Scissors;
+      case 'laboratory': return Microscope;
+      case 'imaging': return Eye;
+      default: return Monitor;
+    }
+  };
+
+  const getCriticalLevelColor = (level: string) => {
+    switch (level) {
+      case 'low': return 'bg-green-100 text-green-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'high': return 'bg-orange-100 text-orange-800';
+      case 'critical': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Cargando dashboard ejecutivo...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-sky-600 to-blue-700 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div>
+              <h1 className="text-3xl font-bold text-white">Clínica Altamedica</h1>
+              <p className="text-sky-100">Dashboard de Gestión Médica y Telemedicina</p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-sky-600">
+                <FileText className="h-4 w-4 mr-2" />
+                Generar Reporte
+              </Button>
+              <Button className="bg-white text-sky-600 hover:bg-sky-50">
+                <Plus className="h-4 w-4 mr-2" />
+                Nueva Cita
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="bg-white shadow-sm border-b border-sky-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex space-x-8 overflow-x-auto">
+            {[
+              { id: 'overview', label: 'Resumen', icon: BarChart3 },
+              { id: 'patients', label: 'Pacientes', icon: Users },
+              { id: 'doctors', label: 'Médicos', icon: UserCheck },
+              { id: 'appointments', label: 'Citas', icon: Calendar },
+              { id: 'telemedicine', label: 'Telemedicina', icon: Video },
+              { id: 'equipment', label: 'Equipamiento', icon: Monitor },
+              { id: 'analytics', label: 'Analytics', icon: TrendingUp },
+              { id: 'marketplace', label: 'Marketplace', icon: Briefcase }
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setSelectedView(item.id as any)}
+                className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+                  selectedView === item.id
+                    ? 'border-sky-500 text-sky-600'
+                    : 'border-transparent text-gray-500 hover:text-sky-600 hover:border-sky-300'
+                }`}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {selectedView === 'overview' && (
+          <div className="space-y-6">
+            {/* Métricas Principales */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="border-sky-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Pacientes Activos</p>
+                      <p className="text-2xl font-bold text-sky-700">{metrics?.activePatients?.toLocaleString()}</p>
+                      <p className="text-xs text-gray-500">de {metrics?.totalPatients?.toLocaleString()} total</p>
+                    </div>
+                    <div className="h-12 w-12 bg-sky-100 rounded-lg flex items-center justify-center">
+                      <Users className="h-6 w-6 text-sky-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-blue-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Médicos Online</p>
+                      <p className="text-2xl font-bold text-blue-700">{metrics?.activeDoctors}</p>
+                      <p className="text-xs text-gray-500">de {metrics?.totalDoctors} total</p>
+                    </div>
+                    <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <UserCheck className="h-6 w-6 text-blue-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-purple-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Sesiones Telemedicina</p>
+                      <p className="text-2xl font-bold text-purple-700">{metrics?.telemedicineSessions}</p>
+                      <p className="text-xs text-gray-500">de {metrics?.totalAppointments} citas hoy</p>
+                    </div>
+                    <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Video className="h-6 w-6 text-purple-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-green-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Ingresos Mensuales</p>
+                      <p className="text-2xl font-bold text-green-700">${metrics?.monthlyRevenue?.toLocaleString()}</p>
+                      <p className="text-xs text-gray-500">Beneficio: ${((metrics?.monthlyRevenue || 0) - (metrics?.monthlyExpenses || 0)).toLocaleString()}</p>
+                    </div>
+                    <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                      <DollarSign className="h-6 w-6 text-green-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Métricas Adicionales de Clínica */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="border-orange-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Casos de Emergencia</p>
+                      <p className="text-2xl font-bold text-orange-700">{metrics?.emergencyCases}</p>
+                      <p className="text-xs text-gray-500">Hoy</p>
+                    </div>
+                    <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <AlertTriangle className="h-6 w-6 text-orange-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-indigo-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Tiempo de Espera</p>
+                      <p className="text-2xl font-bold text-indigo-700">{metrics?.averageWaitTime} min</p>
+                      <p className="text-xs text-gray-500">Promedio</p>
+                    </div>
+                    <div className="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                      <Clock className="h-6 w-6 text-indigo-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-pink-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Retención Pacientes</p>
+                      <p className="text-2xl font-bold text-pink-700">{metrics?.patientRetentionRate}%</p>
+                      <p className="text-xs text-gray-500">Este mes</p>
+                    </div>
+                    <div className="h-12 w-12 bg-pink-100 rounded-lg flex items-center justify-center">
+                      <Target className="h-6 w-6 text-pink-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-teal-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Satisfacción Pacientes</p>
+                      <p className="text-2xl font-bold text-teal-700">{metrics?.patientSatisfaction}%</p>
+                      <p className="text-xs text-gray-500">Encuestas recientes</p>
+                    </div>
+                    <div className="h-12 w-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                      <Heart className="h-6 w-6 text-teal-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Mapa Interactivo Integrado en Overview */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Red Médica Interactiva
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-96 rounded-md overflow-hidden">
+                  <AltamedicaInteractiveMap />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Actividad Reciente */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Últimas Citas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {appointments.slice(0, 5).map((appointment) => (
+                      <div key={appointment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <p className="font-medium">{appointment.patientName}</p>
+                          <p className="text-sm text-gray-600">{appointment.doctorName}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">{appointment.date} {appointment.time}</p>
+                          <Badge className={getAppointmentStatusColor(appointment.status)}>
+                            {appointment.status === 'completed' ? 'Completada' :
+                             appointment.status === 'in_progress' ? 'En Progreso' :
+                             appointment.status === 'scheduled' ? 'Programada' :
+                             appointment.status === 'cancelled' ? 'Cancelada' : 'No Presentó'}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Alertas Médicas y Notificaciones</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <AlertOctagon className="h-5 w-5 text-red-600" />
+                      <div>
+                        <p className="font-medium text-red-800">3 pacientes con valores críticos</p>
+                        <p className="text-sm text-red-700">Requieren atención inmediata</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <Clock className="h-5 w-5 text-yellow-600" />
+                      <div>
+                        <p className="font-medium text-yellow-800">12 pacientes con citas vencidas</p>
+                        <p className="text-sm text-yellow-700">Más de 30 días sin seguimiento</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <Video className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <p className="font-medium text-blue-800">5 sesiones de telemedicina activas</p>
+                        <p className="text-sm text-blue-700">Dr. Pérez atendiendo a Roberto Silva</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <CheckCircle2 className="h-5 w-5 text-green-600" />
+                      <div>
+                        <p className="font-medium text-green-800">67 citas completadas hoy</p>
+                        <p className="text-sm text-green-700">22 pendientes para el resto del día</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-purple-600" />
+                      <div>
+                        <p className="font-medium text-purple-800">Satisfacción aumentó 8%</p>
+                        <p className="text-sm text-purple-700">Comparado con el mes anterior</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {selectedView === 'patients' && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-sky-600" />
+                Gestión de Pacientes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-sky-200">
+                      <th className="text-left py-3 px-4">Paciente</th>
+                      <th className="text-left py-3 px-4">Edad/Género</th>
+                      <th className="text-left py-3 px-4">Diagnóstico Principal</th>
+                      <th className="text-left py-3 px-4">Nivel de Riesgo</th>
+                      <th className="text-left py-3 px-4">Última Visita</th>
+                      <th className="text-left py-3 px-4">Próxima Cita</th>
+                      <th className="text-left py-3 px-4">Score de Salud</th>
+                      <th className="text-left py-3 px-4">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {patients.map((patient) => (
+                      <tr key={patient.id} className="border-b hover:bg-sky-50 transition-colors">
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{patient.name}</p>
+                            <p className="text-sm text-gray-600">ID: {patient.id}</p>
+                            <p className="text-xs text-gray-500">{patient.bloodType} • BMI: {patient.bmi}</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium">{patient.age} años</p>
+                            <p className="text-sm text-gray-600 capitalize">{patient.gender}</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{patient.primaryDiagnosis}</p>
+                            <p className="text-sm text-gray-600">{patient.comorbidities.join(', ')}</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge className={
+                            patient.riskLevel === 'high' ? 'bg-red-100 text-red-800' :
+                            patient.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
+                          }>
+                            {patient.riskLevel === 'high' ? 'Alto' : 
+                             patient.riskLevel === 'medium' ? 'Medio' : 'Bajo'}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4">{patient.lastVisit}</td>
+                        <td className="py-3 px-4">{patient.nextAppointment}</td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className={`h-2 rounded-full ${
+                                  patient.healthScore >= 80 ? 'bg-green-600' :
+                                  patient.healthScore >= 60 ? 'bg-yellow-600' : 'bg-red-600'
+                                }`}
+                                style={{ width: `${patient.healthScore}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-medium">{patient.healthScore}%</span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" className="text-sky-600 border-sky-200 hover:bg-sky-50">
+                              <Eye className="w-3 h-3" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50">
+                              <Video className="w-3 h-3" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="text-green-600 border-green-200 hover:bg-green-50">
+                              <Calendar className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {selectedView === 'doctors' && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserCheck className="h-5 w-5 text-blue-600" />
+                Gestión de Médicos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-blue-200">
+                      <th className="text-left py-3 px-4">Médico</th>
+                      <th className="text-left py-3 px-4">Especialidad</th>
+                      <th className="text-left py-3 px-4">Estado</th>
+                      <th className="text-left py-3 px-4">Telemedicina</th>
+                      <th className="text-left py-3 px-4">Citas Hoy</th>
+                      <th className="text-left py-3 px-4">Rating</th>
+                      <th className="text-left py-3 px-4">Sesión Actual</th>
+                      <th className="text-left py-3 px-4">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {doctors.map((doctor) => (
+                      <tr key={doctor.id} className="border-b hover:bg-blue-50 transition-colors">
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{doctor.name}</p>
+                            <p className="text-sm text-gray-600">ID: {doctor.id}</p>
+                            <p className="text-xs text-gray-500">{doctor.experience} años exp.</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{doctor.specialty}</p>
+                            {doctor.subSpecialty && (
+                              <p className="text-sm text-gray-600">{doctor.subSpecialty}</p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge className={
+                            doctor.status === 'online' ? 'bg-green-100 text-green-800' :
+                            doctor.status === 'busy' ? 'bg-yellow-100 text-yellow-800' :
+                            doctor.status === 'offline' ? 'bg-gray-100 text-gray-800' :
+                            'bg-blue-100 text-blue-800'
+                          }>
+                            {doctor.status === 'online' ? 'Online' :
+                             doctor.status === 'busy' ? 'Ocupado' :
+                             doctor.status === 'offline' ? 'Offline' : 'Ausente'}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge className={doctor.telemedicineEnabled ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                            {doctor.telemedicineEnabled ? 'Habilitado' : 'No disponible'}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="text-center">
+                            <p className="font-medium text-gray-900">{doctor.appointmentsToday}</p>
+                            <p className="text-xs text-gray-500">hoy</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">{doctor.rating}</span>
+                            <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                            <span className="text-xs text-gray-500">({doctor.performanceMetrics.patientsSeen})</span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          {doctor.currentSession ? (
+                            <div className="text-sm">
+                              <p className="font-medium text-gray-900">{doctor.currentSession.patientName}</p>
+                              <p className="text-xs text-gray-600">{doctor.currentSession.sessionType}</p>
+                              <p className="text-xs text-gray-500">Desde {doctor.currentSession.startTime}</p>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-gray-500">Sin sesión</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50">
+                              <Eye className="w-3 h-3" />
+                            </Button>
+                            {doctor.telemedicineEnabled && (
+                              <Button size="sm" variant="outline" className="text-green-600 border-green-200 hover:bg-green-50">
+                                <Video className="w-3 h-3" />
+                              </Button>
+                            )}
+                            <Button size="sm" variant="outline" className="text-purple-600 border-purple-200 hover:bg-purple-50">
+                              <MessageSquare className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {selectedView === 'telemedicine' && (
+          <div className="space-y-6">
+            {/* Estadísticas de Telemedicina */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card className="border-purple-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Video className="w-8 h-8 text-purple-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Sesiones Activas</p>
+                      <p className="text-2xl font-bold text-purple-700">5</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-green-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Wifi className="w-8 h-8 text-green-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Conexión Estable</p>
+                      <p className="text-2xl font-bold text-green-700">98%</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-blue-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Clock className="w-8 h-8 text-blue-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Tiempo Promedio</p>
+                      <p className="text-2xl font-bold text-blue-700">24 min</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-orange-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Users className="w-8 h-8 text-orange-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Médicos Online</p>
+                      <p className="text-2xl font-bold text-orange-700">8</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Sesiones Activas */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Video className="h-5 w-5 text-purple-600" />
+                  Sesiones de Telemedicina Activas
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {doctors.filter(d => d.currentSession).map((doctor) => (
+                    <div key={doctor.id} className="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                          <span className="text-sm font-medium text-purple-800">En Sesión</span>
+                        </div>
+                        <Badge className="bg-purple-100 text-purple-800">
+                          {doctor.currentSession?.sessionType === 'video' ? 'Video' : 
+                           doctor.currentSession?.sessionType === 'audio' ? 'Audio' : 'Chat'}
+                        </Badge>
+                      </div>
+                      <div className="space-y-2">
+                        <div>
+                          <p className="font-medium text-gray-900">{doctor.name}</p>
+                          <p className="text-sm text-gray-600">{doctor.specialty}</p>
+                        </div>
+                        <div className="border-t border-purple-200 pt-2">
+                          <p className="text-sm font-medium text-gray-900">Paciente: {doctor.currentSession?.patientName}</p>
+                          <p className="text-xs text-gray-600">Desde: {doctor.currentSession?.startTime}</p>
+                        </div>
+                        <div className="flex gap-2 pt-2">
+                          <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
+                            <Eye className="w-3 h-3 mr-1" />
+                            Ver Sesión
+                          </Button>
+                          <Button size="sm" variant="outline" className="border-purple-200 text-purple-600">
+                            <MessageSquare className="w-3 h-3 mr-1" />
+                            Chat
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Calidad de Conexión */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <SignalHigh className="h-5 w-5 text-green-600" />
+                    Calidad de Conexión
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Ancho de Banda</span>
+                      <div className="flex items-center gap-2">
+                        <SignalHigh className="w-4 h-4 text-green-600" />
+                        <span className="font-medium">Excelente</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Latencia</span>
+                      <div className="flex items-center gap-2">
+                        <SignalMedium className="w-4 h-4 text-yellow-600" />
+                        <span className="font-medium">45ms</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Paquetes Perdidos</span>
+                      <div className="flex items-center gap-2">
+                        <SignalHigh className="w-4 h-4 text-green-600" />
+                        <span className="font-medium">0.1%</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ActivitySquare className="h-5 w-5 text-blue-600" />
+                    Métricas de Rendimiento
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-gray-600">Satisfacción Pacientes</span>
+                        <span className="font-medium">96%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-green-600 h-2 rounded-full" style={{ width: '96%' }}></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-gray-600">Tiempo de Respuesta</span>
+                        <span className="font-medium">2.3s</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: '85%' }}></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-gray-600">Uptime del Sistema</span>
+                        <span className="font-medium">99.9%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-purple-600 h-2 rounded-full" style={{ width: '99.9%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {selectedView === 'equipment' && (
+          <div className="space-y-6">
+            {/* Estadísticas de Equipamiento */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card className="border-blue-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Monitor className="w-8 h-8 text-blue-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Equipos Operativos</p>
+                      <p className="text-2xl font-bold text-blue-700">
+                        {equipment.filter(e => e.status === 'operational').length}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-yellow-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Wrench className="w-8 h-8 text-yellow-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">En Mantenimiento</p>
+                      <p className="text-2xl font-bold text-yellow-700">
+                        {equipment.filter(e => e.status === 'maintenance').length}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-red-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <AlertTriangle className="w-8 h-8 text-red-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Críticos</p>
+                      <p className="text-2xl font-bold text-red-700">
+                        {equipment.filter(e => e.criticalLevel === 'critical').length}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-green-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <DollarSign className="w-8 h-8 text-green-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Valor Total</p>
+                      <p className="text-2xl font-bold text-green-700">
+                        ${equipment.reduce((sum, e) => sum + e.cost, 0).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Alertas de Equipamiento */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                  Alertas de Equipamiento
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {equipment.filter(e => e.alerts.length > 0).map((equipment) => (
+                    <div key={equipment.id} className="flex items-center gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <div className={`w-3 h-3 rounded-full ${
+                        equipment.criticalLevel === 'critical' ? 'bg-red-500' :
+                        equipment.criticalLevel === 'high' ? 'bg-orange-500' :
+                        equipment.criticalLevel === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                      }`}></div>
+                      <div className="flex-1">
+                        <p className="font-medium text-red-800">{equipment.name}</p>
+                        <p className="text-sm text-red-700">{equipment.alerts.join(', ')}</p>
+                      </div>
+                      <Badge className={getEquipmentStatusColor(equipment.status)}>
+                        {equipment.status === 'operational' ? 'Operativo' :
+                         equipment.status === 'maintenance' ? 'Mantenimiento' :
+                         equipment.status === 'out_of_service' ? 'Fuera de Servicio' :
+                         equipment.status === 'calibration_due' ? 'Calibración Pendiente' : 'Expirado'}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Lista de Equipamiento */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Monitor className="h-5 w-5 text-blue-600" />
+                  Gestión de Equipamiento Médico
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-blue-200">
+                        <th className="text-left py-3 px-4">Equipo</th>
+                        <th className="text-left py-3 px-4">Tipo</th>
+                        <th className="text-left py-3 px-4">Ubicación</th>
+                        <th className="text-left py-3 px-4">Estado</th>
+                        <th className="text-left py-3 px-4">Utilización</th>
+                        <th className="text-left py-3 px-4">Próximo Mantenimiento</th>
+                        <th className="text-left py-3 px-4">Nivel Crítico</th>
+                        <th className="text-left py-3 px-4">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {equipment.map((equipment) => {
+                        const TypeIcon = getEquipmentTypeIcon(equipment.type);
+                        return (
+                          <tr key={equipment.id} className="border-b hover:bg-blue-50 transition-colors">
+                            <td className="py-3 px-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                  <TypeIcon className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-gray-900">{equipment.name}</p>
+                                  <p className="text-sm text-gray-600">{equipment.brand} {equipment.model}</p>
+                                  <p className="text-xs text-gray-500">ID: {equipment.id}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div>
+                                <p className="font-medium text-gray-900">{equipment.category}</p>
+                                <p className="text-sm text-gray-600 capitalize">{equipment.type}</p>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div>
+                                <p className="font-medium text-gray-900">{equipment.location}</p>
+                                <p className="text-sm text-gray-600">{equipment.department}</p>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <Badge className={getEquipmentStatusColor(equipment.status)}>
+                                {equipment.status === 'operational' ? 'Operativo' :
+                                 equipment.status === 'maintenance' ? 'Mantenimiento' :
+                                 equipment.status === 'out_of_service' ? 'Fuera de Servicio' :
+                                 equipment.status === 'calibration_due' ? 'Calibración Pendiente' : 'Expirado'}
+                              </Badge>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex items-center gap-2">
+                                <div className="w-16 bg-gray-200 rounded-full h-2">
+                                  <div 
+                                    className={`h-2 rounded-full ${
+                                      equipment.utilization >= 80 ? 'bg-green-600' :
+                                      equipment.utilization >= 60 ? 'bg-yellow-600' : 'bg-blue-600'
+                                    }`}
+                                    style={{ width: `${equipment.utilization}%` }}
+                                  ></div>
+                                </div>
+                                <span className="text-sm font-medium">{equipment.utilization}%</span>
+                              </div>
+                              <p className="text-xs text-gray-500">Uptime: {equipment.uptime}%</p>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">{equipment.nextMaintenance}</p>
+                                <p className="text-xs text-gray-500">Calibración: {equipment.nextCalibration}</p>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <Badge className={getCriticalLevelColor(equipment.criticalLevel)}>
+                                {equipment.criticalLevel === 'low' ? 'Bajo' :
+                                 equipment.criticalLevel === 'medium' ? 'Medio' :
+                                 equipment.criticalLevel === 'high' ? 'Alto' : 'Crítico'}
+                              </Badge>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50">
+                                  <Eye className="w-3 h-3" />
+                                </Button>
+                                <Button size="sm" variant="outline" className="text-green-600 border-green-200 hover:bg-green-50">
+                                  <Wrench className="w-3 h-3" />
+                                </Button>
+                                <Button size="sm" variant="outline" className="text-purple-600 border-purple-200 hover:bg-purple-50">
+                                  <Settings className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Análisis de Equipamiento */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-purple-600" />
+                    Utilización por Tipo
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {['imaging', 'monitoring', 'laboratory', 'therapeutic', 'diagnostic', 'surgical'].map((type) => {
+                      const typeEquipment = equipment.filter(e => e.type === type);
+                      const avgUtilization = typeEquipment.length > 0 
+                        ? typeEquipment.reduce((sum, e) => sum + e.utilization, 0) / typeEquipment.length 
+                        : 0;
+                      return (
+                        <div key={type} className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600 capitalize">{type}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-purple-600 h-2 rounded-full" 
+                                style={{ width: `${avgUtilization}%` }}
+                              ></div>
+                            </div>
+                            <span className="font-medium text-sm">{avgUtilization.toFixed(1)}%</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-green-600" />
+                    Costos de Mantenimiento
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {equipment.slice(0, 5).map((equipment) => {
+                      const totalMaintenanceCost = equipment.maintenanceHistory.reduce((sum, m) => sum + m.cost, 0);
+                      return (
+                        <div key={equipment.id} className="flex justify-between items-center">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{equipment.name}</p>
+                            <p className="text-xs text-gray-600">{equipment.maintenanceHistory.length} mantenimientos</p>
+                          </div>
+                          <span className="font-medium text-green-600">${totalMaintenanceCost.toLocaleString()}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {selectedView === 'appointments' && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-green-600" />
+                Gestión de Citas Médicas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-green-200">
+                      <th className="text-left py-3 px-4">Paciente</th>
+                      <th className="text-left py-3 px-4">Médico</th>
+                      <th className="text-left py-3 px-4">Fecha/Hora</th>
+                      <th className="text-left py-3 px-4">Tipo</th>
+                      <th className="text-left py-3 px-4">Especialidad</th>
+                      <th className="text-left py-3 px-4">Estado</th>
+                      <th className="text-left py-3 px-4">Signos Vitales</th>
+                      <th className="text-left py-3 px-4">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {appointments.map((appointment) => (
+                      <tr key={appointment.id} className="border-b hover:bg-green-50 transition-colors">
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{appointment.patientName}</p>
+                            <p className="text-sm text-gray-600">ID: {appointment.patientId}</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{appointment.doctorName}</p>
+                            <p className="text-sm text-gray-600">{appointment.specialty}</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{appointment.date}</p>
+                            <p className="text-sm text-gray-600">{appointment.time}</p>
+                            <p className="text-xs text-gray-500">{appointment.duration} min</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge className={
+                            appointment.type === 'telemedicine_video' ? 'bg-purple-100 text-purple-800' :
+                            appointment.type === 'telemedicine_audio' ? 'bg-blue-100 text-blue-800' :
+                            appointment.type === 'in_person' ? 'bg-green-100 text-green-800' :
+                            appointment.type === 'emergency' ? 'bg-red-100 text-red-800' :
+                            'bg-gray-100 text-gray-800'
+                          }>
+                            {appointment.type === 'telemedicine_video' ? 'Telemedicina Video' :
+                             appointment.type === 'telemedicine_audio' ? 'Telemedicina Audio' :
+                             appointment.type === 'in_person' ? 'Presencial' :
+                             appointment.type === 'emergency' ? 'Emergencia' : 'Seguimiento'}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className="text-sm font-medium text-gray-900">{appointment.specialty}</span>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge className={
+                            appointment.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            appointment.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                            appointment.status === 'scheduled' ? 'bg-yellow-100 text-yellow-800' :
+                            appointment.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                            'bg-orange-100 text-orange-800'
+                          }>
+                            {appointment.status === 'completed' ? 'Completada' :
+                             appointment.status === 'in_progress' ? 'En Progreso' :
+                             appointment.status === 'scheduled' ? 'Programada' :
+                             appointment.status === 'cancelled' ? 'Cancelada' : 'No Presentó'}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4">
+                          {appointment.vitalSigns ? (
+                            <div className="text-xs space-y-1">
+                              <div className="flex justify-between">
+                                <span>PA:</span>
+                                <span className="font-medium">{appointment.vitalSigns.bloodPressure}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>FC:</span>
+                                <span className="font-medium">{appointment.vitalSigns.heartRate}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>T:</span>
+                                <span className="font-medium">{appointment.vitalSigns.temperature}°C</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-gray-500">No registrados</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" className="text-green-600 border-green-200 hover:bg-green-50">
+                              <Eye className="w-3 h-3" />
+                            </Button>
+                            {appointment.type.includes('telemedicine') && (
+                              <Button size="sm" variant="outline" className="text-purple-600 border-purple-200 hover:bg-purple-50">
+                                <Video className="w-3 h-3" />
+                              </Button>
+                            )}
+                            <Button size="sm" variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50">
+                              <FileText className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {selectedView === 'analytics' && (
+          <div className="space-y-6">
+            {/* Análisis Demográfico de Pacientes */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users2 className="h-5 w-5 text-sky-600" />
+                    Distribución por Edad
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">18-30 años</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div className="bg-sky-600 h-2 rounded-full" style={{ width: '25%' }}></div>
+                        </div>
+                        <span className="font-medium text-sm">25%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">31-50 años</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-600 h-2 rounded-full" style={{ width: '40%' }}></div>
+                        </div>
+                        <span className="font-medium text-sm">40%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">51-70 años</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div className="bg-purple-600 h-2 rounded-full" style={{ width: '30%' }}></div>
+                        </div>
+                        <span className="font-medium text-sm">30%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">70+ años</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div className="bg-green-600 h-2 rounded-full" style={{ width: '5%' }}></div>
+                        </div>
+                        <span className="font-medium text-sm">5%</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <PieChartIcon className="h-5 w-5 text-green-600" />
+                    Diagnósticos Principales
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Diabetes</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div className="bg-red-600 h-2 rounded-full" style={{ width: '35%' }}></div>
+                        </div>
+                        <span className="font-medium text-sm">35%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Hipertensión</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div className="bg-orange-600 h-2 rounded-full" style={{ width: '28%' }}></div>
+                        </div>
+                        <span className="font-medium text-sm">28%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Asma</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-600 h-2 rounded-full" style={{ width: '15%' }}></div>
+                        </div>
+                        <span className="font-medium text-sm">15%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Otros</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div className="bg-gray-600 h-2 rounded-full" style={{ width: '22%' }}></div>
+                        </div>
+                        <span className="font-medium text-sm">22%</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Análisis de Telemedicina */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Video className="h-5 w-5 text-purple-600" />
+                    Uso de Telemedicina
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Sesiones Video</span>
+                      <span className="font-bold text-purple-600">45%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Sesiones Audio</span>
+                      <span className="font-bold text-blue-600">30%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Citas Presenciales</span>
+                      <span className="font-bold text-green-600">25%</span>
+                    </div>
+                    <Separator />
+                    <div className="text-center pt-2">
+                      <p className="text-sm text-gray-600">Satisfacción Telemedicina</p>
+                      <p className="text-2xl font-bold text-purple-600">96%</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-orange-600" />
+                    Tendencias de Citas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Citas Completadas</span>
+                      <span className="font-bold text-green-600">+15%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Tiempo de Espera</span>
+                      <span className="font-bold text-red-600">-8%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Retención Pacientes</span>
+                      <span className="font-bold text-blue-600">+12%</span>
+                    </div>
+                    <Separator />
+                    <div className="text-center pt-2">
+                      <p className="text-sm text-gray-600">Eficiencia General</p>
+                      <p className="text-2xl font-bold text-orange-600">+18%</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Análisis de Riesgo */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                  Análisis de Riesgo por Paciente
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center p-4 bg-red-50 rounded-lg border border-red-200">
+                    <div className="text-2xl font-bold text-red-600">15%</div>
+                    <p className="text-sm text-gray-600">Alto Riesgo</p>
+                    <p className="text-xs text-gray-500">Requieren seguimiento intensivo</p>
+                  </div>
+                  <div className="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <div className="text-2xl font-bold text-yellow-600">45%</div>
+                    <p className="text-sm text-gray-600">Riesgo Medio</p>
+                    <p className="text-xs text-gray-500">Seguimiento regular</p>
+                  </div>
+                  <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="text-2xl font-bold text-green-600">40%</div>
+                    <p className="text-sm text-gray-600">Bajo Riesgo</p>
+                    <p className="text-xs text-gray-500">Seguimiento estándar</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {selectedView === 'marketplace' && (
+          <div className="space-y-6">
+            {/* Estadísticas de Marketplace Médico */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="border-sky-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-center">
+                    <Stethoscope className="w-8 h-8 text-sky-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Ofertas Médicas</p>
+                      <p className="text-2xl font-bold text-sky-700">{processedOffers.length}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-blue-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-center">
+                    <Users className="w-8 h-8 text-blue-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Clínicas</p>
+                      <p className="text-2xl font-bold text-blue-700">18</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-green-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-center">
+                    <UserPlus className="w-8 h-8 text-green-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Candidatos</p>
+                      <p className="text-2xl font-bold text-green-700">234</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-purple-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-center">
+                    <CheckCircle className="w-8 h-8 text-purple-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-600">Contrataciones</p>
+                      <p className="text-2xl font-bold text-purple-700">67</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Panel de filtros */}
+              <div id="filters-panel" className={`lg:col-span-1 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+                <Card className="sticky top-20">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <Filter className="h-5 w-5" />
+                        Filtros
+                      </CardTitle>
+                      <Button
+                        variant="ghost"
+                        onClick={() => setFilters({
+                          search: '',
+                          location: [],
+                          specialty: [],
+                          type: [],
+                          salaryRange: [0, 20000],
+                          experience: [],
+                          remote: null,
+                          urgent: false
+                        })}
+                        className="text-sm text-gray-500 hover:text-gray-700 flex items-center p-0"
+                      >
+                        <X className="w-4 h-4 mr-1" aria-hidden="true" />
+                        Limpiar
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Búsqueda */}
+                    <div>
+                      <label htmlFor="search-input" className="block text-sm font-medium text-gray-700 mb-2">Búsqueda</label>
+                      <div className="relative">
+                        <Search className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" aria-hidden="true" />
+                        <input
+                          id="search-input"
+                          type="text"
+                          placeholder="Buscar ofertas..."
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                          value={filters.search}
+                          onChange={(e) => setFilters({...filters, search: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Ubicación */}
+                    <div>
+                      <label htmlFor="location-select" className="block text-sm font-medium text-gray-700 mb-2">Ubicación</label>
+                      <select
+                        id="location-select"
+                        multiple
+                        className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                        value={filters.location}
+                        onChange={(e) => {
+                          const selected = Array.from(e.target.selectedOptions, option => option.value);
+                          setFilters({...filters, location: selected});
+                        }}
+                      >
+                        {LOCATIONS.map((loc) => (
+                          <option key={loc} value={loc}>{loc}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    {/* Especialidad */}
+                    <div>
+                      <label htmlFor="specialty-select" className="block text-sm font-medium text-gray-700 mb-2">Especialidad</label>
+                      <select
+                        id="specialty-select"
+                        multiple
+                        className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                        value={filters.specialty}
+                        onChange={(e) => {
+                          const selected = Array.from(e.target.selectedOptions, option => option.value);
+                          setFilters({...filters, specialty: selected});
+                        }}
+                      >
+                        {SPECIALTIES.map((specialty) => (
+                          <option key={specialty} value={specialty}>{specialty}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    {/* Tipo de contrato */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Contrato</label>
+                      <div className="space-y-2">
+                        {CONTRACT_TYPES.map(({ value, label }) => (
+                          <label key={value} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={filters.type.includes(value)}
+                              onChange={(e) => {
+                                const newTypes = e.target.checked 
+                                  ? [...filters.type, value]
+                                  : filters.type.filter(t => t !== value);
+                                setFilters({...filters, type: newTypes});
+                              }}
+                              className="mr-2"
+                            />
+                            <span className="text-sm text-gray-700">{label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Salario */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Rango Salarial (USD mensuales)</label>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="number"
+                          min="0"
+                          max="20000"
+                          step="1000"
+                          placeholder="Mínimo"
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                          value={filters.salaryRange[0]}
+                          onChange={(e) => {
+                            const min = Number(e.target.value);
+                            setFilters({...filters, salaryRange: [min, filters.salaryRange[1]]});
+                          }}
+                        />
+                        <span className="text-gray-500">-</span>
+                        <input
+                          type="number"
+                          min="0"
+                          max="20000"
+                          step="1000"
+                          placeholder="Máximo"
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                          value={filters.salaryRange[1]}
+                          onChange={(e) => {
+                            const max = Number(e.target.value);
+                            setFilters({...filters, salaryRange: [filters.salaryRange[0], max]});
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Experiencia */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Experiencia</label>
+                      <div className="space-y-2">
+                        {EXPERIENCES.map((exp) => (
+                          <label key={exp} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={filters.experience.includes(exp)}
+                              onChange={(e) => {
+                                const newExp = e.target.checked 
+                                  ? [...filters.experience, exp]
+                                  : filters.experience.filter(e => e !== exp);
+                                setFilters({...filters, experience: newExp});
+                              }}
+                              className="mr-2"
+                            />
+                            <span className="text-sm text-gray-700">{exp}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Opciones adicionales */}
+                    <div className="space-y-2">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={filters.remote === true}
+                          onChange={(e) => setFilters({...filters, remote: e.target.checked ? true : null})}
+                          className="mr-2"
+                        />
+                        <span className="text-sm text-gray-700">Remoto disponible</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={filters.urgent}
+                          onChange={(e) => setFilters({...filters, urgent: e.target.checked})}
+                          className="mr-2"
+                        />
+                        <span className="text-sm text-gray-700">Solo ofertas urgentes</span>
+                      </label>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Contenido de Marketplace */}
+              <div className="lg:col-span-3 space-y-6">
+                {/* Mapa en Marketplace */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MapPin className="h-5 w-5 text-sky-600" />
+                      Ubicaciones de Clínicas
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-96 rounded-md overflow-hidden">
+                      <AltamedicaInteractiveMap />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Resultados */}
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <p className="text-gray-600">
+                    {processedOffers.length} ofertas encontradas
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <span>Ordenar por:</span>
+                    <select 
+                      className="border border-gray-300 rounded-md px-2 py-1"
+                      value={sortOption}
+                      onChange={(e) => setSortOption(e.target.value as SortOption)}
+                    >
+                      <option value="recent">Más recientes</option>
+                      <option value="salary">Mejor pagadas</option>
+                      <option value="applications">Más aplicaciones</option>
+                      <option value="rating">Mejor rating</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="lg:hidden"
+                    >
+                      <Sliders className="w-4 h-4 mr-2" />
+                      Filtros
+                    </Button>
+                    <div className="flex items-center bg-white border border-gray-200 rounded-md">
+                      <Button
+                        variant="ghost"
+                        onClick={() => setViewMode('grid')}
+                        className={`p-2 ${viewMode === 'grid' ? 'text-gray-900 bg-gray-100' : 'text-gray-500'}`}
+                      >
+                        <Grid className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => setViewMode('list')}
+                        className={`p-2 ${viewMode === 'list' ? 'text-gray-900 bg-gray-100' : 'text-gray-500'}`}
+                      >
+                        <List className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ofertas */}
+                <div className={`grid gap-6 ${
+                  viewMode === 'grid' 
+                    ? 'grid-cols-1 md:grid-cols-2' 
+                    : 'grid-cols-1'
+                }`}>
+                  {processedOffers.map((offer) => (
+                    <OfferCard
+                      key={offer.id}
+                      offer={offer}
+                      viewMode={viewMode}
+                      onViewDetails={handleViewDetails}
+                      onApply={handleApply}
+                      onSave={handleSave}
+                      onShare={handleShare}
+                    />
+                  ))}
+                </div>
+
+                {processedOffers.length === 0 && (
+                  <div className="text-center py-12">
+                    <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" aria-hidden="true" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No se encontraron ofertas</h3>
+                    <p className="text-gray-600">Intenta ajustar los filtros de búsqueda</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -3,7 +3,7 @@
  * Herramienta para verificar y optimizar la integración con Firestore
  */
 
-import { adminDb, adminAuth } from '@altamedica/firebase';
+import { adminDb, adminAuth } from '@/lib/firebase-admin';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = "force-dynamic";

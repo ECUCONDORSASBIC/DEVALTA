@@ -1,0 +1,114 @@
+{
+  "home": {
+    "xs": {
+      "width": 475,
+      "height": 667,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 4,
+      "screenshot": "responsive-screenshots\\home-xs.png",
+      "status": "PASS"
+    },
+    "sm": {
+      "width": 640,
+      "height": 800,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 4,
+      "screenshot": "responsive-screenshots\\home-sm.png",
+      "status": "PASS"
+    },
+    "md": {
+      "width": 768,
+      "height": 1024,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 4,
+      "screenshot": "responsive-screenshots\\home-md.png",
+      "status": "PASS"
+    },
+    "lg": {
+      "width": 1024,
+      "height": 768,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 4,
+      "screenshot": "responsive-screenshots\\home-lg.png",
+      "status": "PASS"
+    },
+    "xl": {
+      "width": 1280,
+      "height": 800,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 4,
+      "screenshot": "responsive-screenshots\\home-xl.png",
+      "status": "PASS"
+    },
+    "2xl": {
+      "width": 1536,
+      "height": 900,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 4,
+      "screenshot": "responsive-screenshots\\home-2xl.png",
+      "status": "PASS"
+    }
+  },
+  "dashboard": {
+    "xs": {
+      "width": 475,
+      "height": 667,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 0,
+      "screenshot": "responsive-screenshots\\dashboard-xs.png",
+      "status": "PASS"
+    },
+    "sm": {
+      "width": 640,
+      "height": 800,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 0,
+      "screenshot": "responsive-screenshots\\dashboard-sm.png",
+      "status": "PASS"
+    },
+    "md": {
+      "width": 768,
+      "height": 1024,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 0,
+      "screenshot": "responsive-screenshots\\dashboard-md.png",
+      "status": "PASS"
+    },
+    "lg": {
+      "width": 1024,
+      "height": 768,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 0,
+      "screenshot": "responsive-screenshots\\dashboard-lg.png",
+      "status": "PASS"
+    },
+    "xl": {
+      "width": 1280,
+      "height": 800,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 0,
+      "screenshot": "responsive-screenshots\\dashboard-xl.png",
+      "status": "PASS"
+    },
+    "2xl": {
+      "width": 1536,
+      "height": 900,
+      "hasHorizontalScroll": false,
+      "elementsOutsideViewport": 0,
+      "textReadabilityIssues": 0,
+      "screenshot": "responsive-screenshots\\dashboard-2xl.png",
+      "status": "PASS"
+    }
+  }
+}

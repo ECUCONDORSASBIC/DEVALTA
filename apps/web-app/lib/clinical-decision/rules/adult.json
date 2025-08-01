@@ -1,0 +1,88 @@
+[
+  {
+    "id": "adult-cardiovascular-1",
+    "conditions": {
+      "ageRange": ["18-40", "41-65", ">65"],
+      "symptoms": ["chest", "chest_pain", "shortness_of_breath"],
+      "riskFactors": ["hypertension", "smoking", "high_cholesterol"]
+    },
+    "questions": [
+      {
+        "id": "pain-duration",
+        "text": "¿Cuánto dura el dolor en el pecho?",
+        "type": "slider",
+        "range": {"min": 0, "max": 60, "step": 1},
+        "required": true,
+        "category": "symptom"
+      },
+      {
+        "id": "sweating",
+        "text": "¿Experimenta sudoración excesiva?",
+        "type": "checkbox",
+        "required": false,
+        "category": "symptom"
+      }
+    ],
+    "diagnoses": [
+      {
+        "code": "I20.0",
+        "name": "Angina inestable",
+        "probability": 0.7,
+        "urgency": "high",
+        "reasoning": ["Dolor en el pecho con factores de riesgo", "Corta duración"]
+      },
+      {
+        "code": "I21.9",
+        "name": "Infarto agudo de miocardio",
+        "probability": 0.3,
+        "urgency": "critical",
+        "reasoning": ["Dolor severo y prolongado", "Signos de alarma como sudoración"]
+      }
+    ]
+  },
+  {
+    "id": "adult-respiratory-1",
+    "conditions": {
+      "ageRange": ["18-40", "41-65", ">65"],
+      "symptoms": ["chest", "cough", "fever", "difficulty_breathing"]
+    },
+    "questions": [
+      {
+        "id": "cough-characteristic",
+        "text": "¿Cómo describiría la tos?",
+        "type": "radio",
+        "options": [
+          {"value": "dry", "label": "Seca"},
+          {"value": "productive", "label": "Productiva"},
+          {"value": "bloody", "label": "Con sangre"}
+        ],
+        "required": true,
+        "category": "symptom"
+      },
+      {
+        "id": "fever-duration",
+        "text": "¿Cuántos días lleva con fiebre?",
+        "type": "slider",
+        "range": {"min": 0, "max": 14, "step": 1},
+        "required": true,
+        "category": "symptom"
+      }
+    ],
+    "diagnoses": [
+      {
+        "code": "J18.9",
+        "name": "Neumonía",
+        "probability": 0.5,
+        "urgency": "high",
+        "reasoning": ["Fiebre prolongada con tos", "Dificultad respiratoria"]
+      },
+      {
+        "code": "J44.1",
+        "name": "EPOC con exacerbación aguda",
+        "probability": 0.2,
+        "urgency": "medium",
+        "reasoning": ["Historia de tabaquismo", "Tos productiva y dificultad respiratoria"]
+      }
+    ]
+  }
+]

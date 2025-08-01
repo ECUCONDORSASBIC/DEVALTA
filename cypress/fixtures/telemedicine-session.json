@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "data": {
+    "session": {
+      "id": "session_e2e_test",
+      "doctorId": "doctor_e2e_test",
+      "patientId": "patient_e2e_test",
+      "type": "video_consultation",
+      "status": "active",
+      "startTime": "2025-01-26T14:00:00.000Z",
+      "duration": 1800,
+      "webrtcConfig": {
+        "iceServers": [
+          { "urls": "stun:stun.l.google.com:19302" }
+        ]
+      },
+      "chatEnabled": true,
+      "videoEnabled": true,
+      "audioEnabled": true,
+      "recordingEnabled": false
+    },
+    "participants": [
+      {
+        "userId": "doctor_e2e_test",
+        "role": "doctor",
+        "status": "connected",
+        "joinedAt": "2025-01-26T14:00:00.000Z"
+      },
+      {
+        "userId": "patient_e2e_test",
+        "role": "patient",
+        "status": "connected",
+        "joinedAt": "2025-01-26T14:01:00.000Z"
+      }
+    ]
+  }
+}

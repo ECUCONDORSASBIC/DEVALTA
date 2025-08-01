@@ -1,128 +1,114 @@
 module.exports = {
   apps: [
-    // Enhanced Multi-Agent MCP
+    // ====================================================================
+    //                          AGENTES PRINCIPALES
+    // ====================================================================
     {
-      name: 'enhanced-multi-agent-mcp',
-      script: 'mcp-servers/enhanced-multi-agent-mcp.js',
-      cwd: './',
-      env: {
-        NODE_ENV: 'development',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
-      env_production: {
-        NODE_ENV: 'production',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
+      name: 'orchestrator-agent',
+      script: './agents/src/orchestrator-agent/index.ts',
+      exec_interpreter: 'ts-node',
       instances: 1,
       autorestart: true,
-      watch: false,
-      max_memory_restart: '1G',
-      log_file: './logs/enhanced-multi-agent-mcp.log',
-      out_file: './logs/enhanced-multi-agent-mcp-out.log',
-      error_file: './logs/enhanced-multi-agent-mcp-error.log',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
+      watch: ['agents/src/orchestrator-agent'],
+      max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'development',
+      },
     },
 
-    // System Configuration MCP
+    // ====================================================================
+    //                          SUB-AGENTES ESPECIALIZADOS
+    // ====================================================================
     {
-      name: 'system-configuration-mcp',
-      script: 'mcp-servers/system-configuration.js',
-      cwd: './',
-      env: {
-        NODE_ENV: 'development',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
-      env_production: {
-        NODE_ENV: 'production',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
+      name: 'code-quality-agent',
+      script: './agents/src/code-quality-agent/index.ts',
+      exec_interpreter: 'ts-node',
       instances: 1,
       autorestart: true,
-      watch: false,
-      max_memory_restart: '1G',
-      log_file: './logs/system-configuration-mcp.log',
-      out_file: './logs/system-configuration-mcp-out.log',
-      error_file: './logs/system-configuration-mcp-error.log',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
+      watch: ['agents/src/code-quality-agent'],
+      max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'development',
+      },
     },
-
-    // Codebase Intelligence MCP
     {
-      name: 'codebase-intelligence-mcp',
-      script: 'mcp-protected/servers/codebase-intelligence-mcp.js',
-      cwd: './',
-      env: {
-        NODE_ENV: 'development',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
-      env_production: {
-        NODE_ENV: 'production',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
+      name: 'testing-agent',
+      script: './agents/src/testing-agent/index.ts',
+      exec_interpreter: 'ts-node',
       instances: 1,
       autorestart: true,
-      watch: false,
-      max_memory_restart: '1G',
-      log_file: './logs/codebase-intelligence-mcp.log',
-      out_file: './logs/codebase-intelligence-mcp-out.log',
-      error_file: './logs/codebase-intelligence-mcp-error.log',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
+      watch: ['agents/src/testing-agent'],
+      max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'development',
+      },
     },
-
-    // AI Flow Orchestrator MCP
     {
-      name: 'ai-flow-orchestrator-mcp',
-      script: 'mcp-protected/servers/ai-flow-orchestrator-mcp.js',
-      cwd: './',
-      env: {
-        NODE_ENV: 'development',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
-      env_production: {
-        NODE_ENV: 'production',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
+      name: 'devops-agent',
+      script: './agents/src/devops-agent/index.ts',
+      exec_interpreter: 'ts-node',
       instances: 1,
       autorestart: true,
-      watch: false,
-      max_memory_restart: '1G',
-      log_file: './logs/ai-flow-orchestrator-mcp.log',
-      out_file: './logs/ai-flow-orchestrator-mcp-out.log',
-      error_file: './logs/ai-flow-orchestrator-mcp-error.log',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
+      watch: ['agents/src/devops-agent'],
+      max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'development',
+      },
     },
-
-    // Frontend Error Handler MCP
     {
-      name: 'frontend-error-handler-mcp',
-      script: 'mcp-protected/servers/frontend-error-handler.js',
-      cwd: './',
-      env: {
-        NODE_ENV: 'development',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
-      env_production: {
-        NODE_ENV: 'production',
-        PROJECT_ROOT: './',
-        MCP_ENABLED: 'true'
-      },
+      name: 'database-agent',
+      script: './agents/src/database-agent/index.ts',
+      exec_interpreter: 'ts-node',
       instances: 1,
       autorestart: true,
-      watch: false,
-      max_memory_restart: '1G',
-      log_file: './logs/frontend-error-handler-mcp.log',
-      out_file: './logs/frontend-error-handler-mcp-out.log',
-      error_file: './logs/frontend-error-handler-mcp-error.log',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z'
-    }
-  ]
-}; 
+      watch: ['agents/src/database-agent'],
+      max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'development',
+      },
+    },
+    {
+      name: 'security-agent',
+      script: './agents/src/security-agent/index.ts',
+      exec_interpreter: 'ts-node',
+      instances: 1,
+      autorestart: true,
+      watch: ['agents/src/security-agent'],
+      max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'development',
+      },
+    },
+    {
+      name: 'docs-agent',
+      script: './agents/src/docs-agent/index.ts',
+      exec_interpreter: 'ts-node',
+      instances: 1,
+      autorestart: true,
+      watch: ['agents/src/docs-agent'],
+      max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'development',
+      },
+    },
+    {
+      name: 'medical-ai-agent',
+      script: './agents/src/medical-ai-agent/index.js',
+      instances: 1,
+      autorestart: true,
+      watch: ['agents/src/medical-ai-agent'],
+      max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'development',
+      },
+    },
+  ],
+};

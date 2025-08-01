@@ -1,7 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { requireRole } from "../../../lib/auth-middleware";
+import { companiesService } from "../../../lib/firestore";
+import { auditLog, logger } from "../../../lib/medical-mocks";
 
-// Datos de ejemplo de empresas médicas
-const companiesData = [
+// Fallback data for when Firestore is not available
+const fallbackCompaniesData = [
   {
     id: "1",
     name: "Hospital Universitario San Vicente",
@@ -134,22 +137,55 @@ const companiesData = [
   },
 ];
 
-export async function GET() {
+export const GET = requireRole(['company', 'admin'], async (request: NextRequest, user: any) => {
   try {
-    // Simular delay de red
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    return NextResponse.json(companiesData, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
-      },
+    const companyId = user.companyId || user.custom_claims?.companyId;
+    
+    // Log de auditoría
+    await auditLog({
+      action: 'companies_list_viewed',
+      userId: user.uid,
+      companyId: companyId || 'unknown',
+      metadata: { endpoint: '/api/companies' }
     });
+
+    // Try to fetch from Firestore first
+    try {
+      const companies = await companiesService.getCompanies();
+      
+      return NextResponse.json(companies, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+          "X-Data-Source": "firestore"
+        },
+      });
+    } catch (firestoreError) {
+      logger.warn('Firestore unavailable, using fallback data:', firestoreError);
+      
+      // Simular delay de red para fallback
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      return NextResponse.json(fallbackCompaniesData, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+          "X-Data-Source": "fallback"
+        },
+      });
+    }
   } catch (error) {
+    logger.error('Error getting companies:', {
+      error: error.message,
+      userId: user?.uid,
+      companyId: user?.companyId
+    });
+
     return NextResponse.json(
       { error: "Error interno del servidor" },
       { status: 500 }
     );
   }
-}
+});

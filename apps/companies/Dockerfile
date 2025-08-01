@@ -24,16 +24,16 @@ COPY --from=base /app/apps/companies/ ./apps/companies/
 
 COPY apps/companies/src/ ./apps/companies/src/
 COPY apps/companies/public/ ./apps/companies/public/
-COPY apps/companies/next.config.ts ./apps/companies/
-COPY apps/companies/tailwind.config.ts ./apps/companies/
+COPY apps/companies/next.config.js ./apps/companies/
+COPY apps/companies/tailwind.config.js ./apps/companies/
 COPY apps/companies/tsconfig.json ./apps/companies/
 
 WORKDIR /app/apps/companies
 RUN pnpm build
 
-EXPOSE 3002
+EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3002/api/health || exit 1
+    CMD curl -f http://localhost:3000/api/health || exit 1
 
 CMD ["pnpm", "start"]

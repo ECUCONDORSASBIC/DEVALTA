@@ -1,22 +1,32 @@
 {
-  "extends": "../../configs/base/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
+    "rootDir": "./src",
+    "module": "esnext",
+    "target": "es2022",
+    "moduleResolution": "node",
     "declaration": true,
     "declarationMap": true,
-    "composite": true,
-    "incremental": true,
     "skipLibCheck": true,
     "noEmit": false,
     "noEmitOnError": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "jsx": "react-jsx",
+    "lib": ["es2022", "dom", "dom.iterable"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "references": [
-    { "path": "../types" }
-  ],
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": [
+    "node_modules", 
+    "dist", 
+    "**/*.test.ts", 
+    "**/*.test.tsx"
+  ]
 }

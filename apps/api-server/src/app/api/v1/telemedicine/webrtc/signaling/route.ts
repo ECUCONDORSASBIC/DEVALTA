@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createErrorResponse, createSuccessResponse } from '@altamedica/shared';
+import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
 import { z } from 'zod';
 
 // Schema para mensajes de signaling
