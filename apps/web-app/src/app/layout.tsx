@@ -1,12 +1,23 @@
 import FirebaseInit from '@/components/firebase/FirebaseInit'
-import { AuthProvider } from '@/contexts/AuthContext'
+import { AuthProvider } from '@altamedica/auth';
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Lexend } from 'next/font/google'
 import { Toaster } from 'sonner'
 import QueryProvider from '@/components/providers/QueryProvider'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Configuración optimizada de fuentes con variables CSS
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap', // Mejora el rendimiento de carga
+})
+
+const lexend = Lexend({ 
+  subsets: ['latin'],
+  variable: '--font-lexend',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'ALTAMEDICA - Portal Médico Inteligente',
@@ -31,8 +42,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es" className="scroll-smooth">
-      <body className={`${inter.className} antialiased`}>
+    <html lang="es" className={`${inter.variable} ${lexend.variable} scroll-smooth`}>
+      <body className="font-sans antialiased">
         <QueryProvider>
           <FirebaseInit />
           <AuthProvider>

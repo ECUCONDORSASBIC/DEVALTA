@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useWizard } from './Wizard'
-import { cn } from '@/lib/utils'
+import { cn } from '@altamedica/utils'
 
 // Icons using design tokens
 const ChevronLeftIcon = () => (

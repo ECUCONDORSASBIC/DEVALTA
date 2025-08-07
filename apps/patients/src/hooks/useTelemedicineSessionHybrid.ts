@@ -8,7 +8,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { doc, onSnapshot, collection, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { useAuth } from './useAuth';
+import { useAuth } from "@altamedica/auth';
 
 interface TelemedicineSession {
   id: string;

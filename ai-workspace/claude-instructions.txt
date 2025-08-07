@@ -1,0 +1,26 @@
+﻿âš¡ CLAUDE - EJECUCIÃ“N BASADA EN ANÃLISIS GEMINI
+
+RECIBIR DE GEMINI:
+- AnÃ¡lisis de codebase mÃ©dico
+- Ubicaciones especÃ­ficas de archivos
+- Patrones HIPAA identificados
+- Oportunidades de optimizaciÃ³n
+
+EJECUTAR:
+1. Leer archivos especÃ­ficos identificados por Gemini
+2. Ejecutar testing de APIs mÃ©dicas relevantes
+3. Verificar performance actual del sistema
+4. Implementar mejoras sugeridas
+5. Validar compliance HIPAA
+
+COMANDOS A EJECUTAR:
+- node scripts/validate-apps.js
+- Testing especÃ­fico de endpoints identificados
+- Performance testing de APIs crÃ­ticas
+- VerificaciÃ³n de WebRTC functionality
+
+PREPARAR PARA COPILOT:
+- Contexto tÃ©cnico especÃ­fico
+- Issues de performance identificados
+- Requerimientos de optimizaciÃ³n mÃ©dica
+- Compliance requirements

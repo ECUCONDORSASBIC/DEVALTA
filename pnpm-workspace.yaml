@@ -1,36 +1,5 @@
 packages:
-  # 🏥 DOCTORES - Aplicaciones y Servicios para Médicos
-  - 'apps/doctors'
-  - 'apps/admin'
-  - 'apps/companies'
-  - 'apps/medical'
-  
-  # 👥 PACIENTES - Aplicaciones y Servicios para Pacientes
-  - 'apps/patients'
-  - 'apps/web-app'
-  
-  # 🏢 ROOT - Servicios Centrales y Administración
-  - 'apps/api-server'
-  - 'apps/signaling-server'
-  - 'apps/development'
-  - 'apps/anthropic-simulator'
-  
-  # 🏥 CORE - Sistema Principal de AltaMedica
-  - 'altamedica-core'
-  
-  # 📦 PACKAGES - Bibliotecas Compartidas
-  - 'packages/core'
-  - 'packages/ui'
-  - 'packages/auth'
-  - 'packages/firebase'
-  - 'packages/types'
-  - 'packages/shared'
-  - 'packages/medical'
-  - 'packages/eslint-config'
-  - 'packages/tailwind-config'
-  - 'packages/typescript-config'
-  - 'packages/claude-config-manager'
-  - 'packages/database'
-  - 'packages/medical-cache'
-  - 'packages/mobile-app'
-  - 'packages/telemedicine-core'
+  - 'apps/**'
+  - '!apps/**/backup_**' # Excluir cualquier carpeta de backup
+  - 'packages/**'
+  - 'altamedica-e2e-testing'

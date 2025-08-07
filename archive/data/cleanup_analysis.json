@@ -1,0 +1,439 @@
+{
+  "duplicates": [
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "server.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\health\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "rateLimiter.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\middleware\\rateLimiter.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "rate-limit.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\rate-limit.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "auth.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\middleware\\auth.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "audit.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\audit.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "telemedicine-server.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\telemedicine-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "telemedicine-server.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\telemedicine-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "database.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\database.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "firebase-admin.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "firebase-admin.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "firebase-admin.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "shared-auth.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\services\\shared-auth.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/marketplace/notifications",
+      "file": "route.ts",
+      "type": "fetch",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\notifications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/health",
+      "file": "webrtc-server.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\telemedicine\\webrtc-server.ts"
+    },
+    {
+      "service": "python-tools",
+      "method": "POST",
+      "path": "/api/matching/find-partners",
+      "file": "medical_matching_engine.py",
+      "type": "fastapi",
+      "full_path": "medical_matching_engine.py"
+    },
+    {
+      "service": "python-tools",
+      "method": "GET",
+      "path": "/api/matching/companies/{company_id}/recommendations",
+      "file": "medical_matching_engine.py",
+      "type": "fastapi",
+      "full_path": "medical_matching_engine.py"
+    },
+    {
+      "service": "python-tools",
+      "method": "POST",
+      "path": "/api/matching/partnership/create",
+      "file": "medical_matching_engine.py",
+      "type": "fastapi",
+      "full_path": "medical_matching_engine.py"
+    }
+  ],
+  "test_apis": [
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/test",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\test\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/test",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\test\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/test-env",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\test-env\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/test-firebase",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\test-firebase\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/cors-example",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\cors-example\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/test-register",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\test-register\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/auth/test-sso",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\test-sso\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/auth/test-sso",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\test-sso\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/auth/test-sso",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\test-sso\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/firestore-integration-test",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\firestore-integration-test\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/test",
+      "file": "agents-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\agents-routes.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/create-test-user",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\create-test-user\\route.ts"
+    }
+  ],
+  "old_files": [
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/prescriptions/route-old.ts",
+      "file": "route-old.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-old.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/prescriptions/route-old.ts",
+      "file": "route-old.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-old.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/medical-records/route-complex.ts",
+      "file": "route-complex.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/medical-records/route-complex.ts",
+      "file": "route-complex.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/medical-records/route-complex.ts",
+      "file": "route-complex.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/medical-records/route-complex.ts",
+      "file": "route-complex.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+    }
+  ],
+  "unknown_paths": [
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "encryption.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\encryption.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "rateLimiter.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\middleware\\rateLimiter.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "rate-limit.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\rate-limit.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "auth.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\middleware\\auth.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "audit.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\audit.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "telemedicine-server.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\telemedicine-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "telemedicine-server.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\telemedicine-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "database.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\database.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "firebase-admin.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "firebase-admin.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "firebase-admin.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "shared-auth.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\services\\shared-auth.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "shared-auth.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\services\\shared-auth.ts"
+    }
+  ],
+  "external_apis": [
+    {
+      "service": "apps/doctors",
+      "method": "GET",
+      "path": "https://api.ipify.org?format=json",
+      "file": "firebase-service.ts",
+      "type": "fetch",
+      "full_path": "apps\\doctors\\src\\services\\firebase-service.ts"
+    }
+  ],
+  "deprecated": [],
+  "debug_apis": [
+    {
+      "service": "apps/patients",
+      "method": "GET",
+      "path": "/api/debug-headers",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\debug-headers\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/create-test-user",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\create-test-user\\route.ts"
+    }
+  ]
+}

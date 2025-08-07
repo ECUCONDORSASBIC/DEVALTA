@@ -1,6 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
-import SimpleAdminDashboard from '../components/dashboard/SimpleAdminDashboard';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default SimpleAdminDashboard;
+export default function AdminPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/dashboard');
+  }, [router]);
+
+  return null;
+}

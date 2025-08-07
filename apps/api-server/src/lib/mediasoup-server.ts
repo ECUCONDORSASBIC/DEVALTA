@@ -11,14 +11,14 @@ import {
   ProducerOptions,
   ConsumerOptions
 } from 'mediasoup/node/lib/types';
-import { getDatabaseConnection } from '@/lib/database';
+import { dbConnection } from '@altamedica/database';
 import { logPHIAccess, logMedicalAction } from '@/lib/logger';
 import { medicalAuditor } from '@/lib/mock-medical';
 
 // Funciones locales para simular consultas de base de datos
 async function query(sql: string, params: any[] = []): Promise<any> {
   try {
-    const db = getDatabaseConnection();
+    const db = await dbConnection.getFirestore();
     // Simular respuesta de base de datos
     return {
       rows: [
@@ -40,7 +40,7 @@ async function query(sql: string, params: any[] = []): Promise<any> {
 
 async function transaction(callback: (client: any) => Promise<any>): Promise<any> {
   try {
-    const db = getDatabaseConnection();
+    const db = await dbConnection.getFirestore();
     // Simular transacción
     return await callback(db);
   } catch (error) {

@@ -3,17 +3,94 @@
   "version": "1.0.0",
   "description": "Shared TypeScript types for ALTAMEDICA APIs",
   "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/core/index.esm.js",
+      "require": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
+    },
+    "./medical": {
+      "import": "./dist/medical/index.esm.js",
+      "require": "./dist/medical/index.js",
+      "types": "./dist/medical/index.d.ts"
+    },
+    "./medical/patient": {
+      "import": "./dist/medical/patient/index.esm.js",
+      "require": "./dist/medical/patient/index.js",
+      "types": "./dist/medical/patient/index.d.ts"
+    },
+    "./medical/doctor": {
+      "import": "./dist/medical/doctor/index.esm.js",
+      "require": "./dist/medical/doctor/index.js",
+      "types": "./dist/medical/doctor/index.d.ts"
+    },
+    "./medical/clinical": {
+      "import": "./dist/medical/clinical/index.esm.js",
+      "require": "./dist/medical/clinical/index.js",
+      "types": "./dist/medical/clinical/index.d.ts"
+    },
+    "./api": {
+      "import": "./dist/api/index.esm.js",
+      "require": "./dist/api/index.js",
+      "types": "./dist/api/index.d.ts"
+    },
+    "./security": {
+      "import": "./dist/security/index.esm.js",
+      "require": "./dist/security/index.js",
+      "types": "./dist/security/index.d.ts"
+    },
+    "./validators": {
+      "import": "./dist/validators/index.esm.js",
+      "require": "./dist/validators/index.js",
+      "types": "./dist/validators/index.d.ts"
+    },
+    "./guards": {
+      "import": "./dist/guards/index.esm.js",
+      "require": "./dist/guards/index.js",
+      "types": "./dist/guards/index.d.ts"
+    },
+    "./ai": {
+      "import": "./dist/ai/index.esm.js",
+      "require": "./dist/ai/index.js",
+      "types": "./dist/ai/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/utils/index.esm.js",
+      "require": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "src/**/*",
+    "README.md",
+    "package.json"
   ],
   "scripts": {
-    "build": "tsc",
-    "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit"
+    "build": "pnpm clean && pnpm build:cjs && pnpm build:esm",
+    "build:cjs": "tsc --build tsconfig.cjs.json",
+    "build:esm": "tsc --build tsconfig.esm.json",
+    "build:watch": "concurrently \"pnpm build:cjs --watch\" \"pnpm build:esm --watch\"",
+    "clean": "powershell -Command \"Remove-Item -Path dist -Recurse -Force -ErrorAction SilentlyContinue\"",
+    "type-check": "tsc --noEmit",
+    "lint": "tsc --noEmit && tsc --pretty",
+    "analyze-bundle": "node scripts/analyze-bundle.js",
+    "prebuild": "pnpm clean",
+    "postbuild": "pnpm analyze-bundle"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "concurrently": "^8.2.2",
+    "@types/node": "^20.12.0"
   },
   "dependencies": {
     "zod": "^3.22.0"

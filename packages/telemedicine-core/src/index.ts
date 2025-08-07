@@ -1,11 +1,28 @@
-// Exportaciones principales
-export * from './types';
+// @altamedica/telemedicine-core
+export const telemedicineCoreVersion = '1.0.0';
 
-// Exportar WebRTCClient
-export { WebRTCClient } from './client/WebRTCClient';
+// Video Call Client
+export {
+  AltaMedicaVideoCallClient,
+  createConsultationCall,
+  useVideoCall
+} from './videoCallClient';
 
-// Exportar useWebRTC hook
-export { useWebRTC } from './hooks/useWebRTC';
+// Unified Telemedicine Hook (NUEVO)
+export {
+  useTelemedicineUnified
+} from './useTelemedicineUnified';
 
-// Exportar VideoCall component
-export { VideoCall } from './components/VideoCall'; 
+// Export types
+export type {
+  VideoCallResponse,
+  CreateCallRequest,
+  CallStatus,
+  ActiveCall
+} from './videoCallClient';
+
+export type {
+  UnifiedTelemedicineConfig,
+  TelemedicineSession,
+  UnifiedTelemedicineState
+} from './useTelemedicineUnified';

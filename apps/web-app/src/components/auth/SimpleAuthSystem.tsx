@@ -114,7 +114,7 @@ const SimpleAuthSystem: React.FC = () => {
   // === PANTALLA DE FINALIZACIÓN ===
   if (authState.step === 'complete') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full text-center">
           <div className="bg-white rounded-3xl shadow-2xl p-12">
             <div className="w-24 h-24 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-8">
@@ -184,7 +184,7 @@ const SimpleAuthSystem: React.FC = () => {
   const isRegisterMode = authState.step === 'register';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-3xl shadow-2xl p-8">
           <div className="text-center mb-8">

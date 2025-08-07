@@ -1,0 +1,501 @@
+{
+  "name": "AltaMedica_Demo",
+  "scenes": [
+    {
+      "name": "00_intro",
+      "sources": [
+        {
+          "name": "Browser_Source",
+          "type": "browser_source",
+          "settings": {
+            "url": "http://localhost:3003",
+            "width": 1920,
+            "height": 1080,
+            "fps": 60,
+            "shutdown": true,
+            "restart_when_active": true
+          }
+        },
+        {
+          "name": "Title_Overlay",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "AltaMedica - Plataforma M\u00e9dica Integral",
+            "font": {
+              "face": "Arial",
+              "size": 48,
+              "style": "Bold"
+            },
+            "color": 4294967295,
+            "outline": true,
+            "outline_color": 4278190080,
+            "outline_size": 3
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        },
+        {
+          "name": "Description_Text",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Sistema m\u00e9dico completo para pacientes y profesionales",
+            "font": {
+              "face": "Arial",
+              "size": 24
+            },
+            "color": 4294967295
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 1000
+            }
+          }
+        }
+      ],
+      "duration": 3,
+      "effects": [
+        "zoom_in",
+        "title_overlay"
+      ]
+    },
+    {
+      "name": "01_patients_dashboard",
+      "sources": [
+        {
+          "name": "Browser_Source",
+          "type": "browser_source",
+          "settings": {
+            "url": "http://localhost:3003",
+            "width": 1920,
+            "height": 1080,
+            "fps": 60,
+            "shutdown": true,
+            "restart_when_active": true
+          }
+        },
+        {
+          "name": "Title_Overlay",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Dashboard de Pacientes",
+            "font": {
+              "face": "Arial",
+              "size": 48,
+              "style": "Bold"
+            },
+            "color": 4294967295,
+            "outline": true,
+            "outline_color": 4278190080,
+            "outline_size": 3
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        },
+        {
+          "name": "Description_Text",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Acceso a citas, historial m\u00e9dico y telemedicina",
+            "font": {
+              "face": "Arial",
+              "size": 24
+            },
+            "color": 4294967295
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 1000
+            }
+          }
+        }
+      ],
+      "duration": 6,
+      "effects": [
+        "smooth_pan",
+        "highlight_cards"
+      ]
+    },
+    {
+      "name": "02_doctor_search",
+      "sources": [
+        {
+          "name": "Browser_Source",
+          "type": "browser_source",
+          "settings": {
+            "url": "http://localhost:3003/doctors",
+            "width": 1920,
+            "height": 1080,
+            "fps": 60,
+            "shutdown": true,
+            "restart_when_active": true
+          }
+        },
+        {
+          "name": "Title_Overlay",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "B\u00fasqueda de Especialistas",
+            "font": {
+              "face": "Arial",
+              "size": 48,
+              "style": "Bold"
+            },
+            "color": 4294967295,
+            "outline": true,
+            "outline_color": 4278190080,
+            "outline_size": 3
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        },
+        {
+          "name": "Description_Text",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Encuentra el doctor perfecto con filtros avanzados",
+            "font": {
+              "face": "Arial",
+              "size": 24
+            },
+            "color": 4294967295
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 1000
+            }
+          }
+        }
+      ],
+      "duration": 5,
+      "effects": [
+        "search_animation",
+        "card_focus"
+      ]
+    },
+    {
+      "name": "03_telemedicine",
+      "sources": [
+        {
+          "name": "Browser_Source",
+          "type": "browser_source",
+          "settings": {
+            "url": "http://localhost:3003/telemedicine",
+            "width": 1920,
+            "height": 1080,
+            "fps": 60,
+            "shutdown": true,
+            "restart_when_active": true
+          }
+        },
+        {
+          "name": "Title_Overlay",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Telemedicina Avanzada",
+            "font": {
+              "face": "Arial",
+              "size": 48,
+              "style": "Bold"
+            },
+            "color": 4294967295,
+            "outline": true,
+            "outline_color": 4278190080,
+            "outline_size": 3
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        },
+        {
+          "name": "Description_Text",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Consultas m\u00e9dicas por video de alta calidad",
+            "font": {
+              "face": "Arial",
+              "size": 24
+            },
+            "color": 4294967295
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 1000
+            }
+          }
+        }
+      ],
+      "duration": 7,
+      "effects": [
+        "video_highlight",
+        "tech_zoom"
+      ]
+    },
+    {
+      "name": "04_doctors_dashboard",
+      "sources": [
+        {
+          "name": "Browser_Source",
+          "type": "browser_source",
+          "settings": {
+            "url": "http://localhost:3002",
+            "width": 1920,
+            "height": 1080,
+            "fps": 60,
+            "shutdown": true,
+            "restart_when_active": true
+          }
+        },
+        {
+          "name": "Title_Overlay",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Panel M\u00e9dico Profesional",
+            "font": {
+              "face": "Arial",
+              "size": 48,
+              "style": "Bold"
+            },
+            "color": 4294967295,
+            "outline": true,
+            "outline_color": 4278190080,
+            "outline_size": 3
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        },
+        {
+          "name": "Description_Text",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Herramientas completas para profesionales m\u00e9dicos",
+            "font": {
+              "face": "Arial",
+              "size": 24
+            },
+            "color": 4294967295
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 1000
+            }
+          }
+        }
+      ],
+      "duration": 6,
+      "effects": [
+        "professional_transition",
+        "data_focus"
+      ]
+    },
+    {
+      "name": "05_patient_management",
+      "sources": [
+        {
+          "name": "Browser_Source",
+          "type": "browser_source",
+          "settings": {
+            "url": "http://localhost:3002/pacientes",
+            "width": 1920,
+            "height": 1080,
+            "fps": 60,
+            "shutdown": true,
+            "restart_when_active": true
+          }
+        },
+        {
+          "name": "Title_Overlay",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Gesti\u00f3n de Pacientes",
+            "font": {
+              "face": "Arial",
+              "size": 48,
+              "style": "Bold"
+            },
+            "color": 4294967295,
+            "outline": true,
+            "outline_color": 4278190080,
+            "outline_size": 3
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        },
+        {
+          "name": "Description_Text",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Sistema integral de historiales y seguimiento",
+            "font": {
+              "face": "Arial",
+              "size": 24
+            },
+            "color": 4294967295
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 1000
+            }
+          }
+        }
+      ],
+      "duration": 5,
+      "effects": [
+        "table_highlight",
+        "smooth_scroll"
+      ]
+    },
+    {
+      "name": "06_marketplace",
+      "sources": [
+        {
+          "name": "Browser_Source",
+          "type": "browser_source",
+          "settings": {
+            "url": "http://localhost:3002/marketplace",
+            "width": 1920,
+            "height": 1080,
+            "fps": 60,
+            "shutdown": true,
+            "restart_when_active": true
+          }
+        },
+        {
+          "name": "Title_Overlay",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Marketplace M\u00e9dico B2B",
+            "font": {
+              "face": "Arial",
+              "size": 48,
+              "style": "Bold"
+            },
+            "color": 4294967295,
+            "outline": true,
+            "outline_color": 4278190080,
+            "outline_size": 3
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        },
+        {
+          "name": "Description_Text",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Conecta profesionales con oportunidades \u00fanicas",
+            "font": {
+              "face": "Arial",
+              "size": 24
+            },
+            "color": 4294967295
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 1000
+            }
+          }
+        }
+      ],
+      "duration": 6,
+      "effects": [
+        "grid_animation",
+        "card_reveal"
+      ]
+    },
+    {
+      "name": "07_outro",
+      "sources": [
+        {
+          "name": "Browser_Source",
+          "type": "browser_source",
+          "settings": {
+            "url": "http://localhost:3003",
+            "width": 1920,
+            "height": 1080,
+            "fps": 60,
+            "shutdown": true,
+            "restart_when_active": true
+          }
+        },
+        {
+          "name": "Title_Overlay",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "AltaMedica - El Futuro M\u00e9dico",
+            "font": {
+              "face": "Arial",
+              "size": 48,
+              "style": "Bold"
+            },
+            "color": 4294967295,
+            "outline": true,
+            "outline_color": 4278190080,
+            "outline_size": 3
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        },
+        {
+          "name": "Description_Text",
+          "type": "text_gdiplus_v2",
+          "settings": {
+            "text": "Transformando la atenci\u00f3n m\u00e9dica digital",
+            "font": {
+              "face": "Arial",
+              "size": 24
+            },
+            "color": 4294967295
+          },
+          "transform": {
+            "pos": {
+              "x": 100,
+              "y": 1000
+            }
+          }
+        }
+      ],
+      "duration": 4,
+      "effects": [
+        "zoom_out",
+        "logo_animation"
+      ]
+    }
+  ]
+}

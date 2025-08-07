@@ -1,0 +1,27 @@
+﻿ðŸ¥ CONTEXTO MÃ‰DICO ALTAMEDICA - ANÃLISIS REQUERIDO
+
+WORKSPACE: C:\Users\Eduardo\Documents\devaltamedica\devaltamedica\
+
+OBJETIVO: Optimizar sistema de citas mÃ©dicas con WebRTC y compliance HIPAA
+
+ANÃLISIS NECESARIO:
+1. Identificar funciones de appointments en apps/api-server/src/app/api/v1/appointments/
+2. Buscar patrones HIPAA en middleware y validaciones
+3. Mapear WebRTC telemedicine en apps/api-server/src/app/api/v1/telemedicine/
+4. Revisar components mÃ©dicos en apps/doctors/ y apps/patients/
+
+ARCHIVOS CLAVE A ANALIZAR:
+- apps/api-server/src/app/api/v1/appointments/route.ts
+- apps/api-server/src/app/api/v1/telemedicine/sessions/route.ts
+- apps/api-server/src/lib/middleware.ts
+- apps/doctors/src/components/
+- apps/patients/src/components/
+
+ENTREGA A CLAUDE:
+- Ubicaciones exactas de funciones mÃ©dicas
+- Patrones HIPAA identificados
+- Oportunidades de optimizaciÃ³n
+- Dependencies crÃ­ticas
+- Approach recomendado para mejoras
+
+FORMATO: JSON con ubicaciones especÃ­ficas y recomendaciones

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from "@altamedica/auth";
 import Link from 'next/link';
 
 interface ForgotPasswordState {
@@ -64,28 +64,28 @@ const ForgotPasswordForm: React.FC = () => {
   // Pantalla de éxito
   if (state.success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full">
           <div className="bg-white rounded-3xl shadow-2xl p-8">
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="h-8 w-8 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold text-neutral-900 mb-2">
                 ¡Email Enviado!
               </h2>
-              <p className="text-gray-600">
+              <p className="text-neutral-600">
                 Hemos enviado las instrucciones de recuperación a:
               </p>
-              <p className="text-blue-600 font-medium mt-1">
+              <p className="text-primary-500 font-medium mt-1">
                 {state.email}
               </p>
             </div>
             
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
               <div className="flex items-start space-x-3">
-                <Mail className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-blue-800">
+                <Mail className="h-5 w-5 text-primary-500 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-primary-600">
                   <p className="font-medium mb-1">¿No recibiste el email?</p>
                   <ul className="space-y-1 text-blue-700">
                     <li>• Revisa tu carpeta de spam</li>
@@ -99,14 +99,14 @@ const ForgotPasswordForm: React.FC = () => {
             <div className="space-y-4">
               <button
                 onClick={() => updateState({ success: false, email: '', error: '' })}
-                className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300"
+                className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300"
               >
                 Reenviar Email
               </button>
               
               <Link
                 href="/login"
-                className="w-full border-2 border-blue-300 text-blue-600 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 flex items-center justify-center space-x-2"
+                className="w-full border-2 border-blue-300 text-primary-500 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 flex items-center justify-center space-x-2"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Volver al Login</span>
@@ -119,7 +119,7 @@ const ForgotPasswordForm: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50">
       <div className="flex min-h-screen">
         {/* Mitad Izquierda - Información */}
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-cyan-600 p-12 items-center justify-center">
@@ -136,7 +136,7 @@ const ForgotPasswordForm: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2">Proceso Seguro</h3>
-                  <p className="text-blue-100">Utilizamos encriptación de nivel médico para proteger tu información personal y clínica.</p>
+                  <p className="text-primary-100">Utilizamos encriptación de nivel médico para proteger tu información personal y clínica.</p>
                 </div>
               </div>
               
@@ -146,7 +146,7 @@ const ForgotPasswordForm: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2">Acceso Rápido</h3>
-                  <p className="text-blue-100">Recupera tu acceso en minutos y vuelve a gestionar tu salud sin interrupciones.</p>
+                  <p className="text-primary-100">Recupera tu acceso en minutos y vuelve a gestionar tu salud sin interrupciones.</p>
                 </div>
               </div>
               
@@ -156,13 +156,13 @@ const ForgotPasswordForm: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2">Soporte 24/7</h3>
-                  <p className="text-blue-100">Nuestro equipo médico-técnico está disponible para ayudarte en cualquier momento.</p>
+                  <p className="text-primary-100">Nuestro equipo médico-técnico está disponible para ayudarte en cualquier momento.</p>
                 </div>
               </div>
             </div>
             
             <div className="mt-12 p-6 bg-white/10 rounded-2xl backdrop-blur-sm">
-              <p className="text-sm text-blue-100 italic">
+              <p className="text-sm text-primary-100 italic">
                 "La seguridad de tus datos médicos es nuestra prioridad. Cada proceso está diseñado 
                 cumpliendo estándares internacionales de protección sanitaria."
               </p>
@@ -178,13 +178,13 @@ const ForgotPasswordForm: React.FC = () => {
           <div className="max-w-md w-full">
             <div className="bg-white rounded-3xl shadow-2xl p-8">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-primary-500 hover:bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Mail className="h-8 w-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-neutral-900 mb-2">
               Recuperar Contraseña
             </h2>
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               Ingresa tu email y te enviaremos las instrucciones para restablecer tu contraseña
             </p>
           </div>
@@ -202,7 +202,7 @@ const ForgotPasswordForm: React.FC = () => {
             <div>
               <label 
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-neutral-700 mb-2"
               >
                 Email *
               </label>
@@ -215,12 +215,12 @@ const ForgotPasswordForm: React.FC = () => {
                     email: e.target.value, 
                     error: '' 
                   })}
-                  className="w-full py-3 px-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="w-full py-3 px-4 pl-12 border-2 border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                   placeholder="tu@email.com"
                   required
                   disabled={state.isLoading}
                 />
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
               </div>
               {state.email && !validateEmail(state.email) && (
                 <p className="text-red-500 text-xs mt-1 flex items-center space-x-1">
@@ -233,7 +233,7 @@ const ForgotPasswordForm: React.FC = () => {
             <button
               type="submit"
               disabled={state.isLoading || !validateEmail(state.email)}
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
               {state.isLoading ? (
                 <>
@@ -248,7 +248,7 @@ const ForgotPasswordForm: React.FC = () => {
             <div className="text-center">
               <Link
                 href="/login"
-                className="text-blue-600 hover:text-blue-800 font-medium flex items-center justify-center space-x-2"
+                className="text-primary-500 hover:text-primary-600 font-medium flex items-center justify-center space-x-2"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Volver al Login</span>

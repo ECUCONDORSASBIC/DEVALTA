@@ -2,11 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import VideoConsultationPatient from '@/components/telemedicine/VideoConsultationPatient';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import VideoConsultationPatient from '../../../../components/telemedicine/VideoConsultationPatient';
+// Importación desde @altamedica/ui centralizado
+import {
+  CardCorporate as Card,
+  CardContentCorporate as CardContent, 
+  CardHeaderCorporate as CardHeader,
+  ButtonCorporate as Button,
+  StatusBadge as Badge
+} from '@altamedica/ui';
+
+// Componente simple para CardTitle
+const CardTitle = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <h3 className={`text-lg font-semibold ${className}`}>{children}</h3>
+);
 import { 
   Heart, 
   Clock, 
@@ -36,7 +45,7 @@ interface ConsultationDetails {
 export default function PatientTelemedicineConsultation() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Comentado temporalmente
   const sessionId = params.sessionId as string;
 
   const [consultationDetails, setConsultationDetails] = useState<ConsultationDetails | null>(null);

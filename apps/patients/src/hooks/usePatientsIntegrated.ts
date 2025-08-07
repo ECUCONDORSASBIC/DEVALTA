@@ -3,7 +3,7 @@
  * Utiliza React Query para cache y los nuevos servicios API
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTanstackQuery as useQuery, useMutation, useQueryClient } from '@altamedica/hooks';
 import { patientsService, Patient, CreatePatientRequest, UpdatePatientRequest, PatientProfile } from '../services/patients-service';
 import { useState } from 'react';
 

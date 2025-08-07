@@ -21,7 +21,10 @@
       "Bash(npm cache clean:*)",
       "Bash(mkdir:*)",
       "Bash(pnpm lint:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm add:*)",
+      "Bash(powershell.exe:*)"
     ],
     "deny": []
   }

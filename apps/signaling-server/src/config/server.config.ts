@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 export const serverConfig = {
   port: parseInt(process.env.SIGNALING_PORT || '8888'),
   environment: process.env.NODE_ENV || 'development',

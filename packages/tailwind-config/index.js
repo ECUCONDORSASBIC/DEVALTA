@@ -1,121 +1,156 @@
-// Configuración base de Tailwind para AltaMedica
-// Compartida entre todas las aplicaciones del monorepo
+// 🎨 ALTAMEDICA TAILWIND CONFIGURATION
+// Sistema de diseño médico con azul celeste corporativo
 
-import typography from '@tailwindcss/typography';
-import forms from '@tailwindcss/forms';
-
-/** @type {import('tailwindcss').Config} */
-export default {
-    content: [
-        // Contenido específico se define en cada app
-    ],
-    theme: {
-        extend: {
-            colors: {
-                // Paleta de colores médicos AltaMedica
-                primary: {
-                    50: '#eff6ff',
-                    100: '#dbeafe',
-                    200: '#bfdbfe',
-                    300: '#93c5fd',
-                    400: '#60a5fa',
-                    500: '#3b82f6',
-                    600: '#2563eb',
-                    700: '#1d4ed8',
-                    800: '#1e40af',
-                    900: '#1e3a8a',
-                },
-                secondary: {
-                    50: '#ecfdf5',
-                    100: '#d1fae5',
-                    200: '#a7f3d0',
-                    300: '#6ee7b7',
-                    400: '#34d399',
-                    500: '#10b981',
-                    600: '#059669',
-                    700: '#047857',
-                    800: '#065f46',
-                    900: '#064e3b',
-                },
-                medical: {
-                    success: '#10b981',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    info: '#3b82f6',
-                    neutral: '#6b7280',
-                },
-                // Variables CSS para shadcn/ui
-                border: 'hsl(var(--border))',
-                input: 'hsl(var(--input))',
-                ring: 'hsl(var(--ring))',
-                background: 'hsl(var(--background))',
-                foreground: 'hsl(var(--foreground))',
-                destructive: {
-                    DEFAULT: 'hsl(var(--destructive))',
-                    foreground: 'hsl(var(--destructive-foreground))',
-                },
-                muted: {
-                    DEFAULT: 'hsl(var(--muted))',
-                    foreground: 'hsl(var(--muted-foreground))',
-                },
-                accent: {
-                    DEFAULT: 'hsl(var(--accent))',
-                    foreground: 'hsl(var(--accent-foreground))',
-                },
-                popover: {
-                    DEFAULT: 'hsl(var(--popover))',
-                    foreground: 'hsl(var(--popover-foreground))',
-                },
-                card: {
-                    DEFAULT: 'hsl(var(--card))',
-                    foreground: 'hsl(var(--card-foreground))',
-                },
-            },
-            fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
-                medical: ['Inter', 'system-ui', 'sans-serif'],
-            },
-            animation: {
-                'fade-in-up': 'fadeInUp 0.6s ease-out',
-                'fade-in-left': 'fadeInLeft 0.6s ease-out',
-                'fade-in-right': 'fadeInRight 0.6s ease-out',
-                'scale-in': 'scaleIn 0.4s ease-out',
-                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            },
-            keyframes: {
-                fadeInUp: {
-                    from: { opacity: '0', transform: 'translateY(20px)' },
-                    to: { opacity: '1', transform: 'translateY(0)' },
-                },
-                fadeInLeft: {
-                    from: { opacity: '0', transform: 'translateX(-20px)' },
-                    to: { opacity: '1', transform: 'translateX(0)' },
-                },
-                fadeInRight: {
-                    from: { opacity: '0', transform: 'translateX(20px)' },
-                    to: { opacity: '1', transform: 'translateX(0)' },
-                },
-                scaleIn: {
-                    from: { opacity: '0', transform: 'scale(0.95)' },
-                    to: { opacity: '1', transform: 'scale(1)' },
-                },
-            },
-            spacing: {
-                'patient-header': '64px',
-                'patient-sidebar': '260px',
-                'patient-content': 'calc(100% - 260px)',
-                'doctor-header': '72px',
-                'company-sidebar': '280px',
-            },
-            borderRadius: {
-                lg: 'var(--radius)',
-                md: 'calc(var(--radius) - 2px)',
-                sm: 'calc(var(--radius) - 4px)',
-            },
+module.exports = {
+  content: [
+    './src/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // 🏥 COLORES PRIMARIOS ALTAMEDICA - AZUL CELESTE
+        'primary-altamedica': '#0077CC',     // Azul celeste principal
+        'secondary-altamedica': '#4CAF50',   // Verde médico
+        
+        primary: {
+          50: '#E6F4FF',
+          100: '#BAE0FF',
+          200: '#7CC4FF',
+          300: '#36A9FF',
+          400: '#0090FF',
+          500: '#0077CC', // AZUL CELESTE ALTAMEDICA
+          600: '#0066B3',
+          700: '#004C99',
+          800: '#003366',
+          900: '#001F3F',
         },
+        
+        secondary: {
+          50: '#E8F5E9',
+          100: '#C8E6C9',
+          200: '#A5D6A7',
+          300: '#81C784',
+          400: '#66BB6A',
+          500: '#4CAF50', // Verde médico
+          600: '#43A047',
+          700: '#388E3C',
+          800: '#2E7D32',
+          900: '#1B5E20',
+        },
+        
+        // 🚨 ESTADOS MÉDICOS
+        success: '#4CAF50',
+        warning: '#FF9800',
+        danger: '#F44336',
+        info: '#0077CC',
+        
+        // 🌫️ GRISES MÉDICOS
+        gray: {
+          50: '#FAFAFA',
+          100: '#F5F5F5',
+          200: '#EEEEEE',
+          300: '#E0E0E0',
+          400: '#BDBDBD',
+          500: '#9E9E9E',
+          600: '#757575',
+          700: '#616161',
+          800: '#424242',
+          900: '#212121',
+        },
+        
+        // 🌈 COLORES ESPECIALES MÉDICOS
+        telemedicine: '#00BCD4',
+        emergency: '#FF1744',
+        vaccination: '#8BC34A',
+        diagnostic: '#3F51B5',
+        therapy: '#9C27B0',
+        surgery: '#FF5722',
+      },
+      
+      backgroundImage: {
+        // 🎨 GRADIENTES MÉDICOS
+        'gradient-primary-altamedica': 'linear-gradient(135deg, #0077CC 0%, #00BCD4 100%)',
+        'gradient-secondary-altamedica': 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)',
+        'gradient-emergency': 'linear-gradient(135deg, #F44336 0%, #FF1744 100%)',
+        'gradient-telemedicine': 'linear-gradient(135deg, #0077CC 0%, #00BCD4 100%)',
+      },
+      
+      fontFamily: {
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', '"SF Mono"', 'Consolas', 'monospace'],
+      },
+      
+      fontSize: {
+        'xs': ['0.75rem', { lineHeight: '1rem' }],
+        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'base': ['1rem', { lineHeight: '1.5rem' }],
+        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+      },
+      
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '120': '30rem',
+      },
+      
+      borderRadius: {
+        'medical': '0.75rem',
+      },
+      
+      boxShadow: {
+        'medical': '0 4px 6px rgba(0, 119, 204, 0.15)',
+        'medical-lg': '0 10px 15px rgba(0, 119, 204, 0.15)',
+        'emergency': '0 0 20px rgba(244, 67, 54, 0.4)',
+      },
+      
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'fade-in-conservative': 'fadeIn 0.3s ease-in-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'bounce-slow': 'bounce 2s infinite',
+      },
+      
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
     },
-    plugins: [
-        typography,
-        forms,
-    ],
-}; 
+  },
+  plugins: [
+    // Plugin para utilidades médicas custom
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.bg-medical-pattern': {
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230077CC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        },
+        '.text-shadow-medical': {
+          textShadow: '0 2px 4px rgba(0, 119, 204, 0.1)',
+        },
+      }
+      addUtilities(newUtilities)
+    }
+  ],
+  safelist: [
+    // Clases médicas que siempre deben incluirse
+    'bg-primary-altamedica',
+    'bg-secondary-altamedica',
+    'text-primary-altamedica',
+    'text-secondary-altamedica',
+    'border-primary-altamedica',
+    'border-secondary-altamedica',
+    'bg-gradient-primary-altamedica',
+    'bg-gradient-secondary-altamedica',
+  ],
+};

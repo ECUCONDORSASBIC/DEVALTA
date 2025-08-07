@@ -7,8 +7,8 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { ProtectedRoute } from "../hooks/useAuth";
-import { AuthProvider } from "../hooks/useAuth";
+// ProtectedRoute no disponible en auth-service
+import { AuthProvider } from "@altamedica/auth';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -46,7 +46,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
         }
       >
-        {children}
+        <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main className="flex-1">{children}</main>
+          {/* La barra lateral se renderizará aquí, pero su contenido se define en page.tsx */}
+        </div>
       </ProtectedRoute>
     </AuthProvider>
   );

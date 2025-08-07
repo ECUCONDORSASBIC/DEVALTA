@@ -8,7 +8,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { useAuth } from './useAuth';
+import { useAuth } from "@altamedica/auth';
 
 // Interfaces del WebRTC original
 export interface WebRTCConfig {

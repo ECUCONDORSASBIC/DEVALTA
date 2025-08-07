@@ -26,7 +26,7 @@ import {
   Timestamp
 } from 'firebase/firestore';
 
-import { firebaseService } from './firebase-service';
+import { firebaseService } from '@altamedica/database';
 import { 
   Appointment, 
   AppointmentStatus, 

@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from "@altamedica/auth";
 import { LoadingScreen } from '@/components/common/LoadingScreen';
-import { getDashboardUrl } from '@/config/app-urls';
+import { getDashboardUrl } from '../config/app-urls';
 
 interface AuthGuardProps {
   children: React.ReactNode;

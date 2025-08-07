@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useAuth } from './useAuth';
+import { useAuth } from "@altamedica/auth';
 
 export interface TelemedicineWebSocketMessage {
   type: 'session_update' | 'participant_joined' | 'participant_left' | 'connection_quality' | 'error' | 'heartbeat';

@@ -21,7 +21,8 @@
       "Bash(npm run build:*)",
       "Bash(Remove-Item \"C:\\Users\\Eduardo\\Documents\\devaltamedica\\apps\\companies\\src\\data\\dashboard-metrics.ts\" -Force)",
       "Bash(Remove-Item \"C:\\Users\\Eduardo\\Documents\\devaltamedica\\apps\\patients\\src\\components\\ui\\FormError.tsx\" -Force)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }

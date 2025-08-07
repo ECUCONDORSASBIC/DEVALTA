@@ -56,7 +56,7 @@ export function getDashboardUrl(userType: 'patient' | 'doctor' | 'company' | 'ad
   let url = '/';
   switch (userType) {
     case 'patient':
-      url = `${APP_URLS.patients}/dashboard`;
+      url = APP_URLS.patients; // Ya apunta a http://localhost:3003 (raíz)
       break;
     case 'doctor':
       url = `${APP_URLS.doctors}/dashboard`;

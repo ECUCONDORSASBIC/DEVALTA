@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@altamedica/ui';
+import { Button } from '@altamedica/ui';
+import { Input } from '@altamedica/ui';
+import { Label } from '@altamedica/ui';
+import { Badge } from '@altamedica/ui';
+import { Separator } from '@altamedica/ui';
 import { 
   CheckCircle, 
   XCircle, 

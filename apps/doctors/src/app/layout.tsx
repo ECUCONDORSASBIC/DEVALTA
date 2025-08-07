@@ -2,6 +2,9 @@ import type { Metadata } from "next"
 import './fonts.css';
 import './globals.css';
 import '../styles/telemedicine.css';
+import '../utils/browser-polyfills';
+import { ClientLayout } from './client-layout';
+import DoctorLayout from '@/components/layout/DoctorLayout';
 
 export const metadata: Metadata = {
   title: "ALTAMEDICA Doctors",
@@ -16,7 +19,11 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
-        <main className="min-h-screen">{children}</main>
+        <ClientLayout>
+          <DoctorLayout>
+            {children}
+          </DoctorLayout>
+        </ClientLayout>
       </body>
     </html>
   );

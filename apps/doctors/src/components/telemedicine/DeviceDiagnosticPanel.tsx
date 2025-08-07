@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@altamedica/ui';
+import { Button } from '@altamedica/ui';
+import { Badge } from '@altamedica/ui';
 import { 
   Camera, 
   Mic, 
@@ -17,7 +17,7 @@ import {
   Wifi,
   Monitor
 } from 'lucide-react';
-import { useAudioVideoOptimizer } from '@/services/AudioVideoOptimizer';
+import { useAudioVideoOptimizer } from '../services/AudioVideoOptimizer';
 
 interface DeviceDiagnosticPanelProps {
   isOpen: boolean;

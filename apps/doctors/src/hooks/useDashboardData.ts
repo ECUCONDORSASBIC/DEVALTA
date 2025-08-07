@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from "@altamedica/auth';
 
 interface Patient {
   id: string;
@@ -96,6 +97,7 @@ interface DashboardStats {
 }
 
 export function useDashboardData() {
+  const { user, firebaseUser } = useAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [telemedicineSessions, setTelemedicineSessions] = useState<TelemedicineSession[]>([]);
@@ -164,7 +166,22 @@ export function useDashboardData() {
   // Cargar ofertas del marketplace
   const loadMarketplaceOffers = async () => {
     try {
-      const response = await fetch('/api/marketplace');
+      // Solo cargar si el usuario está autenticado
+      if (!firebaseUser) {
+        console.log('User not authenticated, skipping marketplace offers load');
+        return;
+      }
+
+      // Obtener el token de autenticación
+      const token = await firebaseUser.getIdToken();
+      
+      const response = await fetch('/api/marketplace', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
       const data = await response.json();
       
       if (data.success) {
@@ -180,14 +197,23 @@ export function useDashboardData() {
   // Aplicar a una oferta del marketplace
   const applyToOffer = async (offerId: string, coverLetter?: string) => {
     try {
+      // Verificar autenticación
+      if (!firebaseUser || !user) {
+        throw new Error('Usuario no autenticado');
+      }
+
+      // Obtener el token de autenticación
+      const token = await firebaseUser.getIdToken();
+      
       const response = await fetch('/api/marketplace', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           offerId,
-          doctorId: 'doc1', // ID del doctor actual
+          doctorId: user.id, // Usar el ID del doctor actual
           coverLetter: coverLetter || 'Interesado en la posición',
           resume: 'CV del doctor'
         }),
@@ -368,10 +394,12 @@ export function useDashboardData() {
     }
   };
 
-  // Efecto para cargar datos iniciales
+  // Efecto para cargar datos iniciales cuando el usuario está autenticado
   useEffect(() => {
-    loadAllData();
-  }, []);
+    if (firebaseUser) {
+      loadAllData();
+    }
+  }, [firebaseUser]);
 
   // Efecto para recalcular estadísticas cuando cambian los datos
   useEffect(() => {

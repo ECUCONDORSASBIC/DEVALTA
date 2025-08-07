@@ -1,1 +1,0 @@
-module.exports = require("../../configs/shared/next.config.jsnext.config.js");

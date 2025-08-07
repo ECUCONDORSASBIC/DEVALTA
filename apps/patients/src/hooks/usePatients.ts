@@ -1,11 +1,15 @@
-// 🏥 HOOK ESPECIALIZADO DE PACIENTES - ALTAMEDICA
+// 🏥 HOOK ESPECIALIZADO DE PACIENTES - ALTAMEDICA  
 // Gestión granular de datos de pacientes con estado optimizado
-// CONSERVADOR: Mantiene compatibilidad, agrega funcionalidad especializada
+// MIGRADO COMPLETAMENTE AL SERVICIO CENTRALIZADO @altamedica/patient-services
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { medicalService } from '../services';
-import type { Patient, PaginatedResponse } from '../types';
-import type { PatientSearchParams } from '../services/MedicalService';
+import { patientsService } from '../services/patients-service-new';
+import type { 
+  Patient, 
+  PatientsResponse,
+  CreatePatientRequest,
+  UpdatePatientRequest
+} from '../services/patients-service-new';
 
 // 📝 TIPOS ESPECIALIZADOS PARA EL HOOK
 export interface UsePatientState {

@@ -1,51 +1,45 @@
-import { z } from "zod";
+/**
+ * @fileoverview Punto de entrada simplificado para @altamedica/types
+ * @module @altamedica/types
+ * @description Exporta tipos básicos esenciales para compilación
+ */
 
-// Export medical types from altamedica-core
-export * from "./types/medical";
+// ==================== CORE TYPES ====================
+export * from './core';
 
-// ==================== USER SCHEMAS ====================
+// ==================== MEDICAL DOMAIN ====================
+export * from './medical';
+
+// ==================== API TYPES ====================
+export * from './api';
+
+// ==================== SECURITY TYPES ====================
+export * from './security';
+
+// ==================== BUSINESS DOMAIN ====================
+export * from './employee';
+
+// ==================== B2C COMMUNICATION ====================
+export * from './b2c/company-doctor-communication.types';
+
+// ==================== AI TYPES ====================
+export * from './ai';
+
+
+// ==================== LEGACY EXPORTS (DEPRECATED) ====================
+// Estos exports se mantendrán temporalmente para compatibilidad
+// y serán removidos en la versión 2.0
+
+import { z } from 'zod';
+
+/**
+ * @deprecated Use UserRole from '@altamedica/types/core' instead
+ */
 export const UserRoleSchema = z.enum(["admin", "doctor", "patient", "staff"]);
 
-// ==================== AUTH SCHEMAS ====================
-export const VerifyTokenSchema = z.object({
-  idToken: z.string().min(1, "El token es requerido"),
-});
-
-export const RegisterSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
-  firstName: z.string().min(1, "Nombre es requerido"),
-  lastName: z.string().min(1, "Apellido es requerido"),
-  role: UserRoleSchema,
-  phoneNumber: z.string().optional(),
-});
-
-export const UserSchema = z.object({
-  uid: z.string().min(1, "UID es requerido"),
-  email: z.string().email("Email inválido"),
-  firstName: z.string().min(1, "Nombre es requerido"),
-  lastName: z.string().min(1, "Apellido es requerido"),
-  phone: z.string().optional(),
-  avatar: z.string().url().optional(),
-  role: UserRoleSchema,
-  isActive: z.boolean().default(true),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  lastLoginAt: z.date().optional(),
-  profileComplete: z.boolean().default(false),
-});
-
-export const CreateUserSchema = UserSchema.omit({
-  uid: true,
-  createdAt: true,
-  updatedAt: true,
-  lastLoginAt: true,
-});
-
-export const UpdateUserSchema = CreateUserSchema.partial();
-
-// ==================== DOCTOR SCHEMAS ====================
-
+/**
+ * @deprecated Use specific types from their respective modules
+ */
 export const SpecialtySchema = z.enum([
   "cardiology",
   "dermatology",
@@ -65,365 +59,9 @@ export const SpecialtySchema = z.enum([
   "urology",
 ]);
 
-export const DoctorProfileSchema = z.object({
-  uid: z.string().min(1, "UID es requerido"),
-  licenseNumber: z.string().min(1, "Número de licencia es requerido"),
-  specialties: z
-    .array(SpecialtySchema)
-    .min(1, "Al menos una especialidad es requerida"),
-  education: z
-    .array(
-      z.object({
-        institution: z.string().min(1, "Institución es requerida"),
-        degree: z.string().min(1, "Título es requerido"),
-        year: z.number().int().min(1950).max(new Date().getFullYear()),
-      })
-    )
-    .optional(),
-  experience: z.number().int().min(0).optional(),
-  bio: z.string().optional(),
-  consultationFee: z.number().min(0).optional(),
-  availability: z
-    .object({
-      monday: z.array(z.string()).optional(),
-      tuesday: z.array(z.string()).optional(),
-      wednesday: z.array(z.string()).optional(),
-      thursday: z.array(z.string()).optional(),
-      friday: z.array(z.string()).optional(),
-      saturday: z.array(z.string()).optional(),
-      sunday: z.array(z.string()).optional(),
-    })
-    .optional(),
-  companyId: z.string().optional(),
-  isVerified: z.boolean().default(false),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export const CreateDoctorProfileSchema = DoctorProfileSchema.omit({
-  uid: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const UpdateDoctorProfileSchema = CreateDoctorProfileSchema.partial();
-
-// ==================== PATIENT SCHEMAS ====================
-
-export const BloodTypeSchema = z.enum([
-  "A+",
-  "A-",
-  "B+",
-  "B-",
-  "AB+",
-  "AB-",
-  "O+",
-  "O-",
-]);
-
-export const PatientProfileSchema = z.object({
-  uid: z.string().min(1, "UID es requerido"),
-  dateOfBirth: z.date(),
-  gender: z.enum(["male", "female", "other"]),
-  bloodType: BloodTypeSchema.optional(),
-  height: z.number().min(0).optional(), // en cm
-  weight: z.number().min(0).optional(), // en kg
-  allergies: z.array(z.string()).optional(),
-  chronicConditions: z.array(z.string()).optional(),
-  medications: z
-    .array(
-      z.object({
-        name: z.string().min(1, "Nombre del medicamento es requerido"),
-        dosage: z.string().min(1, "Dosis es requerida"),
-        frequency: z.string().min(1, "Frecuencia es requerida"),
-        startDate: z.date(),
-        endDate: z.date().optional(),
-      })
-    )
-    .optional(),
-  emergencyContact: z
-    .object({
-      name: z.string().min(1, "Nombre del contacto es requerido"),
-      relationship: z.string().min(1, "Relación es requerida"),
-      phone: z.string().min(1, "Teléfono es requerido"),
-    })
-    .optional(),
-  insuranceInfo: z
-    .object({
-      provider: z.string().min(1, "Proveedor es requerido"),
-      policyNumber: z.string().min(1, "Número de póliza es requerido"),
-      groupNumber: z.string().optional(),
-    })
-    .optional(),
-  companyId: z.string().optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export const CreatePatientProfileSchema = PatientProfileSchema.omit({
-  uid: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const UpdatePatientProfileSchema = CreatePatientProfileSchema.partial();
-
-// ==================== COMPANY SCHEMAS ====================
-
-export const CompanySchema = z.object({
-  id: z.string().min(1, "ID es requerido"),
-  name: z.string().min(1, "Nombre de la empresa es requerido"),
-  taxId: z.string().min(1, "NIT/RUT es requerido"),
-  address: z.object({
-    street: z.string().min(1, "Dirección es requerida"),
-    city: z.string().min(1, "Ciudad es requerida"),
-    state: z.string().min(1, "Estado/Provincia es requerido"),
-    zipCode: z.string().min(1, "Código postal es requerido"),
-    country: z.string().min(1, "País es requerido"),
-  }),
-  phone: z.string().min(1, "Teléfono es requerido"),
-  email: z.string().email("Email inválido"),
-  website: z.string().url().optional(),
-  logo: z.string().url().optional(),
-  specialties: z.array(SpecialtySchema).optional(),
-  subscription: z.object({
-    plan: z.enum(["basic", "premium", "enterprise"]),
-    status: z.enum(["active", "inactive", "suspended"]),
-    startDate: z.date(),
-    endDate: z.date().optional(),
-    maxUsers: z.number().int().min(1),
-    maxPatients: z.number().int().min(1),
-  }),
-  settings: z
-    .object({
-      timeZone: z.string().default("America/Bogota"),
-      language: z.string().default("es"),
-      appointmentDuration: z.number().int().min(15).max(240).default(30), // minutos
-      workingHours: z
-        .object({
-          start: z
-            .string()
-            .regex(
-              /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-              "Formato de hora inválido"
-            ),
-          end: z
-            .string()
-            .regex(
-              /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-              "Formato de hora inválido"
-            ),
-        })
-        .default({ start: "08:00", end: "18:00" }),
-      workingDays: z
-        .array(
-          z.enum([
-            "monday",
-            "tuesday",
-            "wednesday",
-            "thursday",
-            "friday",
-            "saturday",
-            "sunday",
-          ])
-        )
-        .default(["monday", "tuesday", "wednesday", "thursday", "friday"]),
-    })
-    .optional(),
-  isActive: z.boolean().default(true),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export const CreateCompanySchema = CompanySchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const UpdateCompanySchema = CreateCompanySchema.partial();
-
-// ==================== APPOINTMENT SCHEMAS ====================
-
-export const AppointmentStatusSchema = z.enum([
-  "scheduled",
-  "confirmed",
-  "in-progress",
-  "completed",
-  "cancelled",
-  "no-show",
-]);
-
-export const AppointmentTypeSchema = z.enum([
-  "consultation",
-  "follow-up",
-  "emergency",
-  "routine",
-  "specialist",
-]);
-
-export const AppointmentSchema = z.object({
-  id: z.string().min(1, "ID es requerido"),
-  patientId: z.string().min(1, "ID del paciente es requerido"),
-  doctorId: z.string().min(1, "ID del doctor es requerido"),
-  date: z.date(),
-  duration: z.number().int().min(15).max(240), // minutos
-  type: AppointmentTypeSchema,
-  status: AppointmentStatusSchema,
-  location: z.string().optional(),
-  isTelemedicine: z.boolean().default(false),
-  notes: z.string().optional(),
-  symptoms: z.array(z.string()).optional(),
-  diagnosis: z.string().optional(),
-  prescription: z.string().optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export const CreateAppointmentSchema = AppointmentSchema.omit({
-  id: true,
-  status: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const UpdateAppointmentSchema = CreateAppointmentSchema.partial();
-
-// ==================== MEDICAL RECORD SCHEMAS ====================
-
-export const MedicalRecordTypeSchema = z.enum([
-  "consultation",
-  "diagnosis",
-  "treatment",
-  "lab_result",
-  "imaging",
-  "prescription",
-  "vaccination",
-  "surgery",
-  "allergy",
-  "family_history",
-]);
-
-export const PrioritySchema = z.enum(["low", "medium", "high", "critical"]);
-
-export const MedicalRecordSchema = z.object({
-  id: z.string().min(1, "ID es requerido"),
-  patientId: z.string().min(1, "ID del paciente es requerido"),
-  doctorId: z.string().min(1, "ID del doctor es requerido"),
-  title: z.string().min(1, "Título es requerido"),
-  description: z.string().optional(),
-  type: MedicalRecordTypeSchema,
-  priority: PrioritySchema.optional(),
-  status: z.enum(["active", "archived", "pending"]).default("active"),
-  attachments: z.array(z.string()).optional(),
-  metadata: z.record(z.any()).optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export const CreateMedicalRecordSchema = MedicalRecordSchema.omit({
-  id: true,
-  status: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const UpdateMedicalRecordSchema = CreateMedicalRecordSchema.partial();
-
-// ==================== API RESPONSE SCHEMAS ====================
-
-export const ApiResponseSchema = z.object({
-  success: z.boolean(),
-  data: z.any().optional(),
-  error: z
-    .object({
-      code: z.string(),
-      message: z.string(),
-      details: z.any().optional(),
-    })
-    .optional(),
-  timestamp: z.string(),
-});
-
-// ==================== TYPE EXPORTS ====================
-
-export type UserRole = z.infer<typeof UserRoleSchema>;
-export type User = z.infer<typeof UserSchema>;
-export type CreateUser = z.infer<typeof CreateUserSchema>;
-export type UpdateUser = z.infer<typeof UpdateUserSchema>;
-
-export type Specialty = z.infer<typeof SpecialtySchema>;
-export type DoctorProfile = z.infer<typeof DoctorProfileSchema>;
-export type CreateDoctorProfile = z.infer<typeof CreateDoctorProfileSchema>;
-export type UpdateDoctorProfile = z.infer<typeof UpdateDoctorProfileSchema>;
-
-export type BloodType = z.infer<typeof BloodTypeSchema>;
-export type PatientProfile = z.infer<typeof PatientProfileSchema>;
-export type CreatePatientProfile = z.infer<typeof CreatePatientProfileSchema>;
-export type UpdatePatientProfile = z.infer<typeof UpdatePatientProfileSchema>;
-
-export type Company = z.infer<typeof CompanySchema>;
-export type CreateCompany = z.infer<typeof CreateCompanySchema>;
-export type UpdateCompany = z.infer<typeof UpdateCompanySchema>;
-
-export type AppointmentStatus = z.infer<typeof AppointmentStatusSchema>;
-export type AppointmentType = z.infer<typeof AppointmentTypeSchema>;
-export type Appointment = z.infer<typeof AppointmentSchema>;
-export type CreateAppointment = z.infer<typeof CreateAppointmentSchema>;
-export type UpdateAppointment = z.infer<typeof UpdateAppointmentSchema>;
-
-export type MedicalRecord = z.infer<typeof MedicalRecordSchema>;
-export type CreateMedicalRecord = z.infer<typeof CreateMedicalRecordSchema>;
-export type UpdateMedicalRecord = z.infer<typeof UpdateMedicalRecordSchema>;
-
-export type ApiResponse = z.infer<typeof ApiResponseSchema>;
-
-// ==================== VALIDATION FUNCTIONS ====================
-
-export const validateUser = (data: unknown) => UserSchema.parse(data);
-export const validateCreateUser = (data: unknown) =>
-  CreateUserSchema.parse(data);
-export const validateUpdateUser = (data: unknown) =>
-  UpdateUserSchema.parse(data);
-
-export const validateDoctorProfile = (data: unknown) =>
-  DoctorProfileSchema.parse(data);
-export const validateCreateDoctorProfile = (data: unknown) =>
-  CreateDoctorProfileSchema.parse(data);
-export const validateUpdateDoctorProfile = (data: unknown) =>
-  UpdateDoctorProfileSchema.parse(data);
-
-export const validatePatientProfile = (data: unknown) =>
-  PatientProfileSchema.parse(data);
-export const validateCreatePatientProfile = (data: unknown) =>
-  CreatePatientProfileSchema.parse(data);
-export const validateUpdatePatientProfile = (data: unknown) =>
-  UpdatePatientProfileSchema.parse(data);
-
-export const validateCompany = (data: unknown) => CompanySchema.parse(data);
-export const validateCreateCompany = (data: unknown) =>
-  CreateCompanySchema.parse(data);
-export const validateUpdateCompany = (data: unknown) =>
-  UpdateCompanySchema.parse(data);
-
-export const validateAppointment = (data: unknown) =>
-  AppointmentSchema.parse(data);
-export const validateCreateAppointment = (data: unknown) =>
-  CreateAppointmentSchema.parse(data);
-export const validateUpdateAppointment = (data: unknown) =>
-  UpdateAppointmentSchema.parse(data);
-
-export const validateMedicalRecord = (data: unknown) =>
-  MedicalRecordSchema.parse(data);
-export const validateCreateMedicalRecord = (data: unknown) =>
-  CreateMedicalRecordSchema.parse(data);
-export const validateUpdateMedicalRecord = (data: unknown) =>
-  UpdateMedicalRecordSchema.parse(data);
-
-// ==================== BASE TYPES EXPORTS ====================
-
-export * from "./types/base";
-
-// ==================== API TYPES EXPORTS ====================
-
-export * from "./types/api";
+// ==================== VERSION INFO ====================
+export const TYPES_VERSION = '1.1.0';
+export const TYPES_COMPATIBILITY = {
+  minimum: '1.0.0',
+  breaking: '2.0.0'
+};

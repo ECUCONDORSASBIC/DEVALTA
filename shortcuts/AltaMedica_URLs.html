@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AltaMedica - Dashboard de URLs</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        .app-card:hover {
+            transform: translateY(-5px);
+        }
+        .app-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .app-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+        .url-link {
+            display: block;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        .url-link:hover {
+            background: #e9ecef;
+            border-color: #007bff;
+            transform: translateX(5px);
+        }
+        .url-title {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .url-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .status-badge {
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .status-active { background: #d4edda; color: #155724; }
+        .status-inactive { background: #f8d7da; color: #721c24; }
+        .status-auth { background: #fff3cd; color: #856404; }
+        .status-unknown { background: #e2e3e5; color: #383d41; }
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 AltaMedica</h1>
+            <p>Dashboard de URLs - Navegación Centralizada</p>
+        </div>
+        
+        <div class="apps-grid">
+
+            <div class="app-card">
+                <div class="app-title">
+                    <span class="app-icon">⚙️</span>
+                    Admin
+                </div>
+
+                <a href="http://localhost:3005/" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Home
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3005/</div>
+                </a>
+            </div>
+
+            <div class="app-card">
+                <div class="app-title">
+                    <span class="app-icon">🔧</span>
+                    Api-Server
+                </div>
+
+                <a href="http://localhost:3001/" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Home
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3001/</div>
+                </a>
+
+                <a href="http://localhost:3001/dashboard" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Dashboard
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3001/dashboard</div>
+                </a>
+
+                <a href="http://localhost:3001/test-alias" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Test Alias
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3001/test-alias</div>
+                </a>
+
+                <a href="http://localhost:3001/dashboard/api-monitor" class="url-link" target="_blank">
+                    <div class="url-title">
+                        C:\ - Users - Eduardo - Documents - Devaltamedica - Apps - Api Server - Src - Pages - Dashboard
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3001/dashboard/api-monitor</div>
+                </a>
+            </div>
+
+            <div class="app-card">
+                <div class="app-title">
+                    <span class="app-icon">🏢</span>
+                    Companies
+                </div>
+
+                <a href="http://localhost:3004/" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Home
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3004/</div>
+                </a>
+
+                <a href="http://localhost:3004/_temp_pages" class="url-link" target="_blank">
+                    <div class="url-title">
+                        _Temp_Pages
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3004/_temp_pages</div>
+                </a>
+            </div>
+
+            <div class="app-card">
+                <div class="app-title">
+                    <span class="app-icon">👨‍⚕️</span>
+                    Doctors
+                </div>
+
+                <a href="http://localhost:3002/" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Home
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/</div>
+                </a>
+
+                <a href="http://localhost:3002/citas" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Citas
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/citas</div>
+                </a>
+
+                <a href="http://localhost:3002/dashboard" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Dashboard
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/dashboard</div>
+                </a>
+
+                <a href="http://localhost:3002/marketplace" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Cardiólogo Intervencionista - Urgente
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/marketplace</div>
+                </a>
+
+                <a href="http://localhost:3002/onboarding" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Onboarding
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/onboarding</div>
+                </a>
+
+                <a href="http://localhost:3002/pacientes" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Pacientes
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/pacientes</div>
+                </a>
+
+                <a href="http://localhost:3002/profile" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Información Básica
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/profile</div>
+                </a>
+
+                <a href="http://localhost:3002/telemedicine" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Consulta de seguimiento
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/telemedicine</div>
+                </a>
+
+                <a href="http://localhost:3002/test-video" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Doctor Video
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/test-video</div>
+                </a>
+
+                <a href="http://localhost:3002/telemedicine/professional" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Telemedicine - Professional
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/telemedicine/professional</div>
+                </a>
+
+                <a href="http://localhost:3002/telemedicine/test" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Telemedicine - Test
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/telemedicine/test</div>
+                </a>
+
+                <a href="http://localhost:3002/telemedicine/[sessionId]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Telemedicine - Sessionid
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/telemedicine/[sessionId]</div>
+                </a>
+
+                <a href="http://localhost:3002/telemedicine/session/[sessionId]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Telemedicine - Session - Sessionid
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/telemedicine/session/[sessionId]</div>
+                </a>
+
+                <a href="http://localhost:3002/telemedicine/room/[roomId]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Telemedicine - Room - Roomid
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/telemedicine/room/[roomId]</div>
+                </a>
+
+                <a href="http://localhost:3002/profile/edit" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Profile - Edit
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/profile/edit</div>
+                </a>
+
+                <a href="http://localhost:3002/marketplace/applications" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Cardiólogo Intervencionista - Urgente
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/marketplace/applications</div>
+                </a>
+
+                <a href="http://localhost:3002/marketplace/listings/[id]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Cardiólogo Intervencionista - Urgente
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3002/marketplace/listings/[id]</div>
+                </a>
+            </div>
+
+            <div class="app-card">
+                <div class="app-title">
+                    <span class="app-icon">🧑‍⚕️</span>
+                    Patients
+                </div>
+
+                <a href="http://localhost:3003/" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Tienes actualizaciones importantes
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/</div>
+                </a>
+
+                <a href="http://localhost:3003/ai-diagnosis" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Ai Diagnosis
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/ai-diagnosis</div>
+                </a>
+
+                <a href="http://localhost:3003/appointments" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Appointments
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/appointments</div>
+                </a>
+
+                <a href="http://localhost:3003/doctors" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Doctors
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/doctors</div>
+                </a>
+
+                <a href="http://localhost:3003/galeria-componentes" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Galeria Componentes
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/galeria-componentes</div>
+                </a>
+
+                <a href="http://localhost:3003/health-metrics" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Health Metrics
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/health-metrics</div>
+                </a>
+
+                <a href="http://localhost:3003/hospital3d-simulator" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Hospital3D Simulator
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/hospital3d-simulator</div>
+                </a>
+
+                <a href="http://localhost:3003/lab-results" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Lab Results
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/lab-results</div>
+                </a>
+
+                <a href="http://localhost:3003/medical-history" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Consulta de Cardiología
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/medical-history</div>
+                </a>
+
+                <a href="http://localhost:3003/notifications" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Recordatorio de cita médica
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/notifications</div>
+                </a>
+
+                <a href="http://localhost:3003/onboarding" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Onboarding
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/onboarding</div>
+                </a>
+
+                <a href="http://localhost:3003/patients" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Patients
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/patients</div>
+                </a>
+
+                <a href="http://localhost:3003/post-consultation" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Resumen de Consulta Médica
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/post-consultation</div>
+                </a>
+
+                <a href="http://localhost:3003/prescriptions" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Prescriptions
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/prescriptions</div>
+                </a>
+
+                <a href="http://localhost:3003/profile" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Profile
+                        <span class="status-badge status-active">✅ Activo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/profile</div>
+                </a>
+
+                <a href="http://localhost:3003/settings" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Settings
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/settings</div>
+                </a>
+
+                <a href="http://localhost:3003/support" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Support
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/support</div>
+                </a>
+
+                <a href="http://localhost:3003/telemedicine" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Consulta en Curso
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/telemedicine</div>
+                </a>
+
+                <a href="http://localhost:3003/test-results" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Test Results
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/test-results</div>
+                </a>
+
+                <a href="http://localhost:3003/telemedicine/test" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Verificación de Equipos
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/telemedicine/test</div>
+                </a>
+
+                <a href="http://localhost:3003/telemedicine/waiting" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Telemedicine - Waiting
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/telemedicine/waiting</div>
+                </a>
+
+                <a href="http://localhost:3003/telemedicine/[sessionId]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Telemedicine - Sessionid
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/telemedicine/[sessionId]</div>
+                </a>
+
+                <a href="http://localhost:3003/telemedicine/webrtc/[roomId]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Chat
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/telemedicine/webrtc/[roomId]</div>
+                </a>
+
+                <a href="http://localhost:3003/telemedicine/room/[roomId]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Telemedicine - Room - Roomid
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/telemedicine/room/[roomId]</div>
+                </a>
+
+                <a href="http://localhost:3003/telemedicine/consultation/[sessionId]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Telemedicine - Consultation - Sessionid
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/telemedicine/consultation/[sessionId]</div>
+                </a>
+
+                <a href="http://localhost:3003/prescriptions/[id]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Prescriptions - Id
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/prescriptions/[id]</div>
+                </a>
+
+                <a href="http://localhost:3003/patients/[id]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Patients - Id
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/patients/[id]</div>
+                </a>
+
+                <a href="http://localhost:3003/onboarding/company" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Información de la Empresa
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/onboarding/company</div>
+                </a>
+
+                <a href="http://localhost:3003/onboarding/doctor" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Información Personal
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/onboarding/doctor</div>
+                </a>
+
+                <a href="http://localhost:3003/onboarding/select-role" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Paciente
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/onboarding/select-role</div>
+                </a>
+
+                <a href="http://localhost:3003/medical-history/[id]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Medical History - Id
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/medical-history/[id]</div>
+                </a>
+
+                <a href="http://localhost:3003/lab-results/[id]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Lab Results - Id
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/lab-results/[id]</div>
+                </a>
+
+                <a href="http://localhost:3003/auth/register" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Auth - Register
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/auth/register</div>
+                </a>
+
+                <a href="http://localhost:3003/appointments/book" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Seleccionar Especialidad
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/appointments/book</div>
+                </a>
+
+                <a href="http://localhost:3003/appointments/new" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Appointments - New
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/appointments/new</div>
+                </a>
+
+                <a href="http://localhost:3003/appointments/[id]" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Información de la Cita
+                        <span class="status-badge status-unknown">❓</span>
+                    </div>
+                    <div class="url-description">http://localhost:3003/appointments/[id]</div>
+                </a>
+            </div>
+
+            <div class="app-card">
+                <div class="app-title">
+                    <span class="app-icon">🌐</span>
+                    Web-App
+                </div>
+
+                <a href="http://localhost:3000/" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Introducción a AltaMedica
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/</div>
+                </a>
+
+                <a href="http://localhost:3000/anamnesis-interactiva" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Anamnesis Interactiva
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/anamnesis-interactiva</div>
+                </a>
+
+                <a href="http://localhost:3000/anamnesis-juego" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Esto ayuda al doctor a personalizar tu atención basada en evidencia clínica.
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/anamnesis-juego</div>
+                </a>
+
+                <a href="http://localhost:3000/calculadora-precios" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Calculadora Precios
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/calculadora-precios</div>
+                </a>
+
+                <a href="http://localhost:3000/demo" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Agenda una consulta
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/demo</div>
+                </a>
+
+                <a href="http://localhost:3000/help" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Help
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/help</div>
+                </a>
+
+                <a href="http://localhost:3000/home-optimized" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Home Optimized
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/home-optimized</div>
+                </a>
+
+                <a href="http://localhost:3000/hospital3d" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Hospital3D
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/hospital3d</div>
+                </a>
+
+                <a href="http://localhost:3000/landing-demo" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Consultas Médicas en Video
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/landing-demo</div>
+                </a>
+
+                <a href="http://localhost:3000/privacy" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Privacy
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/privacy</div>
+                </a>
+
+                <a href="http://localhost:3000/profile" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Profile
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/profile</div>
+                </a>
+
+                <a href="http://localhost:3000/status" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Mantenimiento programado de base de datos
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/status</div>
+                </a>
+
+                <a href="http://localhost:3000/terms" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Terms
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/terms</div>
+                </a>
+
+                <a href="http://localhost:3000/unauthorized" class="url-link" target="_blank">
+                    <div class="url-title">
+                        Unauthorized
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/unauthorized</div>
+                </a>
+
+                <a href="http://localhost:3000/(auth)/forgot-password" class="url-link" target="_blank">
+                    <div class="url-title">
+                        (Auth) - Forgot Password
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/(auth)/forgot-password</div>
+                </a>
+
+                <a href="http://localhost:3000/(auth)/login" class="url-link" target="_blank">
+                    <div class="url-title">
+                        (Auth) - Login
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/(auth)/login</div>
+                </a>
+
+                <a href="http://localhost:3000/(auth)/register" class="url-link" target="_blank">
+                    <div class="url-title">
+                        (Auth) - Register
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/(auth)/register</div>
+                </a>
+
+                <a href="http://localhost:3000/(auth)/verify-email" class="url-link" target="_blank">
+                    <div class="url-title">
+                        (Auth) - Verify Email
+                        <span class="status-badge status-inactive">❌ Inactivo</span>
+                    </div>
+                    <div class="url-description">http://localhost:3000/(auth)/verify-email</div>
+                </a>
+            </div>
+
+        </div>
+        
+        <div class="footer">
+            <p>🐍 Generado automáticamente por Python URL Manager</p>
+            <p>Actualizado: 2025-08-04 09:03:09</p>
+        </div>
+    </div>
+</body>
+</html>

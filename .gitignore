@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # Dependencies
+# ----------------------------------------------------------------
 node_modules/
 .pnp
 .pnp.js
@@ -9,22 +10,27 @@ node_modules/
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.npm
 
-# Testing
-coverage/
-*.lcov
-
-# Next.js
+# Build & Cache
+# ----------------------------------------------------------------
 .next/
 out/
 dist/
+build/
+*.tsbuildinfo
+.turbo/
+.eslintcache
 
-# Firebase
-.firebase/
-firebase-debug.log
-firestore-debug.log
+# Testing
+# ----------------------------------------------------------------
+coverage/
+*.lcov
+playwright-report/
+test-results/
 
-# Environment variables
+# Environment & Credentials
+# ----------------------------------------------------------------
 .env
 .env.local
 .env.development.local
@@ -32,71 +38,75 @@ firestore-debug.log
 .env.production.local
 .env.mcp
 .env.super-mcp
+**/firebase-adminsdk-*.json
+**/serviceAccountKey.json
+mcp-config-local.json
+*.key
+*.pem
 
-# Logs
+# Logs & Runtime Data
+# ----------------------------------------------------------------
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+logs/
 *.log
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/settings.json
-.idea/
-
-# Build outputs
-*.tsbuildinfo
-.turbo/
-
-# Runtime data
+*.log.*
 pids
 *.pid
-*.seed
 *.pid.lock
+*.seed
+firebase-debug.log
+firestore-debug.log
 
-# Optional npm cache directory
-.npm
+# Firebase
+**/firebase-debug.log
+*firebase-adminsdk*.json
 
-# Optional eslint cache
-.eslintcache
+# Project-Specific Artifacts & Reports (DEVALTAMEDICA)
+# ----------------------------------------------------------------
+altamedica-alerts.json
+altamedica-notifications.log
+audit_report_*.json
+auth_deep_analysis.log
+auth_quick_check_*.txt
+diagnostico_altamedica_*.json
+medical-compliance-report.json
+CLAUDE.local.md
 
-# MCP sensitive files (if any)
-mcp-config-local.json
-*.key
-*.pem
-
-# Firebase credentials (keep safe)
-**/firebase-adminsdk-*.json
-**/serviceAccountKey.json
-
-# Temporary files
-*.tmp
-*.temp
-logs/
-backups/
-*.log
-*.pid
-*.log.*
-*.pid.*
-
-# Vercel
-.vercel
-
-# TypeScript
-next-env.d.ts
-
-# Windows specific
+# OS & System Files
+# ----------------------------------------------------------------
+.DS_Store
+Thumbs.db
 Desktop.ini
-
-# System files
 .fseventsd
 .fuse_hidden*
 .nfs*
 
-# Local configuration (contains sensitive data)
-CLAUDE.local.md
+# IDE Configuration
+# ----------------------------------------------------------------
+# Ignore all vscode files by default
+.vscode/*
+# But re-include files that are safe and useful to share
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+
+# Temporary Files
+# ----------------------------------------------------------------
+*.tmp
+*.temp
+backups/
+
+# Vercel
+# ----------------------------------------------------------------
+.vercel
+
+# TypeScript
+# ----------------------------------------------------------------
+# This file is generated on postinstall and should not be committed
+next-env.d.ts

@@ -1,72 +1,43 @@
-import React from 'react';
+import * as React from 'react';
+import { cn } from '../lib/utils';
 
-export interface InputProps {
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
-  placeholder?: string;
-  value?: string;
-  defaultValue?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  disabled?: boolean;
-  required?: boolean;
-  className?: string;
-  label?: string;
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
+  label?: string;
   helperText?: string;
 }
 
-export const Input: React.FC<InputProps> = ({
-  type = 'text',
-  placeholder,
-  value,
-  defaultValue,
-  onChange,
-  onBlur,
-  onFocus,
-  disabled = false,
-  required = false,
-  className = '',
-  label,
-  error,
-  helperText,
-}) => {
-  const baseClasses = 'block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-1 sm:text-sm transition-colors';
-  const normalClasses = 'border-gray-300 focus:ring-blue-500 focus:border-blue-500';
-  const errorClasses = 'border-red-300 focus:ring-red-500 focus:border-red-500';
-  const disabledClasses = disabled ? 'bg-gray-50 cursor-not-allowed' : '';
-  
-  const inputClasses = `${baseClasses} ${error ? errorClasses : normalClasses} ${disabledClasses} ${className}`;
-  
-  return (
-    <div className="space-y-1">
-      {label && (
-        <label className="block text-sm font-medium text-gray-700">
-          {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
-        </label>
-      )}
-      
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        defaultValue={defaultValue}
-        onChange={onChange}
-        onBlur={onBlur}
-        onFocus={onFocus}
-        disabled={disabled}
-        required={required}
-        className={inputClasses}
-      />
-      
-      {error && (
-        <p className="text-sm text-red-600">{error}</p>
-      )}
-      
-      {helperText && !error && (
-        <p className="text-sm text-gray-500">{helperText}</p>
-      )}
-    </div>
-  );
-};
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, error, label, helperText, ...props }, ref) => {
+    return (
+      <div className="w-full">
+        {label && (
+          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2 block">
+            {label}
+          </label>
+        )}
+        <input
+          type={type}
+          className={cn(
+            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            error && "border-destructive focus-visible:ring-destructive",
+            className
+          )}
+          ref={ref}
+          {...props}
+        />
+        {error && (
+          <p className="text-sm text-destructive mt-2">{error}</p>
+        )}
+        {helperText && !error && (
+          <p className="text-sm text-muted-foreground mt-2">{helperText}</p>
+        )}
+      </div>
+    );
+  }
+);
+
+Input.displayName = "Input";
+
+export { Input };

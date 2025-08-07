@@ -602,19 +602,6 @@ export function useSearch<T>(items: T[], searchFields: (keyof T)[]) {
   };
 }
 
-// ⏱️ HOOK PARA DEBOUNCE (MANTENIDO IGUAL)
-export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
+// ⏱️ HOOK PARA DEBOUNCE - MIGRADO A @altamedica/hooks
+// Para usar debounce, importar desde: import { useDebounce } from '@altamedica/hooks'
+// export function useDebounce - ELIMINADO - Usar versión centralizada

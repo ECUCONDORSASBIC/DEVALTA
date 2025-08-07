@@ -1,0 +1,26 @@
+{
+  "extends": "../typescript-config/base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "jsx": "react-jsx",
+    "lib": [
+      "es2020",
+      "dom",
+      "dom.iterable"
+    ],
+    "paths": {
+      "@altamedica/api-client/hooks": [
+        "../api-client/src/hooks"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

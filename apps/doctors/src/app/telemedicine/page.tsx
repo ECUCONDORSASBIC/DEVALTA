@@ -1,33 +1,31 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Video, 
-  Clock, 
-  User, 
-  Calendar,
-  Plus,
-  Search,
-  Filter,
-  Activity,
-  AlertCircle,
-  CheckCircle,
-  Eye,
-  RefreshCw,
-  WifiOff
-} from 'lucide-react';
-import { 
-  telemedicineService, 
-  useTelemedicineService,
-  type TelemedicineSession,
-  type SessionFilters 
-} from '@/services/telemedicine-service';
+import { Badge } from '@altamedica/ui';
+import { Button } from '@altamedica/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@altamedica/ui';
 import { useTelemedicineWebSocket } from '@/hooks/useTelemedicineWebSocket';
+import {
+    telemedicineService,
+    useTelemedicineService,
+    type SessionFilters,
+    type TelemedicineSession
+} from '../services/telemedicine-service';
+import { useAuth } from "@altamedica/auth';
+import {
+    Activity,
+    Calendar,
+    CheckCircle,
+    Clock,
+    Eye,
+    Plus,
+    RefreshCw,
+    Search,
+    User,
+    Video,
+    WifiOff
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function DoctorTelemedicinePage() {
   const router = useRouter();

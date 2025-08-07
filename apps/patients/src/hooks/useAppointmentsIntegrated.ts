@@ -3,7 +3,7 @@
  * Utiliza React Query para cache y el servicio de appointments
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTanstackQuery as useQuery, useMutation, useQueryClient } from '@altamedica/hooks';
 import { 
   appointmentsService, 
   Appointment, 

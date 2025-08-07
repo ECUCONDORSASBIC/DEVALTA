@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar, Clock, User, Stethoscope, AlertCircle, CheckCircle } from 'lucide-react';
-import { appointmentService, CreateAppointmentRequest } from '../../services/appointment-service';
+import { getAppointmentService, CreateAppointmentRequest } from '@altamedica/medical-services';
 import { authService } from '../../services/auth-service';
 
 interface Doctor {
@@ -177,7 +177,7 @@ export default function AppointmentBooking() {
       };
 
       // Create appointment
-      const appointment = await appointmentService.createAppointment(appointmentData);
+      const appointment = await getAppointmentService().createAppointment(appointmentData);
       
       setSuccess(true);
       

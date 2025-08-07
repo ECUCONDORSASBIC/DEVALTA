@@ -17,7 +17,23 @@ interface VideoCarouselProps {
 }
 
 const VideoCarousel: React.FC<VideoCarouselProps> = ({
-  videos,
+  videos = [
+    {
+      src: "/Video_Listo_.mp4",
+      title: "Introducción a AltaMedica",
+      description: "Conoce nuestra plataforma médica digital"
+    },
+    {
+      src: "/Video_Listo_Encuentra_Doctor.mp4",
+      title: "Encuentra tu Doctor",
+      description: "Busca especialistas cerca de ti"
+    },
+    {
+      src: "/Video_Listo_Telemedicina.mp4",
+      title: "Telemedicina 24/7",
+      description: "Consultas médicas desde cualquier lugar"
+    }
+  ],
   autoPlay = true,
   muted = true,
   className = '',
@@ -30,6 +46,15 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
   const [error, setError] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showControls, setShowControls] = useState(false);
+
+  // Verificación de seguridad
+  if (!videos || videos.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-neutral-100 rounded-lg p-8">
+        <p className="text-neutral-500">No hay videos disponibles</p>
+      </div>
+    );
+  }
 
   const currentVideo = videos[currentVideoIndex];
 

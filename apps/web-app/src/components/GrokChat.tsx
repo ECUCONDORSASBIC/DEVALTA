@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { grokService, GrokMessage, GrokConnectionStatus } from '@/services/grok-connector';
+import { grokService, GrokMessage, GrokConnectionStatus } from '../services/grok-connector';
 import { Button } from '@/components/ui/Button';
 import { Send, Bot, User, Loader2, AlertCircle, Shield, Settings, TestTube } from 'lucide-react';
 

@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Importar estilos de accesibilidad para presbicia */
+@import './accessibility.css';
+
 /* Variables CSS personalizadas de Altamedica */
 :root {
   /* Colores principales de Altamedica */
@@ -283,4 +286,87 @@ a:hover {
 *:focus-visible {
   outline: 2px solid var(--altamedica-primary);
   outline-offset: 2px;
+}
+
+/* Soporte para Forced Colors Mode (reemplazo de -ms-high-contrast) */
+@media (forced-colors: active) {
+  /* Asegurar que los elementos interactivos sean visibles */
+  .btn, .card, .form-input {
+    forced-color-adjust: none;
+    border: 1px solid ButtonText;
+  }
+  
+  .btn-primary {
+    background: ButtonFace;
+    color: ButtonText;
+    border: 1px solid ButtonText;
+  }
+  
+  .btn-primary:hover {
+    background: Highlight;
+    color: HighlightText;
+  }
+  
+  .card {
+    background: Canvas;
+    color: CanvasText;
+    border: 1px solid CanvasText;
+  }
+  
+  .form-input:focus {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+  
+  /* Enlaces en modo de contraste forzado */
+  a {
+    color: LinkText;
+  }
+  
+  a:visited {
+    color: VisitedText;
+  }
+  
+  /* Asegurar que los iconos sean visibles */
+  .lucide, svg {
+    forced-color-adjust: auto;
+  }
+}
+
+/* Reduce motion para usuarios con preferencias de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .animate-fade-in,
+  .animate-slide-in,
+  .animate-pulse-altamedica {
+    animation: none;
+  }
+}
+
+/* Alto contraste mejorado */
+@media (prefers-contrast: high) {
+  :root {
+    --altamedica-primary: #0066cc;
+    --altamedica-primary-dark: #004499;
+  }
+  
+  .btn {
+    border-width: 2px;
+  }
+  
+  .form-input {
+    border-width: 2px;
+  }
+  
+  .card {
+    border: 2px solid #333;
+  }
 }

@@ -38,23 +38,30 @@ import {
   Database
 } from "lucide-react";
 
-// Importar nuestro nuevo sistema de API
-import { 
-  usePatients, 
-  useAppointments, 
-  usePatientAppointments,
-  useTelemedicineSessions,
-  useSystemHealth,
-  useConnectivity 
-} from "../../../../shared/hooks/useAltamedicaAPI";
+// Importar nuestro nuevo sistema de API desde hooks locales
+import { useAltamedicaAPI, useAPIRequest } from "../hooks/useAltamedicaAPI";
 
-import { 
-  AltamedicaErrorBoundary, 
-  APIErrorDisplay, 
-  LoadingSpinner, 
-  ConnectivityStatus,
-  AltamedicaErrorHandler 
-} from "../../../../shared/components/ErrorBoundary";
+// Componentes de error simples (inline)
+const AltamedicaErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => children;
+const AltamedicaErrorHandler: React.FC<{ 
+  loading: boolean; 
+  apiError: string | null; 
+  onRetry: () => void; 
+  context: string; 
+  children: React.ReactNode 
+}> = ({ loading, apiError, children }) => {
+  if (loading) return <div className="flex justify-center p-4"><div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent"></div></div>;
+  if (apiError) return <div className="text-red-600 p-4">Error: {apiError}</div>;
+  return <>{children}</>;
+};
+const ConnectivityStatus: React.FC<{ isConnected: boolean; testing: boolean; onRetry: () => void }> = ({ isConnected, testing, onRetry }) => (
+  <div className={`flex items-center justify-between p-2 rounded ${isConnected ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+    <span>{isConnected ? '✓ Conectado' : '✗ Desconectado'}</span>
+    <button onClick={onRetry} disabled={testing} className="text-sm underline">
+      {testing ? 'Probando...' : 'Probar'}
+    </button>
+  </div>
+);
 
 // ========================================
 // INTERFACES ACTUALIZADAS
@@ -83,58 +90,71 @@ const PatientDashboardConnected: React.FC = () => {
     lastCheckup: null
   });
 
-  // Hooks de API - conectan directamente al backend real
+  // Hook de API centralizado
+  console.log('🔍 useAltamedicaAPI import:', typeof useAltamedicaAPI);
+  const api = useAltamedicaAPI();
+
+  // Hooks de API usando el nuevo sistema
   const { 
     data: patientsData, 
     loading: patientsLoading, 
-    error: patientsError, 
-    refetch: refetchPatients 
-  } = usePatients();
+    error: patientsError 
+  } = useAPIRequest(() => api.getPatients({ page: 1, limit: 10 }), []);
 
   const { 
     data: appointmentsData, 
     loading: appointmentsLoading, 
-    error: appointmentsError, 
-    refetch: refetchAppointments 
-  } = usePatientAppointments(currentPatientId);
-
-  const { 
-    data: telemedicineData, 
-    loading: telemedicineLoading, 
-    error: telemedicineError 
-  } = useTelemedicineSessions();
+    error: appointmentsError 
+  } = useAPIRequest(() => api.getAppointments(currentPatientId), [currentPatientId]);
 
   const { 
     data: systemHealthData, 
     loading: systemHealthLoading 
-  } = useSystemHealth();
+  } = useAPIRequest(() => api.getDashboard(), []);
 
-  const { 
-    isConnected, 
-    testing: connectivityTesting, 
-    testConnection 
-  } = useConnectivity();
+  const [isConnected, setIsConnected] = useState(true);
+  const [connectivityTesting, setConnectivityTesting] = useState(false);
+
+  const testConnection = async () => {
+    setConnectivityTesting(true);
+    try {
+      await api.getDashboard();
+      setIsConnected(true);
+    } catch (error) {
+      setIsConnected(false);
+    } finally {
+      setConnectivityTesting(false);
+    }
+  };
+
+  const refetchAppointments = async () => {
+    window.location.reload(); // Simple refresh for now
+  };
 
   // Calcular estadísticas del dashboard basadas en datos reales
   useEffect(() => {
-    if (appointmentsData?.appointments) {
-      const appointments = appointmentsData.appointments;
+    if (appointmentsData) {
+      // Asumimos que appointmentsData contiene un array de appointments
+      const appointments = Array.isArray(appointmentsData) ? appointmentsData : 
+                          appointmentsData.appointments || appointmentsData.data || [];
       
-      // Encontrar próxima cita
-      const nextAppt = appointments
-        .filter(apt => apt.status === 'scheduled' || apt.status === 'confirmed')
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+      if (appointments.length > 0) {
+        // Encontrar próxima cita
+        const nextAppt = appointments
+          .filter(apt => apt.status === 'scheduled' || apt.status === 'confirmed')
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
 
-      // Contar completadas
-      const completed = appointments.filter(apt => apt.status === 'completed').length;
+        // Contar completadas
+        const completed = appointments.filter(apt => apt.status === 'completed').length;
 
-      setDashboardStats({
-        nextAppointment: nextAppt ? `${nextAppt.date} ${nextAppt.time}` : null,
-        totalAppointments: appointments.length,
-        completedConsultations: completed,
-        pendingMedications: 2, // Mockear por ahora
-        lastCheckup: appointments[appointments.length - 1]?.date || null
-      });
+        setDashboardStats({
+          nextAppointment: nextAppt ? `${nextAppt.date} ${nextAppt.time}` : null,
+          totalAppointments: appointments.length,
+          completedConsultations: completed,
+          pendingMedications: 2, // Mockear por ahora
+          lastCheckup: appointments[appointments.length - 1]?.date || null
+        });
+      }
     }
   }, [appointmentsData]);
 
@@ -350,26 +370,30 @@ const PatientDashboardConnected: React.FC = () => {
                   onRetry={refetchAppointments}
                   context="Citas Médicas"
                 >
-                  {appointmentsData?.appointments && appointmentsData.appointments.length > 0 ? (
-                    <div className="space-y-4">
-                      {appointmentsData.appointments.map((appointment) => (
-                        <AppointmentCard
-                          key={appointment.id}
-                          appointment={appointment}
-                          onViewDetails={() => console.log('Ver detalles:', appointment.id)}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No hay citas programadas</h3>
-                      <p className="text-gray-600">Programa tu primera cita médica</p>
-                      <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-                        Programar Cita
-                      </button>
-                    </div>
-                  )}
+                  {appointmentsData && (() => {
+                    const appointments = Array.isArray(appointmentsData) ? appointmentsData : 
+                                        appointmentsData.appointments || appointmentsData.data || [];
+                    return appointments.length > 0 ? (
+                      <div className="space-y-4">
+                        {appointments.map((appointment) => (
+                          <AppointmentCard
+                            key={appointment.id}
+                            appointment={appointment}
+                            onViewDetails={() => console.log('Ver detalles:', appointment.id)}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">No hay citas programadas</h3>
+                        <p className="text-gray-600">Programa tu primera cita médica</p>
+                        <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                          Programar Cita
+                        </button>
+                      </div>
+                    );
+                  })()}
                 </AltamedicaErrorHandler>
               </div>
             </div>
@@ -410,9 +434,13 @@ const PatientDashboardConnected: React.FC = () => {
                 </h4>
                 <div className="text-sm text-blue-700 space-y-1">
                   <div>• API Server: http://localhost:3001</div>
-                  <div>• Datos: {patientsData?.total || 0} pacientes registrados</div>
-                  <div>• Citas: {appointmentsData?.total || 0} citas totales</div>
-                  <div>• Telemedicina: {telemedicineData?.total || 0} sesiones</div>
+                  <div>• Datos: {patientsData?.total || (Array.isArray(patientsData) ? patientsData.length : 0)} pacientes registrados</div>
+                  <div>• Citas: {appointmentsData?.total || (() => {
+                    const appointments = Array.isArray(appointmentsData) ? appointmentsData : 
+                                        appointmentsData?.appointments || appointmentsData?.data || [];
+                    return appointments.length;
+                  })()} citas totales</div>
+                  <div>• Estado: {isConnected ? 'Conectado' : 'Desconectado'}</div>
                 </div>
               </div>
             </div>

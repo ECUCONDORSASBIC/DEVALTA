@@ -1,0 +1,144 @@
+{
+  "project_name": "AltaMedica_Demo",
+  "timeline_settings": {
+    "resolution": "1920x1080",
+    "frame_rate": "60fps",
+    "duration": 42
+  },
+  "clips": [
+    {
+      "name": "intro_clip",
+      "start_time": 0,
+      "duration": 3,
+      "source_file": "raw_footage/intro.mp4",
+      "effects": [
+        {
+          "type": "transform",
+          "scale_start": 100,
+          "scale_end": 120,
+          "ease": "ease_in_out"
+        }
+      ],
+      "transition_out": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      }
+    },
+    {
+      "name": "patients_dashboard_clip",
+      "start_time": 3,
+      "duration": 6,
+      "source_file": "raw_footage/patients_dashboard.mp4",
+      "effects": [
+        {
+          "type": "position",
+          "x_start": 0,
+          "x_end": -100,
+          "ease": "linear"
+        }
+      ],
+      "transition_in": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      },
+      "transition_out": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      }
+    },
+    {
+      "name": "doctor_search_clip",
+      "start_time": 9,
+      "duration": 5,
+      "source_file": "raw_footage/doctor_search.mp4",
+      "effects": [],
+      "transition_in": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      },
+      "transition_out": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      }
+    },
+    {
+      "name": "telemedicine_clip",
+      "start_time": 14,
+      "duration": 7,
+      "source_file": "raw_footage/telemedicine.mp4",
+      "effects": [],
+      "transition_in": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      },
+      "transition_out": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      }
+    },
+    {
+      "name": "doctors_dashboard_clip",
+      "start_time": 21,
+      "duration": 6,
+      "source_file": "raw_footage/doctors_dashboard.mp4",
+      "effects": [],
+      "transition_in": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      },
+      "transition_out": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      }
+    },
+    {
+      "name": "patient_management_clip",
+      "start_time": 27,
+      "duration": 5,
+      "source_file": "raw_footage/patient_management.mp4",
+      "effects": [],
+      "transition_in": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      },
+      "transition_out": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      }
+    },
+    {
+      "name": "marketplace_clip",
+      "start_time": 32,
+      "duration": 6,
+      "source_file": "raw_footage/marketplace.mp4",
+      "effects": [],
+      "transition_in": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      },
+      "transition_out": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      }
+    },
+    {
+      "name": "outro_clip",
+      "start_time": 38,
+      "duration": 4,
+      "source_file": "raw_footage/outro.mp4",
+      "effects": [
+        {
+          "type": "transform",
+          "scale_start": 120,
+          "scale_end": 80,
+          "ease": "ease_in_out"
+        }
+      ],
+      "transition_in": {
+        "type": "cross_dissolve",
+        "duration": 0.5
+      }
+    }
+  ],
+  "effects_timeline": []
+}

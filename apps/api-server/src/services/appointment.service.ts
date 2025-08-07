@@ -9,7 +9,7 @@ export class AppointmentService {
    * @returns Una promesa que se resuelve con un array de citas.
    */
   static async getAllAppointments() {
-    if (\!this.db) throw new Error('Firebase Admin no está inicializado');
+    if (!this.db) throw new Error('Firebase Admin no está inicializado');
     
     const appointmentsSnapshot = await this.db.collection('appointments').get();
     const appointments = appointmentsSnapshot.docs.map(doc => ({
@@ -25,10 +25,10 @@ export class AppointmentService {
    * @returns Una promesa que se resuelve con la cita o null si no se encuentra.
    */
   static async getAppointmentById(id: string) {
-    if (\!this.db) throw new Error('Firebase Admin no está inicializado');
+    if (!this.db) throw new Error('Firebase Admin no está inicializado');
     
     const appointmentDoc = await this.db.collection('appointments').doc(id).get();
-    if (\!appointmentDoc.exists) {
+    if (!appointmentDoc.exists) {
       return null;
     }
     return {
@@ -43,7 +43,7 @@ export class AppointmentService {
    * @returns Una promesa que se resuelve con la cita creada.
    */
   static async createAppointment(appointmentData: any) {
-    if (\!this.db) throw new Error('Firebase Admin no está inicializado');
+    if (!this.db) throw new Error('Firebase Admin no está inicializado');
     
     // Validar datos con esquema
     const validatedData = createAppointmentSchema.parse(appointmentData);
@@ -67,7 +67,7 @@ export class AppointmentService {
    * @returns Una promesa que se resuelve con la cita actualizada.
    */
   static async updateAppointment(id: string, updateData: any) {
-    if (\!this.db) throw new Error('Firebase Admin no está inicializado');
+    if (!this.db) throw new Error('Firebase Admin no está inicializado');
     
     await this.db.collection('appointments').doc(id).update({
       ...updateData,
@@ -83,7 +83,7 @@ export class AppointmentService {
    * @returns Una promesa que se resuelve cuando la cita es eliminada.
    */
   static async deleteAppointment(id: string) {
-    if (\!this.db) throw new Error('Firebase Admin no está inicializado');
+    if (!this.db) throw new Error('Firebase Admin no está inicializado');
     
     await this.db.collection('appointments').doc(id).delete();
     return { success: true, message: 'Cita eliminada correctamente' };

@@ -13,30 +13,42 @@ export const queryClient = new QueryClient({
   }
 })
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'
+// Usar la variable de entorno correcta y consistente
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001'
 
 export class AltamedicaAPI {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+    // CRÍTICO: No usar localStorage para tokens - vulnerabilidad XSS
+    // Las cookies HttpOnly son manejadas automáticamente por el navegador
     
-    const response = await fetch(`${API_BASE}${endpoint}`, {
+    const response = await fetch(`${API_BASE}/api/v1${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
+      credentials: 'include', // CRÍTICO: Incluir cookies en todas las peticiones
       ...options,
     })
     
     if (!response.ok) {
       if (response.status === 401) {
-        // Auto logout on 401
+        // Redirigir al login en caso de no autorizado
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('authToken')
+          // No necesitamos limpiar localStorage ya que usamos cookies HttpOnly
           window.location.href = '/login'
         }
       }
-      throw new Error(`API Error: ${response.status} ${response.statusText}`)
+      
+      // Intentar obtener mensaje de error del servidor
+      let errorMessage = `API Error: ${response.status} ${response.statusText}`
+      try {
+        const errorData = await response.json()
+        errorMessage = errorData.message || errorMessage
+      } catch {
+        // Si no se puede parsear el JSON, usar el mensaje por defecto
+      }
+      
+      throw new Error(errorMessage)
     }
     
     return response.json()

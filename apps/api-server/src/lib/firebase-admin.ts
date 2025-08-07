@@ -1,7 +1,8 @@
-import { initializeApp, cert, getApps, getApp, App, ServiceAccount } from 'firebase-admin/app';
-import { getFirestore, Firestore } from 'firebase-admin/firestore';
-import { getAuth, Auth } from 'firebase-admin/auth';
+import { App, getApps, initializeApp, ServiceAccount } from 'firebase-admin/app';
+import { Auth, getAuth } from 'firebase-admin/auth';
+import { Firestore, getFirestore } from 'firebase-admin/firestore';
 import { getStorage, Storage } from 'firebase-admin/storage';
+// Removed 'server-only' import - not compatible with Express server
 
 // Singleton instances
 let app: App | undefined;
@@ -58,28 +59,12 @@ function initializeFirebaseAdmin(): App | null {
   }
 
   try {
-    const credentials = getFirebaseCredentials();
-    
-    if (credentials) {
-      // Inicialización con credenciales completas
-      app = initializeApp({
-        credential: cert(credentials),
-        projectId: credentials.projectId,
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET
-      });
-      console.log('✅ Firebase Admin initialized with service account');
-    } else if (process.env.NODE_ENV === 'development') {
-      // En desarrollo, permitir inicialización sin credenciales
-      // Útil para usar con el emulador de Firebase
-      app = initializeApp({
-        projectId: process.env.FIREBASE_PROJECT_ID || 'altamedica-demo'
-      });
-      console.log('⚠️ Firebase Admin initialized in development mode');
-    } else {
-      console.error('❌ Firebase Admin credentials not found');
-      return null;
-    }
-
+    // El SDK de Firebase Admin buscará automáticamente GOOGLE_APPLICATION_CREDENTIALS
+    // si no se proporcionan credenciales explícitas.
+    app = initializeApp({
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET
+    });
+    console.log('✅ Firebase Admin initialized automatically');
     return app;
   } catch (error) {
     console.error('❌ Firebase Admin initialization failed:', error);

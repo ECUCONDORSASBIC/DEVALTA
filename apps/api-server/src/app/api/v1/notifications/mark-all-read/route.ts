@@ -1,72 +1,75 @@
-/**
- * 🔔 BULK NOTIFICATION OPERATIONS
- * Mark all notifications as read for authenticated user
- * 
- * PUT /api/v1/notifications/mark-all-read
- */
-
-import { verifyAuthToken } from '@/lib/simple-auth';
-import { getFirestore } from 'firebase-admin/firestore';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { createAuthenticatedRoute } from '@/lib/middleware/UnifiedAuth';
+import { createSuccessResponse, createErrorResponse } from '@/lib/response-helpers';
+import NotificationService from '@/services/notification.service';
 
-const db = getFirestore();
+// Schemas
+const MarkAllReadSchema = z.object({
+  userId: z.string().optional(),
+  userType: z.enum(['patient', 'doctor', 'admin']).optional()
+});
 
-/**
- * PUT /api/v1/notifications/mark-all-read
- * Mark all user notifications as read
- */
-export async function PUT(request: NextRequest) {
-  try {
-    // Verify authentication
-    const authResult = await verifyAuthToken(request);
-    if (!authResult.success || !authResult.user) {
-      return NextResponse.json({
-        success: false,
-        error: 'Authentication required'
-      }, { status: 401 });
-    }
-
-    // Get all unread notifications for user
-    const snapshot = await db.collection('notifications')
-      .where('recipient_id', 'in', [authResult.user.id, 'all'])
-      .where('is_read', '==', false)
-      .get();
-
-    if (snapshot.empty) {
-      return NextResponse.json({
-        success: true,
-        message: 'No unread notifications found',
-        data: { marked_count: 0 }
-      });
-    }
-
-    // Batch update all notifications
-    const batch = db.batch();
-    const now = new Date().toISOString();
-
-    snapshot.docs.forEach((doc: any) => {
-      batch.update(doc.ref, {
-        is_read: true,
-        read_at: now,
-        updated_at: now
-      });
-    });
-
-    await batch.commit();
-
-    return NextResponse.json({
-      success: true,
-      message: `${snapshot.size} notifications marked as read`,
-      data: {
-        marked_count: snapshot.size
+// PUT /api/v1/notifications/mark-all-read - Mark all notifications as read for a user
+export const PUT = createAuthenticatedRoute(
+  async (request: NextRequest, authContext) => {
+    try {
+      const body = await request.json();
+      const validation = MarkAllReadSchema.safeParse(body);
+      
+      if (!validation.success) {
+        return NextResponse.json(
+          createErrorResponse('INVALID_REQUEST_BODY', 'Invalid request body', {
+            errors: validation.error.flatten().fieldErrors
+          }),
+          { status: 400 }
+        );
       }
-    });
-
-  } catch (error: unknown) {
-    console.error('Bulk mark read error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to mark notifications as read'
-    }, { status: 500 });
+      
+      const { userId, userType } = validation.data;
+      const currentUserId = authContext.user?.uid!;
+      const currentUserRole = authContext.user?.role!;
+      
+      // Default to current user if not specified
+      const targetUserId = userId || currentUserId;
+      const targetUserType = userType || currentUserRole;
+      
+      // Authorization: users can only mark their own notifications (unless admin)
+      if (currentUserRole !== 'admin' && targetUserId !== currentUserId) {
+        return NextResponse.json(
+          createErrorResponse('FORBIDDEN', 'You can only mark your own notifications as read'),
+          { status: 403 }
+        );
+      }
+      
+      console.log(`[Notifications] Marking all notifications as read for ${targetUserType}: ${targetUserId}`);
+      
+      const count = await NotificationService.markAllAsRead(
+        targetUserId,
+        targetUserType as 'patient' | 'doctor' | 'admin'
+      );
+      
+      console.log(`[Notifications] Marked ${count} notifications as read`);
+      
+      return NextResponse.json(
+        createSuccessResponse({
+          count,
+          message: `${count} notifications marked as read`,
+          userId: targetUserId,
+          userType: targetUserType
+        }, 'All notifications marked as read successfully')
+      );
+      
+    } catch (error) {
+      console.error('[Notifications] Error marking all as read:', error);
+      return NextResponse.json(
+        createErrorResponse('INTERNAL_ERROR', 'Failed to mark notifications as read'),
+        { status: 500 }
+      );
+    }
+  },
+  {
+    allowedRoles: ['patient', 'doctor', 'admin'],
+    auditAction: 'mark_all_notifications_read'
   }
-}
+);

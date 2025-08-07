@@ -1,0 +1,24 @@
+﻿ðŸ› ï¸ GITHUB COPILOT - OPTIMIZACIÃ“N DE CÃ“DIGO MÃ‰DICO
+
+COMANDO PRINCIPAL:
+copilot-debug "optimize AltaMedica medical appointment system with WebRTC and HIPAA compliance"
+
+CONTEXTO RECIBIDO DE CLAUDE:
+- AnÃ¡lisis tÃ©cnico del sistema actual
+- Performance metrics identificados
+- Issues especÃ­ficos encontrados
+- Medical compliance requirements
+
+GENERAR:
+1. CÃ³digo optimizado para sistema de citas mÃ©dicas
+2. Mejoras de performance para WebRTC telemedicine
+3. Enhanced HIPAA compliance validations
+4. Medical workflow optimizations
+5. Error handling improvements
+
+CONSIDERACIONES MÃ‰DICAS:
+- Patient safety first
+- HIPAA PHI protection
+- Emergency response optimization
+- Medical data integrity
+- Audit trail requirements

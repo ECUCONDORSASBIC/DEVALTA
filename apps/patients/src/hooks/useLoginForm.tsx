@@ -5,7 +5,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { useAuth } from './useAuth';
+import { useAuth } from "@altamedica/auth';
 
 // 📝 Interfaces específicas del formulario de login
 export interface LoginFormData {

@@ -20,11 +20,11 @@ import {
   Memory,
   Network
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Progress } from '../ui/progress';
-import { Switch } from '../ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@altamedica/ui';
+import { Badge } from '@altamedica/ui';
+import { Button } from '@altamedica/ui';
+import { Progress } from '@altamedica/ui';
+import { Switch } from '@altamedica/ui';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../hooks/useToast';
 

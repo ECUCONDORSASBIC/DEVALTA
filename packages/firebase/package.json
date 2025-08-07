@@ -7,26 +7,32 @@
   "types": "dist/src/index.d.ts",
   "exports": {
     ".": {
+      "require": "./dist/src/index.js",
       "import": "./dist/src/index.js",
       "types": "./dist/src/index.d.ts"
     },
     "./client-only": {
+      "require": "./dist/src/client-only.js",
       "import": "./dist/src/client-only.js",
       "types": "./dist/src/client-only.d.ts"
     },
     "./src/config-production": {
+      "require": "./dist/src/config-production.js",
       "import": "./dist/src/config-production.js",
       "types": "./dist/src/config-production.d.ts"
     },
     "./src/config": {
+      "require": "./dist/src/config.js",
       "import": "./dist/src/config.js",
       "types": "./dist/src/config.d.ts"
     },
     "./src/client": {
+      "require": "./dist/src/client.js",
       "import": "./dist/src/client.js",
       "types": "./dist/src/client.d.ts"
     },
     "./src/admin": {
+      "require": "./dist/src/admin.js",
       "import": "./dist/src/admin.js",
       "types": "./dist/src/admin.d.ts"
     }
@@ -42,7 +48,7 @@
   "dependencies": {
     "@altamedica/types": "workspace:*",
     "firebase": "^10.14.1",
-    "firebase-admin": "^12.7.0"
+    "@altamedica/firebase-admin": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AltaMedica Hooks Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .card { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .metric { display: inline-block; margin: 10px 20px; text-align: center; }
+        .metric-value { font-size: 2em; font-weight: bold; color: #2196F3; }
+        .metric-label { color: #666; }
+        .health-good { 
+            color: #4CAF50; 
+        }
+        .chart-container { position: relative; height: 400px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 AltaMedica Hooks Dashboard</h1>
+        <p><strong>Última actualización:</strong> 2025-08-07T06:15:40.713Z</p>
+        
+        <div class="card">
+            <h2>📊 Métricas Actuales</h2>
+            <div class="metric">
+                <div class="metric-value health-good">85%</div>
+                <div class="metric-label">Salud del Sistema</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">10.3%</div>
+                <div class="metric-label">Hooks Utilizados</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">213</div>
+                <div class="metric-label">Total Hooks</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">43</div>
+                <div class="metric-label">Duplicaciones</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📈 Tendencias (Últimas 1 mediciones)</h2>
+            <div class="chart-container">
+                <canvas id="trendsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Objetivos</h2>
+            <ul>
+                <li>✅ Uso de hooks > 20%: <strong>PENDIENTE</strong></li>
+                <li>✅ Duplicaciones < 5: <strong>PENDIENTE</strong></li>
+                <li>✅ Problemas = 0: <strong>PENDIENTE</strong></li>
+                <li>✅ Salud > 80%: <strong>CUMPLIDO</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('trendsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ["3:15:40"],
+                datasets: [{
+                    label: 'Salud del Sistema (%)',
+                    data: [85],
+                    borderColor: '#4CAF50',
+                    tension: 0.1
+                }, {
+                    label: 'Uso de Hooks (%)',
+                    data: [10.3],
+                    borderColor: '#2196F3',
+                    tension: 0.1
+                }, {
+                    label: 'Duplicaciones',
+                    data: [43],
+                    borderColor: '#FF9800',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -19,9 +19,10 @@ import {
   Download,
   RefreshCw,
 } from 'lucide-react';
-import { CardCorporate, CardHeaderCorporate, CardContentCorporate } from './ui/CardCorporate';
-import { ButtonCorporate } from './ui/ButtonCorporate';
-import { LoadingSpinner } from './ui/LoadingSpinner';
+import { CardCorporate } from '@altamedica/ui';
+import { CardHeaderCorporate, CardContentCorporate } from './ui/CardCorporate';
+import { ButtonCorporate } from '@altamedica/ui';
+import { LoadingSpinner } from '@altamedica/ui';
 import { useAnamnesis } from '../hooks/useAnamnesis';
 import { AnamnesisStats } from './AnamnesisStats';
 

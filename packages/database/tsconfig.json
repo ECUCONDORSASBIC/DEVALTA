@@ -1,11 +1,44 @@
 {
-  "extends": "../configs/typescript-config/tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
-    "declaration": true,
+    "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "Node"
+    "lib": [
+      "ES2022"
+    ],
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "types": ["node", "jest"],
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@/core/*": ["core/*"],
+      "@/repositories/*": ["repositories/*"],
+      "@/schemas/*": ["schemas/*"],
+      "@/services/*": ["services/*"],
+      "@/security/*": ["security/*"],
+      "@/cache/*": ["cache/*"],
+      "@/monitoring/*": ["monitoring/*"]
+    }
   },
-  "include": ["src"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }

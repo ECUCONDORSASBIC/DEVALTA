@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronLeft, ChevronRight, Settings, Eye, Layers, Box } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@altamedica/utils'
 
 interface SidebarProps {
   isOpen: boolean

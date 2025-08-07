@@ -1,0 +1,133 @@
+{
+  "name": "@altamedica/hooks",
+  "version": "1.0.0",
+  "description": "React hooks centralizados para la plataforma AltaMedica - Medical, Auth, API, Realtime, UI, Performance y más",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./medical": {
+      "import": "./dist/medical/index.esm.js",
+      "require": "./dist/medical/index.js",
+      "types": "./dist/medical/index.d.ts"
+    },
+    "./auth": {
+      "import": "./dist/auth/index.esm.js",
+      "require": "./dist/auth/index.js",
+      "types": "./dist/auth/index.d.ts"
+    },
+    "./api": {
+      "import": "./dist/api/index.esm.js",
+      "require": "./dist/api/index.js",
+      "types": "./dist/api/index.d.ts"
+    },
+    "./realtime": {
+      "import": "./dist/realtime/index.esm.js",
+      "require": "./dist/realtime/index.js",
+      "types": "./dist/realtime/index.d.ts"
+    },
+    "./ui": {
+      "import": "./dist/ui/index.esm.js",
+      "require": "./dist/ui/index.js",
+      "types": "./dist/ui/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/utils/index.esm.js",
+      "require": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    },
+    "./performance": {
+      "import": "./dist/performance/index.esm.js",
+      "require": "./dist/performance/index.js",
+      "types": "./dist/performance/index.d.ts"
+    },
+    "./forms": {
+      "import": "./dist/forms/index.esm.js",
+      "require": "./dist/forms/index.js",
+      "types": "./dist/forms/index.d.ts"
+    },
+    "./composed": {
+      "import": "./dist/composed/index.esm.js",
+      "require": "./dist/composed/index.js",
+      "types": "./dist/composed/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.esm.json",
+    "build:watch": "tsc -p tsconfig.json --watch",
+    "dev": "npm run build:watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build",
+    "storybook:serve": "serve storybook-static -l 6006",
+    "clean": "rimraf dist storybook-static",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "medical",
+    "healthcare",
+    "altamedica",
+    "telemedicine",
+    "hipaa",
+    "typescript"
+  ],
+  "author": "AltaMedica Platform",
+  "license": "MIT",
+  "devDependencies": {
+    "@altamedica/eslint-config": "workspace:*",
+    "@altamedica/typescript-config": "workspace:*",
+    "@storybook/addon-a11y": "^7.5.0",
+    "@storybook/addon-backgrounds": "^7.5.0",
+    "@storybook/addon-controls": "^7.5.0",
+    "@storybook/addon-docs": "^7.5.0",
+    "@storybook/addon-essentials": "^7.5.0",
+    "@storybook/addon-interactions": "^7.5.0",
+    "@storybook/addon-links": "^7.5.0",
+    "@storybook/addon-measure": "^7.5.0",
+    "@storybook/addon-outline": "^7.5.0",
+    "@storybook/addon-storysource": "^7.5.0",
+    "@storybook/addon-viewport": "^7.5.0",
+    "@storybook/blocks": "^7.5.0",
+    "@storybook/manager-api": "^7.5.0",
+    "@storybook/react": "^7.5.0",
+    "@storybook/react-vite": "^7.5.0",
+    "@storybook/theming": "^7.5.0",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@types/react": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    
+    "eslint": "^8.49.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rimraf": "^5.0.1",
+    "serve": "^14.2.1",
+    "storybook": "^7.5.0",
+    "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "dependencies": {
+    "@altamedica/types": "workspace:*",
+    "@tanstack/react-query": "^5.81.2",
+    "zod": "^3.22.2"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

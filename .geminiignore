@@ -1,0 +1,103 @@
+# Gemini Ignore - AltaMedica Configuration
+# Archivos que Gemini debe ignorar para optimizar contexto
+
+# Dependencies
+node_modules/
+*/node_modules/
+.pnpm-store/
+.npm/
+
+# Build outputs
+dist/
+build/
+.next/
+coverage/
+bundle/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+server_logs/
+html-captures/
+
+# Cache
+.turbo/
+.cache/
+.parcel-cache/
+tsconfig.tsbuildinfo
+
+# Environment files
+.env.local
+.env.production
+.env.docker
+.env.*.local
+
+# Database
+data/postgres/
+data/redis/
+
+# Backup files
+packages-backup-*/
+backup_*/
+*.backup
+
+# Generated files
+python_testing_results/
+test-results/
+reports/
+
+# Large media files
+*.mp4
+*.mov
+*.avi
+*.webm
+*.glb
+*.gltf
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/settings.json
+.idea/
+
+# Documentation artifacts (keep main docs)
+**/README-*.md
+**/ANALISIS_*.md
+**/CORRECCIONES_*.md
+**/IMPLEMENTACION_*.md
+
+# Keep important docs but ignore verbose reports
+DOCUMENTATION_AGENT_*.md
+TEST_EXECUTION_*.md
+PACKAGE_STANDARDIZATION_*.md
+WORKSPACE_*.md
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Git files
+.git/
+.gitignore
+
+# Package manager files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Certificate files
+*.pem
+*.key
+*.crt
+
+# Docker files
+Dockerfile.*
+docker-compose.*.yml

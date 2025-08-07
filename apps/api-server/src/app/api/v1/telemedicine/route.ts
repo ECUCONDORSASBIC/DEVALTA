@@ -1,60 +1,51 @@
-/**
- * 🩺 TELEMEDICINE SESSIONS API - COLLECTION
- * Endpoint para crear nuevas sesiones de telemedicina.
- * POST /api/v1/telemedicine
- * @version 2.0.0
- * @author Altamedica
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createAuthenticatedRoute, AuthContext } from '@/lib/middleware/UnifiedAuth';
-import { telemedicineSessionService, TelemedicineSessionSchema } from '@/services/telemedicine-session.service';
-import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
+import { createAuthenticatedRoute } from '@/lib/middleware/UnifiedAuth';
+import { createSuccessResponse, createErrorResponse } from '@/lib/response-helpers';
+import TelemedicineService from '@/services/telemedicine.service';
 
-// Para la creación, podemos omitir campos que se asignan automáticamente.
-const CreateSessionSchema = TelemedicineSessionSchema.omit({ status: true });
+// Schema for system status
+const SystemStatusSchema = z.object({
+  includeRoomStats: z.boolean().optional().default(false)
+});
 
-/**
- * @summary Crea una nueva sesión de telemedicina.
- * @description Registra una nueva sesión, generalmente asociada a una cita.
- * @handler POST
- * @protected
- */
-export const POST = createAuthenticatedRoute(
-  async (request: NextRequest) => {
+// GET /api/v1/telemedicine - Get system status
+export const GET = createAuthenticatedRoute(
+  async (request: NextRequest, authContext) => {
     try {
-      const authContext = (request as any).authContext as AuthContext;
-      const body = await request.json();
+      const url = new URL(request.url);
+      const queryParams = {
+        includeRoomStats: url.searchParams.get('includeRoomStats') === 'true'
+      };
       
-      const validatedData = CreateSessionSchema.parse(body);
-
-      const newSession = await telemedicineSessionService.create(validatedData, authContext.user!);
-
-      return NextResponse.json(createSuccessResponse(newSession), { status: 201 });
-
-    } catch (error: unknown) {
-      console.error('Error en POST /telemedicine:', error);
-      if (error instanceof z.ZodError) {
+      const validation = SystemStatusSchema.safeParse(queryParams);
+      if (!validation.success) {
         return NextResponse.json(
-          createErrorResponse('Datos de entrada inválidos.', 'VALIDATION_ERROR', { validationErrors: error.errors }),
+          createErrorResponse('INVALID_QUERY', 'Invalid query parameters', {
+            errors: validation.error.flatten().fieldErrors
+          }),
           { status: 400 }
         );
       }
-      if (error instanceof Error && error.message === 'FORBIDDEN') {
-        return NextResponse.json(
-          createErrorResponse('No tiene permisos para crear sesiones de telemedicina.', 'FORBIDDEN'),
-          { status: 403 }
-        );
-      }
+      
+      console.log('[Telemedicine] Getting system status');
+      
+      const systemStatus = await TelemedicineService.getSystemStatus(validation.data.includeRoomStats);
+      
       return NextResponse.json(
-        createErrorResponse('Error al crear la sesión de telemedicina.', 'INTERNAL_SERVER_ERROR'),
+        createSuccessResponse(systemStatus, 'System status retrieved successfully')
+      );
+      
+    } catch (error) {
+      console.error('[Telemedicine] Error getting system status:', error);
+      return NextResponse.json(
+        createErrorResponse('INTERNAL_ERROR', 'Failed to retrieve system status'),
         { status: 500 }
       );
     }
   },
   {
-    allowedRoles: ['admin', 'doctor'],
-    auditAction: 'telemedicine_session_create',
+    allowedRoles: ['doctor', 'admin', 'patient'],
+    auditAction: 'get_telemedicine_status'
   }
 );

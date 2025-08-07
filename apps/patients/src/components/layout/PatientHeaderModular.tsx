@@ -6,7 +6,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Bell, Search, User, X, Menu } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from "@altamedica/auth';
 
 // 📝 TIPOS ESPECÍFICOS DEL HEADER
 export interface PatientHeaderProps {

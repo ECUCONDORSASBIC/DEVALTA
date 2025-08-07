@@ -1,0 +1,10 @@
+{
+  "extends": "@altamedica/typescript-config/base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": ["es2020", "dom", "dom.iterable"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"]
+}

@@ -1,43 +1,45 @@
 {
   "name": "@altamedica/medical-types",
   "version": "1.0.0",
-  "description": "Tipos TypeScript para sistema médico ALTAMEDICA - Compliance HIPAA Argentina",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "Tipos e interfaces médicos unificados para la plataforma AltaMedica",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "types": "./dist/index.d.ts"
     }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs --format esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs --format esm --dts --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
   },
   "files": [
     "dist",
     "src"
   ],
-  "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
-    "type-check": "tsc --noEmit",
-    "lint": "eslint src --ext .ts,.tsx",
-    "clean": "rm -rf dist"
-  },
   "keywords": [
     "medical",
-    "healthcare",
-    "argentina",
-    "hipaa",
     "types",
-    "typescript"
+    "healthcare",
+    "altamedica",
+    "typescript",
+    "interfaces"
   ],
-  "author": "ALTAMEDICA Development Team",
-  "license": "PROPRIETARY",
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.8.3"
+  "author": "AltaMedica Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/altamedica/platform"
   },
-  "peerDependencies": {
-    "typescript": ">=5.0.0"
-  }
+  "sideEffects": false
 }

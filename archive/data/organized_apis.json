@@ -1,0 +1,582 @@
+{
+  "patients": {
+    "description": "Gestión de Pacientes",
+    "total_apis": 12,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 5,
+        "endpoints": [
+          "/api/v1/patients/simple",
+          "/api/v1/patients/simple",
+          "/api/v1/patients",
+          "/api/v1/patients",
+          "/api/v1/patients/:id/appointments"
+        ]
+      },
+      "patients": {
+        "port": 3003,
+        "total_apis": 4,
+        "endpoints": [
+          "/api/v1/anamnesis/paciente/:id/resumen",
+          "/api/v1/anamnesis/paciente/:id",
+          "/api/v1/anamnesis/paciente/:id",
+          "/api/v1/anamnesis/paciente/:id"
+        ]
+      },
+      "doctors": {
+        "port": 3002,
+        "total_apis": 2,
+        "endpoints": [
+          "/api/patients",
+          "/api/patients"
+        ]
+      },
+      "web_app": {
+        "port": 3000,
+        "total_apis": 1,
+        "endpoints": [
+          "/api/patients"
+        ]
+      }
+    }
+  },
+  "doctors": {
+    "description": "Gestión de Doctores",
+    "total_apis": 16,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 16,
+        "endpoints": [
+          "/api/v1/doctors/:id",
+          "/api/v1/doctors/:id/schedule",
+          "/api/v1/marketplace/doctors",
+          "/api/v1/marketplace/doctors",
+          "/api/v1/doctors/:id/verification",
+          "/api/v1/doctors/:id/verification",
+          "/api/v1/doctors/visible",
+          "/api/v1/doctors/visible",
+          "/doctor-message",
+          "/api/v1/independent-doctors",
+          "/api/v1/independent-doctors",
+          "/api/v1/doctors/:id/stats",
+          "/api/v1/doctors/search/location",
+          "/api/v1/doctors/:id/appointments",
+          "/api/v1/doctors/:id/reviews",
+          "/api/v1/doctors/:id/reviews"
+        ]
+      }
+    }
+  },
+  "appointments": {
+    "description": "Citas Médicas",
+    "total_apis": 12,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 8,
+        "endpoints": [
+          "/api/appointments",
+          "/api/appointments",
+          "/api/v1/appointments/:id/video-session",
+          "/api/v1/appointments/:id/video-session",
+          "/api/v1/appointments/:id/video-session",
+          "/api/v1/appointments/:id/video-session",
+          "/appointment-reminder",
+          "/api/appointments/:appointmentId/status"
+        ]
+      },
+      "doctors": {
+        "port": 3002,
+        "total_apis": 3,
+        "endpoints": [
+          "/api/appointments",
+          "/api/appointments",
+          "/api/appointments"
+        ]
+      },
+      "web_app": {
+        "port": 3000,
+        "total_apis": 1,
+        "endpoints": [
+          "/api/appointments"
+        ]
+      }
+    }
+  },
+  "telemedicine": {
+    "description": "Telemedicina y Videollamadas",
+    "total_apis": 44,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 40,
+        "endpoints": [
+          "/api/v1/telemedicine/billing/:id",
+          "/api/v1/telemedicine/billing/:id",
+          "/api/v1/telemedicine/billing/:id",
+          "/api/v1/telemedicine/billing",
+          "/api/v1/telemedicine/billing",
+          "/api/v1/telemedicine/webrtc/signaling",
+          "/api/v1/telemedicine/webrtc/signaling",
+          "/api/telemedicine/session",
+          "/api/telemedicine/session",
+          "/api/v1/telemedicine/sessions/:id/end",
+          "/telemedicine-confirmation",
+          "/api/webrtc",
+          "/api/webrtc",
+          "/api/telemedicine/sessions",
+          "/api/telemedicine/sessions/:id",
+          "/api/telemedicine/sessions",
+          "/api/telemedicine/sessions/:id",
+          "/api/telemedicine/sessions/:id/cancel",
+          "/api/telemedicine/sessions/:id/start",
+          "/api/telemedicine/sessions/:id/end",
+          "/api/telemedicine/sessions/:id/chat",
+          "/api/telemedicine/sessions/:id/chat",
+          "/api/telemedicine-ai",
+          "/api/telemedicine-ai",
+          "/sessions",
+          "/sessions/:sessionId",
+          "/sessions",
+          "/sessions/:sessionId/start",
+          "/sessions/:sessionId/end",
+          "/sessions/:sessionId/cancel",
+          "/sessions/:sessionId/chat",
+          "/sessions/:sessionId/chat",
+          "/rooms/:roomId/availability",
+          "/api/rooms",
+          "/api/rooms/:roomId",
+          "/api/rooms/:roomId",
+          "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "/api/v1/telemedicine/webrtc/rooms/:roomId"
+        ]
+      },
+      "doctors": {
+        "port": 3002,
+        "total_apis": 3,
+        "endpoints": [
+          "/api/telemedicine",
+          "/api/telemedicine",
+          "/api/telemedicine"
+        ]
+      },
+      "web_app": {
+        "port": 3000,
+        "total_apis": 1,
+        "endpoints": [
+          "/api/telemedicine"
+        ]
+      }
+    }
+  },
+  "anamnesis": {
+    "description": "Anamnesis y Historiales",
+    "total_apis": 5,
+    "services": {
+      "patients": {
+        "port": 3003,
+        "total_apis": 5,
+        "endpoints": [
+          "/api/v1/anamnesis/importar",
+          "/api/v1/anamnesis",
+          "/api/v1/anamnesis",
+          "/api/v1/anamnesis",
+          "/api/v1/anamnesis"
+        ]
+      }
+    }
+  },
+  "medical_records": {
+    "description": "Expedientes Médicos",
+    "total_apis": 3,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 3,
+        "endpoints": [
+          "/api/v1/medical-records/simple-route.ts",
+          "/api/v1/medical-records/simple-route.ts",
+          "/api/v1/medical-records/auth-helpers.ts"
+        ]
+      }
+    }
+  },
+  "prescriptions": {
+    "description": "Recetas Médicas",
+    "total_apis": 8,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 8,
+        "endpoints": [
+          "/api/v1/prescriptions/route-new.ts",
+          "/api/v1/prescriptions/route-new.ts",
+          "/api/v1/prescriptions/route-new.ts",
+          "/api/v1/prescriptions/route-new.ts",
+          "/api/v1/prescriptions/:id/route-new.ts",
+          "/api/v1/prescriptions/:id/route-new.ts",
+          "/api/v1/prescriptions/prescriptions-route.ts",
+          "/api/v1/prescriptions/prescriptions-route.ts"
+        ]
+      }
+    }
+  },
+  "reports": {
+    "description": "Reportes Médicos",
+    "total_apis": 4,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 4,
+        "endpoints": [
+          "/api/v1/analytics/custom-reports",
+          "/api/v1/analytics/custom-reports",
+          "/api/v1/analytics/custom-reports/schemas.ts",
+          "/api/v1/reports/medical-reports"
+        ]
+      }
+    }
+  },
+  "companies": {
+    "description": "Empresas/Instituciones",
+    "total_apis": 13,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 11,
+        "endpoints": [
+          "/api/companies",
+          "/api/companies",
+          "/api/v1/companies",
+          "/api/v1/companies",
+          "/api/v1/companies/:id",
+          "/api/v1/companies/:id",
+          "/api/v1/companies/:id",
+          "/companies",
+          "/companies/:id",
+          "/api/v1/companies/visible",
+          "/api/v1/companies/visible"
+        ]
+      },
+      "python_tools": {
+        "port": 8888,
+        "total_apis": 2,
+        "endpoints": [
+          "/api/matching/companies/{company_id}/recommendations",
+          "/api/matching/companies/{company_id}/recommendations"
+        ]
+      }
+    }
+  },
+  "marketplace": {
+    "description": "Marketplace B2B",
+    "total_apis": 18,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 17,
+        "endpoints": [
+          "/api/v1/job-listings",
+          "/api/v1/job-listings",
+          "/api/v1/marketplace",
+          "/api/v1/marketplace",
+          "/api/v1/marketplace/notifications",
+          "/api/v1/marketplace/notifications",
+          "/api/v1/marketplace/notifications",
+          "/api/v1/marketplace/notifications",
+          "/api/v1/job-listings/:id",
+          "/api/v1/job-listings/:id",
+          "/api/v1/job-listings/:id",
+          "/marketplace/listings",
+          "/marketplace/listings",
+          "/marketplace/listings/:id",
+          "/marketplace/listings/:id/apply",
+          "/marketplace/listings/:id/applications",
+          "/marketplace/applications/:id"
+        ]
+      },
+      "web_app": {
+        "port": 3000,
+        "total_apis": 1,
+        "endpoints": [
+          "/api/marketplace"
+        ]
+      }
+    }
+  },
+  "jobs": {
+    "description": "Ofertas de Trabajo",
+    "total_apis": 7,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 7,
+        "endpoints": [
+          "/api/v1/jobs",
+          "/api/v1/jobs",
+          "/api/v1/jobs",
+          "/api/v1/jobs",
+          "/api/v1/job-applications",
+          "/api/v1/job-applications",
+          "/api/v1/job-applications"
+        ]
+      }
+    }
+  },
+  "auth": {
+    "description": "Autenticación y Autorización",
+    "total_apis": 4,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 3,
+        "endpoints": [
+          "/api/v1/auth/register",
+          "/api/auth/register",
+          "/api/v1/auth/verify-sso"
+        ]
+      },
+      "web_app": {
+        "port": 3000,
+        "total_apis": 1,
+        "endpoints": [
+          "/api/auth/refresh"
+        ]
+      }
+    }
+  },
+  "admin": {
+    "description": "Administración del Sistema",
+    "total_apis": 10,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 10,
+        "endpoints": [
+          "/api/admin/users/:userId/suspend",
+          "/api/admin/monitoring",
+          "/api/admin/users/:userId/role",
+          "/admin/all",
+          "/admin/cleanup",
+          "/api/admin/users",
+          "/api/admin/dashboard",
+          "/api/admin/system/health",
+          "/api/admin/stats",
+          "/system/status"
+        ]
+      }
+    }
+  },
+  "users": {
+    "description": "Gestión de Usuarios",
+    "total_apis": 8,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 8,
+        "endpoints": [
+          "/api/users/profile",
+          "/api/users/profile",
+          "/user/:userId",
+          "/user/:userId/stats",
+          "/user/:userId/read-all",
+          "/api/v1/users",
+          "/api/v1/users",
+          "/api/users/stats"
+        ]
+      }
+    }
+  },
+  "payments": {
+    "description": "Pagos y Facturación",
+    "total_apis": 4,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 4,
+        "endpoints": [
+          "/api/v1/payments/mercadopago/webhook",
+          "/api/v1/payments/mercadopago/webhook",
+          "/api/v1/payments/mercadopago",
+          "/api/v1/payments/mercadopago"
+        ]
+      }
+    }
+  },
+  "ai": {
+    "description": "Inteligencia Artificial",
+    "total_apis": 11,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 11,
+        "endpoints": [
+          "/api/v1/ai/analyze-symptoms",
+          "/api/v1/ai/image-analysis",
+          "/api/v1/ai/image-analysis",
+          "/api/v1/ai/diagnosis-support",
+          "/api/v1/ai/personalized-recommendations",
+          "/api/v1/ai/personalized-recommendations",
+          "/api/v1/ai/risk-assessment",
+          "/api/v1/ai/lab-analysis",
+          "/api/v1/ai/lab-analysis",
+          "/api/v1/ai/disease-prediction",
+          "/api/v1/ai/disease-prediction"
+        ]
+      }
+    }
+  },
+  "health": {
+    "description": "Estado del Sistema",
+    "total_apis": 14,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 7,
+        "endpoints": [
+          "/api/health",
+          "/api/health",
+          "/api/health",
+          "/health",
+          "/api/v1/health",
+          "/api/v1/health",
+          "/health"
+        ]
+      },
+      "patients": {
+        "port": 3003,
+        "total_apis": 1,
+        "endpoints": [
+          "/api/health"
+        ]
+      },
+      "doctors": {
+        "port": 3002,
+        "total_apis": 1,
+        "endpoints": [
+          "/api/health"
+        ]
+      },
+      "admin": {
+        "port": 3005,
+        "total_apis": 1,
+        "endpoints": [
+          "/api/health"
+        ]
+      },
+      "companies": {
+        "port": 3004,
+        "total_apis": 1,
+        "endpoints": [
+          "/api/health"
+        ]
+      },
+      "web_app": {
+        "port": 3000,
+        "total_apis": 3,
+        "endpoints": [
+          "/api/health",
+          "/status",
+          "/api/health/detailed"
+        ]
+      }
+    }
+  },
+  "matching": {
+    "description": "Sistema de Matching",
+    "total_apis": 4,
+    "services": {
+      "python_tools": {
+        "port": 8888,
+        "total_apis": 4,
+        "endpoints": [
+          "/api/matching/find-partners",
+          "/api/matching/partnership/create",
+          "/api/matching/find-partners",
+          "/api/matching/partnership/create"
+        ]
+      }
+    }
+  },
+  "other": {
+    "description": "Otros Endpoints",
+    "total_apis": 59,
+    "services": {
+      "api_server": {
+        "port": 3001,
+        "total_apis": 49,
+        "endpoints": [
+          "/api/v1/lab-results",
+          "/api/v1/lab-results",
+          "/api/v1/lab-results",
+          "/api/v1/lab-results",
+          "/",
+          "/api/medical/specialties",
+          "/api/v1/notifications/websocket",
+          "/api/v1/finops/cost-estimation",
+          "/api/v1/finops/cost-estimation",
+          "/api/websocket",
+          "/api/websocket",
+          "/api/v1/notifications/mark-all-read",
+          "/api/test",
+          "/api/test",
+          "/api/v1/applications",
+          "/api/v1/applications",
+          "/api/v1/applications",
+          "/api/v1/applications",
+          "/api/ai-medical",
+          "/api/ai-medical",
+          "/api/alerts/:alertId/acknowledge",
+          "/api/v1/dashboard/analytics",
+          "/api/v1/dashboard/analytics",
+          "/metrics",
+          "/metrics-json",
+          "/api/v1/test-firebase",
+          "/:notificationId/read",
+          "/:notificationId/archive",
+          "/:notificationId",
+          "/",
+          "/medical-alert",
+          "/api/cors-example",
+          "/",
+          "/api/v1/test-register",
+          "/api/v1/messages",
+          "/api/v1/messages",
+          "/api/v1/rate-limit-stats",
+          "/api/v1/medical-locations",
+          "/api/v1/medical-locations",
+          "/api/v1/medical-locations",
+          "/api/v1/medical-locations",
+          "/api/v1/dashboard",
+          "/api/v1/messages/:conversationId",
+          "/api/v1/messages/:conversationId",
+          "/api/v1/metrics",
+          "/stats",
+          "/test",
+          "/api/v1/debug-refresh",
+          "/api/v1/debug-refresh"
+        ]
+      },
+      "web_app": {
+        "port": 3000,
+        "total_apis": 10,
+        "endpoints": [
+          "/api/empty",
+          "/api/empty",
+          "/api/empty",
+          "/api/empty",
+          "/connect",
+          "/send",
+          "/disconnect",
+          "/hospital3d-simulator",
+          "/api/grok",
+          "/api/grok"
+        ]
+      }
+    }
+  }
+}

@@ -1,21 +1,20 @@
 'use client';
 
-import React from 'react';
 import {
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Cpu,
-  HardDrive,
-  Memory,
-  RefreshCw,
-  Server,
-  Wifi,
-  Database,
-  Shield,
-  Zap
+    Activity,
+    AlertTriangle,
+    CheckCircle,
+    Clock,
+    Cpu,
+    Database,
+    HardDrive,
+    RefreshCw,
+    Server,
+    Shield,
+    Wifi,
+    Zap
 } from 'lucide-react';
+import React from 'react';
 
 interface SystemHealth {
   status: 'EXCELLENT' | 'GOOD' | 'WARNING' | 'CRITICAL';
@@ -117,7 +116,7 @@ const SystemHealth: React.FC<SystemHealthProps> = ({ health, onRefresh }) => {
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-gray-700">Memoria</h3>
-              <Memory className="w-4 h-4 text-gray-400" />
+              <HardDrive className="w-4 h-4 text-gray-400" />
             </div>
             <p className="text-2xl font-bold text-gray-900">{health.memoryUsage}%</p>
             <div className="w-full bg-gray-200 rounded-full h-2 mt-2">

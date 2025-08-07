@@ -1,18 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { getDashboardUrl } from '../../config/app-urls'
+import { useAuth, PublicUserRole, RegisterData } from "@altamedica/auth"
+import { ArrowRight, Building, Eye, EyeOff, Heart, Loader2, Lock, Mail, Shield, User, UserCheck, Users } from 'lucide-react'
 import Link from 'next/link'
-import { Mail, Lock, User, Eye, EyeOff, Loader2, Shield, Heart, Users, ArrowRight, UserCheck, Building } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuth'
-import { RegisterData } from '@/services/firebase-auth'
-import { getDashboardUrl } from '@/config/app-urls'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 interface RegisterFormData {
   email: string
   password: string
   confirmPassword: string
-  role: 'patient' | 'doctor' | 'company'
+  role: PublicUserRole // Usar solo roles públicos (sin admin)
   first_name: string
   last_name: string
 }
@@ -22,7 +21,7 @@ export default function RegisterForm() {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'patient',
+    role: PublicUserRole.PATIENT, // Usar enum en lugar de string
     first_name: '',
     last_name: ''
   })
@@ -33,7 +32,7 @@ export default function RegisterForm() {
   const [success, setSuccess] = useState('')
   
   const router = useRouter()
-  const { user, userProfile, signUp, signInWithGoogle, loading, error } = useAuth()
+  const { user, userProfile, signUp, loginWithGoogle, loading, error } = useAuth()
   
   // Redirigir si ya está autenticado (solo al cargar la página)
   useEffect(() => {
@@ -95,14 +94,16 @@ export default function RegisterForm() {
         password: formData.password,
         firstName: formData.first_name,
         lastName: formData.last_name,
-        role: formData.role
+        role: formData.role,
+        displayName: `${formData.first_name} ${formData.last_name}`
       }
 
       console.log('📝 [RegisterForm] Llamando a signUp con datos:', {
         email: registerData.email,
         role: registerData.role,
         firstName: registerData.firstName,
-        lastName: registerData.lastName
+        lastName: registerData.lastName,
+        displayName: registerData.displayName
       });
       
       await signUp(registerData)
@@ -115,21 +116,21 @@ export default function RegisterForm() {
       setTimeout(() => {
         let redirectUrl = '/login';
         
-        if (formData.role === 'patient') {
-          // Los pacientes se quedan en web-app
-          redirectUrl = '/login';
-          console.log('🏥 [RegisterForm] Paciente registrado, redirigiendo a:', redirectUrl);
-        } else if (formData.role === 'doctor') {
-          // Los doctores van a localhost:3002
+        if (formData.role === PublicUserRole.PATIENT) {
+          // Los pacientes van a patients-app para login
+          redirectUrl = 'http://localhost:3003/login';
+          console.log('🏥 [RegisterForm] Paciente registrado, redirigiendo a patients-app:', redirectUrl);
+        } else if (formData.role === PublicUserRole.DOCTOR) {
+          // Los doctores van a doctors-app para login
           redirectUrl = 'http://localhost:3002/login';
-          console.log('👨‍⚕️ [RegisterForm] Doctor registrado, redirigiendo a:', redirectUrl);
-        } else if (formData.role === 'company') {
-          // Las empresas van a localhost:3004
+          console.log('👨‍⚕️ [RegisterForm] Doctor registrado, redirigiendo a doctors-app:', redirectUrl);
+        } else if (formData.role === PublicUserRole.COMPANY) {
+          // Las empresas van a companies-app para login
           redirectUrl = 'http://localhost:3004/login';
-          console.log('🏢 [RegisterForm] Empresa registrada, redirigiendo a:', redirectUrl);
+          console.log('🏢 [RegisterForm] Empresa registrada, redirigiendo a companies-app:', redirectUrl);
         } else {
-          // Fallback
-          console.warn('⚠️ [RegisterForm] Rol desconocido:', formData.role);
+          // Fallback - mantener en web-app
+          console.warn('⚠️ [RegisterForm] Rol desconocido:', formData.role, ', mantiendo en web-app');
           redirectUrl = '/login';
         }
         
@@ -153,7 +154,7 @@ export default function RegisterForm() {
     setLocalError('')
 
     try {
-      await signInWithGoogle()
+      await loginWithGoogle()
       setSuccess('¡Registro con Google exitoso!')
       
       // No es necesario redirigir manualmente, el useEffect lo manejará
@@ -170,21 +171,21 @@ export default function RegisterForm() {
     if (localError) setLocalError('')
   }
 
-  const getRoleInfo = (role: string) => {
+  const getRoleInfo = (role: PublicUserRole) => {
     switch (role) {
-      case 'patient':
+      case PublicUserRole.PATIENT:
         return {
           icon: <User className="h-4 w-4" />,
           label: 'Paciente',
           description: 'Accede a consultas médicas y gestiona tu salud'
         }
-      case 'doctor':
+      case PublicUserRole.DOCTOR:
         return {
           icon: <UserCheck className="h-4 w-4" />,
           label: 'Médico',
           description: 'Proporciona consultas y gestiona pacientes'
         }
-      case 'company':
+      case PublicUserRole.COMPANY:
         return {
           icon: <Building className="h-4 w-4" />,
           label: 'Empresa',
@@ -196,14 +197,14 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-neutral-50">
       <div className="flex min-h-screen">
         {/* Mitad Izquierda - Información */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-cyan-600 p-12 items-center justify-center">
+        <div className="hidden lg:flex lg:w-1/2 bg-primary-500 p-12 items-center justify-center">
           <div className="max-w-lg text-white">
             <div className="mb-8">
-              <h1 className="text-4xl font-bold mb-4">🏥 AltaMedica</h1>
-              <h2 className="text-2xl font-semibold mb-6">Únete a Nuestra Comunidad</h2>
+              <h1 className="text-4xl font-display font-bold mb-4">🏥 AltaMedica</h1>
+              <h2 className="text-2xl font-display font-semibold mb-6">Registro en Plataforma de Gestión Sanitaria</h2>
             </div>
             
             <div className="space-y-6">
@@ -212,8 +213,8 @@ export default function RegisterForm() {
                   <Heart className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Atención Personalizada</h3>
-                  <p className="text-blue-100">Recibe atención médica adaptada a tus necesidades específicas con nuestro equipo de especialistas.</p>
+                  <h3 className="font-semibold mb-2">Historia Clínica Centralizada</h3>
+                  <p className="text-primary-100">Gestiona todos tus registros médicos en un solo lugar con acceso seguro desde cualquier dispositivo.</p>
                 </div>
               </div>
               
@@ -222,8 +223,8 @@ export default function RegisterForm() {
                   <Shield className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Registro Seguro</h3>
-                  <p className="text-blue-100">Tu información está protegida con los más altos estándares de seguridad médica y cumplimiento HIPAA.</p>
+                  <h3 className="font-semibold mb-2">Compliance Regulatorio</h3>
+                  <p className="text-primary-100">Cumplimiento completo de HIPAA y normativas argentinas de protección de datos médicos.</p>
                 </div>
               </div>
               
@@ -232,19 +233,19 @@ export default function RegisterForm() {
                   <Users className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Comunidad Médica</h3>
-                  <p className="text-blue-100">Únete a miles de pacientes y profesionales que confían en AltaMedica para su atención médica.</p>
+                  <h3 className="font-semibold mb-2">Red de Profesionales</h3>
+                  <p className="text-primary-100">Conecta con más de 1,200 médicos verificados y especialistas en toda Argentina.</p>
                 </div>
               </div>
             </div>
             
             <div className="mt-12 p-6 bg-white/10 rounded-2xl backdrop-blur-sm">
-              <p className="text-sm text-blue-100 italic">
-                "El proceso de registro fue muy sencillo y la plataforma me ha permitido 
-                tener un mejor control de mi salud con atención médica de calidad."
+              <p className="text-sm text-primary-100 italic">
+                "AltaMedica transformó la gestión de mi consultorio. Ahora puedo centralizar 
+                historiales, optimizar turnos y mejorar la atención de mis pacientes."
               </p>
               <div className="mt-4 text-sm font-medium">
-                - Dr. Carlos Rodríguez, Médico registrado
+                - Dr. Carlos Rodríguez, Cardiología
               </div>
             </div>
           </div>
@@ -255,11 +256,11 @@ export default function RegisterForm() {
           <div className="max-w-md w-full">
             <div className="bg-white rounded-3xl shadow-2xl p-8">
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <User className="h-8 w-8 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Crear Cuenta</h2>
-                <p className="text-gray-600">Únete a la comunidad médica de AltaMedica</p>
+                <h2 className="text-2xl font-display font-bold text-neutral-900 mb-2">Registro en Plataforma</h2>
+                <p className="text-neutral-600">Accede al sistema de gestión sanitaria integral</p>
               </div>
 
               {(localError || error) && (
@@ -287,19 +288,19 @@ export default function RegisterForm() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Selección de Rol */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-neutral-700 mb-3">
                     Tipo de cuenta *
                   </label>
                   <div className="grid grid-cols-1 gap-3">
-                    {['patient', 'doctor', 'company'].map((role) => {
+                    {Object.values(PublicUserRole).map((role) => {
                       const roleInfo = getRoleInfo(role)
                       return (
                         <label
                           key={role}
                           className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${
                             formData.role === role
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? 'border-primary-500 bg-primary-50'
+                              : 'border-neutral-200 hover:border-neutral-300'
                           }`}
                         >
                           <input
@@ -307,18 +308,18 @@ export default function RegisterForm() {
                             name="role"
                             value={role}
                             checked={formData.role === role}
-                            onChange={(e) => handleInputChange('role', e.target.value as 'patient' | 'doctor' | 'company')}
+                            onChange={(e) => handleInputChange('role', e.target.value as PublicUserRole)}
                             className="sr-only"
                           />
                           <div className="flex items-center space-x-3">
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                              formData.role === role ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                              formData.role === role ? 'bg-primary-500 text-white' : 'bg-neutral-200'
                             }`}>
                               {roleInfo.icon}
                             </div>
                             <div>
-                              <div className="font-medium text-gray-900">{roleInfo.label}</div>
-                              <div className="text-sm text-gray-600">{roleInfo.description}</div>
+                              <div className="font-medium text-neutral-900">{roleInfo.label}</div>
+                              <div className="text-sm text-neutral-600">{roleInfo.description}</div>
                             </div>
                           </div>
                         </label>
@@ -330,7 +331,7 @@ export default function RegisterForm() {
                 {/* Nombre y Apellido */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-neutral-700 mb-2">
                       Nombre *
                     </label>
                     <div className="relative">
@@ -340,13 +341,13 @@ export default function RegisterForm() {
                         onChange={(e) => handleInputChange('first_name', e.target.value)}
                         placeholder="Juan"
                         required
-                        className="w-full py-3 px-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        className="w-full py-3 px-4 pl-12 border-2 border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                       />
-                      <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-neutral-700 mb-2">
                       Apellido *
                     </label>
                     <div className="relative">
@@ -356,16 +357,16 @@ export default function RegisterForm() {
                         onChange={(e) => handleInputChange('last_name', e.target.value)}
                         placeholder="Pérez"
                         required
-                        className="w-full py-3 px-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        className="w-full py-3 px-4 pl-12 border-2 border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                       />
-                      <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
                     </div>
                   </div>
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
                     Email *
                   </label>
                   <div className="relative">
@@ -375,15 +376,15 @@ export default function RegisterForm() {
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="tu@email.com"
                       required
-                      className="w-full py-3 px-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      className="w-full py-3 px-4 pl-12 border-2 border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                     />
-                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
                   </div>
                 </div>
 
                 {/* Contraseña */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
                     Contraseña *
                   </label>
                   <div className="relative">
@@ -393,18 +394,18 @@ export default function RegisterForm() {
                       onChange={(e) => handleInputChange('password', e.target.value)}
                       placeholder="••••••••"
                       required
-                      className="w-full py-3 px-4 pl-12 pr-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      className="w-full py-3 px-4 pl-12 pr-12 border-2 border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                     />
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <EyeOff className="h-5 w-5 text-neutral-400 hover:text-neutral-600" />
                       ) : (
-                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <Eye className="h-5 w-5 text-neutral-400 hover:text-neutral-600" />
                       )}
                     </button>
                   </div>
@@ -413,7 +414,7 @@ export default function RegisterForm() {
 
                 {/* Confirmar Contraseña */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
                     Confirmar Contraseña *
                   </label>
                   <div className="relative">
@@ -423,18 +424,18 @@ export default function RegisterForm() {
                       onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                       placeholder="••••••••"
                       required
-                      className="w-full py-3 px-4 pl-12 pr-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      className="w-full py-3 px-4 pl-12 pr-12 border-2 border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                     />
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2"
                     >
                       {showConfirmPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <EyeOff className="h-5 w-5 text-neutral-400 hover:text-neutral-600" />
                       ) : (
-                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        <Eye className="h-5 w-5 text-neutral-400 hover:text-neutral-600" />
                       )}
                     </button>
                   </div>
@@ -449,7 +450,7 @@ export default function RegisterForm() {
                     required
                     className="h-4 w-4 mt-1 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="terms" className="text-sm text-gray-700">
+                  <label htmlFor="terms" className="text-sm text-neutral-700">
                     Acepto los{' '}
                     <Link href="/terms" className="text-blue-600 hover:text-blue-800 font-medium">
                       Términos y Condiciones
@@ -464,7 +465,7 @@ export default function RegisterForm() {
                 <button
                   type="submit"
                   disabled={isSubmitting || loading}
-                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-xl font-semibold shadow-altamedica hover:shadow-altamedica-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
                   {isSubmitting || loading ? (
                     <>
@@ -509,7 +510,7 @@ export default function RegisterForm() {
               </div>
 
               <div className="mt-6 text-center">
-                <p className="text-gray-600 text-sm">
+                <p className="text-neutral-600 text-sm">
                   ¿Ya tienes cuenta?{' '}
                   <Link href="/login" className="text-blue-600 hover:text-blue-800 font-medium">
                     Inicia sesión aquí

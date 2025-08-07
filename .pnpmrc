@@ -1,0 +1,9 @@
+# AltaMedica pnpm Configuration
+auto-install-peers=true
+strict-peer-dependencies=false
+shamefully-hoist=false
+shared-workspace-lockfile=true
+link-workspace-packages=true
+prefer-workspace-packages=true
+save-workspace-protocol=true
+enable-pre-post-scripts=true

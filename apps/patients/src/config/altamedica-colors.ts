@@ -109,7 +109,7 @@ export const ALTAMEDICA_GRADIENTS = {
   warning: 'bg-gradient-to-r from-yellow-500 to-orange-500',
   error: 'bg-gradient-to-r from-red-500 to-red-600',
   medical: 'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700',
-  hero: 'bg-gradient-to-br from-blue-50 via-white to-blue-50',
+  hero: 'bg-gradient-to-br from-blue-50 via-neutral-50 to-blue-50',
 };
 
 // 🏥 Estados médicos

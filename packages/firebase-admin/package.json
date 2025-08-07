@@ -1,0 +1,17 @@
+{
+  "name": "@altamedica/firebase-admin",
+  "version": "1.0.0",
+  "description": "Paquete centralizado de Firebase Admin para AltaMedica",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

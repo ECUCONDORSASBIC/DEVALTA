@@ -25,9 +25,9 @@ import {
   Wifi,
   WifiOff
 } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
-import { Badge } from '../ui/badge';
+import { Button } from '@altamedica/ui';
+import { Card } from '@altamedica/ui';
+import { Badge } from '@altamedica/ui';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../hooks/useToast';
 

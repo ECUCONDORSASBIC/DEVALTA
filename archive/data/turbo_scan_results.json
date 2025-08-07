@@ -1,0 +1,5312 @@
+{
+  "timestamp": "2025-08-04T06:52:17.897747",
+  "summary": {
+    "total_apis": 658,
+    "unique_paths": 263,
+    "services": 2,
+    "methods": [
+      "DELETE",
+      "POST",
+      "GET",
+      "PATCH",
+      "PUT",
+      "get"
+    ]
+  },
+  "by_service": {
+    "unknown": {
+      "name": "unknown",
+      "port": 8080,
+      "total_apis": 630,
+      "unique_paths": 258,
+      "methods": [
+        "DELETE",
+        "POST",
+        "GET",
+        "PATCH",
+        "PUT",
+        "get"
+      ],
+      "apis": [
+        {
+          "path": "/api/matching/find-partners",
+          "method": "POST",
+          "service": "unknown",
+          "file": "medical_matching_engine.py",
+          "line": 347,
+          "type": "express"
+        },
+        {
+          "path": "/api/matching/companies/{company_id}/recommendations",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_matching_engine.py",
+          "line": 352,
+          "type": "express"
+        },
+        {
+          "path": "/api/matching/partnership/create",
+          "method": "POST",
+          "service": "unknown",
+          "file": "medical_matching_engine.py",
+          "line": 358,
+          "type": "express"
+        },
+        {
+          "path": "/api/matching/find-partners",
+          "method": "POST",
+          "service": "unknown",
+          "file": "medical_matching_engine.py",
+          "line": 347,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/matching/companies/{company_id}/recommendations",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_matching_engine.py",
+          "line": 352,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/matching/partnership/create",
+          "method": "POST",
+          "service": "unknown",
+          "file": "medical_matching_engine.py",
+          "line": 358,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/admin/users",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/admin/users",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "https://api.ipify.org?format=json",
+          "method": "GET",
+          "service": "unknown",
+          "file": "firebase-service.ts",
+          "line": 353,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/independent-doctors",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/independent-doctors",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/independent-doctors",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 72,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/independent-doctors",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 166,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/auth/login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/auth/login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 191,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 92,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 157,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 206,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/ai/lab-analysis",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/lab-analysis",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/lab-analysis",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 38,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/ai/lab-analysis",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 125,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 6,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/messages/:conversationId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/messages/:conversationId",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/messages/:conversationId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 18,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/messages/:conversationId",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 132,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 6,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/users/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/users/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 4,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/ai/analyze-symptoms",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/analyze-symptoms",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 74,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 473,
+          "type": "express"
+        },
+        {
+          "path": "/api/usage-restriction/{user_id}",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 483,
+          "type": "express"
+        },
+        {
+          "path": "/api/diagnosis/submit",
+          "method": "POST",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 492,
+          "type": "express"
+        },
+        {
+          "path": "/api/statistics/population",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 527,
+          "type": "express"
+        },
+        {
+          "path": "/api/statistics/symptoms",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 536,
+          "type": "express"
+        },
+        {
+          "path": "/api/statistics/demographics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 581,
+          "type": "express"
+        },
+        {
+          "path": "/api/admin/seed-demo-data",
+          "method": "POST",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 658,
+          "type": "express"
+        },
+        {
+          "path": "/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 473,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/usage-restriction/{user_id}",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 483,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/diagnosis/submit",
+          "method": "POST",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 492,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/statistics/population",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 527,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/statistics/symptoms",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 536,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/statistics/demographics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 581,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/admin/seed-demo-data",
+          "method": "POST",
+          "service": "unknown",
+          "file": "medical_analytics_server.py",
+          "line": 658,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/v1/ai/personalized-recommendations",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/personalized-recommendations",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/personalized-recommendations",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 51,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/ai/personalized-recommendations",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 152,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 21,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 104,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 199,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 277,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/auth/test-sso",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/auth/test-sso",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/auth/test-sso",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/auth/test-sso",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 13,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/auth/test-sso",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 67,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/auth/test-sso",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 129,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/debug-headers",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/debug-headers",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 3,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/telemedicine/session",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/telemedicine/session",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/telemedicine/session",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 52,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/telemedicine/session",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 225,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 6,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/auth/register",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/auth/register",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 167,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/companies",
+          "method": "POST",
+          "service": "unknown",
+          "file": "marketplace-routes.ts",
+          "line": 7,
+          "type": "express"
+        },
+        {
+          "path": "/companies/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "marketplace-routes.ts",
+          "line": 8,
+          "type": "express"
+        },
+        {
+          "path": "/marketplace/listings",
+          "method": "POST",
+          "service": "unknown",
+          "file": "marketplace-routes.ts",
+          "line": 11,
+          "type": "express"
+        },
+        {
+          "path": "/marketplace/listings",
+          "method": "GET",
+          "service": "unknown",
+          "file": "marketplace-routes.ts",
+          "line": 12,
+          "type": "express"
+        },
+        {
+          "path": "/marketplace/listings/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "marketplace-routes.ts",
+          "line": 13,
+          "type": "express"
+        },
+        {
+          "path": "/marketplace/listings/:id/apply",
+          "method": "POST",
+          "service": "unknown",
+          "file": "marketplace-routes.ts",
+          "line": 16,
+          "type": "express"
+        },
+        {
+          "path": "/marketplace/listings/:id/applications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "marketplace-routes.ts",
+          "line": 17,
+          "type": "express"
+        },
+        {
+          "path": "/marketplace/applications/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "marketplace-routes.ts",
+          "line": 18,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/ai/image-analysis",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/image-analysis",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/image-analysis",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 27,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/ai/image-analysis",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 125,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/medical-locations",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/medical-locations",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/medical-locations",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/medical-locations",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/medical-locations",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 45,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/medical-locations",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 189,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/medical-locations",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 260,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/medical-locations",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 334,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/admin/system/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/admin/system/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "webrtc-server.ts",
+          "line": 54,
+          "type": "express"
+        },
+        {
+          "path": "/api/rooms",
+          "method": "POST",
+          "service": "unknown",
+          "file": "webrtc-server.ts",
+          "line": 63,
+          "type": "express"
+        },
+        {
+          "path": "/api/rooms/:roomId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "webrtc-server.ts",
+          "line": 69,
+          "type": "express"
+        },
+        {
+          "path": "/api/rooms/:roomId",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "webrtc-server.ts",
+          "line": 82,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/job-applications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/job-applications",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/job-applications",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/job-applications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 50,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/job-applications",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 231,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/job-applications",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 431,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/doctors/anamnesis",
+          "method": "GET",
+          "service": "unknown",
+          "file": "export-anamnesis.ts",
+          "line": 108,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/patients/anamnesis",
+          "method": "GET",
+          "service": "unknown",
+          "file": "export-anamnesis.ts",
+          "line": 131,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago",
+          "method": "GET",
+          "service": "unknown",
+          "file": "mercadopago.ts",
+          "line": 14,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/admin/dashboard",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/admin/dashboard",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 475,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/ai/disease-prediction",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/disease-prediction",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/disease-prediction",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 43,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/ai/disease-prediction",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 148,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/doctors/:id/reviews",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/:id/reviews",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/:id/reviews",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 16,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/doctors/:id/reviews",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 166,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/test-firebase",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/test-firebase",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 86,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 181,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 255,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 550,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/marketplace",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/marketplace",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/marketplace",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 37,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/marketplace",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 139,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/monitoring/logs",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 300,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/logs",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 301,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/metrics",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 304,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/metrics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 305,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/metrics/:name",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 306,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/alerts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 309,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/alerts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 310,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/alerts/:id/acknowledge",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 311,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/anomalies",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 314,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/health/:service",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 317,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/dashboard",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 320,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/self-healing/actions",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 323,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/self-healing/execute",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 324,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/baselines",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 327,
+          "type": "express"
+        },
+        {
+          "path": "http://localhost:3004/devops/rollback",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 778,
+          "type": "axios"
+        },
+        {
+          "path": "/routing/resolve",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 153,
+          "type": "express"
+        },
+        {
+          "path": "/routing/resolve/:path(*)",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 154,
+          "type": "express"
+        },
+        {
+          "path": "/routing/generate-url",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 157,
+          "type": "express"
+        },
+        {
+          "path": "/routing/validate",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 160,
+          "type": "express"
+        },
+        {
+          "path": "/routing/routes",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 163,
+          "type": "express"
+        },
+        {
+          "path": "/routing/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 166,
+          "type": "express"
+        },
+        {
+          "path": "/routing/deep-link",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 169,
+          "type": "express"
+        },
+        {
+          "path": "/routing/dashboard",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 172,
+          "type": "express"
+        },
+        {
+          "path": "/routing/predictions/:userId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 175,
+          "type": "express"
+        },
+        {
+          "path": "/routing/track-navigation",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 176,
+          "type": "express"
+        },
+        {
+          "path": "/routing/prefetch/:userId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 177,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago",
+          "method": "GET",
+          "service": "unknown",
+          "file": "mercadopago.ts",
+          "line": 14,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 133,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 216,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 281,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 20,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 150,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 266,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/doctors/search/location",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/search/location",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 38,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/companies/visible",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/companies/visible",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/companies/visible",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 37,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/companies/visible",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 217,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/signaling",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/signaling",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/signaling",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 26,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/webrtc/signaling",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 95,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/doctors/visible",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/visible",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/visible",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 38,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/doctors/visible",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 212,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/users/profile",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/users/profile",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/users/profile",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 59,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/users/profile",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 136,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/reports/medical-reports",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/reports/medical-reports",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 78,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/patients/:patientId/vitals",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 108,
+          "type": "express"
+        },
+        {
+          "path": "/patients/:patientId/wearable",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 109,
+          "type": "express"
+        },
+        {
+          "path": "/patients/:patientId/ehr",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 110,
+          "type": "express"
+        },
+        {
+          "path": "/patients/:patientId/status",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 113,
+          "type": "express"
+        },
+        {
+          "path": "/patients/:patientId/alerts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 114,
+          "type": "express"
+        },
+        {
+          "path": "/alerts/active",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 115,
+          "type": "express"
+        },
+        {
+          "path": "/alerts/history",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 116,
+          "type": "express"
+        },
+        {
+          "path": "/models",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 119,
+          "type": "express"
+        },
+        {
+          "path": "/models/:modelId/enable",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 120,
+          "type": "express"
+        },
+        {
+          "path": "/models/:modelId/disable",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 121,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/test-register",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/test-register",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 57,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 155,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/medical-records/auth-helpers.ts",
+          "method": "get",
+          "service": "unknown",
+          "file": "auth-helpers.ts",
+          "line": 233,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/health",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 6,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/health",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 182,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/admin/metrics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useEnhancedAdminDashboard.ts",
+          "line": 64,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/admin/system-status",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useEnhancedAdminDashboard.ts",
+          "line": 77,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/admin/compliance-status",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useEnhancedAdminDashboard.ts",
+          "line": 81,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/auth/verify-sso",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/auth/verify-sso",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 39,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/test-env",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/test-env",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 3,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/anamnesis/paciente/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/anamnesis/paciente/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/anamnesis/paciente/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/anamnesis/paciente/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 11,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/anamnesis/paciente/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 59,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/anamnesis/paciente/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 118,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/firestore-integration-test",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/firestore-integration-test",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 26,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 58,
+          "type": "express"
+        },
+        {
+          "path": "/clients",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 68,
+          "type": "express"
+        },
+        {
+          "path": "/metrics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 79,
+          "type": "express"
+        },
+        {
+          "path": "/events/history",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 91,
+          "type": "express"
+        },
+        {
+          "path": "/events/publish",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 97,
+          "type": "express"
+        },
+        {
+          "path": "/api/telemedicine-ai",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/telemedicine-ai",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/telemedicine-ai",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 88,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/telemedicine-ai",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 563,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMarketplaceNotifications.ts",
+          "line": 297,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMarketplaceNotifications.ts",
+          "line": 332,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMarketplaceNotifications.ts",
+          "line": 365,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/applications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/applications",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/applications",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/applications",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/applications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 56,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/applications",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 115,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/applications",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 186,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/applications",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 264,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/notifications/mark-all-read",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/notifications/mark-all-read",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 18,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/marketplace",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/marketplace",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 3,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 46,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 97,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/admin/monitoring",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/admin/monitoring",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 345,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/test",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/test",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/test",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 4,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/test",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 15,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/ai/risk-assessment",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/risk-assessment",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 53,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/rate-limit-stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/rate-limit-stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 4,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/monitoring/logs",
+          "method": "POST",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 526,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/logs",
+          "method": "GET",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 527,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/metrics",
+          "method": "POST",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 530,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/metrics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 531,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/metrics/:name",
+          "method": "GET",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 532,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/alerts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 535,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/alerts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 536,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/alerts/:id/acknowledge",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 537,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/anomalies",
+          "method": "GET",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 540,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/dashboard",
+          "method": "GET",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 543,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/rules",
+          "method": "GET",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 546,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/rules",
+          "method": "POST",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 547,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/rules/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 548,
+          "type": "express"
+        },
+        {
+          "path": "/monitoring/rules/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "enhanced-index.ts",
+          "line": 549,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/telemedicine/sessions/:id/end",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/sessions/:id/end",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 24,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 514,
+          "type": "express"
+        },
+        {
+          "path": "/api/discover",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 653,
+          "type": "express"
+        },
+        {
+          "path": "/api/test",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 659,
+          "type": "express"
+        },
+        {
+          "path": "/api/generate-types",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 665,
+          "type": "express"
+        },
+        {
+          "path": "/api/full-scan",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 671,
+          "type": "express"
+        },
+        {
+          "path": "/api/status",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 690,
+          "type": "express"
+        },
+        {
+          "path": "/api/results",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 700,
+          "type": "express"
+        },
+        {
+          "path": "/",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 514,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/discover",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 653,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/test",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 659,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/generate-types",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 665,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/full-scan",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 671,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/status",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 690,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/results",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 700,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/discover",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 568,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/test",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 579,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/generate-types",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 590,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/results",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 603,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/full-scan",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 614,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/status",
+          "method": "GET",
+          "service": "unknown",
+          "file": "api_discovery_hub.py",
+          "line": 633,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/doctors/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 73,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/auth/logout",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/auth/logout",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 6,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/pacientes",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMedical.ts",
+          "line": 27,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/pacientes",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMedical.ts",
+          "line": 100,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/citas",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMedical.ts",
+          "line": 226,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/citas/disponibilidad",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMedical.ts",
+          "line": 293,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/auditoria",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMedical.ts",
+          "line": 331,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/doctors/:id/verification",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/:id/verification",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/:id/verification",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 16,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/doctors/:id/verification",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 126,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago/webhook",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago/webhook",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago/webhook",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 13,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago/webhook",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 57,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/auth/test-login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/auth/test-login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 8,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/notifications/websocket",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/notifications/websocket",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 31,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/schedule/optimize",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 140,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/schedule/optimize/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 157,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/schedule/current",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 170,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/forecast/demand",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 185,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/appointments/book",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 201,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/roster/:staffId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 220,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/rooms/utilization",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 237,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/constraints",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 252,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/constraints",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 262,
+          "type": "express"
+        },
+        {
+          "path": "/api/admin/audit/logs",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/admin/audit/logs",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/admin/audit/logs",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/admin/audit/logs",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 84,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/doctors/:id/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/:id/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 17,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/sessions",
+          "method": "POST",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 19,
+          "type": "express"
+        },
+        {
+          "path": "/sessions/:sessionId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 20,
+          "type": "express"
+        },
+        {
+          "path": "/sessions",
+          "method": "GET",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 21,
+          "type": "express"
+        },
+        {
+          "path": "/sessions/:sessionId/start",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 22,
+          "type": "express"
+        },
+        {
+          "path": "/sessions/:sessionId/end",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 23,
+          "type": "express"
+        },
+        {
+          "path": "/sessions/:sessionId/cancel",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 24,
+          "type": "express"
+        },
+        {
+          "path": "/sessions/:sessionId/chat",
+          "method": "POST",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 27,
+          "type": "express"
+        },
+        {
+          "path": "/sessions/:sessionId/chat",
+          "method": "GET",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 28,
+          "type": "express"
+        },
+        {
+          "path": "/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 31,
+          "type": "express"
+        },
+        {
+          "path": "/rooms/:roomId/availability",
+          "method": "GET",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 34,
+          "type": "express"
+        },
+        {
+          "path": "/system/status",
+          "method": "GET",
+          "service": "unknown",
+          "file": "telemedicine-routes.ts",
+          "line": 37,
+          "type": "express"
+        },
+        {
+          "path": "/api/patients",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useDashboardData.ts",
+          "line": 121,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useDashboardData.ts",
+          "line": 137,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useDashboardData.ts",
+          "line": 153,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/marketplace",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useDashboardData.ts",
+          "line": 178,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/marketplace",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useDashboardData.ts",
+          "line": 208,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useDashboardData.ts",
+          "line": 244,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useDashboardData.ts",
+          "line": 281,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useDashboardData.ts",
+          "line": 323,
+          "type": "fetch"
+        },
+        {
+          "path": "/auth/login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 78,
+          "type": "express"
+        },
+        {
+          "path": "/auth/refresh",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 79,
+          "type": "express"
+        },
+        {
+          "path": "/auth/logout",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 80,
+          "type": "express"
+        },
+        {
+          "path": "/auth/revoke",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 81,
+          "type": "express"
+        },
+        {
+          "path": "/auth/verify",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 84,
+          "type": "express"
+        },
+        {
+          "path": "/auth/validate/:token",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 85,
+          "type": "express"
+        },
+        {
+          "path": "/auth/sessions",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 88,
+          "type": "express"
+        },
+        {
+          "path": "/auth/sessions/:sessionId",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 89,
+          "type": "express"
+        },
+        {
+          "path": "/auth/users",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 92,
+          "type": "express"
+        },
+        {
+          "path": "/auth/users/:userId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 93,
+          "type": "express"
+        },
+        {
+          "path": "/auth/users/:userId",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 94,
+          "type": "express"
+        },
+        {
+          "path": "/auth/rotate",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 97,
+          "type": "express"
+        },
+        {
+          "path": "/auth/check-leak",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 100,
+          "type": "express"
+        },
+        {
+          "path": "/auth/leak-patterns",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 101,
+          "type": "express"
+        },
+        {
+          "path": "/auth/anomaly-score/:userId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 104,
+          "type": "express"
+        },
+        {
+          "path": "/auth/anomalies",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 105,
+          "type": "express"
+        },
+        {
+          "path": "http://localhost:3000/monitoring/alerts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 574,
+          "type": "axios"
+        },
+        {
+          "path": "/test",
+          "method": "GET",
+          "service": "unknown",
+          "file": "agents-routes.ts",
+          "line": 5,
+          "type": "express"
+        },
+        {
+          "path": "/ingest/guidelines",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 108,
+          "type": "express"
+        },
+        {
+          "path": "/ingest/drugs",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 126,
+          "type": "express"
+        },
+        {
+          "path": "/ingest/icd10",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 144,
+          "type": "express"
+        },
+        {
+          "path": "/reason",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 162,
+          "type": "express"
+        },
+        {
+          "path": "/check/drug-interactions",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 177,
+          "type": "express"
+        },
+        {
+          "path": "/guidelines/by-condition/:condition",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 189,
+          "type": "express"
+        },
+        {
+          "path": "/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 201,
+          "type": "express"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "server.ts",
+          "line": 34,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago",
+          "method": "GET",
+          "service": "unknown",
+          "file": "mercadopago.ts",
+          "line": 14,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/empty",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/empty",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/empty",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/empty",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/empty",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 4,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/empty",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 27,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/empty",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 31,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/empty",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 35,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/prescriptions/prescriptions-route.ts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "prescriptions-route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/prescriptions/prescriptions-route.ts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "prescriptions-route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/prescriptions/prescriptions-route.ts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "prescriptions-route.ts",
+          "line": 50,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/prescriptions/prescriptions-route.ts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "prescriptions-route.ts",
+          "line": 152,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/ai/diagnosis-support",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/ai/diagnosis-support",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 64,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/analytics/custom-reports/schemas.ts",
+          "method": "get",
+          "service": "unknown",
+          "file": "schemas.ts",
+          "line": 161,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/admin/users/:userId/role",
+          "method": "PATCH",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/admin/users/:userId/role",
+          "method": "PATCH",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 6,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 58,
+          "type": "express"
+        },
+        {
+          "path": "/api/rooms",
+          "method": "POST",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 70,
+          "type": "express"
+        },
+        {
+          "path": "/api/rooms/:roomId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 100,
+          "type": "express"
+        },
+        {
+          "path": "/api/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "index.ts",
+          "line": 138,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/test-login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/test-login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/patients/:id/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/patients/:id/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 59,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/anamnesis/importar",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/anamnesis/importar",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 11,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/dashboard/analytics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/dashboard/analytics",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/dashboard/analytics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 48,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/dashboard/analytics",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 124,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/metrics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/metrics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 4,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/patients/simple",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/patients/simple",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/patients/simple",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 6,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/patients/simple",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 58,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/appointments",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 3,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/auth/refresh",
+          "method": "GET",
+          "service": "unknown",
+          "file": "jwt-service.ts",
+          "line": 210,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/medical-records/simple-route.ts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "simple-route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/medical-records/simple-route.ts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "simple-route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/medical-records/simple-route.ts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "simple-route.ts",
+          "line": 47,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/medical-records/simple-route.ts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "simple-route.ts",
+          "line": 157,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/marketplace/doctors",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/marketplace/doctors",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/marketplace/doctors",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 86,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/marketplace/doctors",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 180,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/data",
+          "method": "POST",
+          "service": "unknown",
+          "file": "minimal-enhanced-agent.ts",
+          "line": 312,
+          "type": "express"
+        },
+        {
+          "path": "/data/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "minimal-enhanced-agent.ts",
+          "line": 313,
+          "type": "express"
+        },
+        {
+          "path": "/data/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "minimal-enhanced-agent.ts",
+          "line": 314,
+          "type": "express"
+        },
+        {
+          "path": "/status",
+          "method": "GET",
+          "service": "unknown",
+          "file": "minimal-enhanced-agent.ts",
+          "line": 317,
+          "type": "express"
+        },
+        {
+          "path": "/rules",
+          "method": "GET",
+          "service": "unknown",
+          "file": "minimal-enhanced-agent.ts",
+          "line": 320,
+          "type": "express"
+        },
+        {
+          "path": "/rules/:id/enable",
+          "method": "POST",
+          "service": "unknown",
+          "file": "minimal-enhanced-agent.ts",
+          "line": 321,
+          "type": "express"
+        },
+        {
+          "path": "/rules/:id/disable",
+          "method": "POST",
+          "service": "unknown",
+          "file": "minimal-enhanced-agent.ts",
+          "line": 322,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/prescriptions/route-old.ts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route-old.ts",
+          "line": 76,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/prescriptions/route-old.ts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route-old.ts",
+          "line": 197,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/ai-medical",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/ai-medical",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/ai-medical",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 82,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/ai-medical",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 378,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/messages",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/messages",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/messages",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 67,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/messages",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 169,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/finops/cost-estimation",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/finops/cost-estimation",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/finops/cost-estimation",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 23,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/finops/cost-estimation",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 118,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "http://localhost:3001/auth/login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 49,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3002/routing/dashboard",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 62,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3007/monitoring/logs",
+          "method": "GET",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 97,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3008/devops/deploy",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 111,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3007/monitoring/metrics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 130,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3006/security/cors/check",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 145,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3001/auth/login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 153,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3002/routing/resolve",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 162,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3007/monitoring/events",
+          "method": "GET",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 173,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3001/auth/login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-communication.test.ts",
+          "line": 207,
+          "type": "axios"
+        },
+        {
+          "path": "/api/v1/anamnesis/paciente/:id/resumen",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/anamnesis/paciente/:id/resumen",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 11,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 50,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/telemedicine/billing",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 190,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/admin/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/admin/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "http://localhost:3002/routing/dashboard",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 67,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3001/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 86,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3007/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 109,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3001/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 152,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3001/auth/login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 171,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3002/routing/resolve",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 175,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3006/security/policies",
+          "method": "GET",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 178,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3001/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 222,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3009/auth/verify",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 264,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3001/auth/login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 282,
+          "type": "axios"
+        },
+        {
+          "path": "http://localhost:3001/auth/login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "agent-resilience.test.ts",
+          "line": 318,
+          "type": "axios"
+        },
+        {
+          "path": "/api/patients",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/patients",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/patients",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 122,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/patients",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 188,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "BaseAgent.ts",
+          "line": 79,
+          "type": "express"
+        },
+        {
+          "path": "/health/detailed",
+          "method": "GET",
+          "service": "unknown",
+          "file": "BaseAgent.ts",
+          "line": 87,
+          "type": "express"
+        },
+        {
+          "path": "/metrics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "BaseAgent.ts",
+          "line": 96,
+          "type": "express"
+        },
+        {
+          "path": "/info",
+          "method": "GET",
+          "service": "unknown",
+          "file": "BaseAgent.ts",
+          "line": 102,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/jobs",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/jobs",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/jobs",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/jobs",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/jobs",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 70,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/jobs",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 258,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/jobs",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 365,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/jobs",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 441,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/companies/partnerships",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMatching.ts",
+          "line": 100,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/debug-refresh",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/debug-refresh",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/debug-refresh",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 7,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/debug-refresh",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 16,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMarketplaceNotifications.ts",
+          "line": 248,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMarketplaceNotifications.ts",
+          "line": 283,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/marketplace/notifications",
+          "method": "GET",
+          "service": "unknown",
+          "file": "useMarketplaceNotifications.ts",
+          "line": 316,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/companies",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/companies",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/companies",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 41,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/companies",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 156,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/lab-results",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/lab-results",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/lab-results",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/lab-results",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/lab-results",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 40,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/lab-results",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 101,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/lab-results",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 164,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/lab-results",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 224,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/dashboard",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/dashboard",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 12,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/alerts/:alertId/acknowledge",
+          "method": "PATCH",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/alerts/:alertId/acknowledge",
+          "method": "PATCH",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/doctors/:id/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/:id/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 15,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/job-listings",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/job-listings",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/job-listings",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 55,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/job-listings",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 162,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 4,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/users",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/users",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/users",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 44,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/users",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 130,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/anamnesis",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/anamnesis",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/anamnesis",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/anamnesis",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/anamnesis",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 11,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/anamnesis",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 54,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/anamnesis",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 106,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/anamnesis",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 161,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/grok",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/grok",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/grok",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 4,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/grok",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 73,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/job-listings/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/job-listings/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/job-listings/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/job-listings/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 37,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/job-listings/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 87,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/job-listings/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 152,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/appointments/:appointmentId/status",
+          "method": "PATCH",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/appointments/:appointmentId/status",
+          "method": "PATCH",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/webrtc",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/webrtc",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/webrtc",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 7,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/webrtc",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 23,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/prescriptions/route-new.ts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route-new.ts",
+          "line": 75,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/prescriptions/route-new.ts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route-new.ts",
+          "line": 194,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/prescriptions/route-new.ts",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route-new.ts",
+          "line": 314,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/prescriptions/route-new.ts",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route-new.ts",
+          "line": 434,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/companies/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/companies/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/companies/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/companies/:id",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 31,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/companies/:id",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 127,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/companies/:id",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 205,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/prescriptions/:id/route-new.ts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route-new.ts",
+          "line": 31,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/prescriptions/:id/route-new.ts",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route-new.ts",
+          "line": 119,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/auth/register",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/auth/register",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 78,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/analytics/custom-reports",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/analytics/custom-reports",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/analytics/custom-reports",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 49,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/analytics/custom-reports",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 239,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/payments/mercadopago",
+          "method": "GET",
+          "service": "unknown",
+          "file": "mercadopago.ts",
+          "line": 14,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/v1/medical-records/route-complex.ts",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route-complex.ts",
+          "line": 40,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/medical-records/route-complex.ts",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route-complex.ts",
+          "line": 193,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/medical-records/route-complex.ts",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "route-complex.ts",
+          "line": 306,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/medical-records/route-complex.ts",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "route-complex.ts",
+          "line": 423,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/admin/users/:userId/suspend",
+          "method": "PATCH",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/admin/users/:userId/suspend",
+          "method": "PATCH",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 5,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/patients",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/patients",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/patients",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 21,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/patients",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 42,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/telemedicine",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 3,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/health/detailed",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/health/detailed",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 81,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/patients",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/patients",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 3,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/user/:userId",
+          "method": "GET",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 8,
+          "type": "express"
+        },
+        {
+          "path": "/user/:userId/stats",
+          "method": "GET",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 39,
+          "type": "express"
+        },
+        {
+          "path": "/:notificationId/read",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 65,
+          "type": "express"
+        },
+        {
+          "path": "/:notificationId/archive",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 86,
+          "type": "express"
+        },
+        {
+          "path": "/user/:userId/read-all",
+          "method": "PUT",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 107,
+          "type": "express"
+        },
+        {
+          "path": "/:notificationId",
+          "method": "DELETE",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 133,
+          "type": "express"
+        },
+        {
+          "path": "/",
+          "method": "POST",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 154,
+          "type": "express"
+        },
+        {
+          "path": "/appointment-reminder",
+          "method": "POST",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 207,
+          "type": "express"
+        },
+        {
+          "path": "/telemedicine-confirmation",
+          "method": "POST",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 239,
+          "type": "express"
+        },
+        {
+          "path": "/medical-alert",
+          "method": "POST",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 269,
+          "type": "express"
+        },
+        {
+          "path": "/doctor-message",
+          "method": "POST",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 299,
+          "type": "express"
+        },
+        {
+          "path": "/admin/all",
+          "method": "GET",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 329,
+          "type": "express"
+        },
+        {
+          "path": "/admin/cleanup",
+          "method": "POST",
+          "service": "unknown",
+          "file": "notification-routes.ts",
+          "line": 351,
+          "type": "express"
+        },
+        {
+          "path": "/api/v1/auth/dev-login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/auth/dev-login",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 8,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/websocket",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/websocket",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/websocket",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 7,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/websocket",
+          "method": "POST",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 20,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/cors-example",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/cors-example",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 8,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/doctors/:id/schedule",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/doctors/:id/schedule",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 34,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "http://localhost:3001/api/v1/auth/login",
+          "method": "GET",
+          "service": "unknown",
+          "file": "firebase-auth.ts",
+          "line": 135,
+          "type": "fetch"
+        },
+        {
+          "path": "http://localhost:3001/api/v1/auth/login",
+          "method": "GET",
+          "service": "unknown",
+          "file": "firebase-auth.ts",
+          "line": 231,
+          "type": "fetch"
+        },
+        {
+          "path": "/api/create-test-user",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/create-test-user",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 3,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET",
+          "service": "unknown",
+          "file": "route.ts",
+          "line": 37,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/metrics",
+          "method": "GET",
+          "service": "unknown",
+          "file": "metrics.ts",
+          "line": 7,
+          "type": "express"
+        },
+        {
+          "path": "/metrics-json",
+          "method": "GET",
+          "service": "unknown",
+          "file": "metrics.ts",
+          "line": 18,
+          "type": "express"
+        }
+      ]
+    },
+    "video-server": {
+      "name": "video-server",
+      "port": 8888,
+      "total_apis": 28,
+      "unique_paths": 7,
+      "methods": [
+        "DELETE",
+        "GET",
+        "POST",
+        "PUT"
+      ],
+      "apis": [
+        {
+          "path": "/api/v1/appointments/:id/video-session",
+          "method": "GET",
+          "service": "video-server",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/appointments/:id/video-session",
+          "method": "POST",
+          "service": "video-server",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/appointments/:id/video-session",
+          "method": "PUT",
+          "service": "video-server",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/appointments/:id/video-session",
+          "method": "DELETE",
+          "service": "video-server",
+          "file": "route.ts",
+          "line": 1,
+          "type": "nextjs_app_router"
+        },
+        {
+          "path": "/api/v1/appointments/:id/video-session",
+          "method": "GET",
+          "service": "video-server",
+          "file": "route.ts",
+          "line": 21,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/appointments/:id/video-session",
+          "method": "POST",
+          "service": "video-server",
+          "file": "route.ts",
+          "line": 150,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/appointments/:id/video-session",
+          "method": "PUT",
+          "service": "video-server",
+          "file": "route.ts",
+          "line": 340,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/v1/appointments/:id/video-session",
+          "method": "DELETE",
+          "service": "video-server",
+          "file": "route.ts",
+          "line": 443,
+          "type": "nextjs_route"
+        },
+        {
+          "path": "/api/video-calls/create",
+          "method": "POST",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 54,
+          "type": "express"
+        },
+        {
+          "path": "/api/video-calls/{room_id}/status",
+          "method": "GET",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 78,
+          "type": "express"
+        },
+        {
+          "path": "/health",
+          "method": "GET",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 96,
+          "type": "express"
+        },
+        {
+          "path": "/video-call/{room_id}",
+          "method": "GET",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 107,
+          "type": "express"
+        },
+        {
+          "path": "/",
+          "method": "GET",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 696,
+          "type": "express"
+        },
+        {
+          "path": "/api/video-calls/create",
+          "method": "POST",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 54,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/video-calls/{room_id}/status",
+          "method": "GET",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 78,
+          "type": "fastapi"
+        },
+        {
+          "path": "/health",
+          "method": "GET",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 96,
+          "type": "fastapi"
+        },
+        {
+          "path": "/video-call/{room_id}",
+          "method": "GET",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 107,
+          "type": "fastapi"
+        },
+        {
+          "path": "/",
+          "method": "GET",
+          "service": "video-server",
+          "file": "start_video_server.py",
+          "line": 696,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/video-calls/create",
+          "method": "POST",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 133,
+          "type": "express"
+        },
+        {
+          "path": "/api/video-calls/{room_id}/status",
+          "method": "GET",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 152,
+          "type": "express"
+        },
+        {
+          "path": "/api/video-calls/active",
+          "method": "GET",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 170,
+          "type": "express"
+        },
+        {
+          "path": "/video-call/{room_id}",
+          "method": "GET",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 253,
+          "type": "express"
+        },
+        {
+          "path": "/",
+          "method": "GET",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 510,
+          "type": "express"
+        },
+        {
+          "path": "/api/video-calls/create",
+          "method": "POST",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 133,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/video-calls/{room_id}/status",
+          "method": "GET",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 152,
+          "type": "fastapi"
+        },
+        {
+          "path": "/api/video-calls/active",
+          "method": "GET",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 170,
+          "type": "fastapi"
+        },
+        {
+          "path": "/video-call/{room_id}",
+          "method": "GET",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 253,
+          "type": "fastapi"
+        },
+        {
+          "path": "/",
+          "method": "GET",
+          "service": "video-server",
+          "file": "telemedicine_video_server.py",
+          "line": 510,
+          "type": "fastapi"
+        }
+      ]
+    }
+  }
+}

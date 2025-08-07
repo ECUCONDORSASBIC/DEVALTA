@@ -49,7 +49,7 @@ const RedirectingLoader: React.FC<RedirectingLoaderProps> = ({
   const CurrentIcon = steps[step].icon;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
         {/* Icono animado */}
         <div className="flex justify-center mb-6">

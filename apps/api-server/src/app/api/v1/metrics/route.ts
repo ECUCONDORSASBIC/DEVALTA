@@ -1,32 +1,63 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMetrics, getMetricsJson } from '../../../../lib/metrics';
+import { createPublicRoute } from '@/lib/middleware/UnifiedAuth';
+import { createSuccessResponse, createErrorResponse } from '@/lib/response-helpers';
+import { getMetrics, getMetricsJson } from '@/lib/metrics';
 
-export async function GET(request: NextRequest) {
-  try {
-    const url = new URL(request.url);
-    const format = url.searchParams.get('format');
-
-    if (format === 'json') {
-      const metricsJson = await getMetricsJson();
-      return NextResponse.json(metricsJson);
-    }
-
-    // Default to Prometheus format
-    const metrics = await getMetrics();
-    return new NextResponse(metrics, {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
+// GET /api/v1/metrics - Prometheus metrics endpoint for scraping
+export const GET = createPublicRoute(
+  async (request: NextRequest, authContext) => {
+    try {
+      const url = new URL(request.url);
+      const format = url.searchParams.get('format') || 'prometheus';
+      
+      console.log(`[Metrics] Getting metrics in ${format} format`);
+      
+      if (format === 'json') {
+        // JSON format for Grafana and other consumers
+        const metricsJson = await getMetricsJson();
+        
+        return NextResponse.json(
+          createSuccessResponse(metricsJson, 'Metrics retrieved successfully')
+        );
+      } else {
+        // Default Prometheus format
+        const metrics = await getMetrics();
+        
+        // Return raw Prometheus metrics format
+        return new NextResponse(metrics, {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
       }
-    });
-  } catch (error: unknown) {
-    console.error('Metrics collection failed:', error);
-    return NextResponse.json(
-      { error: 'Metrics collection failed' },
-      { status: 500 }
-    );
+      
+    } catch (error) {
+      console.error('[Metrics] Error fetching metrics:', error);
+      
+      const url = new URL(request.url);
+      const format = url.searchParams.get('format') || 'prometheus';
+      
+      if (format === 'json') {
+        return NextResponse.json(
+          createErrorResponse('METRICS_ERROR', 'Error fetching metrics'),
+          { status: 500 }
+        );
+      } else {
+        return new NextResponse('Error fetching metrics', {
+          status: 500,
+          headers: {
+            'Content-Type': 'text/plain'
+          }
+        });
+      }
+    }
+  },
+  {
+    skipRateLimit: true, // Prometheus scraping shouldn't be rate limited
+    auditAction: 'get_metrics'
   }
-}
+);

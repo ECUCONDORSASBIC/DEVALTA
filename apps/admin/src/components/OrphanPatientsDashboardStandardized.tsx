@@ -1,37 +1,28 @@
 // 🏥 DASHBOARD ESTANDARIZADO - ALTAMEDICA
-// Versión migrada usando el Medical Design System
+// Versión migrada usando componentes básicos
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { 
-  // Importar iconos necesarios
-  Users, Calendar, Activity, Shield, Settings, BarChart3 
+import {
+    Users
 } from 'lucide-react';
+import React, { useState } from 'react';
 
-// Importar componentes estandarizados
-import { 
-  DashboardLayout, 
-  DashboardHeader, 
-  getDefaultSidebarItems 
-} from '@altamedica/medical-components/components/DashboardLayout';
-import { 
-  KPICard, 
-  KPISection, 
-  MedicalDataTable 
-} from '@altamedica/medical-components/components/DashboardStandard';
-import { 
-  MedicalButton, 
-  MedicalCard, 
-  MedicalBadge 
-} from '@altamedica/medical-components/MedicalDesignSystem';
+// Importar componentes básicos
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle
+} from '@altamedica/ui';
 
 // ============================================================================
 // TIPOS Y INTERFACES
 // ============================================================================
 
 interface DashboardData {
-  // Definir tipos específicos del dashboard
+  /** Datos específicos del dashboard de pacientes huérfanos */
+  orphanPatients?: any[];
 }
 
 // ============================================================================
@@ -43,9 +34,6 @@ const OrphanPatientsStandardized: React.FC = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>('');
-
-  // Sidebar items personalizados
-  const sidebarItems = getDefaultSidebarItems('patient');
 
   // ============================================================================
   // FUNCIONES
@@ -64,35 +52,19 @@ const OrphanPatientsStandardized: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    // Implementar logout
-    console.log('Logout clicked');
-  };
-
-  const handleSettings = () => {
-    // Implementar settings
-    console.log('Settings clicked');
-  };
-
-  const handleRefresh = async () => {
-    await loadDashboardData();
-  };
-
   // ============================================================================
   // KPIs ESTANDARIZADOS
   // ============================================================================
 
   const kpiData = [
     {
-      title: 'Métrica 1',
-      value: 0,
-      change: 0,
+      title: 'Pacientes Huérfanos Totales',
+      value: 127,
+      change: 5.2,
       icon: <Users className="h-6 w-6" />,
       color: 'normal' as const,
-      trend: 'stable' as const,
-      suffix: ''
+      trend: 'up' as const
     }
-    // Agregar más KPIs según sea necesario
   ];
 
   // ============================================================================
@@ -100,36 +72,57 @@ const OrphanPatientsStandardized: React.FC = () => {
   // ============================================================================
 
   return (
-    <DashboardLayout
-      userRole="patient"
-      title="OrphanPatients Dashboard"
-      subtitle="Dashboard de patient estandarizado"
-      notifications={0}
-      onLogout={handleLogout}
-      onSettings={handleSettings}
-      onRefresh={handleRefresh}
-      sidebarItems={sidebarItems}
-      showSearch={true}
-      showFilters={true}
-      compliance={true}
-      lastUpdated={lastUpdated}
-    >
-      {/* KPIs Estándar */}
-      <KPISection kpis={kpiData} columns={4} />
+    <div className="container mx-auto p-6">
+      <header className="mb-6">
+        <h1 className="text-2xl font-bold">Dashboard de Pacientes Huérfanos</h1>
+        <p className="text-gray-600">Gestión especializada de enfermedades raras</p>
+      </header>
 
-      {/* Contenido específico del dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <MedicalCard variant="patient" status="normal">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Sección 1</h3>
-          <p className="text-gray-600">Contenido de la sección 1</p>
-        </MedicalCard>
-
-        <MedicalCard variant="appointment" status="normal">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Sección 2</h3>
-          <p className="text-gray-600">Contenido de la sección 2</p>
-        </MedicalCard>
+      {/* KPI Section */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {kpiData.map((kpi, index) => (
+          <Card key={index}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {kpi.title}
+              </CardTitle>
+              {kpi.icon}
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{kpi.value}</div>
+              <p className="text-xs text-muted-foreground">
+                +{kpi.change}% desde el último mes
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-    </DashboardLayout>
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Lista de Pacientes Huérfanos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center p-8">
+              <p className="text-gray-500">Lista de pacientes disponible aquí</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Estadísticas Médicas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center p-8">
+              <p className="text-gray-500">Estadísticas médicas disponibles aquí</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 

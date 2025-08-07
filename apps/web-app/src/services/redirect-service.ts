@@ -1,4 +1,4 @@
-import { APP_URLS, getDashboardUrl, isExternalUrl } from '@/config/app-urls';
+import { APP_URLS, getDashboardUrl, isExternalUrl } from '../config/app-urls';
 import { NextRouter } from 'next/router';
 import { toast } from 'sonner';
 
@@ -35,8 +35,46 @@ export class RedirectService {
    * Obtiene la URL de redirección después del login
    */
   static getPostLoginRedirect(role: string): string {
-    // Verificar si hay una ruta guardada para redirección
+    // Primero verificar si hay un parámetro redirect en la URL
     if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectParam = urlParams.get('redirect');
+      
+      if (redirectParam) {
+        try {
+          // Decodificar y validar la URL
+          const decodedUrl = decodeURIComponent(redirectParam);
+          console.log('🔄 Redirect param encontrado:', decodedUrl);
+          
+          // Permitir redirección a cualquier app local de AltaMedica
+          const allowedPorts = ['3000', '3001', '3002', '3003', '3004', '3005'];
+          const urlObj = new URL(decodedUrl);
+          
+          if (urlObj.hostname === 'localhost' && allowedPorts.includes(urlObj.port)) {
+            console.log('✅ Redirigiendo a app local:', decodedUrl);
+            return decodedUrl;
+          }
+          
+          // También permitir URLs de producción conocidas
+          const allowedDomains = [
+            'localhost',
+            'altamedica.com',
+            'patients.altamedica.com',
+            'doctors.altamedica.com',
+            'companies.altamedica.com',
+            'admin.altamedica.com'
+          ];
+          
+          if (allowedDomains.some(domain => urlObj.hostname.includes(domain))) {
+            console.log('✅ Redirigiendo a dominio permitido:', decodedUrl);
+            return decodedUrl;
+          }
+        } catch (error) {
+          console.error('Error decodificando redirect param:', error);
+        }
+      }
+      
+      // Verificar si hay una ruta guardada para redirección
       const savedRoute = sessionStorage.getItem('redirectAfterLogin');
       if (savedRoute) {
         sessionStorage.removeItem('redirectAfterLogin');
@@ -44,12 +82,7 @@ export class RedirectService {
       }
     }
     
-    // Si el rol es paciente, mantenerlo en web-app
-    if (role === 'patient') {
-      return '/dashboard';
-    }
-    
-    // Si no, redirigir según el rol
+    // Redirigir todos los roles a su aplicación correspondiente
     return getDashboardUrl(role as any);
   }
   
@@ -122,13 +155,18 @@ export class RedirectService {
    * Verifica si el usuario debe estar en otra aplicación
    */
   static shouldRedirectToOtherApp(currentRole: string, currentPath: string): boolean {
-    // Si es paciente, puede quedarse en web-app
-    if (currentRole === 'patient') {
+    // Todos los usuarios autenticados deben ir a su aplicación correspondiente
+    // excepto en rutas públicas
+    const publicWebAppRoutes = ['/', '/about', '/services', '/contact', '/privacy', '/terms'];
+    const isOnPublicRoute = publicWebAppRoutes.some(route => currentPath === route);
+    
+    // Si está en una ruta pública, no redirigir
+    if (isOnPublicRoute) {
       return false;
     }
     
-    // Si es otro rol y está en ciertas rutas de web-app, debe redirigir
-    const protectedWebAppRoutes = ['/dashboard', '/profile', '/appointments'];
+    // Si es otro rol y está en rutas protegidas de web-app, debe redirigir
+    const protectedWebAppRoutes = ['/dashboard', '/profile', '/appointments', '/login'];
     return protectedWebAppRoutes.some(route => currentPath.startsWith(route));
   }
   

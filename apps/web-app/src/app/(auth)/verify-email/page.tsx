@@ -1,10 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useAuth } from "@altamedica/auth"
+import { auth, sendVerificationEmail } from '@altamedica/firebase-config'; // Importar desde firebase-config
+import { applyActionCode } from 'firebase/auth'
+import { AlertCircle, ArrowRight, CheckCircle, Loader2, Mail, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
-import { Mail, CheckCircle, AlertCircle, Loader2, RefreshCw, ArrowRight } from 'lucide-react'
-import { useAuth } from '@/contexts/AuthContext'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export default function VerifyEmailPage() {
   const router = useRouter()
@@ -30,29 +33,65 @@ export default function VerifyEmailPage() {
 
   const handleEmailVerification = async (code: string) => {
     setIsVerifying(true)
+    console.log('📧 [VerifyEmail] Iniciando verificación con código:', code);
+    
     try {
-      // Aquí normalmente harías la verificación con Firebase
-      // Por ahora simularemos el proceso
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Verificar el email usando Firebase Auth
+      console.log('🔥 [VerifyEmail] Aplicando código de verificación...');
+      await applyActionCode(auth, code)
+      console.log('✅ [VerifyEmail] Email verificado exitosamente');
+      
       setVerificationStatus('success')
-    } catch (error) {
+      toast.success('¡Email verificado exitosamente!');
+    } catch (error: any) {
+      console.error('❌ [VerifyEmail] Error verificando email:', error);
       setVerificationStatus('error')
-      setErrorMessage((error as Error).message || 'Error al verificar el email')
+      
+      let errorMessage = 'Error al verificar el email';
+      switch (error.code) {
+        case 'auth/expired-action-code':
+          errorMessage = 'El enlace de verificación ha expirado';
+          break;
+        case 'auth/invalid-action-code':
+          errorMessage = 'El enlace de verificación es inválido';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'La cuenta está deshabilitada';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'No se encontró la cuenta';
+          break;
+        default:
+          errorMessage = error.message || 'Error desconocido al verificar email';
+      }
+      
+      setErrorMessage(errorMessage)
+      toast.error(errorMessage);
     } finally {
       setIsVerifying(false)
     }
   }
 
   const handleResendVerification = async () => {
-    if (!user) return
+    if (!user) {
+      toast.error('No hay usuario autenticado');
+      return;
+    }
     
     setIsResending(true)
+    console.log('📤 [VerifyEmail] Reenviando email de verificación para:', user.email);
+    
     try {
-      // Aquí normalmente reenviarías el email de verificación
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      // Simulamos éxito
-    } catch (error) {
-      setErrorMessage((error as Error).message || 'Error al reenviar email')
+      // Reenviar email de verificación usando Firebase Auth
+      await sendVerificationEmail(user); // Usar la función importada
+      console.log('✅ [VerifyEmail] Email de verificación reenviado exitosamente');
+      toast.success('Email de verificación reenviado. Revisa tu bandeja de entrada.');
+      setErrorMessage(''); // Limpiar errores previos
+    } catch (error: any) {
+      console.error('❌ [VerifyEmail] Error reenviando email:', error);
+      const errorMessage = error.message || 'Error al reenviar email de verificación';
+      setErrorMessage(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsResending(false)
     }
@@ -61,7 +100,7 @@ export default function VerifyEmailPage() {
   // Si está verificando automáticamente
   if (isVerifying) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center p-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50 flex items-center justify-center p-8">
         <div className="max-w-md w-full">
           <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
             <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -89,7 +128,7 @@ export default function VerifyEmailPage() {
   // Si la verificación fue exitosa
   if (verificationStatus === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center p-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50 flex items-center justify-center p-8">
         <div className="max-w-md w-full">
           <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
             <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -128,7 +167,7 @@ export default function VerifyEmailPage() {
   // Si hay error en la verificación
   if (verificationStatus === 'error') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center p-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50 flex items-center justify-center p-8">
         <div className="max-w-md w-full">
           <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
             <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -188,7 +227,7 @@ export default function VerifyEmailPage() {
 
   // Vista por defecto (cuando no hay parámetros de verificación)
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50">
       <div className="flex min-h-screen">
         {/* Mitad Izquierda - Información */}
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-cyan-600 p-12 items-center justify-center">

@@ -1,0 +1,25 @@
+{
+  "glyphs": {},
+  "familyName": "helvetiker",
+  "ascender": 0.75,
+  "descender": -0.25,
+  "underlineThickness": 0.05,
+  "underlinePosition": -0.125,
+  "boundingBox": {
+    "xMin": -0.5,
+    "yMin": -0.25,
+    "xMax": 0.5,
+    "yMax": 0.75
+  },
+  "resolution": 1000,
+  "original_font_information": {
+    "format": 0,
+    "copyright": "Placeholder font",
+    "fontFamily": "helvetiker",
+    "fontSubfamily": "Regular",
+    "uniqueID": "placeholder",
+    "fullName": "Helvetiker Regular",
+    "version": "Version 1.0",
+    "postScriptName": "Helvetiker-Regular"
+  }
+}

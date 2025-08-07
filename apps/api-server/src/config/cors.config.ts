@@ -1,4 +1,4 @@
-import { getCorsConfig } from '@/config/auth-config';
+import { getCorsConfig } from '../config/auth-config';
 
 /**
  * Configuración CORS para el API Server

@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import WebRTCVideoCall from "../../../components/telemedicine/WebRTCVideoCall";
-import ChatPanel from "../../../components/telemedicine/ChatPanel";
+import WebRTCVideoCall from "../../../../components/telemedicine/WebRTCVideoCall";
+import ChatPanel from "../../../../components/telemedicine/ChatPanel";
 import { 
   User, 
   Calendar, 

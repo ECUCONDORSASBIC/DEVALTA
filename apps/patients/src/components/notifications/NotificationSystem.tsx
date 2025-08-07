@@ -23,12 +23,13 @@ import {
   Filter,
   Search
 } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Switch } from '../ui/switch';
+import { Button } from '@altamedica/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@altamedica/ui';
+import { Badge } from '@altamedica/ui';
+import { Input } from '@altamedica/ui';
+import { Select } from '@altamedica/ui';
+import { SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Switch } from '@altamedica/ui';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../hooks/useToast';
 

@@ -15,7 +15,7 @@ import {
   CheckCheck,
   Search
 } from 'lucide-react'
-import { firebaseChat, ChatConversation, ChatMessage } from '@/services/firebase-chat'
+import { firebaseChat, ChatConversation, ChatMessage } from '../services/firebase-chat'
 import { auth } from '../../config/firebase'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'

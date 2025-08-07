@@ -20,8 +20,6 @@ services:
       - NEXT_PUBLIC_WEB_APP_URL=http://localhost:3000
     env_file:
       - .env.docker
-    volumes:
-      - ./logs:/app/logs
     depends_on:
       - redis
       - postgres
@@ -52,9 +50,6 @@ services:
       - REDIS_URL=redis://redis:6379
     env_file:
       - .env.docker
-    volumes:
-      - ./logs:/app/logs
-      - ./uploads:/app/uploads
     depends_on:
       - postgres
       - redis

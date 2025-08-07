@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useAuth, useUserPermissions, UserProfile } from '@/contexts/AuthContext';
+import { useAuth, useUserPermissions, UserProfile } from "@altamedica/auth";
 import AuthLoading from './AuthLoading';
 import { Shield, AlertTriangle } from 'lucide-react';
 
@@ -39,7 +39,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({
   // Verificar permisos de tipo de usuario
   if (allowedUserTypes && userProfile && !hasPermission(allowedUserTypes)) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-neutral-50 to-orange-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center">
           <div className="bg-white rounded-3xl shadow-2xl p-8">
             <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -92,7 +92,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({
   // Si hay usuario pero no hay perfil completo
   if (user && !userProfile && requireAuth) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-orange-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-neutral-50 to-orange-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full text-center">
           <div className="bg-white rounded-3xl shadow-2xl p-8">
             <div className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">

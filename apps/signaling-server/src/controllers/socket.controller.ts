@@ -10,7 +10,7 @@ import {
   ToggleMediaData,
   VitalsUpdateData,
   User
-} from '../types/index.js';
+} from '@altamedica/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export class SocketController {

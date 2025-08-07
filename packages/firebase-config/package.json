@@ -1,0 +1,54 @@
+{
+  "name": "@altamedica/firebase-config",
+  "version": "1.0.0",
+  "description": "Configuración centralizada de Firebase para la plataforma AltaMedica",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format=cjs --format=esm --dts --clean",
+    "dev": "tsup src/index.ts --format=cjs --format=esm --dts --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "firebase": "^10.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "firebase",
+    "altamedica",
+    "config",
+    "medical",
+    "healthcare"
+  ],
+  "author": "AltaMedica Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/altamedica/platform"
+  }
+}

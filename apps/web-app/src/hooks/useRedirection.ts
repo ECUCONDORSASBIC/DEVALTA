@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { RedirectService } from '@/services/redirect-service';
-import { useAuth } from '@/contexts/AuthContext';
+import { RedirectService } from '../services/redirect-service';
+import { useAuth } from "@altamedica/auth";
 
 interface UseRedirectionOptions {
   checkInterval?: number; // Intervalo para verificar redirección (ms)

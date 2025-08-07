@@ -3,30 +3,31 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { 
-  // Importar iconos necesarios
-  Users, Calendar, Activity, Shield, Settings, BarChart3 
-} from 'lucide-react';
-
-// Importar componentes estandarizados
-import { 
-  DashboardLayout, 
-  DashboardHeader, 
-  KPICard, 
-  KPISection, 
-  MedicalDataTable,
-  MedicalButton, 
-  MedicalCard, 
-  MedicalBadge 
-} from '@altamedica/medical-components';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle
+} from '@altamedica/ui';
+import {
+    // Importar iconos necesarios
+    Users
+} from 'lucide-react'; // Importar componentes básicos
+import React, { useState } from 'react';
 
 // ============================================================================
 // TIPOS Y INTERFACES
 // ============================================================================
 
 interface DashboardData {
-  // Definir tipos específicos del dashboard
+  /** Datos específicos del dashboard administrativo */
+  adminMetrics?: any[];
+}
+
+// Definir las propiedades del componente
+interface AdminDashboardStandardizedProps {
+  /** Propiedades opcionales del dashboard administrativo */
+  className?: string;
 }
 
 // ============================================================================
@@ -38,31 +39,6 @@ const AdminStandardized: React.FC = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string>('');
-
-  // Sidebar items personalizados
-  const sidebarItems = [
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: <BarChart3 className="h-5 w-5" />,
-      active: true
-    },
-    {
-      id: 'users',
-      label: 'Usuarios',
-      icon: <Users className="h-5 w-5" />
-    },
-    {
-      id: 'calendar',
-      label: 'Calendario',
-      icon: <Calendar className="h-5 w-5" />
-    },
-    {
-      id: 'settings',
-      label: 'Configuración',
-      icon: <Settings className="h-5 w-5" />
-    }
-  ];
 
   // ============================================================================
   // FUNCIONES
@@ -96,58 +72,52 @@ const AdminStandardized: React.FC = () => {
   };
 
   // ============================================================================
-  // KPIs ESTANDARIZADOS
-  // ============================================================================
-
-  const kpiData = [
-    {
-      title: 'Métrica 1',
-      value: 0,
-      change: 0,
-      icon: <Users className="h-6 w-6" />,
-      color: 'normal' as const,
-      trend: 'stable' as const,
-      suffix: ''
-    }
-    // Agregar más KPIs según sea necesario
-  ];
-
-  // ============================================================================
   // RENDER
   // ============================================================================
 
   return (
-    <DashboardLayout
-      userRole="admin"
-      title="Admin Dashboard"
-      subtitle="Dashboard de admin estandarizado"
-      notifications={0}
-      onLogout={handleLogout}
-      onSettings={handleSettings}
-      onRefresh={handleRefresh}
-      sidebarItems={sidebarItems}
-      showSearch={true}
-      showFilters={true}
-      compliance={true}
-      lastUpdated={lastUpdated}
-    >
-      {/* KPIs Estándar */}
-      <KPISection kpis={kpiData} columns={4} />
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard Administrativo</h1>
+          <p className="text-gray-600">Dashboard de admin estandarizado</p>
+        </div>
 
-      {/* Contenido específico del dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <MedicalCard variant="patient" status="normal">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Sección 1</h3>
-          <p className="text-gray-600">Contenido de la sección 1</p>
-        </MedicalCard>
+        {/* KPIs Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Usuarios</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">0</div>
+              <p className="text-xs text-muted-foreground">Métricas actualizadas</p>
+            </CardContent>
+          </Card>
+        </div>
 
-        <MedicalCard variant="appointment" status="normal">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Sección 2</h3>
-          <p className="text-gray-600">Contenido de la sección 2</p>
-        </MedicalCard>
+        {/* Contenido específico del dashboard */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sección 1</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">Contenido de la sección 1</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Sección 2</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">Contenido de la sección 2</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
-};
-
-export default AdminStandardized;
+};export default AdminStandardized;

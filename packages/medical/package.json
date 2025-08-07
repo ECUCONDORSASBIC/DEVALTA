@@ -1,0 +1,17 @@
+{
+  "name": "@altamedica/medical",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "echo \"Medical package ready\"",
+    "dev": "echo \"Medical package in dev mode\""
+  },
+  "dependencies": {
+    "react": "^18.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -137,7 +137,7 @@ export const updateActiveUsers = (userType: string, count: number) => {
 
 export const recordComplianceViolation = (violationType: string, severity: 'low' | 'medium' | 'high' | 'critical') => {
   complianceViolations.labels(violationType, severity).inc();
-  logger.warn(`Compliance violation recorded: ${violationType} (${severity})`, {
+  console.warn(`Compliance violation recorded: ${violationType} (${severity})`, {
     type: 'compliance_violation',
     violationType,
     severity,

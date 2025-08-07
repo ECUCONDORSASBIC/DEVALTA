@@ -1,4 +1,5 @@
 {
+  "extends": "next/core-web-vitals",
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["dom", "dom.iterable", "es6"],
@@ -36,6 +37,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@/domains/*": ["./src/domains/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/infrastructure/*": ["./src/infrastructure/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/middleware/*": ["./src/middleware/*"],
       "@/test/*": ["./src/test/*"]

@@ -211,7 +211,7 @@ export default function StatusPage() {
     : 'degraded'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="bg-white rounded-3xl shadow-xl p-8 mb-8">

@@ -11,7 +11,7 @@ import {
   Calendar, FileText, Pill, User, Heart, Activity, Bell, Settings, LogOut,
   Menu, X, Home, Video, Phone, Download, HelpCircle, Shield, AlertTriangle
 } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from "@altamedica/auth';
 
 // 📝 TIPOS ROBUSTOS PARA NAVEGACIÓN
 export interface NavigationItem {

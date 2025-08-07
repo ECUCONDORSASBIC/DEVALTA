@@ -15,7 +15,7 @@ import {
   limit
 } from 'firebase/firestore';
 
-import { firebaseService } from './firebase-service';
+import { firebaseService } from '@altamedica/database';
 import { NotificationLog, NotificationPreferences } from '../types/appointments-users';
 import { Appointment } from '../types/appointments-users';
 import { Patient } from '../types/medical-entities';

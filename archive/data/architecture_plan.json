@@ -1,0 +1,231 @@
+{
+  "directories_to_create": [
+    "tools/python",
+    "tools/scripts",
+    "tools/monitoring",
+    "config/environments",
+    "docs/guides",
+    "docs/security",
+    "archive/logs",
+    "archive/media",
+    "archive/data"
+  ],
+  "move_operations": [
+    {
+      "files": [
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\api_cleanup_analyzer.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\api_discovery_hub.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\api_organizer.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\architecture_cleaner.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\auto_api_tester.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\auto_login_tester.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\check-servers.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\cleanup_script.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\deep_api_hunter.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\demo_video_call.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\execute_ps.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\generate_login_urls.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\install-package-standardization.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\install_video_system.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\launcher.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\medical_analytics_server.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\medical_matching_engine.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\quick_api_mapper.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\quick_test_links.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\simple_architecture_cleaner.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\simple_fast_api_finder.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\sso-auth-proxy.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-servers.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start_video_server.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\telemedicine_video_server.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-package-standardization.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test_flow_manager.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test_video_simple.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\turbo_api_scanner.py",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\video_call_client.py"
+      ],
+      "target": "tools/python/"
+    },
+    {
+      "files": [
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\build-packages.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\build.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\debug-patients-imports.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\execute-now.cmd",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\fix-nextjs-build-error.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\fix-sso-dependencies.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\install-proxy-deps.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\launch_video_system.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\PRUEBA-FINAL-VIDEOLLAMADAS.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\quick-fix-patients.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\restart-patients-app.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-altamedica.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-patients-app.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-services.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-sistema-completo-con-analytics.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-sso-proxy-production.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-sso-proxy-simple.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-sso-proxy.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-telemedicine-system.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-video-server.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-videollamadas-completo.bat",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-video-system.bat"
+      ],
+      "target": "tools/scripts/"
+    },
+    {
+      "files": [
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\check-apps-status.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\debug-sso-login.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\diagnose-sso.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\fix-npm-and-install.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\fix-patients-auth.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\fix-sso-dependencies.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\get-html-simple.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\get-html.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\run-sso-diagnostic.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\setup-debug-tools.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-with-sso-proxy.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-with-sso.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-sso-direct.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-sso-flow-simple.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-sso-flow.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-sso-redirect.ps1",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-sso-simple.ps1"
+      ],
+      "target": "tools/scripts/"
+    },
+    {
+      "files": [
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\.eslintrc.security.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\auditoria-sso-automatica.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\claude-integration.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\execute-autonomous-update.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\execute-updates.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\launcher-fixed.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\launcher.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\medical-compliance-monitor.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\notification-system.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\quick-test-telemedicine.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\setup-sso-proxy.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\simple-sso-proxy.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\sso-proxy-production.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\sso-proxy-server.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\sso-proxy-simple.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\sso-proxy-solution.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\start-with-proxy.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-es-modules.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-integration.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-telemedicine-integration.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\webhook-notification-test.js"
+      ],
+      "target": "tools/scripts/"
+    },
+    {
+      "files": [
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\.env.docker",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\.env.example",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\.env.local",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\.gemini-config.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\api-config.ts",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\claude_desktop_config.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\clean_api_config.ts",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\ecosystem.config.cjs",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\eslint.config.js",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\frontend_api_config.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\gemini-claude-config.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\gemini-config-with-claude.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\jest.config.cjs",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\organized_api_config.ts",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\package-template-config.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\simple_api_config.ts",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\tsconfig.tsbuildinfo",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\turbo_api_config.ts"
+      ],
+      "target": "config/environments/"
+    },
+    {
+      "files": [
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\ANALYTICS-SISTEMA-COMPLETO.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\API_USAGE_GUIDE.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\AUDITORIA_SSO_SESION_PERSISTENTE.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\B2B_MEDICAL_MARKETPLACE_AUDIT.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\B2B_PAYMENT_ARCHITECTURE.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\claude-prompts-for-gemini.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\CLAUDE.local.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\CLAUDE.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\CLAUDE2.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\create-firebase-project.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\gemini-medical-context.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\INFORME_FINAL_SEGURIDAD_EXITOSO.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\manual-test-sso.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\NUEVA_ESTRUCTURA_ARQUITECTURA.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\PROMPT_IA_SSO_LOOP.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\RECOMENDACIONES_SEGURIDAD.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\SIMPLIFICACION_API_SERVER.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\SOLUCION-LOGIN.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\SOLUCION-SSO-FINAL.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\SOLUCION_DEFINITIVA.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\SSO-IMPLEMENTATION-GUIDE.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\SSO-PROXY-README.md",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\VIDEO_SYSTEM_DOCUMENTATION.md"
+      ],
+      "target": "docs/guides/"
+    },
+    {
+      "files": [
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\altamedica-notifications.log",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\auth_deep_analysis.log",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\firestore-debug.log",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\login-filled.png",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\login-final.png",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\login-initial.png",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\sso-auth-proxy.log",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\test-notifications.log"
+      ],
+      "target": "archive/logs/"
+    },
+    {
+      "files": [],
+      "target": "archive/media/"
+    },
+    {
+      "files": [
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\altamedica-alerts.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\audit_report_20250731_070051.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\auth_quick_check_20250803_113440.txt",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\auth_quick_check_20250803_113711.txt",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\auth_quick_check_20250803_114022.txt",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\auth_quick_check_20250803_114153.txt",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\claude-commands.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\cleanup_analysis.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\diagnostico_altamedica_20250731_071828.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\fast_api_results.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\firestore.indexes.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\medical-compliance-report.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\organized_apis.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\requirements-video.txt",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\turbo_scan_results.json",
+        "c:\\Users\\Eduardo\\Documents\\devaltamedica\\webhook-delivery-report.json"
+      ],
+      "target": "archive/data/"
+    }
+  ],
+  "keep_in_root": [
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\.env",
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\.gitignore",
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\docker-compose.yml",
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\Dockerfile",
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\firebase.json",
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\package.json",
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\pnpm-lock.yaml",
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\pnpm-workspace.yaml",
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\README.md",
+    "c:\\Users\\Eduardo\\Documents\\devaltamedica\\tsconfig.json"
+  ],
+  "statistics": {
+    "total_files": 195,
+    "files_to_move": 185,
+    "files_to_keep": 10
+  }
+}

@@ -1,461 +1,447 @@
-# 🏥 ALTAMEDICA - Sistema de Gestión Médica
+# 👨‍⚕️ AltaMedica Doctors Portal
 
-Sistema integral de gestión médica con cumplimiento **HIPAA/GDPR** desarrollado con Next.js 14, Firebase y TypeScript.
+**Puerto:** 3002 | **Tipo:** Portal Médico | **Framework:** Next.js
 
-## 🎯 Características Principales
+## ⚠️ REGLA FUNDAMENTAL: USAR PACKAGES CENTRALIZADOS
 
-### 🔐 Seguridad y Cumplimiento
-- ✅ **Cumplimiento HIPAA** completo
-- ✅ **Cumplimiento GDPR** con manejo de consentimientos
-- ✅ **Cifrado AES-256-GCM** para datos sensibles
-- ✅ **Auditoría completa** de todas las acciones
-- ✅ **Autenticación multifactor** (MFA)
-- ✅ **Control de acceso basado en roles** (RBAC/ABAC)
+### 🚫 **LO QUE NO DEBES HACER:**
+```typescript
+// ❌ NUNCA crear hooks médicos duplicados
+export function usePatients() {
+  // Ya existe en @altamedica/hooks - PROHIBIDO
+}
 
-### 🏥 Funcionalidades Médicas
-- 📋 **Gestión completa de pacientes** con historial médico
-- 📅 **Sistema de citas** con notificaciones en tiempo real
-- 🚨 **Alertas críticas** con priorización médica
-- 📊 **Dashboard médico** con KPIs especializados
-- 🔬 **Integración HL7/FHIR** para interoperabilidad
-- 📱 **Interfaz responsive** optimizada para tablets médicas
+// ❌ NUNCA implementar cálculos médicos duplicados
+export function calculateBMI() {
+  // Ya existe en @altamedica/medical-utils - PROHIBIDO  
+}
 
-### 🛠️ Tecnologías
-
-```
-Frontend:     Next.js 14, React 18, TypeScript 5
-Backend:      Firebase (Auth, Firestore, Storage, Functions)
-Styling:      Tailwind CSS con tema médico personalizado
-State:        React Query + Zustand
-Security:     Crypto-JS, Web Crypto API
-Charts:       Chart.js + React-Chartjs-2
-Testing:      Jest + Testing Library
-```
-
-## 🚀 Inicio Rápido
-
-### Prerrequisitos
-
-```bash
-Node.js >= 18.0.0
-npm >= 9.0.0
-Cuenta de Firebase con Blaze plan (para funciones)
-```
-
-### Instalación
-
-1. **Clonar el repositorio**
-```bash
-git clone https://github.com/altamedica/doctors-app.git
-cd doctors-app
-```
-
-2. **Instalar dependencias**
-```bash
-npm install
-```
-
-3. **Configurar variables de entorno**
-```bash
-cp .env.example .env.local
-# Editar .env.local con tus credenciales de Firebase
-```
-
-4. **Configurar Firebase**
-```bash
-# Instalar Firebase CLI
-npm install -g firebase-tools
-
-# Autenticarse
-firebase login
-
-# Inicializar proyecto
-firebase init
-```
-
-5. **Ejecutar en modo desarrollo**
-```bash
-# Con emuladores de Firebase
-npm run emulators &
-npm run dev
-
-# Solo aplicación
-npm run dev
-```
-
-## 📁 Estructura del Proyecto
-
-```
-src/
-├── app/                    # App Router de Next.js 14
-│   ├── page.tsx           # Dashboard principal
-│   ├── layout.tsx         # Layout raíz
-│   ├── globals.css        # Estilos globales
-│   ├── pacientes/         # Gestión de pacientes
-│   ├── citas/             # Sistema de citas
-│   └── dashboard/         # Configuraciones
-│
-├── components/            # Componentes React reutilizables
-│   ├── dashboard/         # Componentes del dashboard médico
-│   │   ├── MedicalDashboard.tsx
-│   │   ├── DashboardStats.tsx
-│   │   ├── TodayAppointments.tsx
-│   │   └── CriticalAlerts.tsx
-│   ├── navigation/        # Navegación y layout
-│   │   ├── Navbar.tsx
-│   │   └── Footer.tsx
-│   └── auth/             # Autenticación
-│
-├── services/             # Servicios y lógica de negocio
-│   ├── firebase-service.ts      # Configuración Firebase
-│   ├── patient-service.ts       # Gestión de pacientes
-│   ├── encryption-service.ts    # Cifrado médico
-│   └── validation-service.ts    # Validaciones médicas
-│
-├── hooks/                # React Hooks personalizados
-│   └── useDashboard.ts   # Hook principal del dashboard
-│
-├── types/                # Definiciones TypeScript
-│   ├── medical-entities.ts      # Entidades médicas
-│   └── appointments-users.ts    # Citas y usuarios
-│
-└── utils/                # Utilidades y helpers
-    ├── constants.ts      # Constantes médicas
-    └── helpers.ts        # Funciones auxiliares
-```
-
-## 🔧 Configuración
-
-### Variables de Entorno
-
-Crear `.env.local` basado en `.env.example`:
-
-```env
-# Firebase
-NEXT_PUBLIC_FIREBASE_API_KEY=tu_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu_proyecto_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
-NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abc123
-
-# Cifrado (GENERAR NUEVAS CLAVES)
-NEXT_PUBLIC_ENCRYPTION_KEY=clave-de-cifrado-segura
-NEXT_PUBLIC_SIGNING_KEY=clave-de-firma-segura
-
-# Configuración médica
-NEXT_PUBLIC_ENABLE_AUDIT_LOGGING=true
-NEXT_PUBLIC_DATA_RETENTION_DAYS=2555
-NEXT_PUBLIC_SESSION_TIMEOUT_MINUTES=30
-```
-
-### Firebase Rules
-
-Configurar reglas de seguridad en Firestore:
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Pacientes - Solo acceso autorizado
-    match /patients/{patientId} {
-      allow read, write: if request.auth != null 
-        && hasRole('medical_professional')
-        && hasAccessToPatient(patientId);
-    }
-    
-    // Auditoría - Solo escritura, lectura para auditores
-    match /audit_logs/{logId} {
-      allow create: if request.auth != null;
-      allow read: if hasRole('auditor') || hasRole('admin');
-    }
-    
-    // Funciones de helper
-    function hasRole(role) {
-      return role in resource.data.roles;
-    }
-    
-    function hasAccessToPatient(patientId) {
-      return patientId in resource.data.authorizedPatients;
-    }
-  }
+// ❌ NUNCA crear componentes médicos que ya existen
+export function PatientCard() {
+  // Ya existe en @altamedica/medical-components - PROHIBIDO
 }
 ```
 
-## 🏥 Funcionalidades Médicas
-
-### 👥 Gestión de Pacientes
-
+### ✅ **LO QUE SÍ DEBES HACER:**
 ```typescript
-// Crear paciente con validación médica
-const newPatient = await patientService.createPatient({
-  personalInfo: {
-    firstName: 'Juan',
-    lastName: 'Pérez',
-    dateOfBirth: '1990-01-01',
-    nationalId: '12345678',
-    // ... datos cifrados automáticamente
-  },
-  medicalInfo: {
-    bloodType: 'O+',
-    allergies: [...],
-    chronicConditions: [...],
-    // ... validado según estándares médicos
-  }
-});
-
-// Búsqueda avanzada con filtros médicos
-const patients = await patientService.searchPatients({
-  bloodType: 'O+',
-  hasAllergies: true,
-  riskLevel: 'HIGH'
-});
+// ✅ SIEMPRE importar desde packages centralizados
+import { useAuth, usePatients, useAppointments } from '@altamedica/hooks';
+import { calculateBMI, formatMedicalDate } from '@altamedica/medical-utils';
+import { PatientCard, AppointmentTable } from '@altamedica/medical-components';
+import { Patient, MedicalRecord } from '@altamedica/medical-types';
 ```
 
-### 📅 Sistema de Citas
+## 📦 **PASO 1: REVISAR PACKAGES MÉDICOS DISPONIBLES**
 
-```typescript
-// Dashboard con citas en tiempo real
-const { todayAppointments, criticalAlerts } = useDashboard();
+**ANTES de escribir cualquier código médico, verifica estos packages:**
 
-// Gestión de estados de citas
-await markAppointmentComplete(appointmentId);
-await rescheduleAppointment(appointmentId, newDateTime);
-```
-
-### 🚨 Alertas Críticas
-
-```typescript
-// Sistema de alertas médicas automáticas
-const alert: CriticalAlert = {
-  type: 'CRITICAL_VALUES',
-  patientId: 'patient-123',
-  message: 'Valores de glucosa críticos: 350 mg/dL',
-  priority: 'CRITICAL',
-  actionRequired: true
-};
-
-// Reconocimiento de alertas con auditoría
-await acknowledgeAlert(alertId);
-```
-
-## 🔐 Seguridad y Cumplimiento
-
-### Cifrado de Datos
-
-```typescript
-// Cifrado automático de datos sensibles
-const encryptedSSN = await encryptionService.encrypt(socialSecurityNumber);
-
-// Firma digital para integridad
-const signature = await encryptionService.signData(medicalData);
-```
-
-### Auditoría Completa
-
-```typescript
-// Registro automático de todas las acciones
-await auditService.logEvent({
-  action: 'PATIENT_ACCESSED',
-  userId: currentUser.uid,
-  patientId: patientId,
-  timestamp: new Date().toISOString(),
-  reasonForAccess: 'Consulta médica rutinaria'
-});
-```
-
-### Control de Acceso
-
-```typescript
-// Verificación de permisos médicos
-await checkPatientAccessPermission(userId, patientId, 'read');
-await checkMedicalLicenseValid(professionalId);
-```
-
-## 📊 Dashboard Médico
-
-### KPIs Especializados
-
-- 👥 **Total de Pacientes** con tendencias
-- 📅 **Citas del Día** con estados en tiempo real
-- 🚨 **Alertas Críticas** priorizadas por urgencia médica
-- ⏱️ **Tiempo de Espera** promedio
-- 📈 **Satisfacción del Paciente** con métricas detalladas
-- 💰 **Métricas Financieras** mensuales
-
-### Componentes Interactivos
-
-```typescript
-// Dashboard principal con estado global
-<MedicalDashboard initialView="overview" />
-
-// Estadísticas en tiempo real
-<DashboardStats stats={stats} isLoading={isLoading} />
-
-// Citas con gestión de estados
-<TodayAppointments 
-  appointments={appointments}
-  onMarkComplete={markComplete}
-  onReschedule={reschedule}
-/>
-
-// Alertas críticas con priorización
-<CriticalAlerts 
-  alerts={alerts}
-  onAcknowledge={acknowledge}
-  maxVisible={5}
-/>
-```
-
-## 🧪 Testing
-
+### 🪝 Hooks Médicos (`@altamedica/hooks`)
 ```bash
-# Tests unitarios
-npm test
+# Ver hooks médicos disponibles
+cd ../../packages/hooks/src/medical
+ls -la
 
-# Tests con cobertura
-npm run test:coverage
-
-# Tests en modo watch
-npm run test:watch
-
-# Linting y type checking
-npm run lint
-npm run type-check
+# Hooks médicos principales:
+# - usePatients, useAppointments, usePrescriptions
+# - useMedicalRecords, useDiagnostics, useTelemedicine
+# - useVitalSigns, useLabResults, useImaging
 ```
 
-### Estructura de Tests
+### 🏥 Componentes Médicos (`@altamedica/medical-components`)
+```bash
+# Ver componentes médicos disponibles
+cd ../../packages/medical-components/src
+ls -la
 
-```
-__tests__/
-├── components/           # Tests de componentes React
-├── services/            # Tests de servicios médicos
-├── hooks/               # Tests de hooks personalizados
-└── utils/               # Tests de utilidades
-```
-
-## 📱 Responsive Design
-
-Optimizado para dispositivos médicos:
-
-- 📱 **Mobile**: Smartphones para consultas rápidas
-- 📊 **Tablet**: Tablets médicas en salas de consulta
-- 💻 **Desktop**: Estaciones de trabajo médicas
-- 🖨️ **Print**: Reportes médicos optimizados
-
-```css
-/* Breakpoints médicos personalizados */
-@media (min-width: 768px) { /* Tablet médica */ }
-@media (min-width: 1024px) { /* Estación médica */ }
-@media print { /* Reportes médicos */ }
+# Componentes médicos principales:
+# - PatientDashboard, AppointmentScheduler
+# - MedicalHistory, VitalSigns, Prescriptions
+# - TelemedicineConsole, DiagnosticTools
 ```
 
-## 🚀 Deployment
+### 🔧 Utilidades Médicas (`@altamedica/medical-utils`)
+```bash
+# Ver utilidades médicas disponibles
+cd ../../packages/medical-utils/src
+ls -la
+
+# Utilidades médicas principales:
+# - BMI, dosage, vitals calculations
+# - Medical validations, FHIR helpers
+# - ICD-10, SNOMED CT utilities
+```
+
+### 🩺 Tipos Médicos (`@altamedica/medical-types`)
+```bash
+# Ver tipos médicos disponibles
+cd ../../packages/medical-types/src
+ls -la
+
+# Tipos médicos principales:
+# - Patient, Appointment, MedicalRecord
+# - Prescription, Diagnosis, VitalSigns
+# - LabResult, Imaging, Allergy
+```
+
+## 🚀 **Configuración de Desarrollo**
+
+### Instalación
+```bash
+pnpm install
+```
 
 ### Desarrollo
-
 ```bash
-npm run dev
+pnpm dev  # Puerto 3002
 ```
 
-### Producción
-
+### Build
 ```bash
-# Build optimizado
-npm run build
-
-# Deploy a Firebase
-npm run deploy
-
-# Verificación post-deployment
-npm run security:audit
+pnpm build
 ```
 
-### Variables de Entorno por Ambiente
+## 🏗️ **Arquitectura del Portal Médico**
 
+```
+src/
+├── app/                 # Next.js 13+ App Router
+├── components/          # Componentes ESPECÍFICOS del portal médico
+│   ├── consultation/    # Consulta específica de doctores
+│   ├── telemedicine/    # WebRTC específico para doctores
+│   └── diagnosis/       # Herramientas diagnósticas específicas
+├── hooks/               # Solo hooks ESPECÍFICOS de doctores
+│   └── useDoctorOnly.ts   # SOLO si no existe en packages
+├── lib/                 # Configuración específica médica
+└── services/            # Servicios específicos del doctor
+```
+
+## ✅ **Checklist Antes de Desarrollar**
+
+### 📋 **OBLIGATORIO - Verificar Medical Packages Primero:**
+- [ ] ¿El hook médico ya existe en `@altamedica/hooks`?
+- [ ] ¿El componente médico ya existe en `@altamedica/medical-components`?
+- [ ] ¿La utilidad médica ya existe en `@altamedica/medical-utils`?
+- [ ] ¿El tipo médico ya existe en `@altamedica/medical-types`?
+
+### 📋 **Solo si NO existe en packages médicos:**
+- [ ] ¿Es específico del flujo de trabajo del doctor?
+- [ ] ¿No puede ser reutilizado por pacientes u otras apps?
+- [ ] ¿Está documentado por qué es específico del doctor?
+
+## 🎯 **Funcionalidades Específicas del Portal Médico**
+
+### Dashboard Médico
+- **Agenda de consultas del día**
+- **Pacientes recurrentes y urgentes**  
+- **Alertas médicas y notificaciones**
+- **Métricas de práctica médica**
+
+### Consulta Médica
+```typescript
+// ✅ CORRECTO - Específico del flujo de consulta médica
+export function MedicalConsultation() {
+  const { patient, history, vitals } = useConsultation();
+  
+  return (
+    <div>
+      <PatientSummary patient={patient} /> {/* De @altamedica/medical-components */}
+      <VitalSigns data={vitals} />
+      <MedicalHistory history={history} />
+      <DiagnosisInterface />  {/* Específico del doctor */}
+    </div>
+  );
+}
+```
+
+### Telemedicina para Doctores
+```typescript
+// ✅ CORRECTO - WebRTC específico para el rol de doctor
+export function DoctorTelemedicineConsole() {
+  const { 
+    patientConnection, 
+    medicalTools, 
+    consultationNotes 
+  } = useDoctorTelemedicine();
+  
+  return (
+    <div>
+      <VideoConsultation connection={patientConnection} />
+      <MedicalToolsPanel tools={medicalTools} />
+      <ConsultationNotes notes={consultationNotes} />
+    </div>
+  );
+}
+```
+
+## 🔗 **Dependencies Médicas Principales**
+
+```json
+{
+  "@altamedica/hooks": "workspace:*",
+  "@altamedica/medical-components": "workspace:*", 
+  "@altamedica/medical-utils": "workspace:*",
+  "@altamedica/medical-types": "workspace:*",
+  "@altamedica/medical-fhir": "workspace:*",
+  "@altamedica/telemedicine-core": "workspace:*"
+}
+```
+
+## 📊 **Funcionalidades Médicas Principales**
+
+### Gestión de Pacientes
+- **Expedientes médicos electrónicos (EMR)**
+- **Historial clínico completo**
+- **Alertas de medicamentos y alergias**
+- **Seguimiento de tratamientos**
+
+### Diagnóstico y Prescripción
+```typescript
+// ✅ CORRECTO - Herramientas diagnósticas para doctores
+export function DiagnosticWorkflow() {
+  const { 
+    symptoms, 
+    differentialDiagnosis, 
+    recommendedTests 
+  } = useDiagnosticAI();
+  
+  return (
+    <div>
+      <SymptomChecker symptoms={symptoms} />
+      <DiagnosisAssistant suggestions={differentialDiagnosis} />
+      <TestRecommendations tests={recommendedTests} />
+    </div>
+  );
+}
+```
+
+### Prescripción Digital
+```typescript
+// ✅ CORRECTO - Sistema de prescripción para doctores
+export function DigitalPrescription() {
+  const { 
+    medicationDatabase, 
+    dosageCalculator, 
+    interactions 
+  } = usePrescriptionTools();
+  
+  return (
+    <div>
+      <MedicationSearch database={medicationDatabase} />
+      <DosageCalculator calculator={dosageCalculator} />
+      <InteractionWarnings warnings={interactions} />
+    </div>
+  );
+}
+```
+
+## 🛡️ **Seguridad y Compliance HIPAA**
+
+### Autenticación Médica
+```typescript
+// ✅ CORRECTO - Auth médico con validación de licencia
+import { useAuth, requireMedicalLicense } from '@altamedica/auth';
+
+export const DoctorDashboard = requireMedicalLicense()(
+  function DoctorDashboard() {
+    const { doctor, patients, schedule } = useAuth();
+    
+    return <MedicalDashboard doctor={doctor} />;
+  }
+);
+```
+
+### Manejo de PHI (Protected Health Information)
+```typescript
+// ✅ CORRECTO - Manejo seguro de datos médicos
+import { encryptPHI, auditLog } from '@altamedica/medical-security';
+
+export function useSecureMedicalData() {
+  const accessPatientData = async (patientId: string) => {
+    // Audit log obligatorio
+    await auditLog('patient_data_access', { 
+      doctorId, 
+      patientId, 
+      timestamp: new Date() 
+    });
+    
+    // Datos encriptados por defecto
+    const data = await encryptPHI.decrypt(patientData);
+    return data;
+  };
+}
+```
+
+## 🩺 **Herramientas Médicas Específicas**
+
+### Calculadoras Médicas
+```typescript
+// ✅ CORRECTO - Usar calculadoras centralizadas
+import { 
+  calculateBMI, 
+  calculateGFR, 
+  calculateCardiacRisk 
+} from '@altamedica/medical-utils';
+
+export function MedicalCalculators() {
+  return (
+    <div>
+      <BMICalculator calculator={calculateBMI} />
+      <GFRCalculator calculator={calculateGFR} />
+      <CardiacRiskAssessment calculator={calculateCardiacRisk} />
+    </div>
+  );
+}
+```
+
+### Integración FHIR
+```typescript
+// ✅ CORRECTO - Usar FHIR centralizado
+import { validateFHIR, convertToFHIR } from '@altamedica/medical-fhir';
+
+export function FHIRIntegration() {
+  const exportPatientData = (patient: Patient) => {
+    const fhirData = convertToFHIR(patient, 'Patient');
+    const validation = validateFHIR(fhirData);
+    
+    if (validation.valid) {
+      return fhirData;
+    }
+    
+    throw new Error('Invalid FHIR data');
+  };
+}
+```
+
+## 🎨 **UI/UX Específica Médica**
+
+### Tema Médico
+```typescript
+// ✅ CORRECTO - Tema específico para doctores
+export const medicalTheme = {
+  colors: {
+    primary: '#0369a1',      // Azul médico
+    secondary: '#059669',    // Verde salud
+    emergency: '#dc2626',    // Rojo emergencia
+    warning: '#d97706'       // Naranja precaución
+  },
+  medical: {
+    urgent: '#ef4444',
+    normal: '#10b981',
+    follow_up: '#f59e0b'
+  }
+};
+```
+
+### Layouts Médicos
+```typescript
+// ✅ CORRECTO - Layout específico para consulta médica
+export function ConsultationLayout({ children }) {
+  return (
+    <MedicalLayout> {/* De @altamedica/medical-components */}
+      <DoctorSidebar />
+      <PatientInfoHeader />
+      <main>{children}</main>
+      <MedicalFooter />
+    </MedicalLayout>
+  );
+}
+```
+
+## 🚨 **Code Review Checklist Médico**
+
+### ❌ **Rechazar PR si:**
+- Implementa hooks médicos que ya existen
+- Duplica componentes de @altamedica/medical-components
+- Crea cálculos médicos que ya existen en @altamedica/medical-utils
+- No sigue estándares HIPAA de seguridad
+- No justifica por qué algo es específico del doctor
+
+### ✅ **Aprobar PR si:**
+- Usa packages médicos centralizados
+- Solo contiene lógica específica del flujo médico
+- Cumple con estándares HIPAA
+- Incluye audit logs apropiados
+- Está bien documentado médicamente
+
+## 📈 **Performance y Escalabilidad Médica**
+
+### Lazy Loading de Componentes Médicos
+```typescript
+// ✅ CORRECTO - Lazy loading para mejor UX médica
+const PatientHistory = lazy(() => import('./components/PatientHistory'));
+const DiagnosticTools = lazy(() => import('./components/DiagnosticTools'));
+const TelemedicineConsole = lazy(() => import('./components/TelemedicineConsole'));
+```
+
+### Cache de Datos Médicos Seguros
+```typescript
+// ✅ CORRECTO - Cache médico con TTL corto por seguridad
+export function useMedicalCache() {
+  const cacheOptions = {
+    ttl: 300000, // 5 minutos máximo para datos médicos
+    encryption: true,
+    auditLog: true
+  };
+  
+  // Cache específico para datos médicos sensibles
+}
+```
+
+## 🧪 **Testing Médico**
+
+### Tests Específicos Médicos
 ```bash
-# Desarrollo
-.env.local
+# Tests unitarios médicos
+pnpm test:medical
 
-# Staging
-.env.staging
+# Tests de compliance HIPAA
+pnpm test:hipaa
 
-# Producción
-.env.production
+# Tests E2E de flujos médicos
+pnpm test:e2e:medical
 ```
 
-## 📋 Checklist de Cumplimiento
-
-### HIPAA Compliance ✅
-
-- [x] Cifrado de datos en reposo y tránsito
-- [x] Control de acceso basado en roles
-- [x] Auditoría completa de accesos
-- [x] Gestión segura de sesiones
-- [x] Backup y recuperación de datos
-- [x] Capacitación del personal médico
-
-### GDPR Compliance ✅
-
-- [x] Consentimiento explícito del paciente
-- [x] Derecho al olvido (eliminación de datos)
-- [x] Portabilidad de datos médicos
-- [x] Notificación de brechas de seguridad
-- [x] Designación de DPO (Data Protection Officer)
-- [x] Privacy by Design
-
-## 🔄 Actualizaciones y Mantenimiento
-
-### Versionado Semántico
-
-```
-v2.0.0 - Release principal con nuevas funcionalidades
-v2.0.1 - Patch de seguridad
-v2.1.0 - Minor con nuevas características
+### Cypress Tests Médicos
+```typescript
+// ✅ Tests específicos del flujo médico
+describe('Medical Consultation Workflow', () => {
+  it('should handle complete patient consultation', () => {
+    // Test del flujo completo de consulta
+  });
+  
+  it('should validate prescription workflow', () => {
+    // Test del flujo de prescripción digital
+  });
+  
+  it('should ensure HIPAA compliance in data handling', () => {
+    // Test de compliance médico
+  });
+});
 ```
 
-### Logs de Actualización
+## 📋 **Compliance y Regulaciones**
 
-```bash
-# Ver changelog
-cat CHANGELOG.md
+### HIPAA Compliance
+- **Audit logs** obligatorios para acceso a PHI
+- **Encryption** de datos médicos en reposo y tránsito
+- **Access controls** basados en roles médicos
+- **Data retention** según regulaciones médicas
 
-# Verificar vulnerabilidades
-npm audit
-
-# Actualizar dependencias
-npm run update-deps
-```
-
-## 🆘 Soporte y Documentación
-
-### Recursos de Ayuda
-
-- 📖 **Documentación**: `/docs`
-- 🎥 **Tutoriales**: `/training`
-- 📞 **Soporte 24/7**: support@altamedica.com
-- 🐛 **Reportar Bugs**: GitHub Issues
-
-### Contacto de Emergencia
-
-```
-🚨 Emergencias del Sistema: +1 (555) 123-4567
-📧 Soporte Técnico: support@altamedica.com
-💬 Chat en Vivo: https://altamedica.com/support
-```
-
-## 📄 Licencia
-
-Este proyecto es **software propietario** de ALTAMEDICA. 
-
-Todos los derechos reservados. El uso, modificación o distribución requiere autorización explícita.
+### FDA Guidelines
+- **Medical device software** classification si aplica
+- **Clinical validation** para herramientas diagnósticas
+- **Risk management** para funcionalidades médicas críticas
 
 ---
 
-<div align="center">
+## 🎯 **RECUERDA:**
+> **"MÉDICO PRIMERO, CÓDIGO DESPUÉS"**
+> 
+> La seguridad del paciente y el compliance médico son prioritarios sobre cualquier consideración técnica.
 
-**ALTAMEDICA** - *Transformando la atención médica con tecnología segura*
+## 📞 **Soporte Médico**
 
-🏥 [Website](https://altamedica.com) • 📧 [Contact](mailto:info@altamedica.com) • 🐛 [Issues](https://github.com/altamedica/doctors-app/issues)
-
-</div>
+- **Medical Documentation:** `../../packages/medical-*/README.md`
+- **HIPAA Guidelines:** Documentación de compliance
+- **Medical Issues:** Canal médico específico
+- **Emergency Support:** 24/7 para issues críticos médicos

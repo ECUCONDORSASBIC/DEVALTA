@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode, useMemo } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@altamedica/utils'
 
 // Types
 export interface WizardStep {

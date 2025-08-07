@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '@altamedica/ui';
+import { Button } from '@altamedica/ui';
+import { Badge } from '@altamedica/ui';
+import { Progress } from '@altamedica/ui';
 import { 
   Settings, 
   Zap, 
@@ -21,7 +21,7 @@ import {
   WifiOff,
   WifiIcon
 } from 'lucide-react';
-import { useAutoOptimizer, NetworkMetrics } from '@/services/AutoOptimizer';
+import { useAutoOptimizer, NetworkMetrics } from '../services/AutoOptimizer';
 
 interface AutoOptimizationPanelProps {
   isOpen: boolean;

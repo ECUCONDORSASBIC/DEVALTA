@@ -2,10 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+// Importación desde @altamedica/ui centralizado
+import {
+  CardCorporate as Card,
+  CardContentCorporate as CardContent,
+  CardHeaderCorporate as CardHeader,
+  ButtonCorporate as Button,
+  StatusBadge as Badge,
+  Separator
+} from '@altamedica/ui';
+
+// Componente simple para CardTitle
+const CardTitle = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <h3 className={`text-lg font-semibold ${className}`}>{children}</h3>
+);
 import { 
   CheckCircle, 
   FileText, 

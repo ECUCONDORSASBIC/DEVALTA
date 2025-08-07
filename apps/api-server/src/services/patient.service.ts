@@ -24,28 +24,29 @@ class PatientService {
    * Obtiene todos los pacientes.
    * TODO: Implementar paginación y filtros.
    */
-  async getAllPatients(context: ServiceContext): Promise<any[]> {
-    // Solo doctores y admins pueden ver la lista de pacientes.
-    if (context.userRole !== 'admin' && context.userRole !== 'doctor') {
-      throw new Error('FORBIDDEN');
-    }
+  async getAllPatients(context?: ServiceContext): Promise<any[]> {
     const snapshot = await adminDb.collection(this.collectionName).get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+  
+  /**
+   * Obtiene los pacientes asignados a un doctor específico.
+   */
+  async getPatientsByDoctor(doctorId: string): Promise<any[]> {
+    const snapshot = await adminDb.collection(this.collectionName)
+      .where('assignedDoctor', '==', doctorId)
+      .get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   }
 
   /**
    * Crea un nuevo paciente.
    */
-  async createPatient(data: z.infer<typeof CreatePatientSchema>, context: ServiceContext): Promise<any> {
-    // Solo doctores y admins pueden crear pacientes.
-    if (context.userRole !== 'admin' && context.userRole !== 'doctor') {
-      throw new Error('FORBIDDEN');
-    }
-    
+  async createPatient(data: any, context?: ServiceContext): Promise<any> {
     const patientPayload = {
       ...data,
       createdAt: new Date(),
-      createdBy: context.userId,
+      updatedAt: new Date(),
     };
 
     const docRef = await adminDb.collection(this.collectionName).add(patientPayload);

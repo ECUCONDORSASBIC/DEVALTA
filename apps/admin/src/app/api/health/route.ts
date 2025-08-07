@@ -1,4 +1,4 @@
-// @ts-nocheck
+// Health check endpoint
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';

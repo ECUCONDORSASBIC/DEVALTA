@@ -2,56 +2,61 @@
 // Biblioteca completa de componentes con design system aplicado
 // CONSERVADOR: Preserva componentes originales, agrega versiones corporativas
 
-// 🔘 Componentes Base Corporativos
-export { default as ButtonCorporate } from './ButtonCorporate';
-export { default as CardCorporate, CardHeaderCorporate, CardContentCorporate, CardFooterCorporate } from './CardCorporate';
+// Importar tipos necesarios desde @altamedica/ui
+import type { AppointmentData, MedicalRecordData } from '@altamedica/ui';
 
-// 🏥 Componentes Médicos Especializados
-export { default as AppointmentCard } from './AppointmentCard';
-export { default as MedicalRecordCard } from './MedicalRecordCard';
+// ⚠️ COMPONENTES MIGRADOS A @altamedica/ui
+// Los siguientes componentes han sido centralizados:
+// - ButtonCorporate → @altamedica/ui (corporate)
+// - CardCorporate → @altamedica/ui (corporate)
+// - AppointmentCard → @altamedica/ui (medical)
+// - HealthMetricCard → @altamedica/ui (medical)
+// - StatusBadge → @altamedica/ui (medical)
+// - LoadingSpinner → @altamedica/ui (base)
 
-// 📊 Componentes UI Mejorados (preservando originales para compatibilidad)
-export { LoadingSpinner } from './LoadingSpinner';
-export { SearchFilter } from './SearchFilter';
-export { StatusBadge } from './StatusBadge';
+// ⚠️ COMPONENTES MIGRADOS A @altamedica/ui PACKAGES
+// Los siguientes componentes están ahora centralizados:
+// - SearchFilter → @altamedica/ui/forms
+// - FormLabel → @altamedica/ui/forms  
+// - FormError → @altamedica/ui/forms
+// - FormGroup → @altamedica/ui/forms
 
-// 📝 Componentes de Formulario - Nuevos
-export { FormLabel } from './FormLabel';
-export { FormError } from './FormError';
-export { InputCorporate } from './InputCorporate';
-export { FormGroup, FormGroupCompact, FormGroupHorizontal } from './FormGroup';
+// 📦 RE-EXPORTACIÓN DE COMPONENTES CENTRALIZADOS
+export { 
+  SearchFilter, 
+  SearchFilterCompact, 
+  SearchFilterExpanded 
+} from '@altamedica/ui/forms';
 
-// 📝 Tipos y interfaces corporativas
-export type { 
-  ButtonVariant, 
-  ButtonSize, 
-  ButtonCorporateProps 
-} from './ButtonCorporate';
+export { 
+  FormLabel, 
+  FormLabelCompact, 
+  FormLabelLarge 
+} from '@altamedica/ui/forms';
 
-export type { 
-  CardVariant, 
-  CardSize, 
-  CardCorporateProps,
-  CardHeaderProps,
-  CardContentProps,
-  CardFooterProps 
-} from './CardCorporate';
+export { 
+  FormError 
+} from '@altamedica/ui/forms';
 
-export type { 
-  AppointmentType,
-  AppointmentStatus,
-  AppointmentData,
-  AppointmentCardProps 
-} from './AppointmentCard';
+export { 
+  FormGroup, 
+  FormGroupCompact, 
+  FormGroupHorizontal 
+} from '@altamedica/ui/forms';
 
-export type { 
-  MedicalRecordType,
-  Priority,
-  MedicalRecordData,
-  MedicalRecordCardProps 
-} from './MedicalRecordCard';
+// 📝 Tipos y interfaces locales (disponibles en @altamedica/ui)
+// export type { 
+//   MedicalRecordType,
+//   Priority,
+//   MedicalRecordData,
+//   MedicalRecordCardProps 
+// } from '@altamedica/ui';
 
-export type { StatusType } from './StatusBadge';
+// ⚠️ NOTA: Los tipos de componentes migrados están disponibles en @altamedica/ui:
+// - ButtonCorporateProps, ButtonVariant, ButtonSize → @altamedica/ui
+// - CardCorporateProps, CardVariant, CardSize → @altamedica/ui
+// - AppointmentCardProps, AppointmentData, AppointmentType → @altamedica/ui
+// - StatusType → @altamedica/ui
 
 // 🎯 BIBLIOTECA DE DATOS MOCK PARA DESARROLLO
 export const MOCK_APPOINTMENT: AppointmentData = {
@@ -187,16 +192,8 @@ export const UI_THEME_CONFIG = {
 };
 
 export default {
-  // Componentes corporativos (recomendados)
-  ButtonCorporate,
-  CardCorporate,
-  AppointmentCard,
-  MedicalRecordCard,
-  
-  // Componentes originales (compatibilidad)
-  LoadingSpinner,
+  // Componentes locales restantes
   SearchFilter,
-  StatusBadge,
   
   // Datos mock para desarrollo
   MOCK_APPOINTMENT,
@@ -207,3 +204,7 @@ export default {
   // Configuración
   UI_THEME_CONFIG
 };
+
+// ⚠️ MIGRACIÓN COMPLETADA:
+// Para usar componentes centralizados, importar desde @altamedica/ui:
+// import { ButtonCorporate, CardCorporate, AppointmentCard, HealthMetricCard, StatusBadge, LoadingSpinner } from '@altamedica/ui';

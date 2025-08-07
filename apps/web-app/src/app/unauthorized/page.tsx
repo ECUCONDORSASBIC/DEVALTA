@@ -9,7 +9,7 @@ const UnauthorizedPage = () => {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-neutral-50 to-orange-50 flex items-center justify-center px-6">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
           <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">

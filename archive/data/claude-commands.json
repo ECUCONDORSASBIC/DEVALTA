@@ -1,0 +1,18 @@
+{
+  "claude_hipaa": {
+    "description": "Analyze code for HIPAA compliance using Claude",
+    "command": "callClaude('Analyze this codebase for HIPAA compliance: ${input}', 'hipaa')"
+  },
+  "claude_webrtc": {
+    "description": "Optimize WebRTC for medical telemedicine using Claude",
+    "command": "callClaude('Optimize this WebRTC code for medical telemedicine: ${input}', 'webrtc')"
+  },
+  "claude_medical": {
+    "description": "Review medical workflow with Claude expertise",
+    "command": "callClaude('Review this medical workflow: ${input}', 'medical')"
+  },
+  "claude_architecture": {
+    "description": "Analyze architecture patterns with Claude",
+    "command": "callClaude('Analyze this architecture for medical compliance: ${input}', 'architecture')"
+  }
+}

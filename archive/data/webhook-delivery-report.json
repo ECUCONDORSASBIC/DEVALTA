@@ -1,0 +1,69 @@
+{
+  "timestamp": "2025-08-02T04:15:57.073Z",
+  "totalNotifications": 9,
+  "byChannel": {
+    "slack": 3,
+    "teams": 3,
+    "email": 3
+  },
+  "successful": 0,
+  "failed": 0,
+  "skipped": 9,
+  "averageResponseTime": 0,
+  "deliveryLog": [
+    {
+      "type": "slack",
+      "status": "SKIPPED",
+      "reason": "No webhook URL configured",
+      "timestamp": "2025-08-02T04:15:56.769Z"
+    },
+    {
+      "type": "teams",
+      "status": "SKIPPED",
+      "reason": "No webhook URL configured",
+      "timestamp": "2025-08-02T04:15:56.769Z"
+    },
+    {
+      "type": "email",
+      "status": "SKIPPED",
+      "reason": "No webhook URL configured",
+      "timestamp": "2025-08-02T04:15:56.770Z"
+    },
+    {
+      "type": "slack",
+      "status": "SKIPPED",
+      "reason": "No webhook URL configured",
+      "timestamp": "2025-08-02T04:15:56.871Z"
+    },
+    {
+      "type": "teams",
+      "status": "SKIPPED",
+      "reason": "No webhook URL configured",
+      "timestamp": "2025-08-02T04:15:56.871Z"
+    },
+    {
+      "type": "email",
+      "status": "SKIPPED",
+      "reason": "No webhook URL configured",
+      "timestamp": "2025-08-02T04:15:56.871Z"
+    },
+    {
+      "type": "slack",
+      "status": "SKIPPED",
+      "reason": "No webhook URL configured",
+      "timestamp": "2025-08-02T04:15:56.972Z"
+    },
+    {
+      "type": "teams",
+      "status": "SKIPPED",
+      "reason": "No webhook URL configured",
+      "timestamp": "2025-08-02T04:15:56.972Z"
+    },
+    {
+      "type": "email",
+      "status": "SKIPPED",
+      "reason": "No webhook URL configured",
+      "timestamp": "2025-08-02T04:15:56.973Z"
+    }
+  ]
+}

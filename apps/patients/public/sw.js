@@ -19,7 +19,8 @@ const TELEMEDICINE_ROUTES = [
   '/telemedicine',
   '/api/telemedicine',
   '/api/telemedicine/stats',
-  '/api/telemedicine/sessions'
+  '/api/telemedicine/sessions',
+  '/ai-diagnosis'
 ];
 
 // Estrategias de cache

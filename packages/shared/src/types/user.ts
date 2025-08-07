@@ -1,42 +1,66 @@
-/**
- * Tipos de usuario y estructuras base para el sistema de autenticación
- * ALTAMEDICA - Sistema Unificado de Autenticación
- */
-
-export type UserType = 'patient' | 'doctor' | 'company' | 'admin';
-
-export type UserStatus = 'active' | 'inactive' | 'suspended' | 'pending';
+import { UserRole } from './roles';
 
 export interface User {
   uid: string;
   email: string;
+  displayName?: string;
+  photoURL?: string;
+  role: UserRole;
   emailVerified: boolean;
+  phoneNumber?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  
+  // Profile specific fields
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: Date;
+  gender?: 'male' | 'female' | 'other';
+  
+  // Medical specific fields (for doctors)
+  medicalLicense?: string;
+  specialties?: string[];
+  hospitalAffiliations?: string[];
+  
+  // Company specific fields (for company admins)
+  companyId?: string;
+  companyName?: string;
+  department?: string;
+  
+  // Settings
+  preferences?: {
+    language: string;
+    timezone: string;
+    notifications: {
+      email: boolean;
+      sms: boolean;
+      push: boolean;
+    };
+  };
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  role: UserRole | null;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData extends LoginCredentials {
   firstName: string;
   lastName: string;
-  phone?: string;
-  profilePicture?: string;
-  userType: UserType;
-  status: UserStatus;
-  createdAt: Date;
-  lastLogin?: Date;
-  twoFactorEnabled: boolean;
-  
-  // Campos específicos por tipo de usuario
-  companyId?: string;
-  departmentId?: string;
-  specialtyId?: string;
-  licenseNumber?: string;
+  role: UserRole;
+  phoneNumber?: string;
 }
 
-export interface CustomClaims {
-  userType: UserType;
-  permissions: string[];
-  roles: string[];
-  appAccess: string[];
-  companyId?: string;
-  departmentId?: string;
-}
-
-export interface AuthUser extends User {
-  customClaims: CustomClaims;
+export interface AuthResponse {
+  user: User;
+  token: string;
+  refreshToken?: string;
+  expiresIn: number;
 }

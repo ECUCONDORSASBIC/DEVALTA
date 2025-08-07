@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { roleRedirectMiddleware } from '@/middleware/role-redirect';
-import { getDashboardUrl } from '@/config/app-urls';
+import { roleRedirectMiddleware } from '../middleware/role-redirect';
+import { getDashboardUrl } from '../config/app-urls';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

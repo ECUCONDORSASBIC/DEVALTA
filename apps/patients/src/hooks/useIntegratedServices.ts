@@ -3,19 +3,27 @@
  * Proporciona acceso unificado a todos los servicios del backend dockerizado
  */
 
-// Hooks de Pacientes
+// Hooks de Pacientes - MIGRADO A CENTRALIZED
 export {
   usePatients,
-  usePatientsSimple,
   usePatient,
-  usePatientProfile,
-  usePatientSearch,
-  usePatientsStats,
   useCreatePatient,
   useUpdatePatient,
   useDeletePatient,
-  usePatientMedicalRecords,
   usePatientAppointments,
+  usePatientMedicalHistory,
+  usePatientPrescriptions,
+  usePatientDocuments,
+  useUploadPatientDocument
+} from '@altamedica/hooks';
+
+// Hooks locales que aún no están centralizados
+export {
+  usePatientsSimple,
+  usePatientProfile,
+  usePatientSearch,
+  usePatientsStats,
+  usePatientMedicalRecords,
   useUpcomingAppointments,
   useUpdateCommunicationPreferences,
   usePatientsManager,
@@ -23,10 +31,21 @@ export {
   patientsQueryKeys,
 } from './usePatientsIntegrated';
 
-// Hooks de Citas
+// Hooks de Citas - MIGRADO A CENTRALIZED
 export {
   useAppointments,
   useAppointment,
+  useCreateAppointment,
+  useUpdateAppointment,
+  useCancelAppointment,
+  useConfirmAppointment,
+  useRescheduleAppointment,
+  useAvailableSlots,
+  useCompleteAppointment
+} from '@altamedica/hooks';
+
+// Hooks locales que aún no están centralizados
+export {
   useUpcomingAppointments as useUpcomingAppointmentsFromService,
   useAppointmentHistory,
   useAppointmentStats,
@@ -34,11 +53,6 @@ export {
   useDoctor,
   useDoctorAvailability,
   useDoctorSearch,
-  useCreateAppointment,
-  useUpdateAppointment,
-  useCancelAppointment,
-  useConfirmAppointment,
-  useRescheduleAppointment,
   useStartVideoSession,
   useAppointmentsManager,
   appointmentsQueryKeys,
@@ -210,17 +224,16 @@ export function useIntegratedDashboard(patientId?: string) {
 
 /**
  * Hook para validar conectividad con el backend
+ * MIGRADO: Ahora usa @altamedica/api-client
  */
 export function useBackendConnectivity() {
-  const { apiClient } = require('../services/api-client');
+  const { useApiClient } = require('@altamedica/api-client');
+  const apiClient = useApiClient();
   
   const healthCheck = useQuery({
     queryKey: ['backend', 'health'],
     queryFn: async () => {
-      const response = await apiClient.checkHealth();
-      if (!response.success) {
-        throw new Error(response.error || 'Backend no disponible');
-      }
+      const response = await apiClient.get('/health');
       return response.data;
     },
     staleTime: 30 * 1000, // 30 segundos
@@ -232,10 +245,7 @@ export function useBackendConnectivity() {
   const serverStatus = useQuery({
     queryKey: ['backend', 'status'],
     queryFn: async () => {
-      const response = await apiClient.getServerStatus();
-      if (!response.success) {
-        throw new Error(response.error || 'No se pudo obtener estado del servidor');
-      }
+      const response = await apiClient.get('/metrics');
       return response.data;
     },
     staleTime: 2 * 60 * 1000, // 2 minutos
@@ -258,4 +268,4 @@ export function useBackendConnectivity() {
 }
 
 // Re-exportar funciones de query caching para uso avanzado
-export { useQueryClient } from '@tanstack/react-query';
+export { useQueryClient } from '@altamedica/hooks';

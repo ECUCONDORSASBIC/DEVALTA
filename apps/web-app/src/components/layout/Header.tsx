@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Menu, X, User, LogIn, UserPlus, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@altamedica/utils';
 
 interface HeaderProps {
   transparent?: boolean;

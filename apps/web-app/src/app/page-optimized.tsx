@@ -1,23 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import dynamic from 'next/dynamic';
-import "leaflet/dist/leaflet.css";
 import type { LatLngTuple } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import dynamic from 'next/dynamic';
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Importación dinámica para evitar problemas de SSR con Leaflet
-const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), {
-  ssr: false,
-});
-const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), {
-  ssr: false,
-});
-const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), {
-  ssr: false,
-});
-const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), {
-  ssr: false,
-});
+const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
 
 // Tipos específicos para el marketplace
 interface MarketplaceDoctor {
@@ -65,13 +57,19 @@ interface MarketplaceCompany {
   jobs?: any[];
 }
 
+// Props para el componente del mapa
 interface MarketplaceMapProps {
   doctors: MarketplaceDoctor[];
-  companies?: MarketplaceCompany[];
+  companies: MarketplaceCompany[];
   center?: LatLngTuple;
   showDoctors?: boolean;
   showCompanies?: boolean;
   mode?: 'hiring' | 'networking' | 'discovery';
+}
+
+// Props para la página de Next.js
+interface PageProps {
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 // Componente para marcadores personalizados
@@ -229,13 +227,13 @@ const CustomMarker: React.FC<{
   );
 };
 
-export default function MarketplaceMapDemo({
+// Componente del mapa renombrado
+function MarketplaceMap({
   doctors,
-  companies = [],
+  companies,
   center,
   showDoctors = true,
   showCompanies = true,
-  mode = 'hiring'
 }: MarketplaceMapProps) {
   const mapRef = useRef<any>(null);
   const [mapInitialized, setMapInitialized] = useState(false);
@@ -244,7 +242,7 @@ export default function MarketplaceMapDemo({
   const [selectedDoctor, setSelectedDoctor] = useState<MarketplaceDoctor | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<MarketplaceCompany | null>(null);
 
-  // Fix Leaflet default icons for SSR y evitar re-inicialización
+  // Fix Leaflet default icons
   useEffect(() => {
     if (typeof window !== 'undefined' && !mapInitialized) {
       const L = (window as any).L;
@@ -260,19 +258,16 @@ export default function MarketplaceMapDemo({
     }
   }, [mapInitialized]);
 
-  // Manejar selección de doctor
   const handleDoctorSelect = useCallback((doctor: MarketplaceDoctor) => {
     setSelectedDoctor(doctor);
     setSelectedCompany(null);
   }, []);
 
-  // Manejar selección de empresa
   const handleCompanySelect = useCallback((company: MarketplaceCompany) => {
     setSelectedCompany(company);
     setSelectedDoctor(null);
   }, []);
 
-  // Cleanup effect para evitar memory leaks
   useEffect(() => {
     return () => {
       if (mapRef.current) {
@@ -298,7 +293,6 @@ export default function MarketplaceMapDemo({
 
   return (
     <div className="relative h-full">
-      {/* Mapa de Leaflet */}
       <MapContainer
         key={`map-${mapInitialized}`}
         center={mapCenter}
@@ -312,7 +306,6 @@ export default function MarketplaceMapDemo({
           url='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
         />
         
-        {/* Renderizar doctores */}
         {showDoctors && doctors.map((doctor) => (
           <CustomMarker
             key={doctor.id}
@@ -324,7 +317,6 @@ export default function MarketplaceMapDemo({
           />
         ))}
         
-        {/* Renderizar empresas */}
         {showCompanies && companies.map((company) => (
           <CustomMarker
             key={company.id}
@@ -337,7 +329,6 @@ export default function MarketplaceMapDemo({
         ))}
       </MapContainer>
 
-      {/* Overlay de información */}
       <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-3 max-w-xs">
         <p className="text-xs text-gray-600 mb-2">
           <strong>Demo Interactiva</strong> - Explora el marketplace médico
@@ -358,5 +349,28 @@ export default function MarketplaceMapDemo({
         </div>
       </div>
     </div>
+  );
+}
+
+// Nuevo componente de página de exportación por defecto
+export default function OptimizedHomepage({ searchParams }: PageProps) {
+  // Los datos de demostración se definen aquí para que el componente del mapa sea puro
+  const mockDoctors: MarketplaceDoctor[] = [
+    { id: 'doc1', name: 'Dr. Elena Rodriguez', specialties: ['Cardiología'], location: { city: 'Buenos Aires', country: 'Argentina', coordinates: [-34.6037, -58.3816] }, rating: 4.9, experience: 15, hourlyRate: 120, availableForHiring: true, responseTime: 2, totalHires: 50, isUrgentAvailable: true, isOnline: true, lastActive: 'now', workArrangement: 'remote', languages: ['Español', 'Inglés'], verificationStatus: 'verified' },
+    { id: 'doc2', name: 'Dr. João Silva', specialties: ['Neurología', 'Pediatría'], location: { city: 'São Paulo', country: 'Brasil', coordinates: [-23.5505, -46.6333] }, rating: 4.8, experience: 10, hourlyRate: 100, availableForHiring: true, responseTime: 4, totalHires: 35, isUrgentAvailable: false, isOnline: true, lastActive: '5m ago', workArrangement: 'hybrid', languages: ['Portugués', 'Inglés'], verificationStatus: 'verified' },
+    { id: 'doc3', name: 'Dr. Sofia Martinez', specialties: ['Dermatología'], location: { city: 'Ciudad de México', country: 'México', coordinates: [19.4326, -99.1332] }, rating: 4.9, experience: 8, hourlyRate: 90, availableForHiring: false, responseTime: 24, totalHires: 60, isUrgentAvailable: false, isOnline: false, lastActive: '2h ago', workArrangement: 'on_site', languages: ['Español'], verificationStatus: 'pending' },
+    { id: 'doc4', name: 'Dr. Carlos Gomez', specialties: ['Oncología'], location: { city: 'Bogotá', country: 'Colombia', coordinates: [4.7110, -74.0721] }, rating: 5.0, experience: 20, hourlyRate: 150, availableForHiring: true, responseTime: 1, totalHires: 42, isUrgentAvailable: true, isOnline: false, lastActive: '1d ago', workArrangement: 'flexible', languages: ['Español', 'Inglés'], verificationStatus: 'verified' },
+  ];
+
+  const mockCompanies: MarketplaceCompany[] = [
+      { id: 'comp1', name: 'Hospital Central de Lima', industry: 'Salud', location: { city: 'Lima', country: 'Perú', coordinates: [-12.0464, -77.0428] }, rating: 4.7, size: '1000+', activeJobs: 15, urgentJobs: 3, isActivelyHiring: true, averageResponseTime: 48, totalHires: 200, companyType: 'hospital' },
+      { id: 'comp2', name: 'Clínica Andes Salud', industry: 'Atención Médica', location: { city: 'Santiago', country: 'Chile', coordinates: [-33.4489, -70.6693] }, rating: 4.8, size: '501-1000', activeJobs: 8, urgentJobs: 1, isActivelyHiring: true, averageResponseTime: 24, totalHires: 150, companyType: 'clinic' },
+  ];
+
+  return (
+    <MarketplaceMap 
+      doctors={mockDoctors}
+      companies={mockCompanies}
+    />
   );
 }

@@ -65,6 +65,12 @@ export const CORS_CONFIG = {
       'http://localhost:3005',     // admin
       'http://localhost:3006',     // medical
       'http://localhost:8888',     // signaling server
+      'http://altamedica.local:3000',     // web-app con dominio local
+      'http://altamedica.local:3001',     // api-server con dominio local
+      'http://altamedica.local:3002',     // doctors con dominio local
+      'http://altamedica.local:3003',     // patients con dominio local
+      'http://altamedica.local:3004',     // companies con dominio local
+      'http://altamedica.local:3005',     // admin con dominio local
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

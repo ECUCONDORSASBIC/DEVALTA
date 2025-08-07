@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { anamnesisService, AnamnesisData } from '../services/anamnesis-service';
-import { useAuth } from './useAuth';
+import { useAuth } from "@altamedica/auth';
 
 interface UseAnamnesisReturn {
   anamnesis: AnamnesisData | null;

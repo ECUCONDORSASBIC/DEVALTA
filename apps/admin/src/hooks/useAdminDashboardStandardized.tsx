@@ -3,27 +3,22 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { 
+import {
   // Importar iconos necesarios
-  Users, Calendar, Activity, Shield, Settings, BarChart3 
+  Users
 } from 'lucide-react';
+import React, { useState } from 'react';
 
 // Importar componentes estandarizados
-import { 
-  DashboardLayout, 
-  DashboardHeader, 
-  getDefaultSidebarItems 
+import {
+  DashboardLayout,
+  getDefaultSidebarItems
 } from '@altamedica/medical-components/components/DashboardLayout';
-import { 
-  KPICard, 
-  KPISection, 
-  MedicalDataTable 
+import {
+  KPISection
 } from '@altamedica/medical-components/components/DashboardStandard';
-import { 
-  MedicalButton, 
-  MedicalCard, 
-  MedicalBadge 
+import {
+  MedicalCard
 } from '@altamedica/medical-components/MedicalDesignSystem';
 
 // ============================================================================
@@ -31,7 +26,8 @@ import {
 // ============================================================================
 
 interface DashboardData {
-  // Definir tipos específicos del dashboard
+  /** Datos específicos del dashboard administrativo */
+  adminMetrics?: any[];
 }
 
 // ============================================================================

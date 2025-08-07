@@ -26,7 +26,7 @@ import {
   HelpCircle,
   Shield
 } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from "@altamedica/auth';
 
 // 📝 TIPOS DE NAVEGACIÓN
 interface NavigationItem {

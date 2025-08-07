@@ -3,9 +3,9 @@
  * Middlewares críticos de seguridad
  * Límite PROACTIVO: 250 líneas
  */
-import { NextRequest, NextResponse } from 'next/server'
-import rateLimit from './rate-limit'
-import { adminAuth } from '@/lib/firebase-admin'
+import { adminAuth } from '@/lib/firebase-admin';
+import { NextRequest, NextResponse } from 'next/server';
+import { rateLimit } from './rate-limit';
 
 // Headers de seguridad obligatorios
 const SECURITY_HEADERS = {
@@ -152,19 +152,7 @@ export async function authenticateRequest(request: NextRequest): Promise<{
     
     const token = authHeader.split(' ')[1]
     
-    // Para testing - permitir token de test
-    if (token === 'test-jwt-token-altamedica') {
-      return {
-        isAuthenticated: true,
-        user: {
-          uid: 'test-user-123',
-          email: 'test@altamedica.com',
-          role: 'doctor'
-        }
-      }
-    }
-    
-    // Verificar token con Firebase
+    // Verificar token con Firebase (REMOVED: hardcoded test token for security)
     try {
       const decodedToken = await adminAuth.verifyIdToken(token)
       return {

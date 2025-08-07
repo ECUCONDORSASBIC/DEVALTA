@@ -1,6 +1,6 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
-import { serverConfig } from '../config/server.config.js';
+
 
 /**
  * Firebase Service para Signaling Server

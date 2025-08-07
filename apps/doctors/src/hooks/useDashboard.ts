@@ -8,8 +8,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
-import { firebaseService } from '@/services/firebase-service';
-import { doctorService, DoctorStats, DoctorAppointment, DoctorPatient, DoctorAlert, DoctorActivity } from '@/services/doctor-service';
+import { firebaseService } from '@altamedica/database';
+import { doctorService, DoctorStats, DoctorAppointment, DoctorPatient, DoctorAlert, DoctorActivity } from '../services/doctor-service';
 
 // Usar tipos del servicio de doctores
 export type DashboardStats = DoctorStats;

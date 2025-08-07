@@ -8,7 +8,7 @@ import React, { useState, useCallback } from 'react';
 import PatientHeaderModular from './PatientHeaderModular';
 import PatientSidebarModular from './PatientSidebarModular';
 import PatientFooterModular from './PatientFooterModular';
-import { AuthProvider, ProtectedRoute } from '../../hooks/useAuth';
+import { AuthProvider } from "@altamedica/auth';
 import type { SidebarConfig } from './PatientSidebarModular';
 import type { FooterProps } from './PatientFooterModular';
 

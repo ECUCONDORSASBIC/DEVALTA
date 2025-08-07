@@ -13,9 +13,9 @@ const Medical3DCanvas = dynamic(() => import('./Medical3DCanvas'), {
 
 // Componente de loading simple
 const Demo3DLoading = () => (
-  <div className="w-full h-32 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center">
+  <div className="w-full h-32 bg-white rounded-lg flex items-center justify-center">
     <div className="text-center space-y-2">
-      <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-200 border-t-blue-600 mx-auto"></div>
+      <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-200 border-t-blue-600 mx-auto"></div>
       <p className="text-xs text-blue-600 font-medium">Cargando consulta...</p>
     </div>
   </div>
@@ -24,13 +24,9 @@ const Demo3DLoading = () => (
 // Solo doctor_male.glb - modelo único para simplificar
 
 // Componente principal del demo
-interface MedicalConsultation3DDemoProps {
-  height?: string;
-}
+interface MedicalConsultation3DDemoProps {}
 
-export default function MedicalConsultation3DDemo({ 
-  height = '140px' 
-}: MedicalConsultation3DDemoProps) {
+export default function MedicalConsultation3DDemo({}: MedicalConsultation3DDemoProps = {}) {
   const [step, setStep] = useState(0);
   
   // Estados de la simulación IA
@@ -55,46 +51,46 @@ export default function MedicalConsultation3DDemo({
   const Icon = currentStep.icon;
 
   return (
-    <div className="relative w-full bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg overflow-hidden flex" style={{ height }}>
-      {/* Doctor 3D - 50% izquierda con fondo negro */}
-      <div className="w-1/2 relative bg-black rounded-l-lg">
+    <div className="relative w-full bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+      {/* Doctor 3D - 100% del ancho con aspect-ratio responsivo */}
+      <div className="relative bg-gray-50 rounded-lg aspect-video">
         <NoSSR fallback={<Demo3DLoading />}>
-          <Medical3DCanvas height={height} />
+          <Medical3DCanvas />
         </NoSSR>
         
         {/* Indicador de IA sobre el doctor */}
-        <div className="absolute top-2 left-2">
-          <div className="bg-blue-600/90 text-white px-2 py-1 rounded-full text-xs font-semibold backdrop-blur-sm">
+        <div className="absolute top-3 left-3">
+          <div className="bg-blue-600/90 text-white px-3 py-1.5 rounded-full text-sm font-semibold backdrop-blur-sm shadow-lg">
             👨‍⚕️ IA Médica
           </div>
         </div>
 
         {/* Estado de simulación sobre el doctor */}
-        <div className="absolute bottom-2 left-2 right-2">
-          <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-sm">
-            <div className="flex items-center gap-2">
-              <Icon className="h-3 w-3 text-blue-600 animate-pulse" />
-              <span className="text-xs font-medium text-gray-700">{currentStep.text}</span>
+        <div className="absolute bottom-3 left-3 right-3">
+          <div className="bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-lg">
+            <div className="flex items-center gap-3">
+              <Icon className="h-4 w-4 text-blue-600 animate-pulse" />
+              <span className="text-sm font-medium text-gray-700">{currentStep.text}</span>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Texto explicativo - 50% derecha */}
-      <div className="w-1/2 p-4 flex flex-col justify-center">
-        <div className="space-y-3">
-          <h3 className="text-lg font-bold text-gray-800 leading-tight">
-            Consulta Médica Virtual
-          </h3>
-          
-          <div className="space-y-2 text-sm text-gray-700">
-            <p className="leading-relaxed">
-              <span className="font-semibold text-blue-600">IA analiza</span> tu historia clínica y anamnesis para recomendarte el <span className="font-semibold">especialista exacto</span> que necesitas, sin consultar médico general.
-            </p>
+        {/* Texto explicativo superpuesto en la esquina superior derecha */}
+        <div className="absolute top-3 right-3 max-w-xs">
+          <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+            <h3 className="text-lg font-bold text-gray-800 leading-tight mb-2">
+              Consulta Médica Virtual
+            </h3>
             
-            <div className="flex items-start gap-2 text-xs text-gray-600 bg-white/60 rounded-lg p-2">
-              <Brain className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-              <span><span className="font-medium">IA + Historial permanente:</span> Consultas recursivas y seguimiento continuo de tu salud</span>
+            <div className="space-y-2 text-sm text-gray-700">
+              <p className="leading-relaxed">
+                <span className="font-semibold text-blue-600">IA analiza</span> tu historia clínica y anamnesis para recomendarte el <span className="font-semibold">especialista exacto</span> que necesitas.
+              </p>
+              
+              <div className="flex items-start gap-2 text-xs text-gray-600 bg-blue-50 rounded-lg p-2">
+                <Brain className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                <span><span className="font-medium">IA + Historial permanente:</span> Seguimiento continuo de tu salud</span>
+              </div>
             </div>
           </div>
         </div>

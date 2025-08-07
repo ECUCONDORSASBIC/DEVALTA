@@ -11,7 +11,7 @@ export const AuthLoading: React.FC<AuthLoadingProps> = ({
   message = 'Verificando autenticación...' 
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-cyan-50 flex items-center justify-center">
       <div className="text-center">
         <div className="relative mb-8">
           <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto">

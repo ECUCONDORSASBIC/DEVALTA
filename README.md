@@ -1,25 +1,593 @@
-# 🏥 AltaMedica - Plataforma Médica Empresarial
+# 🏥 AltaMedica - Sistema de Telemedicina Profesional
 
-<div align="center">
+> **Sistema integral de telemedicina con WebRTC, IA médica y compliance HIPAA**
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue)](https://www.typescriptlang.org/)
-[![Firebase](https://img.shields.io/badge/Firebase-v10-orange)](https://firebase.google.com/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://www.docker.com/)
-[![HIPAA](https://img.shields.io/badge/HIPAA-Compliant-green)](https://www.hhs.gov/hipaa/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2020.0.0-brightgreen.svg)](https://nodejs.org/)
+[![pnpm Version](https://img.shields.io/badge/pnpm-%3E%3D%2010.13.1-orange.svg)](https://pnpm.io/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8%2B-blue.svg)](https://www.typescriptlang.org/)
 
-**Sistema médico integral con telemedicina, IA diagnóstica y compliance HIPAA**
+## 📋 Tabla de Contenidos
 
-[🚀 Quick Start](#-quick-start) • [📚 Documentación](#-documentación) • [🐳 Docker](#-docker-deployment) • [🔧 Desarrollo](#-desarrollo)
+- [🎯 Descripción del Proyecto](#-descripción-del-proyecto)
+- [🏗️ Arquitectura del Monorepo](#️-arquitectura-del-monorepo)
+- [🚀 Inicio Rápido](#-inicio-rápido)
+- [📱 Aplicaciones](#-aplicaciones)
+- [📦 Packages Compartidos](#-packages-compartidos)
+- [🛠️ Scripts Principales](#️-scripts-principales)
+- [🔧 Tecnologías](#-tecnologías)
+- [🌐 Variables de Entorno](#-variables-de-entorno)
+- [🧪 Testing](#-testing)
+- [📚 Estándares de Desarrollo](#-estándares-de-desarrollo)
+- [🐳 Docker](#-docker)
+- [🤖 Sistema de Agentes IA](#-sistema-de-agentes-ia)
+- [📖 Documentación Adicional](#-documentación-adicional)
+- [🆘 Troubleshooting](#-troubleshooting)
 
-</div>
+## 🎯 Descripción del Proyecto
+
+AltaMedica es una plataforma integral de telemedicina que conecta pacientes, médicos, empresas y administradores en un ecosistema médico digital completo. El sistema incluye:
+
+- **Videollamadas médicas** con WebRTC de alta calidad
+- **IA médica integrada** para asistencia diagnóstica
+- **Compliance HIPAA** completo
+- **Sistema de gestión** para diferentes tipos de usuarios
+- **Marketplace B2B** para servicios médicos
+- **Monitoreo en tiempo real** con agentes IA
+
+## 🏗️ Arquitectura del Monorepo
+
+```
+devaltamedica/
+├── 📱 apps/                    # Aplicaciones frontend
+│   ├── web-app/               # App web principal
+│   ├── api-server/            # Servidor API backend
+│   ├── doctors/               # Portal médicos
+│   ├── patients/              # Portal pacientes
+│   ├── companies/             # Portal empresas
+│   ├── admin/                 # Panel administrativo
+│   └── signaling-server/      # Servidor WebRTC
+├── 📦 packages/               # Packages compartidos
+│   ├── auth/                  # Autenticación centralizada
+│   ├── ui/                    # Componentes UI
+│   ├── shared/                # Utilidades compartidas
+│   └── medical-components/    # Componentes médicos
+├── 🤖 agents/                 # Sistema de agentes IA
+├── 🛠️ scripts/               # Scripts de automatización
+├── 📋 configs/                # Configuraciones compartidas
+└── 📚 docs/                   # Documentación
+```
+
+### 🎯 Modelo de Arquitectura
+
+- **Frontend**: Next.js 15+ con TypeScript
+- **Backend**: Node.js con Express/FastAPI
+- **Base de Datos**: Firebase Firestore + PostgreSQL
+- **Tiempo Real**: WebRTC + WebSockets
+- **IA**: Integración con modelos médicos
+- **Autenticación**: Sistema unificado con SSO
+- **Infraestructura**: Docker + Cloud deployment
+
+## 🚀 Inicio Rápido
+
+### 📋 Prerrequisitos
+
+```bash
+# Versiones requeridas
+Node.js >= 20.0.0
+pnpm >= 10.13.1
+Python >= 3.9 (para scripts auxiliares)
+Docker >= 24.0 (opcional)
+```
+
+### ⚡ Instalación Rápida
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/ECUCONDORSASBIC/DEVALTA.git
+cd devaltamedica
+
+# 2. Instalar dependencias
+pnpm install
+
+# 3. Configurar variables de entorno
+cp .env.example .env.local
+# Editar .env.local con tus configuraciones
+
+# 4. Ejecutar en modo desarrollo
+pnpm dev:all
+```
+
+### 🎮 Comandos de Desarrollo
+
+```bash
+# Desarrollo completo (todas las apps)
+pnpm dev:all
+
+# Desarrollo del core (web-app + api-server)
+pnpm dev:core
+
+# Desarrollo médico (doctors + patients)
+pnpm dev:medical
+
+# Aplicaciones individuales
+pnpm dev:web-app       # Puerto 3000
+pnpm dev:api-server    # Puerto 3001
+pnpm dev:doctors       # Puerto 3002
+pnpm dev:patients      # Puerto 3003
+pnpm dev:companies     # Puerto 3004
+pnpm dev:admin         # Puerto 3005
+pnpm dev:signaling     # Puerto 3006
+```
+
+## 📱 Aplicaciones
+
+| App | Puerto | Descripción | URL Local |
+|-----|--------|-------------|-----------|
+| **web-app** | 3000 | Aplicación web principal | http://localhost:3000 |
+| **api-server** | 3001 | Servidor API backend | http://localhost:3001 |
+| **doctors** | 3002 | Portal para médicos | http://localhost:3002 |
+| **patients** | 3003 | Portal para pacientes | http://localhost:3003 |
+| **companies** | 3004 | Portal para empresas | http://localhost:3004 |
+| **admin** | 3005 | Panel administrativo | http://localhost:3005 |
+| **signaling-server** | 3006 | Servidor WebRTC | http://localhost:3006 |
+
+### 🏥 Funcionalidades por App
+
+#### 👨‍⚕️ **Doctors App**
+- Dashboard médico completo
+- Gestión de pacientes y citas
+- Videollamadas médicas
+- Historial clínico
+- Asistente IA médico
+
+#### 👥 **Patients App**
+- Portal del paciente
+- Agendar citas médicas
+- Acceso a historial médico
+- Videoconsultas
+- Notificaciones de salud
+
+#### 🏢 **Companies App**
+- Gestión empresarial de salud
+- Dashboard de empleados
+- Reportes de salud corporativa
+- Marketplace B2B médico
+
+#### 🔧 **Admin App**
+- Panel de administración global
+- Gestión de usuarios y roles
+- Monitoreo del sistema
+- Analytics y reportes
+- Configuración global
+
+#### 🌐 **API Server**
+- API REST completa
+- Autenticación y autorización
+- Integración con Firebase
+- Endpoints médicos especializados
+- Compliance HIPAA
+
+## 📦 Packages Compartidos
+
+### 🔐 `@altamedica/auth`
+Sistema de autenticación centralizado con SSO y manejo de roles.
+
+```bash
+# Uso en aplicaciones
+import { AuthProvider, useAuth } from '@altamedica/auth';
+```
+
+### 🎨 `@altamedica/ui`
+Biblioteca de componentes UI reutilizables con diseño médico.
+
+### 🔧 `@altamedica/shared`
+Utilidades, tipos y funciones compartidas entre aplicaciones.
+
+### 🏥 `@altamedica/medical-components`
+Componentes especializados para el dominio médico.
+
+## 🛠️ Scripts Principales
+
+### 🚀 **Desarrollo**
+```bash
+pnpm dev:all           # Todas las apps en paralelo
+pnpm dev:core          # Core apps (web-app + api-server)
+pnpm dev:medical       # Apps médicas (doctors + patients)
+pnpm dev:admin         # Solo admin app
+```
+
+### 🔨 **Build**
+```bash
+pnpm build             # Build todas las apps
+pnpm build:apps        # Solo aplicaciones
+pnpm build:packages    # Solo packages compartidos
+```
+
+### 🧪 **Testing**
+```bash
+pnpm test              # Tests básicos
+pnpm test:all          # Todos los tests
+pnpm test:apps         # Tests de aplicaciones
+pnpm test:e2e          # Tests end-to-end
+pnpm test:accessibility # Tests de accesibilidad
+pnpm test:webrtc       # Tests de WebRTC
+```
+
+### 🧹 **Calidad de Código**
+```bash
+pnpm lint              # Linting completo
+pnpm lint:fix          # Fix automático
+pnpm type-check        # Verificación TypeScript
+pnpm type-check:all    # TypeScript en todas las apps
+```
+
+### 🔧 **Mantenimiento**
+```bash
+pnpm clean             # Limpiar builds
+pnpm clean:all         # Limpieza completa + reinstall
+pnpm fresh-install     # Instalación desde cero
+```
+
+### 🩺 **Diagnóstico**
+```bash
+pnpm diagnose:sso      # Diagnóstico SSO
+pnpm diagnose:servers  # Estado de servidores
+pnpm diagnose:api      # Conexión API
+pnpm workspace:status  # Estado del workspace
+```
+
+### 🛠️ **Utilidades**
+```bash
+pnpm fix:sso-deps      # Arreglar dependencias SSO
+pnpm fix:npm           # Arreglar issues de npm
+pnpm util:gen-login-urls # Generar URLs de login
+pnpm util:install-video  # Instalar sistema de video
+```
+
+## 🔧 Tecnologías
+
+### **Frontend**
+- **Framework**: Next.js 15.3.4+ con App Router
+- **Lenguaje**: TypeScript 5.8+
+- **UI Framework**: React 19+
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Estado**: Zustand + React Query
+- **Formularios**: React Hook Form + Zod
+
+### **Backend**
+- **Runtime**: Node.js 20+
+- **Framework**: Express.js + FastAPI (Python)
+- **Base de Datos**: Firebase Firestore + PostgreSQL
+- **Autenticación**: Firebase Auth + JWT
+- **Tiempo Real**: WebRTC + Socket.io
+
+### **DevOps & Tooling**
+- **Package Manager**: pnpm 10.13.1+
+- **Bundler**: Turbopack (Next.js)
+- **Linting**: ESLint + Prettier
+- **Testing**: Jest + Cypress + Playwright
+- **Containerization**: Docker + Docker Compose
+- **CI/CD**: GitHub Actions
+
+### **Monorepo**
+- **Tool**: pnpm workspaces
+- **Build System**: Turborepo (configurado)
+- **Shared Packages**: TypeScript packages
+- **Dependencies**: Hoisting optimizado
+
+## 🌐 Variables de Entorno
+
+### 📁 Archivo `.env.local` (Raíz)
+
+```bash
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abcdef
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# API Configuration
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_SIGNALING_SERVER_URL=ws://localhost:3006
+
+# Environment
+NODE_ENV=development
+NEXT_TELEMETRY_DISABLED=1
+
+# Security
+JWT_SECRET=your_jwt_secret_here
+ENCRYPTION_KEY=your_encryption_key_here
+
+# External Services
+OPENAI_API_KEY=your_openai_key
+GOOGLE_CLOUD_KEY=your_google_cloud_key
+```
+
+### 📋 Variables por App
+
+Cada aplicación puede tener variables específicas en su directorio `apps/{app}/.env.local`.
+
+## 🧪 Testing
+
+### 🎯 Estrategia de Testing
+
+- **Unit Tests**: Jest para lógica de negocio
+- **Integration Tests**: Pruebas de componentes
+- **E2E Tests**: Cypress para flujos completos
+- **Accessibility Tests**: Pruebas de accesibilidad
+- **Performance Tests**: Lighthouse CI
+
+### 🏃‍♂️ Comandos de Testing
+
+```bash
+# Tests unitarios
+pnpm test:apps
+
+# Tests específicos
+pnpm test:accessibility    # Accesibilidad
+pnpm test:webrtc          # WebRTC
+pnpm test:ai              # IA médica
+
+# E2E testing
+pnpm test:e2e             # Headless
+pnpm test:e2e:open        # UI mode
+```
+
+### 📊 Coverage
+
+Los reportes de coverage se generan en `coverage/` de cada app.
+
+## 📚 Estándares de Desarrollo
+
+### 🎨 **Convenciones de Código**
+
+#### **Estructura de Archivos**
+```
+src/
+├── app/                 # App Router (Next.js 13+)
+├── components/          # Componentes React
+│   ├── ui/             # Componentes básicos UI
+│   ├── forms/          # Componentes de formularios
+│   └── medical/        # Componentes médicos específicos
+├── hooks/              # Custom hooks
+├── lib/                # Utilidades y configuraciones
+├── services/           # Servicios y APIs
+├── types/              # Definiciones TypeScript
+└── utils/              # Funciones helper
+```
+
+#### **Naming Conventions**
+- **Components**: PascalCase (`PatientCard.tsx`)
+- **Hooks**: camelCase con prefijo "use" (`usePatientData.ts`)
+- **Utils**: camelCase (`formatMedicalId.ts`)
+- **Types**: PascalCase (`Patient`, `MedicalRecord`)
+- **Constants**: UPPER_SNAKE_CASE (`MAX_UPLOAD_SIZE`)
+
+#### **Imports**
+```typescript
+// 1. External libraries
+import React from 'react';
+import { NextPage } from 'next';
+
+// 2. Internal packages
+import { useAuth } from '@altamedica/auth';
+import { Button } from '@altamedica/ui';
+
+// 3. Relative imports
+import { PatientCard } from '../components/PatientCard';
+import { usePatientData } from '../hooks/usePatientData';
+```
+
+### 🔒 **Seguridad**
+
+- **HIPAA Compliance**: Todos los datos médicos deben cumplir HIPAA
+- **Data Encryption**: Datos sensibles encriptados en tránsito y reposo
+- **Authentication**: Sistema de autenticación centralizado
+- **Authorization**: Control de acceso basado en roles (RBAC)
+- **Audit Logging**: Logs de auditoría para acciones críticas
+
+### 📝 **Commits**
+
+Usamos [Conventional Commits](https://www.conventionalcommits.org/):
+
+```bash
+feat(patients): add telemedicine video component
+fix(auth): resolve SSO login redirect issue
+docs(readme): update installation instructions
+style(ui): format button component
+refactor(api): restructure patient endpoints
+test(doctors): add unit tests for appointment booking
+```
+
+### 🔄 **Git Workflow**
+
+1. **Branches**: `feature/`, `fix/`, `docs/`, `refactor/`
+2. **Pull Requests**: Requeridos para main
+3. **Code Review**: Mínimo 1 revisor
+4. **CI/CD**: Tests automáticos antes del merge
+
+## 🐳 Docker
+
+### 🚀 **Quick Start**
+
+```bash
+# Desarrollo completo
+docker-compose -f docker-compose.dev.yml up
+
+# Producción
+docker-compose up
+```
+
+### 📋 **Servicios Docker**
+
+```yaml
+# docker-compose.yml incluye:
+- web-app          # Puerto 3000
+- api-server       # Puerto 3001  
+- doctors          # Puerto 3002
+- patients         # Puerto 3003
+- companies        # Puerto 3004
+- admin            # Puerto 3005
+- signaling-server # Puerto 3006
+- postgres         # Puerto 5432
+- redis            # Puerto 6379
+```
+
+### 🔧 **Builds Individuales**
+
+```bash
+# Build app específica
+docker build -f apps/doctors/Dockerfile -t altamedica-doctors .
+
+# Build con optimizaciones
+docker build --target production -t altamedica-prod .
+```
+
+## 🤖 Sistema de Agentes IA
+
+AltaMedica incluye un sistema avanzado de agentes IA para automatización y monitoreo:
+
+### 🧠 **Agentes Disponibles**
+
+- **Auth Agent**: Gestión de autenticación
+- **Routing Agent**: Enrutamiento inteligente
+- **Security Agent**: Monitoreo de seguridad
+- **Monitoring Agent**: Supervisión del sistema
+- **Patient Monitoring**: Seguimiento de pacientes
+- **Emergency Coordination**: Coordinación de emergencias
+- **Knowledge Graph**: Gestión del conocimiento médico
+
+### 🚀 **Comandos de Agentes**
+
+```bash
+# Desarrollo de agentes
+cd agents/
+pnpm dev              # Todos los agentes
+pnpm dev:auth         # Solo auth agent
+pnpm dev:monitoring   # Solo monitoring agent
+
+# Producción
+pnpm start:all        # Todos los agentes
+pnpm start:core       # Agentes core
+pnpm start:medical    # Agentes médicos
+
+# Testing
+pnpm test:collaborative    # Tests colaborativos
+pnpm test:patient-monitoring # Tests de monitoreo
+```
+
+## 📖 Documentación Adicional
+
+### 📚 **Documentos Técnicos**
+
+- `docs/ARCHITECTURE.md` - Arquitectura detallada del sistema
+- `docs/API.md` - Documentación completa de la API
+- `docs/DEPLOYMENT.md` - Guía de despliegue
+- `docs/SECURITY.md` - Políticas de seguridad
+- `docs/CONTRIBUTING.md` - Guía para contribuidores
+
+### 🏥 **Documentos Médicos**
+
+- `docs/HIPAA.md` - Compliance HIPAA
+- `docs/MEDICAL_WORKFLOWS.md` - Flujos médicos
+- `docs/TELEMEDICINE.md` - Guía de telemedicina
+- `docs/AI_MEDICAL.md` - IA médica integrada
+
+### 🚀 **Guías de Usuario**
+
+- `docs/USER_DOCTORS.md` - Guía para médicos
+- `docs/USER_PATIENTS.md` - Guía para pacientes
+- `docs/USER_COMPANIES.md` - Guía para empresas
+- `docs/USER_ADMIN.md` - Guía de administración
+
+## 🆘 Troubleshooting
+
+### 🔧 **Problemas Comunes**
+
+#### **Instalación**
+```bash
+# Error: pnpm not found
+npm install -g pnpm@10.13.1
+
+# Error: Node version
+nvm use 20
+# or
+nvm install 20
+
+# Dependencias corruptas
+pnpm clean:all
+```
+
+#### **Desarrollo**
+```bash
+# Puerto ocupado
+lsof -ti:3000 | xargs kill -9  # macOS/Linux
+netstat -ano | findstr :3000   # Windows
+
+# Firebase connection
+pnpm diagnose:api
+
+# SSO issues
+pnpm diagnose:sso
+pnpm fix:sso-deps
+```
+
+#### **Build Errors**
+```bash
+# TypeScript errors
+pnpm type-check:all
+
+# Next.js cache issues
+rm -rf .next/
+pnpm dev
+
+# Workspace issues
+pnpm workspace:check
+pnpm workspace:fix
+```
+
+### 📞 **Soporte**
+
+- **Issues**: [GitHub Issues](https://github.com/ECUCONDORSASBIC/DEVALTA/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ECUCONDORSASBIC/DEVALTA/discussions)
+- **Wiki**: [Project Wiki](https://github.com/ECUCONDORSASBIC/DEVALTA/wiki)
+
+### 🔍 **Logs y Debugging**
+
+```bash
+# Logs de desarrollo
+pnpm dev:doctors 2>&1 | tee logs/doctors.log
+
+# Logs de producción
+docker-compose logs -f web-app
+
+# Debugging específico
+DEBUG=altamedica:* pnpm dev:api-server
+```
 
 ---
 
-## 🎯 **Resumen Ejecutivo**
+## 📄 Licencia
 
-**AltaMedica** es una plataforma médica empresarial de próxima generación que combina telemedicina avanzada, inteligencia artificial diagnóstica y cumplimiento estricto con regulaciones HIPAA. Desarrollada como un monorepo modular con 7 aplicaciones especializadas.
+Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
+
+## 👥 Contribuidores
+
+Ver [CONTRIBUTORS.md](CONTRIBUTORS.md) para la lista completa de contribuidores.
+
+---
+
+<div align="center">
+
+**[⬆ Volver al inicio](#-altamedica---sistema-de-telemedicina-profesional)**
+
+*Desarrollado con ❤️ para mejorar la salud digital*
+
+</div>
 
 ### 🏆 **Características Destacadas**
 - 🩺 **Telemedicina HD:** WebRTC con latencia <100ms

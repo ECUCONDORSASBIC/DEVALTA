@@ -6,25 +6,32 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --port 3003",
-    "build": "next build",
+    "build": "npx next build",
     "start": "next start --port 3003",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
-    "clean": "rm -rf .next dist coverage node_modules"
+    "clean": "rm -rf .next dist coverage node_modules",
+    "playwright": "playwright test",
+    "playwright:ui": "playwright test --ui",
+    "playwright:headed": "playwright test --headed",
+    "medical-diagnosis": "playwright test tests/medical-diagnostic.spec.ts --headed --reporter=list",
+    "auth-diagnosis": "playwright test tests/auth-flow-diagnostic.spec.ts --headed --reporter=list",
+    "quick-diagnosis": "playwright test tests/medical-diagnostic.spec.ts tests/auth-flow-diagnostic.spec.ts --reporter=list",
+    "full-health-check": "playwright test --reporter=html"
   },
   "dependencies": {
-    "@altamedica/core": "workspace:*",
+    "@altamedica/api-client": "workspace:*",
+    "@altamedica/auth": "workspace:*",
     "@altamedica/firebase": "workspace:*",
+    "@altamedica/hooks": "workspace:*",
     "@altamedica/shared": "workspace:*",
     "@altamedica/types": "workspace:*",
     "@altamedica/ui": "workspace:*",
-    "axios": "^1.7.2",
-    "lucide-react": "^0.294.0",
-    "next": "^15.3.4",
+    "@altamedica/utils": "workspace:*",
+    "cookie": "^1.0.2",
+    "lucide-react": "^0.536.0",
+    "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "socket.io-client": "^4.8.1"
@@ -32,6 +39,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "^15.4.1",
     "@next/eslint-plugin-next": "^15.3.4",
+    "@playwright/test": "^1.48.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.10",
     "@types/node": "^20.19.1",
@@ -46,7 +54,6 @@
     "postcss": "^8.4.32",
     "prettier": "^3.1.0",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.3.3",
-    "vitest": "^2.1.8"
+    "typescript": "^5.3.3"
   }
 }

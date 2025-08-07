@@ -3,7 +3,7 @@
 import React from 'react';
 import { useParams } from 'next/navigation';
 import { ProfessionalTelemedicineCall } from '@/components/telemedicine/ProfessionalTelemedicineCall';
-import { useAuth } from '@/hooks/useAuth'; // Suponiendo que existe un hook de autenticación
+import { useAuth } from '@altamedica/hooks'; // Hook de autenticación centralizado
 
 const TelemedicineRoomPage = () => {
   const params = useParams();

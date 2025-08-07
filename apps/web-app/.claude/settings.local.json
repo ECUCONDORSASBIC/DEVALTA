@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(copy page.tsx page.backup.tsx)",
+      "Bash(copy page.new.tsx page.tsx)"
+    ],
+    "deny": []
+  }
+}

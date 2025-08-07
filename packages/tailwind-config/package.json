@@ -1,12 +1,13 @@
 {
-    "name": "@altamedica/tailwind-config",
-    "version": "0.0.0",
-    "private": true,
-    "main": "index.cjs",
-    "type": "module",
-    "devDependencies": {
-        "@tailwindcss/forms": "^0.5.7",
-        "@tailwindcss/typography": "^0.5.10",
-        "tailwindcss": "^3.4.0"
-    }
+  "name": "@altamedica/tailwind-config",
+  "version": "1.0.0",
+  "description": "AltaMedica tailwind-config package",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Build script placeholder'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tailwindcss": "^3.3.0"
+  }
 }

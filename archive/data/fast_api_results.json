@@ -1,0 +1,4563 @@
+{
+  "timestamp": "2025-08-04 06:56:19",
+  "summary": {
+    "total_apis": 283,
+    "unique_paths": 156,
+    "services": 7,
+    "service_list": [
+      "apps/api-server",
+      "apps/patients",
+      "apps/doctors",
+      "apps/admin",
+      "apps/companies",
+      "apps/web-app",
+      "python-tools"
+    ]
+  },
+  "by_service": {
+    "apps/api-server": [
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/users/profile",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\users\\profile\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/users/profile",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\users\\profile\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/lab-results",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\lab-results\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/lab-results",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\lab-results\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/lab-results",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\lab-results\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/lab-results",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\lab-results\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/",
+        "file": "index.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\functions\\index.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/health",
+        "file": "index.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\functions\\index.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/companies",
+        "file": "index.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\functions\\index.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/companies",
+        "file": "index.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\functions\\index.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/medical/specialties",
+        "file": "index.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\functions\\index.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/notifications/websocket",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\notifications\\websocket\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/auth/register",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\register\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/prescriptions/route-new.ts",
+        "file": "route-new.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-new.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/prescriptions/route-new.ts",
+        "file": "route-new.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-new.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/prescriptions/route-new.ts",
+        "file": "route-new.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-new.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/prescriptions/route-new.ts",
+        "file": "route-new.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-new.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/medical-records/simple-route.ts",
+        "file": "simple-route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\simple-route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/medical-records/simple-route.ts",
+        "file": "simple-route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\simple-route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/ai/analyze-symptoms",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\analyze-symptoms\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/telemedicine/billing/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/telemedicine/billing/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/telemedicine/billing/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/telemedicine/billing",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/telemedicine/billing",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/telemedicine/webrtc/signaling",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\signaling\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/telemedicine/webrtc/signaling",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\signaling\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/v1/medical-records/auth-helpers.ts",
+        "file": "auth-helpers.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\auth-helpers.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PATCH",
+        "path": "/api/admin/users/:userId/suspend",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\admin\\users\\[userId]\\suspend\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/finops/cost-estimation",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\finops\\cost-estimation\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/finops/cost-estimation",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\finops\\cost-estimation\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/websocket",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\websocket\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/websocket",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\websocket\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/job-listings",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/job-listings",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/telemedicine/session",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\telemedicine\\session\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/telemedicine/session",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\telemedicine\\session\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/notifications/mark-all-read",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\notifications\\mark-all-read\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/appointments",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\appointments\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/appointments",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\appointments\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/health",
+        "file": "server.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\server.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/analytics/custom-reports",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\analytics\\custom-reports\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/analytics/custom-reports",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\analytics\\custom-reports\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/doctors/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/test",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\test\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/test",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\test\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/appointments/:id/video-session",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\appointments\\[id]\\video-session\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/appointments/:id/video-session",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\appointments\\[id]\\video-session\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/appointments/:id/video-session",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\appointments\\[id]\\video-session\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/appointments/:id/video-session",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\appointments\\[id]\\video-session\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/prescriptions/:id/route-new.ts",
+        "file": "route-new.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\[id]\\route-new.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/prescriptions/:id/route-new.ts",
+        "file": "route-new.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\[id]\\route-new.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/applications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\applications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/applications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\applications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/applications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\applications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/applications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\applications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/ai/image-analysis",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\image-analysis\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/ai/image-analysis",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\image-analysis\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/admin/monitoring",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\admin\\monitoring\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "encryption.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\lib\\encryption.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/companies",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/companies",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/telemedicine/sessions/:id/end",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\sessions\\[id]\\end\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/ai-medical",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\ai-medical\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/ai-medical",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\ai-medical\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/doctors/:id/schedule",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\schedule\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PATCH",
+        "path": "/api/alerts/:alertId/acknowledge",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\alerts\\[alertId]\\acknowledge\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/dashboard/analytics",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\dashboard\\analytics\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/dashboard/analytics",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\dashboard\\analytics\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/v1/analytics/custom-reports/schemas.ts",
+        "file": "schemas.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\analytics\\custom-reports\\schemas.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "rateLimiter.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\middleware\\rateLimiter.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PATCH",
+        "path": "/api/admin/users/:userId/role",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\admin\\users\\[userId]\\role\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/auth/register",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\auth\\register\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/marketplace/doctors",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\doctors\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/marketplace/doctors",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\doctors\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/test-env",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\test-env\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/metrics",
+        "file": "metrics.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\metrics.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/metrics-json",
+        "file": "metrics.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\metrics.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/test-firebase",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\test-firebase\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/payments/mercadopago/webhook",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\payments\\mercadopago\\webhook\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/payments/mercadopago/webhook",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\payments\\mercadopago\\webhook\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "rate-limit.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\lib\\rate-limit.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/doctors/:id/verification",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\verification\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/doctors/:id/verification",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\verification\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/ai/diagnosis-support",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\diagnosis-support\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/marketplace",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/marketplace",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/doctors/visible",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\visible\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/doctors/visible",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\visible\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/user/:userId",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/user/:userId/stats",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/:notificationId/read",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/:notificationId/archive",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/user/:userId/read-all",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/:notificationId",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/appointment-reminder",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/telemedicine-confirmation",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/medical-alert",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/doctor-message",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/admin/all",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/admin/cleanup",
+        "file": "notification-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/marketplace/notifications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\notifications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/marketplace/notifications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\notifications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/marketplace/notifications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\notifications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/marketplace/notifications",
+        "file": "route.ts",
+        "type": "fetch",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\notifications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/jobs",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\jobs\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/jobs",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\jobs\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/jobs",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\jobs\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/jobs",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\jobs\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/health",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\health\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/admin/users",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\admin\\users\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/users",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\users\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/users",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\users\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/cors-example",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\cors-example\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/ai/personalized-recommendations",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\personalized-recommendations\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/ai/personalized-recommendations",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\personalized-recommendations\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/webrtc",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\webrtc\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/webrtc",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\webrtc\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "auth.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\middleware\\auth.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/health",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/telemedicine/sessions",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/telemedicine/sessions/:id",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/telemedicine/sessions",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/telemedicine/sessions/:id",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/telemedicine/sessions/:id/cancel",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/telemedicine/sessions/:id/start",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/telemedicine/sessions/:id/end",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/telemedicine/sessions/:id/chat",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/telemedicine/sessions/:id/chat",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\api-server\\server.js"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "audit.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\lib\\audit.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/test-register",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\test-register\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/admin/dashboard",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\admin\\dashboard\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/ai/risk-assessment",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\risk-assessment\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/independent-doctors",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\independent-doctors\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/independent-doctors",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\independent-doctors\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/patients/simple",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\simple\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/patients/simple",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\simple\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/messages",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\messages\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/messages",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\messages\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/rate-limit-stats",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\rate-limit-stats\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/ai/lab-analysis",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\lab-analysis\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/ai/lab-analysis",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\lab-analysis\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/medical-locations",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-locations\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/medical-locations",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-locations\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/medical-locations",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-locations\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/medical-locations",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-locations\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/health",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\health\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/health",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\health\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/telemedicine-ai",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\telemedicine-ai\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/telemedicine-ai",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\telemedicine-ai\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/prescriptions/prescriptions-route.ts",
+        "file": "prescriptions-route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\prescriptions-route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/prescriptions/prescriptions-route.ts",
+        "file": "prescriptions-route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\prescriptions-route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/doctors/:id/stats",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\stats\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/auth/verify-sso",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\verify-sso\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/prescriptions/route-old.ts",
+        "file": "route-old.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-old.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/prescriptions/route-old.ts",
+        "file": "route-old.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-old.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/reports/medical-reports",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\reports\\medical-reports\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/payments/mercadopago",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\payments\\mercadopago\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/payments/mercadopago",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\payments\\mercadopago\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/auth/test-sso",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\test-sso\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/auth/test-sso",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\test-sso\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/auth/test-sso",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\test-sso\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PATCH",
+        "path": "/api/appointments/:appointmentId/status",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\appointments\\[appointmentId]\\status\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/patients",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/patients",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "telemedicine-server.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\lib\\telemedicine-server.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "telemedicine-server.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\lib\\telemedicine-server.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/dashboard",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\dashboard\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/medical-records/route-complex.ts",
+        "file": "route-complex.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/medical-records/route-complex.ts",
+        "file": "route-complex.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/medical-records/route-complex.ts",
+        "file": "route-complex.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/medical-records/route-complex.ts",
+        "file": "route-complex.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/messages/:conversationId",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\messages\\[conversationId]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/messages/:conversationId",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\messages\\[conversationId]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/admin/system/health",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\admin\\system\\health\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/doctors/search/location",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\search\\location\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/metrics",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\metrics\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/doctors/:id/appointments",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\appointments\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/companies/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/companies/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/companies/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "database.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\lib\\database.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/admin/stats",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\admin\\stats\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/job-listings/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/job-listings/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/job-listings/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/ai/disease-prediction",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\disease-prediction\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/ai/disease-prediction",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\disease-prediction\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/firestore-integration-test",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\firestore-integration-test\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/users/stats",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\users\\stats\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "firebase-admin.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "firebase-admin.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "firebase-admin.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/companies",
+        "file": "marketplace-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/companies/:id",
+        "file": "marketplace-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/marketplace/listings",
+        "file": "marketplace-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/marketplace/listings",
+        "file": "marketplace-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/marketplace/listings/:id",
+        "file": "marketplace-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/marketplace/listings/:id/apply",
+        "file": "marketplace-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/marketplace/listings/:id/applications",
+        "file": "marketplace-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/marketplace/applications/:id",
+        "file": "marketplace-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/sessions",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/sessions/:sessionId",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/sessions",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/sessions/:sessionId/start",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/sessions/:sessionId/end",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/sessions/:sessionId/cancel",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/sessions/:sessionId/chat",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/sessions/:sessionId/chat",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/stats",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/rooms/:roomId/availability",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/system/status",
+        "file": "telemedicine-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/test",
+        "file": "agents-routes.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\routes\\agents-routes.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/health",
+        "file": "webrtc-server.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\telemedicine\\webrtc-server.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/rooms",
+        "file": "webrtc-server.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\telemedicine\\webrtc-server.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/rooms/:roomId",
+        "file": "webrtc-server.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\telemedicine\\webrtc-server.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/rooms/:roomId",
+        "file": "webrtc-server.ts",
+        "type": "express",
+        "full_path": "apps\\api-server\\src\\telemedicine\\webrtc-server.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/job-applications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-applications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/job-applications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-applications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/job-applications",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-applications\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/patients/:id/appointments",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\[id]\\appointments\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/debug-refresh",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\debug-refresh\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/debug-refresh",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\debug-refresh\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\rooms\\[roomId]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\rooms\\[roomId]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\rooms\\[roomId]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "DELETE",
+        "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\rooms\\[roomId]\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/companies/visible",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\visible\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "PUT",
+        "path": "/api/v1/companies/visible",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\visible\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "GET",
+        "path": "/api/v1/doctors/:id/reviews",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\reviews\\route.ts"
+      },
+      {
+        "service": "apps/api-server",
+        "method": "POST",
+        "path": "/api/v1/doctors/:id/reviews",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\reviews\\route.ts"
+      }
+    ],
+    "apps/patients": [
+      {
+        "service": "apps/patients",
+        "method": "GET",
+        "path": "/api/v1/anamnesis/paciente/:id/resumen",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\paciente\\[id]\\resumen\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "POST",
+        "path": "/api/v1/anamnesis/importar",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\importar\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "GET",
+        "path": "/api/debug-headers",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\debug-headers\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "GET",
+        "path": "/api/v1/anamnesis",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "POST",
+        "path": "/api/v1/anamnesis",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "PUT",
+        "path": "/api/v1/anamnesis",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "DELETE",
+        "path": "/api/v1/anamnesis",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "GET",
+        "path": "/api/v1/anamnesis/paciente/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\paciente\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "PUT",
+        "path": "/api/v1/anamnesis/paciente/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\paciente\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "DELETE",
+        "path": "/api/v1/anamnesis/paciente/:id",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\paciente\\[id]\\route.ts"
+      },
+      {
+        "service": "apps/patients",
+        "method": "GET",
+        "path": "/api/health",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\patients\\src\\app\\api\\health\\route.ts"
+      }
+    ],
+    "apps/doctors": [
+      {
+        "service": "apps/doctors",
+        "method": "GET",
+        "path": "/api/appointments",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\doctors\\src\\app\\api\\appointments\\route.ts"
+      },
+      {
+        "service": "apps/doctors",
+        "method": "POST",
+        "path": "/api/appointments",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\doctors\\src\\app\\api\\appointments\\route.ts"
+      },
+      {
+        "service": "apps/doctors",
+        "method": "PUT",
+        "path": "/api/appointments",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\doctors\\src\\app\\api\\appointments\\route.ts"
+      },
+      {
+        "service": "apps/doctors",
+        "method": "GET",
+        "path": "https://api.ipify.org?format=json",
+        "file": "firebase-service.ts",
+        "type": "fetch",
+        "full_path": "apps\\doctors\\src\\services\\firebase-service.ts"
+      },
+      {
+        "service": "apps/doctors",
+        "method": "GET",
+        "path": "/api/health",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\doctors\\src\\app\\api\\health\\route.ts"
+      },
+      {
+        "service": "apps/doctors",
+        "method": "GET",
+        "path": "/api/patients",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\doctors\\src\\app\\api\\patients\\route.ts"
+      },
+      {
+        "service": "apps/doctors",
+        "method": "POST",
+        "path": "/api/patients",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\doctors\\src\\app\\api\\patients\\route.ts"
+      },
+      {
+        "service": "apps/doctors",
+        "method": "GET",
+        "path": "/api/telemedicine",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\doctors\\src\\app\\api\\telemedicine\\route.ts"
+      },
+      {
+        "service": "apps/doctors",
+        "method": "POST",
+        "path": "/api/telemedicine",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\doctors\\src\\app\\api\\telemedicine\\route.ts"
+      },
+      {
+        "service": "apps/doctors",
+        "method": "PUT",
+        "path": "/api/telemedicine",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\doctors\\src\\app\\api\\telemedicine\\route.ts"
+      }
+    ],
+    "apps/admin": [
+      {
+        "service": "apps/admin",
+        "method": "GET",
+        "path": "/api/health",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\admin\\src\\app\\api\\health\\route.ts"
+      }
+    ],
+    "apps/companies": [
+      {
+        "service": "apps/companies",
+        "method": "GET",
+        "path": "/api/health",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\companies\\src\\app\\api\\health\\route.ts"
+      }
+    ],
+    "apps/web-app": [
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/health",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\health\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/empty",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\empty\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "POST",
+        "path": "/api/empty",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\empty\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "PUT",
+        "path": "/api/empty",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\empty\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "DELETE",
+        "path": "/api/empty",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\empty\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/marketplace",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\marketplace\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "POST",
+        "path": "/connect",
+        "file": "grok-server.js",
+        "type": "express",
+        "full_path": "apps\\web-app\\server\\grok-server.js"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "POST",
+        "path": "/send",
+        "file": "grok-server.js",
+        "type": "express",
+        "full_path": "apps\\web-app\\server\\grok-server.js"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "POST",
+        "path": "/disconnect",
+        "file": "grok-server.js",
+        "type": "express",
+        "full_path": "apps\\web-app\\server\\grok-server.js"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/status",
+        "file": "grok-server.js",
+        "type": "express",
+        "full_path": "apps\\web-app\\server\\grok-server.js"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/hospital3d-simulator",
+        "file": "server.js",
+        "type": "express",
+        "full_path": "apps\\web-app\\dev-server\\server.js"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/create-test-user",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\create-test-user\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/telemedicine",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\telemedicine\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "shared-auth.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\services\\shared-auth.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "get",
+        "path": "/api/unknown",
+        "file": "shared-auth.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\services\\shared-auth.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/appointments",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\appointments\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "POST",
+        "path": "/api/grok",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\grok\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/grok",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\grok\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/patients",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\patients\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/health/detailed",
+        "file": "route.ts",
+        "type": "nextjs_export",
+        "full_path": "apps\\web-app\\src\\app\\api\\health\\detailed\\route.ts"
+      },
+      {
+        "service": "apps/web-app",
+        "method": "GET",
+        "path": "/api/auth/refresh",
+        "file": "jwt-service.ts",
+        "type": "fetch",
+        "full_path": "apps\\web-app\\src\\services\\jwt-service.ts"
+      }
+    ],
+    "python-tools": [
+      {
+        "service": "python-tools",
+        "method": "POST",
+        "path": "/api/matching/find-partners",
+        "file": "medical_matching_engine.py",
+        "type": "express",
+        "full_path": "medical_matching_engine.py"
+      },
+      {
+        "service": "python-tools",
+        "method": "GET",
+        "path": "/api/matching/companies/{company_id}/recommendations",
+        "file": "medical_matching_engine.py",
+        "type": "express",
+        "full_path": "medical_matching_engine.py"
+      },
+      {
+        "service": "python-tools",
+        "method": "POST",
+        "path": "/api/matching/partnership/create",
+        "file": "medical_matching_engine.py",
+        "type": "express",
+        "full_path": "medical_matching_engine.py"
+      },
+      {
+        "service": "python-tools",
+        "method": "POST",
+        "path": "/api/matching/find-partners",
+        "file": "medical_matching_engine.py",
+        "type": "fastapi",
+        "full_path": "medical_matching_engine.py"
+      },
+      {
+        "service": "python-tools",
+        "method": "GET",
+        "path": "/api/matching/companies/{company_id}/recommendations",
+        "file": "medical_matching_engine.py",
+        "type": "fastapi",
+        "full_path": "medical_matching_engine.py"
+      },
+      {
+        "service": "python-tools",
+        "method": "POST",
+        "path": "/api/matching/partnership/create",
+        "file": "medical_matching_engine.py",
+        "type": "fastapi",
+        "full_path": "medical_matching_engine.py"
+      }
+    ]
+  },
+  "all_apis": [
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/users/profile",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\users\\profile\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/users/profile",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\users\\profile\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/lab-results",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\lab-results\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/lab-results",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\lab-results\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/lab-results",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\lab-results\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/lab-results",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\lab-results\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/",
+      "file": "index.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\functions\\index.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "index.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\functions\\index.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/companies",
+      "file": "index.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\functions\\index.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/companies",
+      "file": "index.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\functions\\index.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/medical/specialties",
+      "file": "index.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\functions\\index.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/notifications/websocket",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\notifications\\websocket\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\register\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/prescriptions/route-new.ts",
+      "file": "route-new.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-new.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/prescriptions/route-new.ts",
+      "file": "route-new.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-new.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/prescriptions/route-new.ts",
+      "file": "route-new.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-new.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/prescriptions/route-new.ts",
+      "file": "route-new.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-new.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/medical-records/simple-route.ts",
+      "file": "simple-route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\simple-route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/medical-records/simple-route.ts",
+      "file": "simple-route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\simple-route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/ai/analyze-symptoms",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\analyze-symptoms\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/telemedicine/billing/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/telemedicine/billing/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/telemedicine/billing/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/telemedicine/billing",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/telemedicine/billing",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\billing\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/telemedicine/webrtc/signaling",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\signaling\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/telemedicine/webrtc/signaling",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\signaling\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/v1/medical-records/auth-helpers.ts",
+      "file": "auth-helpers.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\auth-helpers.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PATCH",
+      "path": "/api/admin/users/:userId/suspend",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\admin\\users\\[userId]\\suspend\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/finops/cost-estimation",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\finops\\cost-estimation\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/finops/cost-estimation",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\finops\\cost-estimation\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/websocket",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\websocket\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/websocket",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\websocket\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/job-listings",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/job-listings",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/telemedicine/session",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\telemedicine\\session\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/telemedicine/session",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\telemedicine\\session\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/notifications/mark-all-read",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\notifications\\mark-all-read\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/appointments",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\appointments\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/appointments",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\appointments\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "server.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/analytics/custom-reports",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\analytics\\custom-reports\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/analytics/custom-reports",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\analytics\\custom-reports\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/doctors/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/test",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\test\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/test",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\test\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/appointments/:id/video-session",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\appointments\\[id]\\video-session\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/appointments/:id/video-session",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\appointments\\[id]\\video-session\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/appointments/:id/video-session",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\appointments\\[id]\\video-session\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/appointments/:id/video-session",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\appointments\\[id]\\video-session\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/prescriptions/:id/route-new.ts",
+      "file": "route-new.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\[id]\\route-new.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/prescriptions/:id/route-new.ts",
+      "file": "route-new.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\[id]\\route-new.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/applications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\applications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/applications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\applications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/applications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\applications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/applications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\applications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/ai/image-analysis",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\image-analysis\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/ai/image-analysis",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\image-analysis\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/admin/monitoring",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\admin\\monitoring\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "encryption.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\encryption.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/companies",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/companies",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/telemedicine/sessions/:id/end",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\sessions\\[id]\\end\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/ai-medical",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\ai-medical\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/ai-medical",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\ai-medical\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/doctors/:id/schedule",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\schedule\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PATCH",
+      "path": "/api/alerts/:alertId/acknowledge",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\alerts\\[alertId]\\acknowledge\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/dashboard/analytics",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\dashboard\\analytics\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/dashboard/analytics",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\dashboard\\analytics\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/v1/analytics/custom-reports/schemas.ts",
+      "file": "schemas.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\analytics\\custom-reports\\schemas.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "rateLimiter.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\middleware\\rateLimiter.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PATCH",
+      "path": "/api/admin/users/:userId/role",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\admin\\users\\[userId]\\role\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\auth\\register\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/marketplace/doctors",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\doctors\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/marketplace/doctors",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\doctors\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/test-env",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\test-env\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/metrics",
+      "file": "metrics.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\metrics.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/metrics-json",
+      "file": "metrics.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\metrics.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/test-firebase",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\test-firebase\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/payments/mercadopago/webhook",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\payments\\mercadopago\\webhook\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/payments/mercadopago/webhook",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\payments\\mercadopago\\webhook\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "rate-limit.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\rate-limit.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/doctors/:id/verification",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\verification\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/doctors/:id/verification",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\verification\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/ai/diagnosis-support",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\diagnosis-support\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/marketplace",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/marketplace",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/doctors/visible",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\visible\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/doctors/visible",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\visible\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/user/:userId",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/user/:userId/stats",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/:notificationId/read",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/:notificationId/archive",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/user/:userId/read-all",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/:notificationId",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/appointment-reminder",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/telemedicine-confirmation",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/medical-alert",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/doctor-message",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/admin/all",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/admin/cleanup",
+      "file": "notification-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\notification-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/marketplace/notifications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\notifications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/marketplace/notifications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\notifications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/marketplace/notifications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\notifications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/marketplace/notifications",
+      "file": "route.ts",
+      "type": "fetch",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\marketplace\\notifications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/jobs",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\jobs\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/jobs",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\jobs\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/jobs",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\jobs\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/jobs",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\jobs\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\health\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/admin/users",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\admin\\users\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/users",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\users\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/users",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\users\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/cors-example",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\cors-example\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/ai/personalized-recommendations",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\personalized-recommendations\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/ai/personalized-recommendations",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\personalized-recommendations\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/webrtc",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\webrtc\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/webrtc",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\webrtc\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "auth.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\middleware\\auth.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/health",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/telemedicine/sessions",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/telemedicine/sessions/:id",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/telemedicine/sessions",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/telemedicine/sessions/:id",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/telemedicine/sessions/:id/cancel",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/telemedicine/sessions/:id/start",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/telemedicine/sessions/:id/end",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/telemedicine/sessions/:id/chat",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/telemedicine/sessions/:id/chat",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\api-server\\server.js"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "audit.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\audit.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/test-register",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\test-register\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/admin/dashboard",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\admin\\dashboard\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/ai/risk-assessment",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\risk-assessment\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/independent-doctors",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\independent-doctors\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/independent-doctors",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\independent-doctors\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/patients/simple",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\simple\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/patients/simple",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\simple\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/messages",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\messages\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/messages",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\messages\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/rate-limit-stats",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\rate-limit-stats\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/ai/lab-analysis",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\lab-analysis\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/ai/lab-analysis",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\lab-analysis\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/medical-locations",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-locations\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/medical-locations",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-locations\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/medical-locations",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-locations\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/medical-locations",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-locations\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\health\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\health\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/telemedicine-ai",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\telemedicine-ai\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/telemedicine-ai",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\telemedicine-ai\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/prescriptions/prescriptions-route.ts",
+      "file": "prescriptions-route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\prescriptions-route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/prescriptions/prescriptions-route.ts",
+      "file": "prescriptions-route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\prescriptions-route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/doctors/:id/stats",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\stats\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/auth/verify-sso",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\verify-sso\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/prescriptions/route-old.ts",
+      "file": "route-old.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-old.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/prescriptions/route-old.ts",
+      "file": "route-old.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\prescriptions\\route-old.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/reports/medical-reports",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\reports\\medical-reports\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/payments/mercadopago",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\payments\\mercadopago\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/payments/mercadopago",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\payments\\mercadopago\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/auth/test-sso",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\test-sso\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/auth/test-sso",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\test-sso\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/auth/test-sso",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\auth\\test-sso\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PATCH",
+      "path": "/api/appointments/:appointmentId/status",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\appointments\\[appointmentId]\\status\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/patients",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/patients",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "telemedicine-server.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\telemedicine-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "telemedicine-server.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\telemedicine-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/dashboard",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\dashboard\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/medical-records/route-complex.ts",
+      "file": "route-complex.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/medical-records/route-complex.ts",
+      "file": "route-complex.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/medical-records/route-complex.ts",
+      "file": "route-complex.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/medical-records/route-complex.ts",
+      "file": "route-complex.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\medical-records\\route-complex.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/messages/:conversationId",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\messages\\[conversationId]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/messages/:conversationId",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\messages\\[conversationId]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/admin/system/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\admin\\system\\health\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/doctors/search/location",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\search\\location\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/metrics",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\metrics\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/doctors/:id/appointments",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\appointments\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/companies/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/companies/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/companies/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "database.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\database.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/admin/stats",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\admin\\stats\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/job-listings/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/job-listings/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/job-listings/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-listings\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/ai/disease-prediction",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\disease-prediction\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/ai/disease-prediction",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\ai\\disease-prediction\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/firestore-integration-test",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\firestore-integration-test\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/users/stats",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\users\\stats\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "firebase-admin.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "firebase-admin.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "firebase-admin.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\lib\\firebase-admin.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/companies",
+      "file": "marketplace-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/companies/:id",
+      "file": "marketplace-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/marketplace/listings",
+      "file": "marketplace-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/marketplace/listings",
+      "file": "marketplace-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/marketplace/listings/:id",
+      "file": "marketplace-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/marketplace/listings/:id/apply",
+      "file": "marketplace-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/marketplace/listings/:id/applications",
+      "file": "marketplace-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/marketplace/applications/:id",
+      "file": "marketplace-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\marketplace-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/sessions",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/sessions/:sessionId",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/sessions",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/sessions/:sessionId/start",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/sessions/:sessionId/end",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/sessions/:sessionId/cancel",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/sessions/:sessionId/chat",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/sessions/:sessionId/chat",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/stats",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/rooms/:roomId/availability",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/system/status",
+      "file": "telemedicine-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\telemedicine-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/test",
+      "file": "agents-routes.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\routes\\agents-routes.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/health",
+      "file": "webrtc-server.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\telemedicine\\webrtc-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/rooms",
+      "file": "webrtc-server.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\telemedicine\\webrtc-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/rooms/:roomId",
+      "file": "webrtc-server.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\telemedicine\\webrtc-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/rooms/:roomId",
+      "file": "webrtc-server.ts",
+      "type": "express",
+      "full_path": "apps\\api-server\\src\\telemedicine\\webrtc-server.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/job-applications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-applications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/job-applications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-applications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/job-applications",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\job-applications\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/patients/:id/appointments",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\patients\\[id]\\appointments\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/debug-refresh",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\debug-refresh\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/debug-refresh",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\debug-refresh\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\rooms\\[roomId]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\rooms\\[roomId]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\rooms\\[roomId]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "DELETE",
+      "path": "/api/v1/telemedicine/webrtc/rooms/:roomId",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\telemedicine\\webrtc\\rooms\\[roomId]\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/companies/visible",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\visible\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "PUT",
+      "path": "/api/v1/companies/visible",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\companies\\visible\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "GET",
+      "path": "/api/v1/doctors/:id/reviews",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\reviews\\route.ts"
+    },
+    {
+      "service": "apps/api-server",
+      "method": "POST",
+      "path": "/api/v1/doctors/:id/reviews",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\api-server\\src\\app\\api\\v1\\doctors\\[id]\\reviews\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "GET",
+      "path": "/api/v1/anamnesis/paciente/:id/resumen",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\paciente\\[id]\\resumen\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "POST",
+      "path": "/api/v1/anamnesis/importar",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\importar\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "GET",
+      "path": "/api/debug-headers",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\debug-headers\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "GET",
+      "path": "/api/v1/anamnesis",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "POST",
+      "path": "/api/v1/anamnesis",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "PUT",
+      "path": "/api/v1/anamnesis",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "DELETE",
+      "path": "/api/v1/anamnesis",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "GET",
+      "path": "/api/v1/anamnesis/paciente/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\paciente\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "PUT",
+      "path": "/api/v1/anamnesis/paciente/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\paciente\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "DELETE",
+      "path": "/api/v1/anamnesis/paciente/:id",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\v1\\anamnesis\\paciente\\[id]\\route.ts"
+    },
+    {
+      "service": "apps/patients",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\patients\\src\\app\\api\\health\\route.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "GET",
+      "path": "/api/appointments",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\doctors\\src\\app\\api\\appointments\\route.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "POST",
+      "path": "/api/appointments",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\doctors\\src\\app\\api\\appointments\\route.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "PUT",
+      "path": "/api/appointments",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\doctors\\src\\app\\api\\appointments\\route.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "GET",
+      "path": "https://api.ipify.org?format=json",
+      "file": "firebase-service.ts",
+      "type": "fetch",
+      "full_path": "apps\\doctors\\src\\services\\firebase-service.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\doctors\\src\\app\\api\\health\\route.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "GET",
+      "path": "/api/patients",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\doctors\\src\\app\\api\\patients\\route.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "POST",
+      "path": "/api/patients",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\doctors\\src\\app\\api\\patients\\route.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "GET",
+      "path": "/api/telemedicine",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\doctors\\src\\app\\api\\telemedicine\\route.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "POST",
+      "path": "/api/telemedicine",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\doctors\\src\\app\\api\\telemedicine\\route.ts"
+    },
+    {
+      "service": "apps/doctors",
+      "method": "PUT",
+      "path": "/api/telemedicine",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\doctors\\src\\app\\api\\telemedicine\\route.ts"
+    },
+    {
+      "service": "apps/admin",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\admin\\src\\app\\api\\health\\route.ts"
+    },
+    {
+      "service": "apps/companies",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\companies\\src\\app\\api\\health\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/health",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\health\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/empty",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\empty\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "POST",
+      "path": "/api/empty",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\empty\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "PUT",
+      "path": "/api/empty",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\empty\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "DELETE",
+      "path": "/api/empty",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\empty\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/marketplace",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\marketplace\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "POST",
+      "path": "/connect",
+      "file": "grok-server.js",
+      "type": "express",
+      "full_path": "apps\\web-app\\server\\grok-server.js"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "POST",
+      "path": "/send",
+      "file": "grok-server.js",
+      "type": "express",
+      "full_path": "apps\\web-app\\server\\grok-server.js"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "POST",
+      "path": "/disconnect",
+      "file": "grok-server.js",
+      "type": "express",
+      "full_path": "apps\\web-app\\server\\grok-server.js"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/status",
+      "file": "grok-server.js",
+      "type": "express",
+      "full_path": "apps\\web-app\\server\\grok-server.js"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/hospital3d-simulator",
+      "file": "server.js",
+      "type": "express",
+      "full_path": "apps\\web-app\\dev-server\\server.js"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/create-test-user",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\create-test-user\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/telemedicine",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\telemedicine\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "shared-auth.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\services\\shared-auth.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "get",
+      "path": "/api/unknown",
+      "file": "shared-auth.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\services\\shared-auth.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/appointments",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\appointments\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "POST",
+      "path": "/api/grok",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\grok\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/grok",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\grok\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/patients",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\patients\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/health/detailed",
+      "file": "route.ts",
+      "type": "nextjs_export",
+      "full_path": "apps\\web-app\\src\\app\\api\\health\\detailed\\route.ts"
+    },
+    {
+      "service": "apps/web-app",
+      "method": "GET",
+      "path": "/api/auth/refresh",
+      "file": "jwt-service.ts",
+      "type": "fetch",
+      "full_path": "apps\\web-app\\src\\services\\jwt-service.ts"
+    },
+    {
+      "service": "python-tools",
+      "method": "POST",
+      "path": "/api/matching/find-partners",
+      "file": "medical_matching_engine.py",
+      "type": "express",
+      "full_path": "medical_matching_engine.py"
+    },
+    {
+      "service": "python-tools",
+      "method": "GET",
+      "path": "/api/matching/companies/{company_id}/recommendations",
+      "file": "medical_matching_engine.py",
+      "type": "express",
+      "full_path": "medical_matching_engine.py"
+    },
+    {
+      "service": "python-tools",
+      "method": "POST",
+      "path": "/api/matching/partnership/create",
+      "file": "medical_matching_engine.py",
+      "type": "express",
+      "full_path": "medical_matching_engine.py"
+    },
+    {
+      "service": "python-tools",
+      "method": "POST",
+      "path": "/api/matching/find-partners",
+      "file": "medical_matching_engine.py",
+      "type": "fastapi",
+      "full_path": "medical_matching_engine.py"
+    },
+    {
+      "service": "python-tools",
+      "method": "GET",
+      "path": "/api/matching/companies/{company_id}/recommendations",
+      "file": "medical_matching_engine.py",
+      "type": "fastapi",
+      "full_path": "medical_matching_engine.py"
+    },
+    {
+      "service": "python-tools",
+      "method": "POST",
+      "path": "/api/matching/partnership/create",
+      "file": "medical_matching_engine.py",
+      "type": "fastapi",
+      "full_path": "medical_matching_engine.py"
+    }
+  ]
+}

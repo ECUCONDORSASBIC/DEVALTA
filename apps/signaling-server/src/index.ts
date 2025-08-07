@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
@@ -52,9 +55,9 @@ const limiter = rateLimit(serverConfig.rateLimit);
 app.use('/api/', limiter);
 
 // Health check
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'healthy', 
+app.get('/health', (_, res) => {
+  res.json({
+    status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
@@ -84,9 +87,10 @@ app.post('/api/rooms', authenticateToken, requireRole(['doctor', 'admin']), asyn
         createdAt: room.createdAt
       }
     });
+    return;
   } catch (error) {
     logger.error('Error creating room:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to create room' 
     });
   }
@@ -121,16 +125,17 @@ app.get('/api/rooms/:roomId', authenticateToken, async (req, res) => {
         }))
       }
     });
+    return;
   } catch (error) {
     logger.error('Error getting room:', error);
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Failed to get room information' 
     });
   }
 });
 
 // Estadísticas del servidor
-app.get('/api/stats', authenticateToken, requireRole(['admin']), async (req, res) => {
+app.get('/api/stats', authenticateToken, requireRole(['admin']), async (_, res) => {
   try {
     const stats = await roomService.getRoomStats();
     
@@ -153,7 +158,7 @@ app.get('/api/stats', authenticateToken, requireRole(['admin']), async (req, res
 // Configurar Socket.IO
 const io = new Server(httpServer, {
   cors: serverConfig.cors,
-  transports: serverConfig.socketIO.transports,
+  transports: serverConfig.socketIO.transports as any,
   pingTimeout: serverConfig.socketIO.pingTimeout,
   pingInterval: serverConfig.socketIO.pingInterval,
   maxHttpBufferSize: serverConfig.socketIO.maxHttpBufferSize

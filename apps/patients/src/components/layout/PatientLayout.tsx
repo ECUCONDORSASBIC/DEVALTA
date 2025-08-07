@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PatientSidebar from './PatientSidebar';
-import { AuthProvider, ProtectedRoute } from '../../hooks/useAuth';
+import { AuthProvider } from "@altamedica/auth';
 import { Bell, Search, User } from 'lucide-react';
 
 interface PatientLayoutProps {

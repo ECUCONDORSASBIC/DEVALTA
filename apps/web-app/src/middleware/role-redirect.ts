@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDashboardUrl } from '@/config/app-urls';
+import { getDashboardUrl } from '../config/app-urls';
 
 /**
  * Middleware para redirigir usuarios a su aplicación correspondiente según su rol

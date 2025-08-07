@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Ejecutar Patients App",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["--filter", "patients", "dev"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "🏥 Ejecutar Doctors App",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["--filter", "doctors", "dev"],
+      "group": "build",
+      "presentation": {
+        "panel": "new"
+      }
+    },
+    {
+      "label": "🔧 Ejecutar API Server",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["--filter", "api-server", "dev"],
+      "group": "build",
+      "presentation": {
+        "panel": "new"
+      }
+    },
+    {
+      "label": "🧪 Ejecutar Tests",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["test"],
+      "group": "test",
+      "presentation": {
+        "panel": "new"
+      }
+    },
+    {
+      "label": "🧹 Linter Fix",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["lint:fix"],
+      "group": "build"
+    },
+    {
+      "label": "📦 Build All",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["build"],
+      "group": "build"
+    }
+  ]
+}

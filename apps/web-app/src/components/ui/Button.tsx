@@ -1,45 +1,62 @@
-import React from 'react';
+import * as React from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { type VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary-500 text-white hover:bg-primary-600 focus-visible:ring-primary-500 shadow-altamedica hover:shadow-altamedica-lg",
+        destructive: "bg-alert-500 text-white hover:bg-alert-600 focus-visible:ring-alert-500",
+        outline: "border-2 border-primary-500 bg-transparent text-primary-600 hover:bg-primary-50 focus-visible:ring-primary-500",
+        secondary: "bg-primary-50 text-primary-700 hover:bg-primary-100 focus-visible:ring-primary-500",
+        ghost: "bg-transparent text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900",
+        link: "text-primary-500 underline-offset-4 hover:underline hover:text-primary-600",
+        medical: "bg-success-500 text-white hover:bg-success-600 focus-visible:ring-success-500",
+        emergency: "bg-alert-600 text-white hover:bg-alert-700 focus-visible:ring-alert-500 animate-pulse",
+        argentina: "bg-argentina-500 text-white hover:bg-argentina-600 focus-visible:ring-argentina-500",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-lg px-3",
+        lg: "h-12 rounded-lg px-6 text-base",
+        xl: "h-14 rounded-lg px-8 text-lg",
+        icon: "h-10 w-10",
+        xs: "h-7 rounded-md px-2 text-xs",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  loading?: boolean;
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className = '', variant = 'default', size = 'default', loading, children, disabled, ...props }, ref) => {
-    const baseClasses = 'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
-    
-    const variants = {
-      default: 'bg-blue-600 text-white hover:bg-blue-700',
-      destructive: 'bg-red-600 text-white hover:bg-red-700',
-      outline: 'border border-gray-300 bg-background hover:bg-gray-50 hover:text-gray-900',
-      secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
-      ghost: 'hover:bg-gray-100 hover:text-gray-900',
-      link: 'text-blue-600 underline-offset-4 hover:underline',
-    };
-    
-    const sizes = {
-      default: 'h-10 px-4 py-2',
-      sm: 'h-9 rounded-md px-3',
-      lg: 'h-11 rounded-md px-8',
-      icon: 'h-10 w-10',
-    };
-    
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
     return (
-      <button
-        className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        disabled={loading || disabled}
         {...props}
-      >
-        {loading ? '⏳' : children}
-      </button>
+      />
     );
   }
 );
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
+// For backward compatibility, export a ButtonCorporate that's the same as Button
+const ButtonCorporate = Button;
+
+export { Button, ButtonCorporate, buttonVariants };
 export { Button as default };

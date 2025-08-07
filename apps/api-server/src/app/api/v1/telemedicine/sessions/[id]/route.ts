@@ -1,140 +1,179 @@
-/**
- * 🩺 TELEMEDICINE SESSIONS API - INDIVIDUAL SESSION
- * Endpoints para gestionar una sesión de telemedicina específica.
- * GET, PUT, DELETE /api/v1/telemedicine/sessions/[id]
- * @version 2.0.0
- * @author Altamedica
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createAuthenticatedRoute, AuthContext } from '@/lib/middleware/UnifiedAuth';
-import { telemedicineSessionService, TelemedicineSessionSchema } from '@/services/telemedicine-session.service';
-import { createErrorResponse, createSuccessResponse } from '@/lib/response-helpers';
+import { createAuthenticatedRoute } from '@/lib/middleware/UnifiedAuth';
+import { createSuccessResponse, createErrorResponse } from '@/lib/response-helpers';
+import TelemedicineService from '@/services/telemedicine.service';
 
-/**
- * @summary Obtiene una sesión de telemedicina por su ID.
- * @handler GET
- * @protected
- */
+// Schemas
+const UpdateSessionSchema = z.object({
+  status: z.enum(['active', 'completed', 'cancelled']).optional(),
+  notes: z.string().optional(),
+  recordingUrl: z.string().url().optional()
+});
+
+// GET /api/v1/telemedicine/sessions/[id] - Get specific session
 export const GET = createAuthenticatedRoute(
-  async (request: NextRequest, { params }: { params: { id: string } }) => {
+  async (request: NextRequest, authContext, { params }: { params: { id: string } }) => {
     try {
-      const authContext = (request as any).authContext as AuthContext;
-      const session = await telemedicineSessionService.findById(params.id, authContext.user!);
-
+      const { id } = params;
+      
+      if (!id) {
+        return NextResponse.json(
+          createErrorResponse('MISSING_PARAMETER', 'Session ID is required'),
+          { status: 400 }
+        );
+      }
+      
+      console.log(`[Telemedicine] Getting session ${id}`);
+      
+      const session = await TelemedicineService.getSession(id);
+      
       if (!session) {
         return NextResponse.json(
-          createErrorResponse('Sesión de telemedicina no encontrada o sin permisos.', 'NOT_FOUND'),
+          createErrorResponse('SESSION_NOT_FOUND', 'Telemedicine session not found'),
           { status: 404 }
         );
       }
-
-      return NextResponse.json(createSuccessResponse(session));
-    } catch (error: unknown) {
-      console.error(`Error en GET /telemedicine/sessions/${(params as any)?.id}:`, error);
+      
+      // Authorization: users can only access their own sessions (unless admin)
+      const currentUserId = authContext.user?.uid;
+      const currentUserRole = authContext.user?.role;
+      
+      if (currentUserRole !== 'admin') {
+        if (session.patientId !== currentUserId && session.doctorId !== currentUserId) {
+          return NextResponse.json(
+            createErrorResponse('FORBIDDEN', 'You can only access your own sessions'),
+            { status: 403 }
+          );
+        }
+      }
+      
       return NextResponse.json(
-        createErrorResponse('Error al obtener la sesión.', 'INTERNAL_SERVER_ERROR'),
+        createSuccessResponse(session, 'Session retrieved successfully')
+      );
+      
+    } catch (error) {
+      console.error('[Telemedicine] Error getting session:', error);
+      return NextResponse.json(
+        createErrorResponse('INTERNAL_ERROR', 'Failed to retrieve session'),
         { status: 500 }
       );
     }
   },
   {
     allowedRoles: ['doctor', 'patient', 'admin'],
-    auditAction: 'telemedicine_session_read',
+    auditAction: 'get_telemedicine_session'
   }
 );
 
-/**
- * @summary Actualiza una sesión de telemedicina.
- * @handler PUT
- * @protected
- */
+// PUT /api/v1/telemedicine/sessions/[id] - Update session (start, end, cancel)
 export const PUT = createAuthenticatedRoute(
-  async (request: NextRequest, { params }: { params: { id: string } }) => {
+  async (request: NextRequest, authContext, { params }: { params: { id: string } }) => {
     try {
-      const authContext = (request as any).authContext as AuthContext;
-      const body = await request.json();
+      const { id } = params;
       
-      const validatedData = TelemedicineSessionSchema.partial().parse(body);
-
-      const updatedSession = await telemedicineSessionService.update(params.id, validatedData, authContext.user!);
-
-      return NextResponse.json(createSuccessResponse(updatedSession));
-    } catch (error: unknown) {
-      console.error(`Error en PUT /telemedicine/sessions/${(params as any)?.id}:`, error);
-
-      if (error instanceof z.ZodError) {
+      if (!id) {
         return NextResponse.json(
-          createErrorResponse('Datos de entrada inválidos.', 'VALIDATION_ERROR', { validationErrors: error.errors }),
+          createErrorResponse('MISSING_PARAMETER', 'Session ID is required'),
           { status: 400 }
         );
       }
-      if (error instanceof Error && error.message === 'NOT_FOUND') {
-        return NextResponse.json(
-          createErrorResponse('Sesión no encontrada.', 'NOT_FOUND'),
-          { status: 404 }
-        );
-      }
-      if (error instanceof Error && error.message === 'FORBIDDEN') {
-        return NextResponse.json(
-          createErrorResponse('No tiene permisos para modificar este recurso.', 'FORBIDDEN'),
-          { status: 403 }
-        );
-      }
-
-      return NextResponse.json(
-        createErrorResponse('Error al actualizar la sesión.', 'INTERNAL_SERVER_ERROR'),
-        { status: 500 }
-      );
-    }
-  },
-  {
-    allowedRoles: ['doctor', 'admin'],
-    auditAction: 'telemedicine_session_update',
-  }
-);
-
-/**
- * @summary Elimina (cancela) una sesión de telemedicina.
- * @handler DELETE
- * @protected
- */
-export const DELETE = createAuthenticatedRoute(
-  async (request: NextRequest, { params }: { params: { id:string } }) => {
-    try {
-      const authContext = (request as any).authContext as AuthContext;
-      const success = await telemedicineSessionService.delete(params.id, authContext.user!);
-
-      if (!success) {
-        return NextResponse.json(
-          createErrorResponse('Sesión no encontrada.', 'NOT_FOUND'),
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json(createSuccessResponse({
-        message: 'Sesión de telemedicina cancelada exitosamente.',
-        id: params.id
-      }));
-    } catch (error: unknown) {
-      console.error(`Error en DELETE /telemedicine/sessions/${(params as any)?.id}:`, error);
       
-      if (error instanceof Error && error.message === 'FORBIDDEN') {
+      const body = await request.json();
+      const validation = UpdateSessionSchema.safeParse(body);
+      
+      if (!validation.success) {
         return NextResponse.json(
-          createErrorResponse('No tiene permisos para eliminar este recurso.', 'FORBIDDEN'),
-          { status: 403 }
+          createErrorResponse('INVALID_REQUEST_BODY', 'Invalid request body', {
+            errors: validation.error.flatten().fieldErrors
+          }),
+          { status: 400 }
         );
       }
-
+      
+      const { status, notes, recordingUrl } = validation.data;
+      
+      console.log(`[Telemedicine] Updating session ${id} with status: ${status}`);
+      
+      // Get current session to check permissions
+      const currentSession = await TelemedicineService.getSession(id);
+      
+      if (!currentSession) {
+        return NextResponse.json(
+          createErrorResponse('SESSION_NOT_FOUND', 'Telemedicine session not found'),
+          { status: 404 }
+        );
+      }
+      
+      // Authorization: users can only update their own sessions (unless admin)
+      const currentUserId = authContext.user?.uid;
+      const currentUserRole = authContext.user?.role;
+      
+      if (currentUserRole !== 'admin') {
+        if (currentSession.patientId !== currentUserId && currentSession.doctorId !== currentUserId) {
+          return NextResponse.json(
+            createErrorResponse('FORBIDDEN', 'You can only update your own sessions'),
+            { status: 403 }
+          );
+        }
+      }
+      
+      let updatedSession;
+      
+      switch (status) {
+        case 'active':
+          updatedSession = await TelemedicineService.startSession(id, currentUserId);
+          break;
+        case 'completed':
+          updatedSession = await TelemedicineService.endSession(id, {
+            notes,
+            recordingUrl,
+            endedBy: currentUserId
+          });
+          break;
+        case 'cancelled':
+          updatedSession = await TelemedicineService.cancelSession(id, currentUserId);
+          break;
+        default:
+          // Generic update for other fields
+          updatedSession = await TelemedicineService.updateSession(id, {
+            notes,
+            recordingUrl,
+            updatedBy: currentUserId
+          });
+      }
+      
+      console.log(`[Telemedicine] Session ${id} updated successfully`);
+      
       return NextResponse.json(
-        createErrorResponse('Error al cancelar la sesión.', 'INTERNAL_SERVER_ERROR'),
+        createSuccessResponse(updatedSession, `Session ${status ? status : 'updated'} successfully`)
+      );
+      
+    } catch (error) {
+      console.error('[Telemedicine] Error updating session:', error);
+      
+      if (error instanceof Error && error.message.includes('not found')) {
+        return NextResponse.json(
+          createErrorResponse('SESSION_NOT_FOUND', 'Session not found'),
+          { status: 404 }
+        );
+      }
+      
+      if (error instanceof Error && error.message.includes('invalid state')) {
+        return NextResponse.json(
+          createErrorResponse('INVALID_SESSION_STATE', error.message),
+          { status: 400 }
+        );
+      }
+      
+      return NextResponse.json(
+        createErrorResponse('INTERNAL_ERROR', 'Failed to update session'),
         { status: 500 }
       );
     }
   },
   {
-    allowedRoles: ['admin'], // Solo administradores pueden borrar/cancelar sesiones
-    auditAction: 'telemedicine_session_delete',
+    allowedRoles: ['doctor', 'patient', 'admin'],
+    auditAction: 'update_telemedicine_session'
   }
 );

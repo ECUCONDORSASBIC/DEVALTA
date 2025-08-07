@@ -16,7 +16,8 @@ import {
   BarChart3,
   Target,
 } from 'lucide-react';
-import { CardCorporate, CardContentCorporate } from './ui/CardCorporate';
+import { CardCorporate } from '@altamedica/ui';
+import { CardContentCorporate } from './ui/CardCorporate';
 
 interface AnamnesisStatsProps {
   completitud: number;

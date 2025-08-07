@@ -1,54 +1,200 @@
 /**
- * 👤 USER SERVICE - ALTAMEDICA
- * Servicio para la gestión de usuarios.
+ * 👥 USER SERVICE - ALTAMEDICA
+ * Servicio consolidado para la gestión de usuarios
+ * Combina lo mejor de user.service.ts y UserService.ts
  */
-import { adminAuth, adminDb } from '@/lib/firebase-admin';
-import { z } from 'zod';
-import { BaseService, ServiceContext } from '@/lib/patterns/ServicePattern';
 
-// Esquema de Zod para la actualización de un usuario.
-// Solo se permiten ciertos campos para ser actualizados a través de la API.
-export const UserUpdateSchema = z.object({
-  firstName: z.string().min(2, "El nombre debe tener al menos 2 caracteres.").optional(),
-  lastName: z.string().min(2, "El apellido debe tener al menos 2 caracteres.").optional(),
+import { getAuthAdmin, getFirestoreAdmin } from '@/lib/firebase-admin';
+import { z } from 'zod';
+import { BaseService, BaseEntity, ServiceContext, QueryOptions, ServiceResponse } from '@/lib/patterns/ServicePattern';
+import { AppError, ErrorCodes } from '@/lib/response-helpers';
+
+// Schema de validación para creación de usuario
+export const UserCreateSchema = z.object({
+  email: z.string().email('Email inválido'),
+  firstName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(50),
+  lastName: z.string().min(2, 'El apellido debe tener al menos 2 caracteres').max(50),
+  role: z.enum(['admin', 'doctor', 'patient', 'company', 'nurse']),
   phoneNumber: z.string().optional(),
-  // Datos de perfil específicos según el rol
+  companyId: z.string().optional(),
   profile: z.object({
-    specialties: z.array(z.string()).optional(), // Para doctores
-    title: z.string().optional(), // Para doctores/staff
-    bio: z.string().optional(),
-    avatarUrl: z.string().url().optional(),
+    avatar: z.string().url().optional(),
+    bio: z.string().max(500).optional(),
+    specialties: z.array(z.string()).optional(),
+    languages: z.array(z.string()).optional(),
+    timezone: z.string().optional()
   }).optional(),
 });
 
-// Esquema para cambios realizados por un administrador
-export const AdminUserUpdateSchema = UserUpdateSchema.extend({
-    role: z.enum(['patient', 'doctor', 'nurse', 'company', 'admin']).optional(),
-    isActive: z.boolean().optional(),
+// Schema de validación para actualización de usuario
+export const UserUpdateSchema = z.object({
+  firstName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(50).optional(),
+  lastName: z.string().min(2, 'El apellido debe tener al menos 2 caracteres').max(50).optional(),
+  phoneNumber: z.string().optional(),
+  profile: z.object({
+    avatar: z.string().url().optional(),
+    bio: z.string().max(500).optional(),
+    specialties: z.array(z.string()).optional(),
+    languages: z.array(z.string()).optional(),
+    timezone: z.string().optional(),
+    title: z.string().optional(),
+  }).optional(),
+  settings: z.object({
+    notifications: z.object({
+      email: z.boolean().optional(),
+      push: z.boolean().optional(),
+      sms: z.boolean().optional()
+    }).optional(),
+    privacy: z.object({
+      profileVisible: z.boolean().optional(),
+      shareData: z.boolean().optional()
+    }).optional()
+  }).optional(),
 });
 
+// Schema para cambios realizados por un administrador
+export const AdminUserUpdateSchema = UserUpdateSchema.extend({
+  role: z.enum(['patient', 'doctor', 'nurse', 'company', 'admin']).optional(),
+  isActive: z.boolean().optional(),
+  emailVerified: z.boolean().optional(),
+  companyId: z.string().optional(),
+});
 
-export interface User {
-  id: string;
+// Interfaz de usuario
+export interface User extends BaseEntity {
   email: string;
-  role: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
+  role: 'admin' | 'doctor' | 'patient' | 'company' | 'nurse';
   phoneNumber?: string;
   isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  profile?: any;
+  emailVerified: boolean;
+  companyId?: string;
+  profile?: {
+    avatar?: string;
+    bio?: string;
+    specialties?: string[];
+    languages?: string[];
+    timezone?: string;
+    title?: string;
+  };
+  settings?: {
+    notifications?: {
+      email: boolean;
+      push: boolean;
+      sms: boolean;
+    };
+    privacy?: {
+      profileVisible: boolean;
+      shareData: boolean;
+    };
+  };
+  metadata?: {
+    lastSignIn?: Date;
+    signInCount: number;
+    lastIP?: string;
+    lastUserAgent?: string;
+    createdFrom?: string;
+  };
 }
 
 class UserService extends BaseService<User> {
   protected collectionName = 'users';
-  protected entitySchema = UserUpdateSchema; // Usado para la validación base
+  protected entitySchema = UserUpdateSchema;
 
+  /**
+   * Crear un nuevo usuario
+   */
+  async create(data: Omit<User, keyof BaseEntity>, context: ServiceContext): Promise<User> {
+    // Solo admins pueden crear usuarios
+    if (context.userRole !== 'admin') {
+      throw new AppError('Permisos insuficientes', 403, ErrorCodes.FORBIDDEN);
+    }
+
+    // Validar datos
+    const validatedData = UserCreateSchema.parse(data);
+
+    // Verificar si el usuario ya existe
+    const existingUser = await this.findByEmail(validatedData.email);
+    if (existingUser) {
+      throw new AppError('El email ya está registrado', 409, ErrorCodes.ALREADY_EXISTS);
+    }
+
+    const adminAuth = getAuthAdmin();
+    const adminDb = getFirestoreAdmin();
+
+    if (!adminAuth || !adminDb) {
+      throw new AppError('Servicios no disponibles', 503, ErrorCodes.SERVICE_UNAVAILABLE);
+    }
+
+    try {
+      // Crear usuario en Firebase Auth primero
+      const userRecord = await adminAuth.createUser({
+        email: validatedData.email,
+        displayName: `${validatedData.firstName} ${validatedData.lastName}`,
+        emailVerified: false,
+      });
+
+      // Establecer custom claims
+      await adminAuth.setCustomUserClaims(userRecord.uid, {
+        role: validatedData.role,
+        altamedicaUser: true,
+        createdAt: Date.now(),
+      });
+
+      const now = new Date();
+      const newUser: User = {
+        ...validatedData,
+        id: userRecord.uid,
+        isActive: true,
+        emailVerified: false,
+        createdAt: now,
+        updatedAt: now,
+        createdBy: context.userId,
+        metadata: {
+          signInCount: 0,
+          createdFrom: 'api'
+        }
+      };
+
+      // Guardar en Firestore
+      await adminDb.collection(this.collectionName).doc(userRecord.uid).set(newUser);
+
+      // Crear perfil específico según el rol
+      await this.createRoleProfile(userRecord.uid, validatedData.role);
+
+      // Log action
+      await this.logAction('create', userRecord.uid, context, {
+        userRole: validatedData.role,
+        companyId: validatedData.companyId
+      });
+
+      return newUser;
+    } catch (error: any) {
+      // Si falla, intentar limpiar Firebase Auth
+      if (error.userRecord?.uid) {
+        try {
+          await adminAuth.deleteUser(error.userRecord.uid);
+        } catch (cleanupError) {
+          console.error('Error cleaning up user:', cleanupError);
+        }
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Buscar usuario por ID
+   */
   async findById(id: string, context: ServiceContext): Promise<User | null> {
-    // Un usuario solo puede ver su propio perfil, a menos que sea un admin.
-    if (context.userRole !== 'admin' && context.userId !== id) {
-      throw new Error('FORBIDDEN');
+    // Verificar permisos
+    if (!this.canAccessUser(id, context)) {
+      throw new AppError('Permisos insuficientes', 403, ErrorCodes.FORBIDDEN);
+    }
+
+    const adminDb = getFirestoreAdmin();
+    if (!adminDb) {
+      throw new AppError('Servicio no disponible', 503, ErrorCodes.SERVICE_UNAVAILABLE);
     }
 
     const doc = await adminDb.collection(this.collectionName).doc(id).get();
@@ -56,29 +202,127 @@ class UserService extends BaseService<User> {
       return null;
     }
 
-    const userData = doc.data();
-    // Excluir datos sensibles antes de devolver
-    const { passwordHash, ...safeUserData } = userData!;
+    const userData = doc.data()!;
     
-    return { id: doc.id, ...safeUserData } as User;
+    // Excluir datos sensibles
+    const { passwordHash, ...safeUserData } = userData;
+    
+    return {
+      id: doc.id,
+      ...safeUserData,
+      createdAt: userData.createdAt?.toDate() || userData.createdAt,
+      updatedAt: userData.updatedAt?.toDate() || userData.updatedAt,
+      metadata: {
+        ...userData.metadata,
+        lastSignIn: userData.metadata?.lastSignIn?.toDate() || userData.metadata?.lastSignIn
+      }
+    } as User;
   }
 
-  async update(id: string, data: Partial<User>, context: ServiceContext): Promise<User> {
-    let validatedData;
-    // Determinar qué esquema de validación usar
-    if (context.userRole === 'admin') {
-        validatedData = AdminUserUpdateSchema.parse(data);
-    } else {
-        // Un usuario solo puede actualizar su propio perfil
-        if (context.userId !== id) {
-            throw new Error('FORBIDDEN');
-        }
-        validatedData = UserUpdateSchema.parse(data);
+  /**
+   * Buscar múltiples usuarios
+   */
+  async findMany(options: QueryOptions, context: ServiceContext): Promise<ServiceResponse<User[]>> {
+    const adminDb = getFirestoreAdmin();
+    if (!adminDb) {
+      throw new AppError('Servicio no disponible', 503, ErrorCodes.SERVICE_UNAVAILABLE);
     }
 
-    const userRef = adminDb.collection(this.collectionName).doc(id);
-    if (!(await userRef.get()).exists) {
-      throw new Error('NOT_FOUND');
+    const query = this.buildQuery(options);
+
+    try {
+      let firestoreQuery: any = adminDb.collection(this.collectionName);
+
+      // Aplicar filtros basados en rol
+      if (context.userRole !== 'admin') {
+        if (context.userRole === 'company' && context.companyId) {
+          firestoreQuery = firestoreQuery.where('companyId', '==', context.companyId);
+        } else if (context.userRole === 'doctor') {
+          // Los doctores pueden ver pacientes y otros doctores de su compañía
+          firestoreQuery = firestoreQuery.where('role', 'in', ['patient', 'doctor']);
+          if (context.companyId) {
+            firestoreQuery = firestoreQuery.where('companyId', '==', context.companyId);
+          }
+        } else {
+          // Pacientes y otros solo pueden ver su propio registro
+          firestoreQuery = firestoreQuery.where('id', '==', context.userId);
+        }
+      }
+
+      // Aplicar filtros adicionales
+      Object.entries(query.filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          firestoreQuery = firestoreQuery.where(key, '==', value);
+        }
+      });
+
+      // Aplicar ordenamiento
+      firestoreQuery = firestoreQuery.orderBy(query.sortBy, query.sortOrder);
+
+      // Obtener total
+      const totalSnapshot = await firestoreQuery.get();
+      const total = totalSnapshot.size;
+
+      // Aplicar paginación
+      const paginatedQuery = firestoreQuery.offset(query.offset).limit(query.limit);
+      const snapshot = await paginatedQuery.get();
+
+      const users: User[] = [];
+      for (const doc of snapshot.docs) {
+        const userData = doc.data();
+        users.push({
+          id: doc.id,
+          ...userData,
+          createdAt: userData.createdAt?.toDate() || userData.createdAt,
+          updatedAt: userData.updatedAt?.toDate() || userData.updatedAt,
+          metadata: {
+            ...userData.metadata,
+            lastSignIn: userData.metadata?.lastSignIn?.toDate() || userData.metadata?.lastSignIn
+          }
+        } as User);
+      }
+
+      return {
+        data: users,
+        total,
+        page: query.page,
+        limit: query.limit,
+        hasNext: query.offset + query.limit < total,
+        hasPrev: query.page > 1
+      };
+    } catch (error) {
+      console.error('Error finding users:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualizar usuario
+   */
+  async update(id: string, data: Partial<User>, context: ServiceContext): Promise<User> {
+    const adminAuth = getAuthAdmin();
+    const adminDb = getFirestoreAdmin();
+
+    if (!adminAuth || !adminDb) {
+      throw new AppError('Servicios no disponibles', 503, ErrorCodes.SERVICE_UNAVAILABLE);
+    }
+
+    // Verificar que el usuario existe
+    const existingUser = await this.findById(id, context);
+    if (!existingUser) {
+      throw new AppError('Usuario no encontrado', 404, ErrorCodes.NOT_FOUND);
+    }
+
+    // Determinar qué schema usar según el rol
+    let validatedData;
+    if (context.userRole === 'admin') {
+      validatedData = AdminUserUpdateSchema.parse(data);
+    } else {
+      // Un usuario solo puede actualizar su propio perfil
+      if (context.userId !== id) {
+        throw new AppError('Solo puedes actualizar tu propio perfil', 403, ErrorCodes.FORBIDDEN);
+      }
+      validatedData = UserUpdateSchema.parse(data);
     }
 
     const updatePayload = {
@@ -87,62 +331,328 @@ class UserService extends BaseService<User> {
       updatedBy: context.userId,
     };
 
-    await userRef.update(updatePayload);
+    try {
+      // Actualizar en Firestore
+      await adminDb.collection(this.collectionName).doc(id).update(updatePayload);
 
-    // Si el rol fue cambiado por un admin, actualizar también en Firebase Auth
-    if (validatedData.role && context.userRole === 'admin') {
+      // Si el rol cambió, actualizar en Firebase Auth
+      if (validatedData.role && context.userRole === 'admin') {
         await adminAuth.setCustomUserClaims(id, { role: validatedData.role });
+      }
+
+      // Log action
+      await this.logAction('update', id, context, { 
+        updatedFields: Object.keys(validatedData) 
+      });
+
+      // Obtener usuario actualizado
+      const updatedUser = await this.findById(id, context);
+      if (!updatedUser) {
+        throw new AppError('Error al obtener usuario actualizado', 500, ErrorCodes.INTERNAL_ERROR);
+      }
+
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
     }
-
-    await this.logAction('update', id, context, { updatedFields: Object.keys(validatedData) });
-
-    return (await this.findById(id, context))!;
   }
 
   /**
-   * Desactiva un usuario (borrado lógico).
+   * Eliminar usuario (desactivación lógica)
    */
   async delete(id: string, context: ServiceContext): Promise<boolean> {
-    // Solo un admin puede desactivar un usuario. Un usuario no puede eliminarse a sí mismo.
+    // Solo admins pueden eliminar usuarios
     if (context.userRole !== 'admin') {
-      throw new Error('FORBIDDEN');
-    }
-    if (context.userId === id) {
-        throw new Error('BAD_REQUEST: An admin cannot deactivate themselves.');
+      throw new AppError('Solo administradores pueden eliminar usuarios', 403, ErrorCodes.FORBIDDEN);
     }
 
+    // Un admin no puede eliminarse a sí mismo
+    if (context.userId === id) {
+      throw new AppError('No puedes eliminar tu propia cuenta', 400, ErrorCodes.BUSINESS_RULE_VIOLATION);
+    }
+
+    const adminAuth = getAuthAdmin();
+    const adminDb = getFirestoreAdmin();
+
+    if (!adminAuth || !adminDb) {
+      throw new AppError('Servicios no disponibles', 503, ErrorCodes.SERVICE_UNAVAILABLE);
+    }
+
+    // Verificar que el usuario existe
     const userRef = adminDb.collection(this.collectionName).doc(id);
-    if (!(await userRef.get()).exists) {
+    const userDoc = await userRef.get();
+    
+    if (!userDoc.exists) {
       return false;
     }
 
-    // Desactivar en Firestore
-    await userRef.update({
-      isActive: false,
-      updatedAt: new Date(),
-      updatedBy: context.userId,
-    });
+    try {
+      // Desactivar en Firestore
+      await userRef.update({
+        isActive: false,
+        deletedAt: new Date(),
+        deletedBy: context.userId,
+        updatedAt: new Date()
+      });
 
-    // Desactivar en Firebase Auth
-    await adminAuth.updateUser(id, { disabled: true });
+      // Desactivar en Firebase Auth
+      await adminAuth.updateUser(id, { disabled: true });
 
-    await this.logAction('delete', id, context, { reason: 'deactivated by admin' });
-    return true;
+      // Log action
+      await this.logAction('delete', id, context, { 
+        reason: 'Desactivado por administrador' 
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
   }
 
   /**
-   * Obtiene el perfil completo del usuario autenticado, incluyendo su perfil de rol.
+   * Obtener perfil del usuario autenticado con perfil de rol
    */
   async getMe(context: ServiceContext): Promise<User | null> {
-    const userDoc = await adminDb.collection(this.collectionName).doc(context.userId).get();
-    if (!userDoc.exists) {
+    const adminDb = getFirestoreAdmin();
+    if (!adminDb) {
+      throw new AppError('Servicio no disponible', 503, ErrorCodes.SERVICE_UNAVAILABLE);
+    }
+
+    const user = await this.findById(context.userId, context);
+    if (!user) {
       return null;
     }
 
-    const userData = userDoc.data() as User;
-    let roleProfile = null;
+    // Obtener perfil específico del rol
+    const roleProfile = await this.getRoleProfile(context.userId, user.role);
+    
+    return {
+      ...user,
+      profile: {
+        ...user.profile,
+        ...roleProfile
+      }
+    };
+  }
 
-    // Colecciones de perfiles por rol
+  /**
+   * Buscar usuario por email
+   */
+  async findByEmail(email: string): Promise<User | null> {
+    const adminDb = getFirestoreAdmin();
+    if (!adminDb) {
+      throw new AppError('Servicio no disponible', 503, ErrorCodes.SERVICE_UNAVAILABLE);
+    }
+
+    try {
+      const snapshot = await adminDb.collection(this.collectionName)
+        .where('email', '==', email)
+        .limit(1)
+        .get();
+
+      if (snapshot.empty) {
+        return null;
+      }
+
+      const doc = snapshot.docs[0];
+      const userData = doc.data();
+
+      return {
+        id: doc.id,
+        ...userData,
+        createdAt: userData.createdAt?.toDate() || userData.createdAt,
+        updatedAt: userData.updatedAt?.toDate() || userData.updatedAt,
+        metadata: {
+          ...userData.metadata,
+          lastSignIn: userData.metadata?.lastSignIn?.toDate() || userData.metadata?.lastSignIn
+        }
+      } as User;
+    } catch (error) {
+      console.error('Error finding user by email:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualizar último inicio de sesión
+   */
+  async updateLastSignIn(userId: string, ipAddress?: string, userAgent?: string): Promise<void> {
+    const adminDb = getFirestoreAdmin();
+    if (!adminDb) {
+      throw new AppError('Servicio no disponible', 503, ErrorCodes.SERVICE_UNAVAILABLE);
+    }
+
+    try {
+      const FieldValue = adminDb.FieldValue;
+      const updateData: any = {
+        'metadata.lastSignIn': new Date(),
+        'metadata.signInCount': FieldValue.increment(1),
+        updatedAt: new Date()
+      };
+
+      if (ipAddress) updateData['metadata.lastIP'] = ipAddress;
+      if (userAgent) updateData['metadata.lastUserAgent'] = userAgent;
+
+      await adminDb.collection(this.collectionName).doc(userId).update(updateData);
+    } catch (error) {
+      console.error('Error updating last sign in:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Buscar usuarios por rol
+   */
+  async findByRole(role: string, context: ServiceContext): Promise<User[]> {
+    if (!this.checkPermission(context, 'read')) {
+      throw new AppError('Permisos insuficientes', 403, ErrorCodes.FORBIDDEN);
+    }
+
+    const adminDb = getFirestoreAdmin();
+    if (!adminDb) {
+      throw new AppError('Servicio no disponible', 503, ErrorCodes.SERVICE_UNAVAILABLE);
+    }
+
+    try {
+      let query: any = adminDb.collection(this.collectionName)
+        .where('role', '==', role)
+        .where('isActive', '==', true);
+
+      // Aplicar filtro de compañía si no es admin
+      if (context.userRole !== 'admin' && context.companyId) {
+        query = query.where('companyId', '==', context.companyId);
+      }
+
+      const snapshot = await query.get();
+      const users: User[] = [];
+
+      for (const doc of snapshot.docs) {
+        const userData = doc.data();
+        users.push({
+          id: doc.id,
+          ...userData,
+          createdAt: userData.createdAt?.toDate() || userData.createdAt,
+          updatedAt: userData.updatedAt?.toDate() || userData.updatedAt,
+          metadata: {
+            ...userData.metadata,
+            lastSignIn: userData.metadata?.lastSignIn?.toDate() || userData.metadata?.lastSignIn
+          }
+        } as User);
+      }
+
+      return users;
+    } catch (error) {
+      console.error('Error finding users by role:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Verificar si el usuario puede acceder a los datos de otro usuario
+   */
+  private canAccessUser(targetUserId: string, context: ServiceContext): boolean {
+    // Los administradores pueden acceder a todos los usuarios
+    if (context.userRole === 'admin') {
+      return true;
+    }
+
+    // Los usuarios pueden acceder a sus propios datos
+    if (context.userId === targetUserId) {
+      return true;
+    }
+
+    // Los administradores de empresa pueden acceder a usuarios de su empresa
+    if (context.userRole === 'company' && context.companyId) {
+      // TODO: Verificar que el usuario objetivo pertenece a la misma empresa
+      return true;
+    }
+
+    // Los doctores pueden acceder a sus pacientes
+    if (context.userRole === 'doctor') {
+      // TODO: Verificar relación doctor-paciente
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Crear perfil específico según el rol
+   */
+  private async createRoleProfile(userId: string, role: string): Promise<void> {
+    const adminDb = getFirestoreAdmin();
+    if (!adminDb) return;
+
+    const now = new Date();
+
+    switch (role) {
+      case 'doctor':
+        await adminDb.collection('doctors').doc(userId).set({
+          userId,
+          specialties: [],
+          license: null,
+          education: [],
+          experience: [],
+          availability: {},
+          rating: 0,
+          reviewCount: 0,
+          isVerified: false,
+          createdAt: now,
+        });
+        break;
+
+      case 'patient':
+        await adminDb.collection('patients').doc(userId).set({
+          userId,
+          dateOfBirth: null,
+          gender: null,
+          bloodType: null,
+          allergies: [],
+          medications: [],
+          emergencyContact: null,
+          medicalHistory: [],
+          createdAt: now,
+        });
+        break;
+
+      case 'company':
+        await adminDb.collection('companies').doc(userId).set({
+          userId,
+          companyName: null,
+          industry: null,
+          size: null,
+          description: null,
+          website: null,
+          address: null,
+          isVerified: false,
+          subscription: 'basic',
+          createdAt: now,
+        });
+        break;
+
+      case 'nurse':
+        await adminDb.collection('nurses').doc(userId).set({
+          userId,
+          license: null,
+          specialties: [],
+          shift: null,
+          department: null,
+          isVerified: false,
+          createdAt: now,
+        });
+        break;
+    }
+  }
+
+  /**
+   * Obtener perfil específico del rol
+   */
+  private async getRoleProfile(userId: string, role: string): Promise<any> {
+    const adminDb = getFirestoreAdmin();
+    if (!adminDb) return null;
+
     const roleCollections: { [key: string]: string } = {
       doctor: 'doctors',
       patient: 'patients',
@@ -150,28 +660,18 @@ class UserService extends BaseService<User> {
       nurse: 'nurses',
     };
 
-    const roleCollection = roleCollections[userData.role];
-    if (roleCollection) {
-      const roleDoc = await adminDb.collection(roleCollection).doc(context.userId).get();
-      if (roleDoc.exists) {
-        roleProfile = roleDoc.data();
-      }
+    const collection = roleCollections[role];
+    if (!collection) return null;
+
+    try {
+      const doc = await adminDb.collection(collection).doc(userId).get();
+      return doc.exists ? doc.data() : null;
+    } catch (error) {
+      console.error(`Error getting ${role} profile:`, error);
+      return null;
     }
-
-    return {
-      ...userData,
-      id: userDoc.id,
-      profile: roleProfile, // Añadir el perfil específico del rol
-    };
-  }
-
-  // No implementados para este alcance
-  async create(data: any, context: ServiceContext): Promise<User> {
-    throw new Error("Method not implemented.");
-  }
-  async findMany(options: any, context: ServiceContext): Promise<any> {
-    throw new Error("Method not implemented.");
   }
 }
 
+// Exportar instancia única del servicio
 export const userService = new UserService();

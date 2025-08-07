@@ -1,236 +1,451 @@
-# 🏥 Altamedica Signaling Server
+# 📡 AltaMedica Signaling Server
 
-Servidor de señalización WebRTC para el sistema de telemedicina de Altamedica.
+**Puerto:** 8888 | **Tipo:** Servidor WebRTC | **Framework:** Node.js + Socket.IO
 
-## 🚀 Características
+## ⚠️ REGLA FUNDAMENTAL: USAR PACKAGES CENTRALIZADOS
 
-- ✅ Señalización WebRTC con Socket.IO
-- ✅ Autenticación JWT integrada
-- ✅ Gestión de salas médicas virtuales
-- ✅ Chat en tiempo real durante consultas
-- ✅ Monitoreo de signos vitales
-- ✅ Soporte para compartir pantalla
-- ✅ Rate limiting y seguridad
-- ✅ Logging y auditoría HIPAA
-- ✅ Redis para escalabilidad
+### 🚫 **LO QUE NO DEBES HACER:**
+```typescript
+// ❌ NUNCA crear servicios de WebRTC duplicados
+export class WebRTCService {
+  // Ya existe en @altamedica/telemedicine-core - PROHIBIDO
+}
 
-## 📋 Requisitos
+// ❌ NUNCA implementar autenticación duplicada
+export function authenticateSocket() {
+  // Ya existe en @altamedica/auth - PROHIBIDO  
+}
 
-- Node.js 18+
-- Redis (opcional, pero recomendado para producción)
-- pnpm
+// ❌ NUNCA crear utilidades de conexión que ya existen
+export function validatePeerConnection() {
+  // Ya existe en @altamedica/utils - PROHIBIDO
+}
+```
 
-## 🛠️ Instalación
+### ✅ **LO QUE SÍ DEBES HACER:**
+```typescript
+// ✅ SIEMPRE importar desde packages centralizados
+import { WebRTCSignaling, PeerConnectionManager } from '@altamedica/telemedicine-core';
+import { authenticateSocket, validateMedicalSession } from '@altamedica/auth';
+import { logSecureEvent, encryptSignaling } from '@altamedica/medical-security';
+import { SignalingMessage, PeerConnection } from '@altamedica/telemedicine-types';
+```
 
-1. **Instalar dependencias:**
+## 📦 **PASO 1: REVISAR PACKAGES DE TELEMEDICINA DISPONIBLES**
+
+**ANTES de escribir cualquier código de señalización, verifica estos packages:**
+
+### 📡 Core de Telemedicina (`@altamedica/telemedicine-core`)
+```bash
+# Ver servicios de WebRTC disponibles
+cd ../../packages/telemedicine-core/src
+ls -la
+
+# Servicios principales:
+# - WebRTCSignaling, PeerConnectionManager
+# - MediaStreamHandler, QualityController
+# - SecurityManager, EncryptionHandler
+```
+
+### 🔐 Seguridad Médica (`@altamedica/medical-security`)
+```bash
+# Ver seguridad de telemedicina disponible
+cd ../../packages/medical-security/src/webrtc
+ls -la
+
+# Seguridad WebRTC:
+# - SignalingEncryption, MediaEncryption
+# - SessionValidator, AuditLogger
+# - HIPAACompliantWebRTC
+```
+
+### 🪝 Hooks de WebRTC (`@altamedica/hooks`)
+```bash
+# Ver hooks de WebRTC disponibles
+cd ../../packages/hooks/src/webrtc
+ls -la
+
+# Hooks de WebRTC:
+# - useWebRTC, usePeerConnection, useMediaStream
+# - useSignaling, useCallQuality, useRecording
+```
+
+### 🌐 Tipos de WebRTC (`@altamedica/telemedicine-types`)
+```bash
+# Ver tipos de WebRTC disponibles
+cd ../../packages/telemedicine-types/src
+ls -la
+
+# Tipos de WebRTC:
+# - SignalingMessage, PeerConnection, MediaStream
+# - CallSession, QualityMetrics, SecurityState
+```
+
+## 🚀 **Configuración del Servidor**
+
+### Instalación
 ```bash
 pnpm install
 ```
 
-2. **Configurar variables de entorno:**
-```bash
-cp .env.example .env
-# Editar .env con tus valores
-```
-
-3. **Compilar TypeScript:**
-```bash
-pnpm build
-```
-
-## 🏃‍♂️ Ejecutar
-
 ### Desarrollo
 ```bash
-pnpm dev
+pnpm dev  # Puerto 8888
 ```
 
 ### Producción
 ```bash
-pnpm build
-pnpm start
+pnpm start  # Con SSL y clustering
 ```
 
-## 🔌 API Endpoints
+## 🏗️ **Arquitectura del Signaling Server**
 
-### REST API
-
-#### Health Check
-```http
-GET /health
+```
+src/
+├── config/              # Configuración específica del servidor
+│   ├── server.config.ts # Solo config específica del signaling
+│   └── ssl.config.ts    # SSL específico para WebRTC
+├── middleware/          # Middleware ESPECÍFICO del signaling
+│   ├── auth.middleware.ts # Solo auth específico del servidor
+│   └── rate-limit.ts    # Rate limiting específico
+├── services/            # Servicios ESPECÍFICOS del servidor
+│   ├── room.service.ts  # Solo lógica específica de rooms
+│   └── connection.ts    # Solo gestión específica de conexiones
+└── index.ts             # Entry point del servidor
 ```
 
-#### Crear Sala
-```http
-POST /api/rooms
-Authorization: Bearer <token>
+## ✅ **Checklist Antes de Desarrollar**
 
-{
-  "sessionId": "session-123",
-  "appointmentId": "appointment-456"
+### 📋 **OBLIGATORIO - Verificar Telemedicine Packages Primero:**
+- [ ] ¿El servicio de WebRTC ya existe en `@altamedica/telemedicine-core`?
+- [ ] ¿La funcionalidad de seguridad ya existe en `@altamedica/medical-security`?
+- [ ] ¿Los tipos ya existen en `@altamedica/telemedicine-types`?
+- [ ] ¿Las utilidades ya existen en `@altamedica/utils`?
+
+### 📋 **Solo si NO existe en packages:**
+- [ ] ¿Es específico de la infraestructura del servidor?
+- [ ] ¿Es lógica de networking/transporte únicamente?
+- [ ] ¿Está documentado por qué es específico del servidor?
+
+## 🎯 **Funcionalidades Específicas del Signaling Server**
+
+### Gestión de Conexiones WebRTC
+- **Señalización de ofertas y respuestas**
+- **Intercambio de candidatos ICE**
+- **Gestión de rooms médicas**
+- **Quality of Service monitoring**
+
+### Room Management Específico
+```typescript
+// ✅ CORRECTO - Gestión de rooms específica del servidor
+export class MedicalRoomManager {
+  constructor(
+    private signalingCore: WebRTCSignaling, // De @altamedica/telemedicine-core
+    private security: MedicalSecurity // De @altamedica/medical-security
+  ) {}
+  
+  async createMedicalRoom(doctorId: string, patientId: string) {
+    // Lógica específica del servidor para crear rooms médicas
+    const roomConfig = {
+      encryption: true,
+      recording: true,
+      hipaaCompliant: true,
+      qualityMonitoring: true
+    };
+    
+    return this.signalingCore.createRoom(roomConfig);
+  }
 }
 ```
 
-#### Obtener Información de Sala
-```http
-GET /api/rooms/:roomId
-Authorization: Bearer <token>
+### Connection Management Específico
+```typescript
+// ✅ CORRECTO - Gestión de conexiones específica del servidor
+export class ServerConnectionManager {
+  constructor(
+    private peerManager: PeerConnectionManager // De @altamedica/telemedicine-core
+  ) {}
+  
+  handleServerSpecificConnection(socket: Socket) {
+    // Solo lógica específica del servidor
+    socket.on('join-medical-room', this.handleJoinRoom.bind(this));
+    socket.on('medical-signal', this.handleMedicalSignal.bind(this));
+    socket.on('quality-report', this.handleQualityReport.bind(this));
+  }
+}
 ```
 
-#### Estadísticas del Servidor
-```http
-GET /api/stats
-Authorization: Bearer <token>
+## 🔗 **Dependencies Específicas del Servidor**
+
+```json
+{
+  "@altamedica/telemedicine-core": "workspace:*",
+  "@altamedica/medical-security": "workspace:*", 
+  "@altamedica/telemedicine-types": "workspace:*",
+  "@altamedica/auth": "workspace:*",
+  "@altamedica/utils": "workspace:*",
+  "socket.io": "^4.7.2",
+  "express": "^4.18.2"
+}
 ```
 
-## 📡 Eventos de Socket.IO
+## 📊 **Funcionalidades Específicas del Servidor**
 
-### Cliente → Servidor
+### Autenticación de Socket
+```typescript
+// ✅ CORRECTO - Auth específico para sockets médicos
+import { authenticateSocket } from '@altamedica/auth';
 
-#### Autenticación
-```javascript
-socket.emit('authenticate', jwtToken);
+export function setupSocketAuth(io: Server) {
+  io.use(async (socket, next) => {
+    try {
+      // Usar auth centralizado
+      const user = await authenticateSocket(socket.handshake.auth.token);
+      
+      // Validaciones específicas del servidor
+      if (!user.canAccessTelemedicine) {
+        throw new Error('Unauthorized for telemedicine');
+      }
+      
+      socket.data.user = user;
+      next();
+    } catch (error) {
+      next(new Error('Authentication failed'));
+    }
+  });
+}
 ```
 
-#### Unirse a Sala
-```javascript
-socket.emit('join-room', {
-  roomId: 'room-123',
-  userId: 'user-456',
-  role: 'doctor', // o 'patient'
-  token: 'jwt-token'
-});
+### Rate Limiting Específico
+```typescript
+// ✅ CORRECTO - Rate limiting específico para WebRTC
+export function setupWebRTCRateLimit() {
+  return {
+    signalingMessages: { limit: 100, window: 60000 }, // 100/min
+    peerConnections: { limit: 5, window: 300000 },    // 5/5min
+    mediaStreams: { limit: 2, window: 1800000 }       // 2/30min
+  };
+}
 ```
 
-#### Señalización WebRTC
-```javascript
-socket.emit('webrtc-signal', {
-  type: 'offer', // o 'answer', 'ice-candidate'
-  sessionId: 'room-123',
-  from: 'user-123',
-  to: 'user-456',
-  data: sdpData
-});
+## 🛡️ **Seguridad Específica del Servidor**
+
+### Encriptación de Señalización
+```typescript
+// ✅ CORRECTO - Usar encriptación centralizada
+import { encryptSignaling, auditSignaling } from '@altamedica/medical-security';
+
+export class SecureSignalingHandler {
+  async handleSignalingMessage(socket: Socket, message: SignalingMessage) {
+    // Auditar todas las señales médicas
+    await auditSignaling({
+      userId: socket.data.user.id,
+      messageType: message.type,
+      timestamp: new Date(),
+      encrypted: true
+    });
+    
+    // Usar encriptación centralizada
+    const encryptedMessage = await encryptSignaling(message);
+    
+    // Solo lógica específica del servidor
+    this.routeToDestination(encryptedMessage);
+  }
+}
 ```
 
-#### Enviar Mensaje de Chat
-```javascript
-socket.emit('chat-message', {
-  roomId: 'room-123',
-  message: 'Hola, ¿cómo se siente hoy?',
-  type: 'text'
-});
+### Validación de Sesiones Médicas
+```typescript
+// ✅ CORRECTO - Validación específica del servidor
+export class MedicalSessionValidator {
+  constructor(
+    private security: MedicalSecurity // De @altamedica/medical-security
+  ) {}
+  
+  async validateMedicalSession(sessionId: string, participants: string[]) {
+    // Usar validaciones centralizadas
+    const isValid = await this.security.validateSession(sessionId);
+    
+    // Validaciones específicas del servidor
+    if (participants.length > 2) {
+      throw new Error('Medical sessions limited to doctor-patient only');
+    }
+    
+    return isValid;
+  }
+}
 ```
 
-#### Toggle Media
-```javascript
-socket.emit('toggle-media', {
-  type: 'video', // o 'audio'
-  enabled: false,
-  sessionId: 'room-123'
-});
+## 📡 **WebRTC Infrastructure Específica**
+
+### STUN/TURN Configuration
+```typescript
+// ✅ CORRECTO - Configuración específica del servidor
+export const webRTCConfig = {
+  iceServers: [
+    {
+      urls: process.env.STUN_SERVER_URL,
+      username: process.env.STUN_USERNAME,
+      credential: process.env.STUN_CREDENTIAL
+    },
+    {
+      urls: process.env.TURN_SERVER_URL,
+      username: process.env.TURN_USERNAME,
+      credential: process.env.TURN_CREDENTIAL
+    }
+  ],
+  iceCandidatePoolSize: 10,
+  bundlePolicy: 'max-bundle',
+  rtcpMuxPolicy: 'require'
+};
 ```
 
-### Servidor → Cliente
-
-#### Autenticación Exitosa
-```javascript
-socket.on('authenticated', (data) => {
-  console.log('Usuario autenticado:', data.user);
-});
+### Quality Monitoring
+```typescript
+// ✅ CORRECTO - Monitoreo específico del servidor
+export class ServerQualityMonitor {
+  constructor(
+    private qualityCore: QualityController // De @altamedica/telemedicine-core
+  ) {}
+  
+  startServerMonitoring(roomId: string) {
+    // Usar core centralizado para métricas
+    return this.qualityCore.monitor(roomId, {
+      serverMetrics: true,
+      bandwidthAnalysis: true,
+      connectionStability: true,
+      medicalQualityStandards: true
+    });
+  }
+}
 ```
 
-#### Unido a Sala
-```javascript
-socket.on('room-joined', (data) => {
-  console.log('Unido a sala:', data.roomId);
-  console.log('Participantes:', data.participants);
-});
+## 🚨 **Code Review Checklist del Servidor**
+
+### ❌ **Rechazar PR si:**
+- Implementa lógica de WebRTC que ya existe en packages
+- No usa autenticación centralizada
+- No incluye audit logs médicos apropiados
+- No cumple estándares HIPAA para telemedicina
+- No justifica por qué es específico del servidor
+
+### ✅ **Aprobar PR si:**
+- Usa packages de telemedicina centralizados
+- Solo contiene lógica específica del servidor/networking
+- Incluye seguridad y audit apropiados
+- Optimiza para performance del servidor
+- Está bien documentado técnicamente
+
+## 📈 **Performance y Escalabilidad del Servidor**
+
+### Clustering para Alta Disponibilidad
+```typescript
+// ✅ CORRECTO - Clustering específico del servidor
+import cluster from 'cluster';
+import { createAdapter } from '@socket.io/redis-adapter';
+
+export function setupClustering() {
+  if (cluster.isPrimary) {
+    // Master process - específico del servidor
+    for (let i = 0; i < require('os').cpus().length; i++) {
+      cluster.fork();
+    }
+  } else {
+    // Worker processes con Redis adapter
+    const io = new Server(server);
+    io.adapter(createAdapter(redisClient, redisClient.duplicate()));
+  }
+}
 ```
 
-#### Participante Unido
-```javascript
-socket.on('participant-joined', (data) => {
-  console.log('Nuevo participante:', data.participant);
-});
+### Health Checks Específicos
+```typescript
+// ✅ CORRECTO - Health checks específicos del servidor
+export function setupHealthChecks(server: Server) {
+  server.get('/health', (req, res) => {
+    const health = {
+      server: 'healthy',
+      activeConnections: io.engine.clientsCount,
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      webrtc: {
+        activeRooms: roomManager.getActiveRoomsCount(),
+        peerConnections: connectionManager.getActiveConnectionsCount()
+      }
+    };
+    
+    res.json(health);
+  });
+}
 ```
 
-#### Señal WebRTC Recibida
-```javascript
-socket.on('webrtc-signal', (data) => {
-  // Procesar señal WebRTC
-  handleWebRTCSignal(data);
-});
-```
+## 🧪 **Testing Específico del Servidor**
 
-## 🔒 Seguridad
-
-- **JWT Authentication**: Todos los endpoints y sockets requieren autenticación
-- **Rate Limiting**: Protección contra abuso de API
-- **CORS**: Configuración estricta de orígenes permitidos
-- **Helmet**: Headers de seguridad HTTP
-- **Input Validation**: Validación con Zod
-- **HIPAA Compliance**: Logging de auditoría para accesos médicos
-
-## 📊 Monitoreo
-
-El servidor incluye:
-- Logging con Winston
-- Métricas de rendimiento
-- Estado de salas activas
-- Estadísticas de conexiones
-
-## 🏗️ Arquitectura
-
-```
-signaling-server/
-├── src/
-│   ├── config/          # Configuración del servidor
-│   ├── controllers/     # Controladores de Socket.IO
-│   ├── middleware/      # Middleware de autenticación
-│   ├── services/        # Servicios de negocio
-│   ├── types/           # Tipos TypeScript
-│   └── index.ts         # Punto de entrada
-├── logs/                # Archivos de log
-└── dist/                # Código compilado
-```
-
-## 🧪 Testing
-
+### Tests de Integración WebRTC
 ```bash
-# Ejecutar tests
-pnpm test
+# Tests específicos del servidor
+pnpm test:server
 
-# Tests con watch mode
-pnpm test:watch
+# Tests de load para WebRTC
+pnpm test:load
+
+# Tests de seguridad del signaling
+pnpm test:security:signaling
 ```
 
-## 🚀 Despliegue
-
-### Docker
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY dist ./dist
-EXPOSE 8888
-CMD ["node", "dist/index.js"]
+### Tests de Socket.IO
+```typescript
+// ✅ Tests específicos del signaling server
+describe('Medical Signaling Server', () => {
+  it('should handle medical room creation securely', () => {
+    // Test de creación de rooms médicas
+  });
+  
+  it('should validate and encrypt all signaling messages', () => {
+    // Test de seguridad de mensajes
+  });
+  
+  it('should maintain HIPAA compliance in all WebRTC operations', () => {
+    // Test de compliance médico
+  });
+});
 ```
 
-### PM2
+## 🔧 **Configuración Específica del Servidor**
+
+### SSL/TLS para WebRTC
+```typescript
+// ✅ CORRECTO - SSL específico para WebRTC médico
+export const sslConfig = {
+  key: fs.readFileSync(process.env.SSL_KEY_PATH),
+  cert: fs.readFileSync(process.env.SSL_CERT_PATH),
+  // WebRTC requiere certificados válidos en producción
+  secureProtocol: 'TLSv1_2_method',
+  ciphers: 'ECDHE-RSA-AES128-GCM-SHA256:!RC4:!aNULL:!eNULL'
+};
+```
+
+### Environment Variables
 ```bash
-pm2 start dist/index.js --name altamedica-signaling
+# Variables específicas del signaling server
+SIGNALING_PORT=8888
+SSL_KEY_PATH=/path/to/ssl/key.pem
+SSL_CERT_PATH=/path/to/ssl/cert.pem
+STUN_SERVER_URL=stun:stun.altamedica.com:3478
+TURN_SERVER_URL=turn:turn.altamedica.com:3478
+REDIS_URL=redis://localhost:6379
 ```
 
-## 🤝 Contribuir
+---
 
-1. Fork el repositorio
-2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit cambios (`git commit -am 'feat: agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Crear Pull Request
+## 🎯 **RECUERDA:**
+> **"INFRAESTRUCTURA PRIMERO, FEATURES DESPUÉS"**
+> 
+> Este servidor debe ser principalmente infraestructura de networking. La lógica de WebRTC está en los packages centralizados.
 
-## 📄 Licencia
+## 📞 **Soporte del Servidor**
 
-MIT License - Copyright (c) 2025 Altamedica
+- **WebRTC Documentation:** `../../packages/telemedicine-*/README.md`
+- **Server Infrastructure:** Documentación de DevOps
+- **Security Guidelines:** Compliance para telemedicina
+- **24/7 Monitoring:** Sistema de monitoreo continuo

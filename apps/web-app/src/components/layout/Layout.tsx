@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@altamedica/utils'
 import { ReactNode } from 'react'
 import { Header } from './Header'
 import { Footer } from './Footer'

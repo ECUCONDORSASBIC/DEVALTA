@@ -1,8 +1,12 @@
 import { Router } from 'express';
+import { UnifiedAuth } from '../middleware/UnifiedAuth'; // Importar middleware
 import TelemedicineController from '../telemedicine/telemedicine-controller';
 import WebRTCServer from '../telemedicine/webrtc-server';
 
 const router = Router();
+
+// Aplicar middleware de autenticación a todas las rutas de telemedicina
+router.use(UnifiedAuth);
 
 // Inicializar servidor WebRTC
 const webrtcServer = new WebRTCServer();
