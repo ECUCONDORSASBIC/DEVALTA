@@ -4,7 +4,9 @@
  */
 
 import { NextRequest } from 'next/server';
+import { auditLog, logger } from '../../../lib/medical-mocks';
 import { GET } from '../../app/api/companies/route';
+import { requireRole } from '../../lib/auth-middleware';
 
 // Mock de dependencias
 jest.mock('../../../lib/medical-mocks', () => ({
@@ -16,7 +18,7 @@ jest.mock('../../../lib/medical-mocks', () => ({
 }));
 
 jest.mock('../../lib/auth-middleware', () => ({
-  requireRole: (roles: string[], handler: Function) => {
+  requireRole: (roles: string[], handler: (req: NextRequest) => Promise<Response>) => {
     return async (request: NextRequest) => {
       // Mock user para testing
       const mockUser = {
@@ -28,7 +30,7 @@ jest.mock('../../lib/auth-middleware', () => ({
         }
       };
       
-      return handler(request, mockUser);
+      return handler(request);
     };
   }
 }));
@@ -86,7 +88,7 @@ describe('/api/companies', () => {
   describe('Autenticación y autorización', () => {
     it('debería requerir rol company o admin', () => {
       // Este test verifica que requireRole se llame con los roles correctos
-      const { requireRole } = require('../../lib/auth-middleware');
+      // requireRole ya está mockeado arriba
       
       // Verificar que se configuró con los roles correctos
       expect(requireRole).toHaveBeenCalledWith(['company', 'admin'], expect.any(Function));
@@ -146,7 +148,7 @@ describe('/api/companies', () => {
 
   describe('Logging y auditoría', () => {
     it('debería registrar acceso a la API', async () => {
-      const { auditLog } = require('../../../lib/medical-mocks');
+      // auditLog ya está mockeado arriba
       
       await GET(mockRequest, null);
 
@@ -159,7 +161,7 @@ describe('/api/companies', () => {
     });
 
     it('debería loggear errores cuando ocurren', async () => {
-      const { logger } = require('../../../lib/medical-mocks');
+      // logger ya está mockeado arriba
       
       // Mock para forzar error
       const originalConsoleError = console.error;

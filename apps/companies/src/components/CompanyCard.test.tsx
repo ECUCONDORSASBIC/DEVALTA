@@ -2,11 +2,11 @@
  * 🧪 ALTAMEDICA COMPANIES - COMPONENT TESTS
  * Tests de integración para componentes de empresas
  */
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { Company } from '@altamedica/types'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import CompanyCard from './CompanyCard'
-import { Company } from '@/types'
 
 // Mock del hook de navegación
 const mockPush = vi.fn()
@@ -79,11 +79,14 @@ const createWrapper = () => {
     },
   })
 
-  return ({ children }: { children: React.ReactNode }) => (
+  const TestWrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       {children}
     </QueryClientProvider>
   )
+  TestWrapper.displayName = 'TestWrapper'
+  
+  return TestWrapper
 }
 
 describe('CompanyCard Component', () => {

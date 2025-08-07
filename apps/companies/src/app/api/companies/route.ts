@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "../../../lib/auth-middleware";
-import { companiesService } from "../../../lib/firestore";
+import { companiesService } from "@altamedica/database";
 import { auditLog, logger } from "../../../lib/medical-mocks";
 
 // Fallback data for when Firestore is not available
@@ -178,7 +178,7 @@ export const GET = requireRole(['company', 'admin'], async (request: NextRequest
     }
   } catch (error) {
     logger.error('Error getting companies:', {
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       userId: user?.uid,
       companyId: user?.companyId
     });

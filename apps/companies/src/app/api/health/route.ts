@@ -1,4 +1,4 @@
-// @ts-nocheck
+// Remove ts-nocheck and fix types instead
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';

@@ -1,6 +1,8 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
+// import '@altamedica/firebase/client-only'; // Initialize Firebase Client - Comentado hasta build
+import { AuthProvider } from "@altamedica/auth';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -8,8 +10,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'ALTAMEDICA Companies',
-  description: 'Corporate platform for medical businesses and job listings',
+  title: 'ALTAMEDICA Companies - Dashboard Empresarial',
+  description: 'Plataforma corporativa para clínicas y hospitales con gestión avanzada',
 }
 
 export default function RootLayout({
@@ -20,9 +22,11 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.variable}>
-        <main className="min-h-screen">
-          {children}
-        </main>
+        <AuthProvider>
+          <main className="min-h-screen">
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   )

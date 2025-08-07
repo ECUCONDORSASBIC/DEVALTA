@@ -2,9 +2,49 @@
 
 import React, { useState } from 'react';
 import MarketplaceMap from '../MarketplaceMap';
-import { useMarketplaceNotifications } from '../../hooks/useMarketplaceNotifications';
-import { useMarketplace } from '@/contexts/MarketplaceContext';
+import { useMarketplaceNotifications } from '../../hooks/useMarketplac          <button
+            onClick={() => setActiveView('applications')}
+            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+              activeView === 'applications' ? 'bg-primary-50 text-primary-600' : 'hover:bg-neutral-50'
+            }`}
+              )}
+          </div>
+        )}
+        
+        {activeView === 'analytics' && (
+          <MarketplaceAnalytics />
+        )}
+      </div>    >
+            📋 Postulaciones
+            <span className="block text-sm text-neutral-500">
+              {[...extendedJobs, ...additionalJobs].reduce((sum, job) => sum + (job.applicants?.length || 0), 0)} candidatos
+            </span>
+          </button>
+          
+          <button
+            onClick={() => setActiveView('analytics')}
+            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+              activeView === 'analytics' ? 'bg-primary-50 text-primary-600' : 'hover:bg-neutral-50'
+            }`}
+          >
+            📊 Analytics del Marketplace
+            <span className="block text-sm text-neutral-500">Métricas y tendencias</span>
+          </button>
+          
+          <button
+            onClick={() => setShowMessaging(true)}
+            className="w-full text-left px-4 py-2 rounded-lg transition-colors hover:bg-neutral-50"
+          >
+            💬 Mensajería
+            <span className="block text-sm text-neutral-500">
+              {unreadCount > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs mr-1">{unreadCount}</span>}
+              Conversaciones activas
+            </span>
+          </button>port { useMarketplace } from '@/contexts/MarketplaceContext';
 import type { MarketplaceDoctor, MarketplaceCompany, JobOffer } from '@/contexts/MarketplaceContext';
+import JobForm from './JobForm';
+import MessagingSystem from './MessagingSystem';
+import MarketplaceAnalytics from './MarketplaceAnalytics';
 
 // Interfaz para postulantes (específica del dashboard)
 interface Applicant {
@@ -22,6 +62,9 @@ interface Applicant {
 
 export default function JobMarketplaceDashboard() {
   const [showCreateJobModal, setShowCreateJobModal] = useState(false);
+  const [showFullJobForm, setShowFullJobForm] = useState(false);
+  const [showMessaging, setShowMessaging] = useState(false);
+  const [editingJob, setEditingJob] = useState<JobOffer | null>(null);
   
   // Hook del marketplace (estado compartido)
   const {
@@ -55,7 +98,13 @@ export default function JobMarketplaceDashboard() {
   
   // Datos filtrados para el mapa
   const filteredDoctors = getFilteredDoctors();
-  const filteredCompanies = getFilteredCompanies();
+  const filteredCompanies = getFilteredCompanies().map(company => ({
+    ...company,
+    size: company.size || 'No especificado',
+    companyType: company.companyType === 'laboratory' || company.companyType === 'other' 
+      ? 'hospital' as const 
+      : company.companyType
+  }));
   
   // Combinar ofertas reales con mock para demostrar funcionalidad completa del dashboard
   const extendedJobs = [...myCompanyJobs].map(job => ({
@@ -67,6 +116,7 @@ export default function JobMarketplaceDashboard() {
   const additionalJobs: (JobOffer & { applicants?: Applicant[] })[] = [
     {
       id: "job1",
+      companyId: "company1",
       title: "Cardiólogo Intervencionista",
       company: "Hospital Italiano",
       location: "Buenos Aires, Argentina",
@@ -107,6 +157,7 @@ export default function JobMarketplaceDashboard() {
     },
     {
       id: "job2",
+      companyId: "company1",
       title: "Pediatra - Telemedicina",
       company: "Hospital Italiano",
       location: "Remoto - LATAM",
@@ -130,12 +181,12 @@ export default function JobMarketplaceDashboard() {
   return (
     <div className={`flex h-[calc(100vh-120px)] ${(selectedDoctor || selectedCompany) ? 'pr-96' : ''} transition-all duration-300`}>
       {/* Barra lateral de navegación */}
-      <div className="w-64 bg-white border-r border-gray-200 p-4">
+      <div className="w-64 bg-white border-r border-neutral-200 p-4">
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-4">Portal de Empleo</h2>
           <button 
-            onClick={() => setShowCreateJobModal(true)}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            onClick={() => setShowFullJobForm(true)}
+            className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
             ➕ Publicar Nueva Oferta
           </button>
@@ -145,52 +196,61 @@ export default function JobMarketplaceDashboard() {
           <button
             onClick={() => setActiveView('marketplace')}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              activeView === 'marketplace' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+              activeView === 'marketplace' ? 'bg-primary-50 text-primary-600' : 'hover:bg-neutral-50'
             }`}
           >
             🗺️ Mapa del Marketplace
-            <span className="block text-sm text-gray-500">Buscar talento médico</span>
+            <span className="block text-sm text-neutral-500">Buscar talento médico</span>
           </button>
           
           <button
             onClick={() => setActiveView('jobs')}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              activeView === 'jobs' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+              activeView === 'jobs' ? 'bg-primary-50 text-primary-600' : 'hover:bg-neutral-50'
             }`}
           >
             💼 Mis Ofertas de Trabajo
-            <span className="block text-sm text-gray-500">{extendedJobs.length} ofertas activas</span>
+            <span className="block text-sm text-neutral-500">{extendedJobs.length} ofertas activas</span>
           </button>
           
           <button
-            onClick={() => setActiveView('applications')}
+            onClick={() => setActiveView('analytics')}
             className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              activeView === 'applications' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+              activeView === 'analytics' ? 'bg-primary-50 text-primary-600' : 'hover:bg-neutral-50'
             }`}
           >
-            📋 Postulaciones
-            <span className="block text-sm text-gray-500">
-              {[...extendedJobs, ...additionalJobs].reduce((sum, job) => sum + (job.applicants?.length || 0), 0)} candidatos
+            � Analytics del Marketplace
+            <span className="block text-sm text-neutral-500">Métricas y tendencias</span>
+          </button>
+          
+          <button
+            onClick={() => setShowMessaging(true)}
+            className="w-full text-left px-4 py-2 rounded-lg transition-colors hover:bg-neutral-50"
+          >
+            💬 Mensajería
+            <span className="block text-sm text-neutral-500">
+              {unreadCount > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs mr-1">{unreadCount}</span>}
+              Conversaciones activas
             </span>
           </button>
         </nav>
         
-        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+        <div className="mt-8 p-4 bg-neutral-50 rounded-lg">
           <h3 className="font-medium mb-2">Estadísticas Rápidas</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600">Ofertas activas:</span>
+              <span className="text-neutral-600">Ofertas activas:</span>
               <span className="font-medium">{extendedJobs.filter(j => j.status === 'active').length}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Total postulantes:</span>
+              <span className="text-neutral-600">Total postulantes:</span>
               <span className="font-medium">
                 {[...extendedJobs, ...additionalJobs].reduce((sum, job) => sum + (job.applicants?.length || 0), 0)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Posiciones urgentes:</span>
-              <span className="font-medium text-red-600">
+              <span className="text-neutral-600">Posiciones urgentes:</span>
+              <span className="font-medium text-alert-600">
                 {extendedJobs.filter(j => j.urgent).length}
               </span>
             </div>
@@ -198,20 +258,20 @@ export default function JobMarketplaceDashboard() {
         </div>
         
         {/* Notificaciones del Marketplace */}
-        <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="mt-4 p-4 bg-primary-50 rounded-lg border border-blue-200">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-medium text-blue-800">Notificaciones</h3>
+            <h3 className="font-medium text-primary-800">Notificaciones</h3>
             <div className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-              <span className="text-xs text-blue-600">{isConnected ? 'Conectado' : 'Desconectado'}</span>
+              <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-success-500' : 'bg-alert-500'}`}></div>
+              <span className="text-xs text-primary-600">{isConnected ? 'Conectado' : 'Desconectado'}</span>
             </div>
           </div>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-blue-700">Sin leer:</span>
-              <span className="font-medium text-blue-800">
+              <span className="text-primary-700">Sin leer:</span>
+              <span className="font-medium text-primary-800">
                 {unreadCount > 0 ? (
-                  <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">
+                  <span className="bg-alert-500 text-white px-2 py-1 rounded-full text-xs">
                     {unreadCount}
                   </span>
                 ) : (
@@ -220,37 +280,37 @@ export default function JobMarketplaceDashboard() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-blue-700">Total notificaciones:</span>
-              <span className="font-medium text-blue-800">{notifications.length}</span>
+              <span className="text-primary-700">Total notificaciones:</span>
+              <span className="font-medium text-primary-800">{notifications.length}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-1 bg-gray-50 overflow-hidden">
+      <div className="flex-1 bg-neutral-50 overflow-hidden">
         {activeView === 'jobs' && (
           <div className="p-6">
             <h2 className="text-2xl font-bold mb-6">Mis Ofertas de Trabajo</h2>
             
             <div className="grid gap-4">
               {[...extendedJobs, ...additionalJobs].map(job => (
-                <div key={job.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+                <div key={job.id} className="bg-white rounded-lg border border-neutral-200 p-6 hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-xl font-semibold">{job.title}</h3>
-                      <p className="text-gray-600">{job.location}</p>
+                      <p className="text-neutral-600">{job.location}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {job.urgent && (
-                        <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                        <span className="px-3 py-1 bg-alert-100 text-alert-700 rounded-full text-sm font-medium">
                           🚨 Urgente
                         </span>
                       )}
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        job.status === 'active' ? 'bg-green-100 text-green-700' : 
-                        job.status === 'paused' ? 'bg-yellow-100 text-yellow-700' : 
-                        'bg-gray-100 text-gray-700'
+                        job.status === 'active' ? 'bg-success-100 text-success-700' : 
+                        job.status === 'paused' ? 'bg-alert-100 text-alert-700' : 
+                        'bg-neutral-100 text-neutral-700'
                       }`}>
                         {job.status === 'active' ? '✅ Activa' : 
                          job.status === 'paused' ? '⏸️ Pausada' : '🔒 Cerrada'}
@@ -260,19 +320,19 @@ export default function JobMarketplaceDashboard() {
                   
                   <div className="grid grid-cols-4 gap-4 mb-4 text-sm">
                     <div>
-                      <span className="text-gray-500">Especialidad</span>
+                      <span className="text-neutral-500">Especialidad</span>
                       <p className="font-medium">{job.specialty}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">Salario</span>
-                      <p className="font-medium text-green-600">{job.salary}</p>
+                      <span className="text-neutral-500">Salario</span>
+                      <p className="font-medium text-success-600">{job.salary}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">Modalidad</span>
+                      <span className="text-neutral-500">Modalidad</span>
                       <p className="font-medium">{job.remote ? '🏠 Remoto' : '🏥 Presencial'}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500">Postulaciones</span>
+                      <span className="text-neutral-500">Postulaciones</span>
                       <p className="font-medium">{job.applicants?.length || 0} candidatos</p>
                     </div>
                   </div>
@@ -280,14 +340,17 @@ export default function JobMarketplaceDashboard() {
                   <div className="flex gap-2">
                     <button 
                       onClick={() => setSelectedJob(job)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                     >
                       Ver Postulantes
                     </button>
-                    <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <button 
+                      onClick={() => setEditingJob(job)}
+                      className="px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors"
+                    >
                       Editar Oferta
                     </button>
-                    <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <button className="px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors">
                       {job.status === 'active' ? 'Pausar' : 'Activar'}
                     </button>
                   </div>
@@ -301,7 +364,7 @@ export default function JobMarketplaceDashboard() {
           <div className="h-full">
             <div className="p-6 pb-0">
               <h2 className="text-2xl font-bold mb-4">Mapa del Marketplace Médico</h2>
-              <p className="text-gray-600 mb-6">Explora médicos disponibles y empresas del sector salud</p>
+              <p className="text-neutral-600 mb-6">Explora médicos disponibles y empresas del sector salud</p>
             </div>
             <div className="h-[calc(100%-120px)]">
               <MarketplaceMap 
@@ -315,7 +378,7 @@ export default function JobMarketplaceDashboard() {
                   console.log('Doctor seleccionado:', doctor);
                 }}
                 onCompanySelect={(company) => {
-                  setSelectedCompany(company);
+                  setSelectedCompany(company as any);
                   console.log('Empresa seleccionada:', company);
                 }}
               />
@@ -333,56 +396,56 @@ export default function JobMarketplaceDashboard() {
                   {job.title} - {job.applicants?.length} postulantes
                 </h3>
                 
-                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <div className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
                   <table className="w-full">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-neutral-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                           Candidato
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                           Especialidad
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                           Experiencia
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                           Calificación
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                           Estado
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                           Acciones
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-neutral-200">
                       {job.applicants?.map(applicant => (
-                        <tr key={applicant.id} className="hover:bg-gray-50">
+                        <tr key={applicant.id} className="hover:bg-neutral-50">
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{applicant.name}</div>
-                            <div className="text-sm text-gray-500">Aplicó: {applicant.appliedDate}</div>
+                            <div className="text-sm font-medium text-neutral-900">{applicant.name}</div>
+                            <div className="text-sm text-neutral-500">Aplicó: {applicant.appliedDate}</div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
                             {applicant.specialty}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
                             {applicant.experience} años
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <span className="text-yellow-400">⭐</span>
-                              <span className="ml-1 text-sm text-gray-900">{applicant.rating}</span>
+                              <span className="ml-1 text-sm text-neutral-900">{applicant.rating}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              applicant.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              applicant.status === 'reviewing' ? 'bg-blue-100 text-blue-800' :
-                              applicant.status === 'interviewed' ? 'bg-purple-100 text-purple-800' :
-                              applicant.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                              'bg-red-100 text-red-800'
+                              applicant.status === 'pending' ? 'bg-alert-100 text-alert-800' :
+                              applicant.status === 'reviewing' ? 'bg-primary-100 text-primary-800' :
+                              applicant.status === 'interviewed' ? 'bg-primary-100 text-primary-800' :
+                              applicant.status === 'accepted' ? 'bg-success-100 text-success-800' :
+                              'bg-alert-100 text-alert-800'
                             }`}>
                               {applicant.status === 'pending' ? 'Pendiente' :
                                applicant.status === 'reviewing' ? 'En revisión' :
@@ -392,10 +455,10 @@ export default function JobMarketplaceDashboard() {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button className="text-blue-600 hover:text-blue-900 mr-3">
+                            <button className="text-primary-600 hover:text-primary-900 mr-3">
                               Ver Perfil
                             </button>
-                            <button className="text-green-600 hover:text-green-900">
+                            <button className="text-success-600 hover:text-success-900">
                               Contactar
                             </button>
                           </td>
@@ -412,9 +475,9 @@ export default function JobMarketplaceDashboard() {
       
       {/* Panel de detalles deslizable */}
       {(selectedDoctor || selectedCompany) && (
-        <div className="fixed inset-y-0 right-0 w-96 bg-white border-l border-gray-200 shadow-lg transform translate-x-0 transition-transform z-40">
+        <div className="fixed inset-y-0 right-0 w-96 bg-white border-l border-neutral-200 shadow-lg transform translate-x-0 transition-transform z-40">
           <div className="h-full flex flex-col">
-            <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+            <div className="p-4 bg-neutral-50 border-b border-neutral-200 flex items-center justify-between">
               <h3 className="text-lg font-semibold">
                 {selectedDoctor ? 'Detalles del Médico' : 'Detalles de la Empresa'}
               </h3>
@@ -433,47 +496,47 @@ export default function JobMarketplaceDashboard() {
               {selectedDoctor && (
                 <div className="space-y-4">
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-blue-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                    <div className="w-20 h-20 bg-primary-100 rounded-full mx-auto mb-3 flex items-center justify-center">
                       <span className="text-2xl">👨‍⚕️</span>
                     </div>
                     <h4 className="text-xl font-semibold">{selectedDoctor.name}</h4>
-                    <p className="text-gray-600">{selectedDoctor.specialties.join(', ')}</p>
+                    <p className="text-neutral-600">{selectedDoctor.specialties.join(', ')}</p>
                     <div className="flex items-center justify-center gap-1 mt-2">
                       <span className="text-yellow-400">⭐</span>
                       <span className="font-medium">{selectedDoctor.rating}</span>
-                      <span className="text-sm text-gray-500">({selectedDoctor.totalHires} contrataciones)</span>
+                      <span className="text-sm text-neutral-500">({selectedDoctor.totalHires} contrataciones)</span>
                     </div>
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-600 mb-1">Tarifa por hora</p>
-                      <p className="text-lg font-semibold text-green-600">${selectedDoctor.hourlyRate}</p>
+                    <div className="bg-neutral-50 p-3 rounded-lg">
+                      <p className="text-sm text-neutral-600 mb-1">Tarifa por hora</p>
+                      <p className="text-lg font-semibold text-success-600">${selectedDoctor.hourlyRate}</p>
                     </div>
                     
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-600 mb-1">Experiencia</p>
+                    <div className="bg-neutral-50 p-3 rounded-lg">
+                      <p className="text-sm text-neutral-600 mb-1">Experiencia</p>
                       <p className="font-medium">{selectedDoctor.experience} años</p>
                     </div>
                     
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-600 mb-1">Modalidad</p>
+                    <div className="bg-neutral-50 p-3 rounded-lg">
+                      <p className="text-sm text-neutral-600 mb-1">Modalidad</p>
                       <p className="font-medium capitalize">{selectedDoctor.workArrangement}</p>
                     </div>
                     
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-600 mb-1">Estado</p>
+                    <div className="bg-neutral-50 p-3 rounded-lg">
+                      <p className="text-sm text-neutral-600 mb-1">Estado</p>
                       <div className="flex items-center gap-2">
-                        <div className={`h-2 w-2 rounded-full ${selectedDoctor.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                        <div className={`h-2 w-2 rounded-full ${selectedDoctor.isOnline ? 'bg-success-500' : 'bg-gray-400'}`}></div>
                         <span className="text-sm">{selectedDoctor.isOnline ? 'En línea' : 'Desconectado'}</span>
                       </div>
                     </div>
                     
                     <div>
-                      <p className="text-sm text-gray-600 mb-2">Idiomas</p>
+                      <p className="text-sm text-neutral-600 mb-2">Idiomas</p>
                       <div className="flex flex-wrap gap-1">
                         {selectedDoctor.languages.map((lang, index) => (
-                          <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                          <span key={index} className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded-full">
                             {lang}
                           </span>
                         ))}
@@ -482,7 +545,7 @@ export default function JobMarketplaceDashboard() {
                   </div>
                   
                   <div className="pt-4 border-t">
-                    <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                    <button className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-colors">
                       Contactar Médico
                     </button>
                   </div>
@@ -492,11 +555,11 @@ export default function JobMarketplaceDashboard() {
               {selectedCompany && (
                 <div className="space-y-4">
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-green-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                    <div className="w-20 h-20 bg-success-100 rounded-full mx-auto mb-3 flex items-center justify-center">
                       <span className="text-2xl">🏥</span>
                     </div>
                     <h4 className="text-xl font-semibold">{selectedCompany.name}</h4>
-                    <p className="text-gray-600">{selectedCompany.location.city}, {selectedCompany.location.country}</p>
+                    <p className="text-neutral-600">{selectedCompany.location.city}, {selectedCompany.location.country}</p>
                     <div className="flex items-center justify-center gap-1 mt-2">
                       <span className="text-yellow-400">⭐</span>
                       <span className="font-medium">{selectedCompany.rating}</span>
@@ -504,24 +567,24 @@ export default function JobMarketplaceDashboard() {
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-gray-50 p-3 rounded-lg text-center">
-                      <p className="text-2xl font-bold text-blue-600">{selectedCompany.activeJobs}</p>
-                      <p className="text-sm text-gray-600">Ofertas activas</p>
+                    <div className="bg-neutral-50 p-3 rounded-lg text-center">
+                      <p className="text-2xl font-bold text-primary-600">{selectedCompany.activeJobs}</p>
+                      <p className="text-sm text-neutral-600">Ofertas activas</p>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-lg text-center">
-                      <p className="text-2xl font-bold text-red-600">{selectedCompany.urgentJobs}</p>
-                      <p className="text-sm text-gray-600">Urgentes</p>
+                    <div className="bg-neutral-50 p-3 rounded-lg text-center">
+                      <p className="text-2xl font-bold text-alert-600">{selectedCompany.urgentJobs}</p>
+                      <p className="text-sm text-neutral-600">Urgentes</p>
                     </div>
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-600 mb-1">Tiempo de respuesta</p>
+                    <div className="bg-neutral-50 p-3 rounded-lg">
+                      <p className="text-sm text-neutral-600 mb-1">Tiempo de respuesta</p>
                       <p className="font-medium">{selectedCompany.averageResponseTime} horas</p>
                     </div>
                     
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-600 mb-1">Total contrataciones</p>
+                    <div className="bg-neutral-50 p-3 rounded-lg">
+                      <p className="text-sm text-neutral-600 mb-1">Total contrataciones</p>
                       <p className="font-medium">{selectedCompany.totalHires}</p>
                     </div>
                   </div>
@@ -531,10 +594,10 @@ export default function JobMarketplaceDashboard() {
                       <h5 className="font-medium mb-2">Últimas ofertas:</h5>
                       <div className="space-y-2">
                         {selectedCompany.jobs.slice(0, 3).map((job) => (
-                          <div key={job.id} className="p-3 bg-gray-50 rounded-lg">
+                          <div key={job.id} className="p-3 bg-neutral-50 rounded-lg">
                             <p className="font-medium text-sm">{job.title}</p>
-                            <p className="text-xs text-gray-600">{job.specialty}</p>
-                            <p className="text-xs text-green-600 mt-1">{job.salary}</p>
+                            <p className="text-xs text-neutral-600">{job.specialty}</p>
+                            <p className="text-xs text-success-600 mt-1">{job.salary}</p>
                           </div>
                         ))}
                       </div>
@@ -542,13 +605,78 @@ export default function JobMarketplaceDashboard() {
                   )}
                   
                   <div className="pt-4 border-t">
-                    <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                    <button className="w-full bg-success-600 text-white py-2 px-4 rounded-lg hover:bg-success-700 transition-colors">
                       Ver Todas las Ofertas
                     </button>
                   </div>
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Sistema de Mensajería */}
+      {showMessaging && (
+        <MessagingSystem onClose={() => setShowMessaging(false)} />
+      )}
+      
+      {/* Formulario completo de Job */}
+      {showFullJobForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[95vh] overflow-y-auto">
+            <JobForm
+              onSubmit={(data) => {
+                console.log('Nueva oferta creada:', data);
+                // Aquí se enviaría al backend
+                setShowFullJobForm(false);
+              }}
+              onCancel={() => setShowFullJobForm(false)}
+            />
+          </div>
+        </div>
+      )}
+      
+      {/* Formulario de edición de Job */}
+      {editingJob && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[95vh] overflow-y-auto">
+            <JobForm
+              onSubmit={(data) => {
+                console.log('Oferta actualizada:', data);
+                // Aquí se enviaría al backend
+                setEditingJob(null);
+              }}
+              onCancel={() => setEditingJob(null)}
+              initialData={{
+                title: editingJob.title,
+                specialty: editingJob.specialty,
+                description: editingJob.description,
+                requirements: editingJob.requirements,
+                benefits: editingJob.benefits,
+                location: editingJob.location,
+                remote: editingJob.remote,
+                type: editingJob.type,
+                schedule: editingJob.schedule,
+                experience: editingJob.experience,
+                urgent: editingJob.urgent,
+                // Parsear salario del string a objeto
+                salary: {
+                  min: 8000,
+                  max: 12000,
+                  currency: 'USD' as const,
+                  period: 'month' as const
+                },
+                contactInfo: {
+                  email: 'rrhh@hospitalsanvicente.com',
+                  phone: '+54 11 1234-5678',
+                  contactPerson: 'Dr. María González'
+                },
+                applicationDeadline: '2025-08-31',
+                startDate: '2025-09-15'
+              }}
+              isEditing={true}
+            />
           </div>
         </div>
       )}
@@ -560,12 +688,12 @@ export default function JobMarketplaceDashboard() {
             <h3 className="text-xl font-bold mb-4">Publicar Nueva Oferta de Trabajo</h3>
             <form className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Título del puesto</label>
-                <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Título del puesto</label>
+                <input type="text" className="w-full px-3 py-2 border border-neutral-300 rounded-lg" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Especialidad</label>
+                <select className="w-full px-3 py-2 border border-neutral-300 rounded-lg">
                   <option>Cardiología</option>
                   <option>Pediatría</option>
                   <option>Oncología</option>
@@ -574,12 +702,12 @@ export default function JobMarketplaceDashboard() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Salario</label>
-                  <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">Salario</label>
+                  <input type="text" placeholder="USD 8,000 - 12,000" className="w-full px-3 py-2 border border-neutral-300 rounded-lg" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Modalidad</label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">Modalidad</label>
+                  <select className="w-full px-3 py-2 border border-neutral-300 rounded-lg">
                     <option>Presencial</option>
                     <option>Remoto</option>
                     <option>Híbrido</option>
@@ -587,22 +715,26 @@ export default function JobMarketplaceDashboard() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                <textarea rows={4} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Descripción</label>
+                <textarea rows={4} className="w-full px-3 py-2 border border-neutral-300 rounded-lg" />
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <button 
                   type="button"
                   onClick={() => setShowCreateJobModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 border border-neutral-300 rounded-lg hover:bg-neutral-50"
                 >
                   Cancelar
                 </button>
                 <button 
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  type="button"
+                  onClick={() => {
+                    setShowCreateJobModal(false);
+                    setShowFullJobForm(true);
+                  }}
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
                 >
-                  Publicar Oferta
+                  Usar Formulario Completo
                 </button>
               </div>
             </form>

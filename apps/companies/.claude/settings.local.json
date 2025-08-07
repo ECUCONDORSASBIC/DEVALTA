@@ -4,7 +4,24 @@
       "Bash(ls:*)",
       "Bash(find:*)",
       "Bash(pnpm install:*)",
-      "Bash(npm install)"
+      "Bash(npm install)",
+      "Bash(npx cypress run:*)",
+      "Bash(npx next dev:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run test:server:*)",
+      "Bash(mkdir:*)",
+      "Bash(pnpm --filter \"@altamedica/firebase\" build)",
+      "Bash(pnpm --filter \"@altamedica/types\" build)",
+      "Bash(Start-Process powershell -ArgumentList \"-Command\", \"cd ''C:\\Users\\Eduardo\\Documents\\devaltamedica\\apps\\companies''; node test-server.js\" -WindowStyle Hidden)",
+      "Bash(timeout:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm --filter \"@altamedica/api-server\" run start:express)",
+      "Bash(powershell:*)",
+      "Bash(npm run build:*)",
+      "Bash(Remove-Item \"C:\\Users\\Eduardo\\Documents\\devaltamedica\\apps\\companies\\src\\data\\dashboard-metrics.ts\" -Force)",
+      "Bash(Remove-Item \"C:\\Users\\Eduardo\\Documents\\devaltamedica\\apps\\patients\\src\\components\\ui\\FormError.tsx\" -Force)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

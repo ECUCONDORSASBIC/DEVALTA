@@ -492,10 +492,10 @@ describe('Patient Workflow - Company Integration', () => {
       cy.visit('/companies/1')
 
       // Navegación con teclado
-      cy.get('body').tab()
+      cy.get('body').type('{tab}')
       cy.focused().should('have.attr', 'data-testid', 'main-navigation')
       
-      cy.focused().tab()
+      cy.focused().type('{tab}')
       cy.focused().should('have.attr', 'data-testid', 'company-name')
 
       // Verificar aria-labels

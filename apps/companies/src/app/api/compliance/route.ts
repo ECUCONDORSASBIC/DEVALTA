@@ -226,7 +226,7 @@ export const GET = requireRole(['company', 'admin'], async (request: NextRequest
 
   } catch (error) {
     logger.error('Error getting compliance status:', {
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       userId: user?.uid,
       companyId: user?.companyId
     });
@@ -307,7 +307,7 @@ export const POST = requireRole(['company', 'admin'], async (request: NextReques
 
   } catch (error) {
     logger.error('Error generating compliance report:', {
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       userId: user?.uid,
       companyId: user?.companyId
     });
@@ -376,7 +376,7 @@ export const PUT = requireRole(['company', 'admin'], async (request: NextRequest
 
   } catch (error) {
     logger.error('Error updating compliance action:', {
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       userId: user?.uid,
       companyId: user?.companyId
     });

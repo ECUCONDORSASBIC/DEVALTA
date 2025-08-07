@@ -145,7 +145,7 @@ export const GET = requireRole(['company'], async (request: NextRequest, user: a
 
   } catch (error) {
     logger.error('Error getting marketplace settings:', {
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       userId: user?.uid,
       companyId: user?.companyId
     });
@@ -226,7 +226,7 @@ export const PUT = requireRole(['company'], async (request: NextRequest, user: a
 
   } catch (error) {
     logger.error('Error updating marketplace settings:', {
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       userId: user?.uid,
       companyId: user?.companyId
     });

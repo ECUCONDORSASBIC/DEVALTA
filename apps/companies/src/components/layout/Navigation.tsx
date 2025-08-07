@@ -10,6 +10,7 @@ interface NavigationProps {
 const navigationItems = [
   { id: 'overview', label: 'Resumen', icon: '📊' },
   { id: 'doctors', label: 'Personal Médico', icon: '👨‍⚕️' },
+  { id: 'b2c-communication', label: 'Comunicación B2C', icon: '🔗' },
   { id: 'marketplace', label: 'Marketplace', icon: '💼' },
   { id: 'appointments', label: 'Citas', icon: '📅' },
   { id: 'analytics', label: 'Analytics', icon: '📈' }

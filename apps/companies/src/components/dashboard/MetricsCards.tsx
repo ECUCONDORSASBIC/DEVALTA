@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui';
+import { Card, CardContent } from '@altamedica/ui';
 import { 
   Users, 
   UserCheck, 
@@ -7,7 +7,7 @@ import {
   TrendingUp, 
   DollarSign,
 } from 'lucide-react';
-import { CompanyMetrics } from '@/data/dashboard-metrics';
+import { CompanyMetrics } from '@altamedica/shared';
 
 interface MetricsCardsProps {
   metrics: CompanyMetrics;

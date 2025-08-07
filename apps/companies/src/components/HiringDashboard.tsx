@@ -7,8 +7,7 @@ import {
   PieChart, Pie, Cell, LineChart, Line, Legend
 } from 'recharts';
 // Note: Using emojis instead of lucide-react icons to avoid Turbopack issues
-import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
-import { Button } from './ui/Button';
+import { Card, CardContent, CardHeader, CardTitle, Button } from '@altamedica/ui';
 
 interface HiringMetrics {
   companyId: string;

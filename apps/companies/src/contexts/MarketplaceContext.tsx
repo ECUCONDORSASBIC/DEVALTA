@@ -1,7 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import type { LatLngTuple } from 'leaflet';
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
 // Interfaces compartidas
 interface MarketplaceDoctor {
@@ -95,14 +95,14 @@ interface MarketplaceContextType {
   filters: MarketplaceFilters;
   
   // Vista activa
-  activeView: 'marketplace' | 'jobs' | 'applications';
+  activeView: 'marketplace' | 'jobs' | 'applications' | 'analytics';
   
   // Acciones
   setSelectedDoctor: (doctor: MarketplaceDoctor | null) => void;
   setSelectedCompany: (company: MarketplaceCompany | null) => void;
   setSelectedJob: (job: JobOffer | null) => void;
   setFilters: (filters: Partial<MarketplaceFilters>) => void;
-  setActiveView: (view: 'marketplace' | 'jobs' | 'applications') => void;
+  setActiveView: (view: 'marketplace' | 'jobs' | 'applications' | 'analytics') => void;
   
   // Métodos utilitarios
   getDoctorsBySpecialty: (specialty: string) => MarketplaceDoctor[];
@@ -130,7 +130,7 @@ export function MarketplaceProvider({
   const [selectedDoctor, setSelectedDoctor] = useState<MarketplaceDoctor | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<MarketplaceCompany | null>(null);
   const [selectedJob, setSelectedJob] = useState<JobOffer | null>(null);
-  const [activeView, setActiveView] = useState<'marketplace' | 'jobs' | 'applications'>('marketplace');
+  const [activeView, setActiveView] = useState<'marketplace' | 'jobs' | 'applications' | 'analytics'>('marketplace');
   
   const [filters, setFiltersState] = useState<MarketplaceFilters>({
     specialties: [],
@@ -247,4 +247,4 @@ export function useMarketplace() {
 }
 
 // Exportar tipos para usar en otros componentes
-export type { MarketplaceDoctor, MarketplaceCompany, JobOffer, MarketplaceFilters };
+export type { JobOffer, MarketplaceCompany, MarketplaceDoctor, MarketplaceFilters };

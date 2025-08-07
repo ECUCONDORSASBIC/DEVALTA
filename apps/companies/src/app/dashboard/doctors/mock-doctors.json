@@ -1,0 +1,67 @@
+[
+  {
+    "id": "d1a2b3c4-e5f6-7890-abcd-ef1234567890",
+    "name": "Dr. Carlos Martínez",
+    "email": "carlos.martinez@example.com",
+    "specialty": "Cardiología",
+    "licenseNumber": "CARD-2019-001",
+    "phone": "+54 11 1234-5678",
+    "experience": 8,
+    "status": "Activo",
+    "consultationFee": 85,
+    "availability": "Disponible",
+    "hireDate": "2019-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "d2b3c4d5-f6g7-8901-bcde-f23456789012",
+    "name": "Dra. María López",
+    "email": "maria.lopez@example.com",
+    "specialty": "Pediatría",
+    "licenseNumber": "PED-2020-015",
+    "phone": "+54 11 2345-6789",
+    "experience": 6,
+    "status": "Activo",
+    "consultationFee": 75,
+    "availability": "Disponible",
+    "hireDate": "2020-08-10T00:00:00.000Z"
+  },
+  {
+    "id": "d3c4d5e6-g7h8-9012-cdef-34567890123a",
+    "name": "Dr. Alejandro Rodríguez",
+    "email": "alejandro.rodriguez@example.com",
+    "specialty": "Neurología",
+    "licenseNumber": "NEU-2018-007",
+    "phone": "+54 11 3456-7890",
+    "experience": 12,
+    "status": "Activo",
+    "consultationFee": 120,
+    "availability": "Ocupado",
+    "hireDate": "2018-01-20T00:00:00.000Z"
+  },
+  {
+    "id": "d4d5e6f7-h8i9-0123-defg-456789012345",
+    "name": "Dra. Ana Fernández",
+    "email": "ana.fernandez@example.com",
+    "specialty": "Ginecología",
+    "licenseNumber": "GIN-2021-003",
+    "phone": "+54 11 4567-8901",
+    "experience": 4,
+    "status": "De Vacaciones",
+    "consultationFee": 90,
+    "availability": "No Disponible",
+    "hireDate": "2021-06-05T00:00:00.000Z"
+  },
+  {
+    "id": "d5e6f7g8-i9j0-1234-efgh-56789012345b",
+    "name": "Dr. Roberto Silva",
+    "email": "roberto.silva@example.com",
+    "specialty": "Traumatología",
+    "licenseNumber": "TRA-2017-012",
+    "phone": "+54 11 5678-9012",
+    "experience": 15,
+    "status": "Inactivo",
+    "consultationFee": 100,
+    "availability": "No Disponible",
+    "hireDate": "2017-09-12T00:00:00.000Z"
+  }
+]

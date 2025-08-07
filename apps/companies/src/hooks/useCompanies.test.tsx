@@ -2,23 +2,23 @@
  * 🧪 ALTAMEDICA COMPANIES - TESTS DE HOOKS
  * Tests unitarios para hooks de gestión de empresas
  */
-import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { describe, it, expect, beforeEach, vi, Mock } from 'vitest'
+import { renderHook, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'
 import {
-  useCompanies,
-  useCompany,
-  useCreateCompany,
-  useUpdateCompany,
-  useDeleteCompany,
-  useCompanyDoctors,
-  useJobOffers,
-  useCompanyAnalytics,
-  useCompanySearch,
-  usePaginatedCompanies,
-  useCompanyDashboard
-} from '../hooks/useCompanies'
+    useCompanies,
+    useCompany,
+    useCompanyAnalytics,
+    useCompanyDashboard,
+    useCompanyDoctors,
+    useCompanySearch,
+    useCreateCompany,
+    useDeleteCompany,
+    useJobOffers,
+    usePaginatedCompanies,
+    useUpdateCompany
+} from '@altamedica/hooks'
 import { companyService } from '../services/companyService'
 
 // Mock del servicio
@@ -166,11 +166,14 @@ const createWrapper = () => {
     },
   })
 
-  return ({ children }: { children: ReactNode }) => (
+  const TestWrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       {children}
     </QueryClientProvider>
   )
+  TestWrapper.displayName = 'TestWrapper'
+  
+  return TestWrapper
 }
 
 describe('Company Hooks', () => {

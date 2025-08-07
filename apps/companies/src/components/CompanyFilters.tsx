@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Filter, MapPin, Building } from "lucide-react";
+import { Building, Filter, MapPin, Search } from "lucide-react";
 import { useState } from "react";
 
 interface CompanyFiltersProps {
@@ -142,7 +142,7 @@ export function CompanyFilters({
         <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-200">
           {searchTerm && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-sky-100 text-sky-800">
-              Búsqueda: "{searchTerm}"
+              Búsqueda: &quot;{searchTerm}&quot;
               <button
                 onClick={() => onSearchChange("")}
                 className="ml-2 text-sky-600 hover:text-sky-800"

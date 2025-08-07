@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@altamedica/ui';
 
 // Placeholder para futura implementación con Chart.js
 export function ChartsSection() {

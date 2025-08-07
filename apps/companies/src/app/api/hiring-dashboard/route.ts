@@ -147,7 +147,7 @@ export const GET = requireRole(['company'], async (request: NextRequest, user: a
 
   } catch (error) {
     logger.error('Error getting hiring dashboard:', {
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       userId: user?.uid,
       companyId: user?.companyId
     });
@@ -211,7 +211,7 @@ export const POST = requireRole(['company'], async (request: NextRequest, user: 
 
   } catch (error) {
     logger.error('Error generating hiring report:', {
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       userId: user?.uid,
       companyId: user?.companyId
     });

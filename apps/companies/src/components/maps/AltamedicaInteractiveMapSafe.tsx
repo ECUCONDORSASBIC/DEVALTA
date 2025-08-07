@@ -221,7 +221,7 @@ export default function AltamedicaInteractiveMapSafe() {
         <div className="lg:col-span-2">
           <div className="relative h-[600px] bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl overflow-hidden border-2 border-blue-200 shadow-lg">
             {/* Simulación visual del mapa */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-neutral-50 to-blue-50">
               {/* Grid para simular calles */}
               <div className="absolute inset-0 opacity-20">
                 {[...Array(10)].map((_, i) => (
