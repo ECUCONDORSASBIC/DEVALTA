@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Correcciones críticas de contraste */
+@import '../styles/contrast-fixes.css';
+
 /* Leaflet CSS se carga vía componente, no mediante @import aquí */
 
 /* Tipografía centralizada y optimizada */
@@ -52,6 +55,25 @@ p {
 /* Enlaces con el nuevo color cyan brillante */
 a {
   @apply text-primary-500 hover:text-primary-600 transition-colors;
+}
+
+/* CORRECCIÓN: Forzar contraste correcto en botones */
+button[class*="bg-primary"] {
+  color: white !important;
+}
+
+button[class*="text-primary"] {
+  color: #0e7490 !important; /* primary-700 para mejor contraste */
+}
+
+/* Asegurar que todos los botones tengan texto visible */
+.button, [role="button"], button {
+  position: relative;
+}
+
+.button *, [role="button"] *, button * {
+  z-index: 1;
+  position: relative;
 }
 
 /* Fix para iconos de Leaflet */

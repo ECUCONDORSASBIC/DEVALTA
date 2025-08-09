@@ -100,11 +100,7 @@ const nextConfig = {
       });
     }
 
-    // 🌐 WebAssembly support
-    config.experiments = {
-      ...config.experiments,
-      asyncWebAssembly: true,
-    };
+    // 🌐 WebAssembly support removed - Firebase Admin now server-only
     
     // Optimizaciones de producción
     if (!dev) {
@@ -152,7 +148,6 @@ const nextConfig = {
   
   // 📊 EXPERIMENTAL FEATURES
   experimental: {
-    asyncWebAssembly: true, // 🔧 Enable WebAssembly support for Firebase Admin
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
 

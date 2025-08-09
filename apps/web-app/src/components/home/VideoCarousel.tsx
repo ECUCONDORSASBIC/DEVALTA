@@ -319,20 +319,20 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({
           <button
             key={index}
             onClick={() => selectVideo(index)}
-            className={`flex-shrink-0 w-32 h-20 bg-gray-800 rounded-lg overflow-hidden relative group ${
-              index === currentVideoIndex ? 'ring-2 ring-blue-500' : ''
+            className={`flex-shrink-0 w-32 h-20 video-carousel-thumbnail rounded-lg overflow-hidden relative group hover:ring-2 hover:ring-primary-400 transition-all ${
+              index === currentVideoIndex ? 'ring-2 ring-primary-500' : ''
             }`}
             aria-label={`Reproducir ${video.title}`}
           >
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <span className="text-white text-xs font-medium px-2 text-center">
+            <div className="absolute inset-0 video-carousel-overlay flex items-center justify-center hover:bg-opacity-85 transition-all">
+              <span className="video-carousel-text text-xs px-2 text-center leading-tight">
                 {video.title}
               </span>
             </div>
             {index === currentVideoIndex && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500">
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary-500">
                 <div
-                  className="h-full bg-blue-400"
+                  className="h-full bg-primary-400 transition-all"
                   style={{ width: `${progress}%` }}
                 />
               </div>

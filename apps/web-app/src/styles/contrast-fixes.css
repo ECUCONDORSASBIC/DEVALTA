@@ -1,0 +1,105 @@
+/* Correcciones críticas de contraste para accesibilidad */
+
+/* Video carousel thumbnails - Forzar contraste alto */
+.video-thumbnail-overlay {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  color: #ffffff !important;
+}
+
+.video-thumbnail-text {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  font-weight: 600 !important;
+}
+
+/* Botones con overlay - Asegurar contraste mínimo */
+.overlay-button {
+  position: relative;
+}
+
+.overlay-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+
+.overlay-button .overlay-text {
+  position: relative;
+  z-index: 2;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Correcciones para elementos con bg-gray-800 */
+.bg-gray-800 .text-white,
+.bg-gray-800 [class*="text-white"] {
+  color: #ffffff !important;
+}
+
+/* Correcciones para elementos con bg-black con opacidad */
+[class*="bg-black/"] .text-white,
+[class*="bg-black/"] [class*="text-white"] {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Asegurar que los overlays tengan el fondo correcto */
+.absolute.inset-0[class*="bg-black"] {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Mejoras específicas para el carrusel de videos */
+.video-carousel-thumbnail {
+  background-color: rgb(31, 41, 55) !important; /* gray-800 explícito */
+}
+
+.video-carousel-overlay {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.video-carousel-text {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  line-height: 1.2 !important;
+}
+
+/* Estados hover mejorados */
+.video-carousel-thumbnail:hover .video-carousel-overlay {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.video-carousel-thumbnail:hover .video-carousel-text {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+/* Correcciones de accesibilidad WCAG AA */
+.text-white {
+  color: #ffffff !important;
+}
+
+.bg-gray-800 {
+  background-color: rgb(31, 41, 55) !important;
+}
+
+/* Focus states mejorados para accesibilidad */
+.video-carousel-thumbnail:focus-visible {
+  outline: 2px solid #06b6d4 !important;
+  outline-offset: 2px !important;
+}
+
+/* Modo de alto contraste */
+@media (prefers-contrast: high) {
+  .video-carousel-overlay {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+  }
+  
+  .video-carousel-text {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+  }
+}

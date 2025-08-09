@@ -1,10 +1,10 @@
-import FirebaseInit from '@/components/firebase/FirebaseInit'
+import FirebaseInit from '@/components/firebase/FirebaseInit';
+import QueryProvider from '@/components/providers/QueryProvider';
 import { AuthProvider } from '@altamedica/auth';
-import type { Metadata } from 'next'
-import { Inter, Lexend } from 'next/font/google'
-import { Toaster } from 'sonner'
-import QueryProvider from '@/components/providers/QueryProvider'
-import './globals.css'
+import type { Metadata } from 'next';
+import { Inter, Lexend } from 'next/font/google';
+import { Toaster } from 'sonner';
+import './globals.css';
 
 // Configuración optimizada de fuentes con variables CSS
 const inter = Inter({ 

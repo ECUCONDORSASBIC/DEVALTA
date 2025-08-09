@@ -1,26 +1,26 @@
 "use client";
 
-import { Button, Card, CardContent, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@altamedica/ui';
+import { Button } from '@altamedica/ui';
 import {
-  Activity,
-  ArrowRight,
-  Award,
-  Brain,
-  CheckCircle,
-  DollarSign,
-  Download,
-  Heart,
-  Shield,
-  Star,
-  Stethoscope,
-  Users,
-  Video,
-  Zap
+    Activity,
+    ArrowRight,
+    Award,
+    Brain,
+    CheckCircle,
+    Heart,
+    Shield,
+    Star,
+    Stethoscope,
+    Users,
+    Video,
+    Zap
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 
 // Componentes lazy-loaded para optimización
 const VideoCarousel = dynamic(() => import("@/components/home/VideoCarousel"), {
