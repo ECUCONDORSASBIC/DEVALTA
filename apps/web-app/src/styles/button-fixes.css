@@ -1,0 +1,225 @@
+/* 🔧 CORRECCIONES CRÍTICAS DE INTERACTIVIDAD DE BOTONES */
+
+/* ========================================
+   PROBLEMA 1: Z-INDEX Y ELEMENTOS SUPERPUESTOS
+   ======================================== */
+
+/* Asegurar que todos los botones tengan z-index apropiado */
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+.button {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto !important;
+}
+
+/* Específicamente para botones dentro de overlays */
+.absolute button,
+.relative button,
+[class*="absolute"] button,
+[class*="relative"] button {
+  z-index: 20 !important;
+}
+
+/* Botones en headers y navbars */
+header button,
+nav button,
+[role="banner"] button,
+[role="navigation"] button {
+  z-index: 50 !important;
+}
+
+/* ========================================
+   PROBLEMA 2: POINTER EVENTS BLOQUEADOS
+   ======================================== */
+
+/* Forzar pointer-events en todos los botones */
+button {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+button:disabled {
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Corregir elementos que pueden estar bloqueando */
+.overlay-button::before {
+  pointer-events: none !important;
+}
+
+/* ========================================
+   PROBLEMA 3: PSEUDO-ELEMENTOS INTERFERENTES
+   ======================================== */
+
+/* Asegurar que pseudo-elementos no bloqueen clicks */
+button::before,
+button::after,
+[role="button"]::before,
+[role="button"]::after {
+  pointer-events: none !important;
+}
+
+/* ========================================
+   PROBLEMA 4: TRANSFORMACIONES Y LAYOUT
+   ======================================== */
+
+/* Corregir problemas de transformación que pueden afectar click area */
+button {
+  transform: translateZ(0); /* Forzar hardware acceleration */
+}
+
+/* Asegurar que el área clickeable coincida con el elemento visual */
+button {
+  min-width: 44px; /* WCAG minimum touch target */
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+/* ========================================
+   PROBLEMA 5: ESTILOS ESPECÍFICOS DE ALTAMEDICA
+   ======================================== */
+
+/* Botones de autenticación específicos */
+button[class*="bg-primary"],
+button[class*="text-primary"],
+.header button,
+.auth button {
+  z-index: 100 !important;
+  pointer-events: auto !important;
+  position: relative !important;
+}
+
+/* Botones dentro de forms */
+form button {
+  z-index: 30 !important;
+}
+
+/* ========================================
+   PROBLEMA 6: MOBILE ESPECÍFICOS
+   ======================================== */
+
+/* Mejor handling en dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  button {
+    min-width: 48px;
+    min-height: 48px;
+    padding: 12px 16px;
+  }
+}
+
+/* ========================================
+   PROBLEMA 7: DEBUG VISUAL (SOLO DESARROLLO)
+   ======================================== */
+
+/* Mostrar área clickeable en desarrollo */
+@media (max-width: 9999px) {
+  .debug-buttons button {
+    outline: 2px dashed rgba(255, 0, 0, 0.3) !important;
+    outline-offset: 2px !important;
+  }
+  
+  .debug-buttons button:hover {
+    outline-color: rgba(0, 255, 0, 0.5) !important;
+  }
+}
+
+/* ========================================
+   PROBLEMA 8: FOCUS STATES MEJORADOS
+   ======================================== */
+
+/* Focus visible mejorado */
+button:focus-visible {
+  outline: 3px solid #06b6d4 !important;
+  outline-offset: 2px !important;
+  z-index: 1000 !important;
+}
+
+/* ========================================
+   PROBLEMA 9: ANIMACIONES QUE PUEDEN INTERFERIR
+   ======================================== */
+
+/* Deshabilitar animaciones que pueden causar problemas de click */
+button.loading {
+  animation-fill-mode: forwards;
+  pointer-events: none !important;
+}
+
+button:not(.loading) {
+  animation: none !important;
+}
+
+/* ========================================
+   PROBLEMA 10: ESPECÍFICO PARA NEXT.JS
+   ======================================== */
+
+/* Corregir hidration mismatch en botones */
+button[suppressHydrationWarning] {
+  opacity: 1 !important;
+  display: inline-flex !important;
+}
+
+/* ========================================
+   CORRECCIONES DE ÚLTIMA INSTANCIA
+   ======================================== */
+
+/* Si todo lo demás falla, forzar interactividad */
+.force-interactive {
+  pointer-events: auto !important;
+  z-index: 9999 !important;
+  position: relative !important;
+  cursor: pointer !important;
+}
+
+.force-interactive * {
+  pointer-events: none !important;
+}
+
+/* Debugging class para identificar problemas */
+.debug-click-area {
+  border: 2px solid red !important;
+  background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
+/* ========================================
+   ESPECÍFICO PARA ENLACES QUE ACTÚAN COMO BOTONES
+   ======================================== */
+
+a[role="button"],
+.link-button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none !important;
+  z-index: 10;
+  pointer-events: auto !important;
+}
+
+/* ========================================
+   PREVENIR PROBLEMAS DE CONTENIDO DINÁMICO
+   ======================================== */
+
+/* Asegurar que el contenido dinámico no rompa la interactividad */
+button[aria-label],
+button[title] {
+  position: relative;
+  z-index: 15;
+}
+
+/* Loading states que mantienen interactividad visual */
+button[aria-busy="true"] {
+  pointer-events: none;
+  opacity: 0.7;
+  cursor: wait;
+}
+
+button[aria-busy="true"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  pointer-events: none;
+}

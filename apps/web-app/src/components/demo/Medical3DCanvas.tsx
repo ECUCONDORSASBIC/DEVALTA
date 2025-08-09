@@ -11,8 +11,9 @@ const DOCTOR_POSITION: [number, number, number] = [0, 1.2, 0]; // Médico en pos
 const DOCTOR_SCALE: [number, number, number] = [1.8, 1.8, 1.8]; // Escala aumentada para presencia imponente
 const DOCTOR_ROTATION: [number, number, number] = [0, -Math.PI / 6, 0]; // Rotación ligera hacia la izquierda
 
-// Componente optimizado para vista desde abajo hacia arriba - médico en posición elevada
+// Componente optimizado para vista diagonal de 45° enfocada en el torso
 function OptimizedDoctorModel() {
+  // Usar modelo original doctor_male.glb directamente
   const { scene, animations } = useGLTF(DOCTOR_MODEL_PATH);
   const mixer = useRef<THREE.AnimationMixer>();
   const modelRef = useRef<THREE.Group>(null);
@@ -62,7 +63,7 @@ function OptimizedDoctorModel() {
         position: DOCTOR_POSITION,
         scale: DOCTOR_SCALE,
         rotation: DOCTOR_ROTATION,
-        mode: 'vista-desde-abajo-medico-elevado'
+        mode: 'vista-diagonal-desde-abajo-cabeza-limite'
       });
     }
   }, [scene, animations]);

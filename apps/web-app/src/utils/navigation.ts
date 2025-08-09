@@ -34,7 +34,7 @@ export const APPS: Record<string, AppInfo> = {
       },
     ]
   },
-  api-server: {
+  "api-server": {
     name: "api-server",
     baseUrl: "http://localhost:3001",
     port: 3001,
@@ -534,7 +534,7 @@ export const APPS: Record<string, AppInfo> = {
       },
     ]
   },
-  web-app: {
+  "web-app": {
     name: "web-app",
     baseUrl: "http://localhost:3000",
     port: 3000,
@@ -660,7 +660,7 @@ export const APPS: Record<string, AppInfo> = {
         params: undefined
       },
       {
-        path: "/(auth)/login",
+        path: "/auth/login",
         title: "(Auth) - Login",
         app: "web-app",
         requiresAuth: true,

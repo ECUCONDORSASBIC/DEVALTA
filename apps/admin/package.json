@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@altamedica/auth": "workspace:*",
+  "@altamedica/hooks": "workspace:*",
     "@altamedica/shared": "workspace:*",
     "@altamedica/ui": "workspace:*",
     "@altamedica/utils": "workspace:*",

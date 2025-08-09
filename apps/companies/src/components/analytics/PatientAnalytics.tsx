@@ -1,9 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@altamedica/ui';
 import {
     Activity,
     Filter,
@@ -35,6 +30,16 @@ import {
     XAxis,
     YAxis
 } from 'recharts';
+
+// Componente Progress simple
+const Progress = ({ value, className = '' }: { value: number; className?: string }) => (
+  <div className={`w-full bg-gray-200 rounded-full h-2.5 ${className}`}>
+    <div 
+      className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+      style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+    />
+  </div>
+);
 
 // Interfaces para analytics de pacientes
 interface PatientMetrics {
@@ -223,11 +228,11 @@ const PatientAnalytics: React.FC = () => {
         <div className="flex items-center space-x-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
+            <input
               placeholder="Buscar pacientes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 w-[250px]"
+              className="pl-8 w-[250px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <Button variant="outline" size="sm">

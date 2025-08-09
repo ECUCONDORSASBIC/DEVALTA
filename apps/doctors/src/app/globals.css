@@ -53,7 +53,7 @@ body {
 
 /* Estilos para componentes de telemedicina */
 .telemedicine-container {
-  @apply min-h-screen bg-gradient-to-br from-blue-50 via-neutral-50 to-indigo-50;
+  @apply min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-blue-100;
 }
 
 .telemedicine-video {
@@ -62,7 +62,14 @@ body {
 }
 
 .telemedicine-controls {
-  @apply flex items-center justify-center gap-4 p-4 bg-white/80 backdrop-blur-sm rounded-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 0.5rem;
 }
 
 .telemedicine-button {

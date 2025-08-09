@@ -1,0 +1,48 @@
+// Backup creado el 9 de agosto de 2025
+// Archivo original: PatientDashboardIntegrated.tsx
+
+/**
+ * PatientDashboard Integrado - Usa los nuevos hooks del backend dockerizado
+ * Versión optimizada con React Query y servicios integrados
+ */
+
+'use client';
+
+import React, { useState } from 'react';
+import { 
+  useIntegratedDashboard,
+  usePatient,
+  useUpcomingAppointments,
+  useActivePrescriptions,
+  useMedicalSummary,
+  useBackendConnectivity 
+} from '../../hooks/useIntegratedServices';
+
+// Importar componentes existentes
+import HealthSummaryCard from './cards/HealthSummaryCard';
+import VitalSignsMonitor from './monitors/VitalSignsMonitor';
+import MedicationTracker from './trackers/MedicationTracker';
+import UpcomingAppointments from './appointments/UpcomingAppointments';
+import LabResultsTrends from './lab/LabResultsTrends';
+import EmergencyPanel from './emergency/EmergencyPanel';
+import MedicalAlerts from './alerts/MedicalAlerts';
+import QuickActions from './actions/QuickActions';
+
+interface PatientDashboardIntegratedProps {
+  patientId: string;
+  viewMode?: 'complete' | 'summary' | 'emergency';
+  locale?: string;
+}
+
+const PatientDashboardIntegrated: React.FC<PatientDashboardIntegratedProps> = ({
+  patientId,
+  viewMode = 'complete',
+  locale = 'es-MX'
+}) => {
+  // Estados locales
+  const [activeSection, setActiveSection] = useState<string>('overview');
+  const [isEmergencyMode, setIsEmergencyMode] = useState(false);
+  // ...existing code...
+}
+
+export default PatientDashboardIntegrated;

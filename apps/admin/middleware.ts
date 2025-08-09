@@ -1,16 +1,19 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Rutas públicas que no requieren autenticación
-const publicRoutes = ['/login', '/api/health']
+// Rutas públicas mínimas (login local eliminado: redirigido a web-app)
+const publicRoutes = ['/api/health']
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Permitir acceso a rutas públicas
-  if (publicRoutes.some(route => pathname.startsWith(route))) {
-    return NextResponse.next()
+  // Bloquear intento de uso de /login local → redirigir a gateway central
+  if (pathname.startsWith('/login')) {
+    const central = new URL('http://localhost:3000/auth/login')
+    central.searchParams.set('from', 'admin')
+    return NextResponse.redirect(central)
   }
+  if (publicRoutes.some(route => pathname.startsWith(route))) return NextResponse.next()
 
   // Verificar token de autenticación
   const token = request.cookies.get('adminToken')?.value || 
@@ -18,9 +21,10 @@ export function middleware(request: NextRequest) {
 
   // Si no hay token, redirigir al login
   if (!token) {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('redirect', pathname)
-    return NextResponse.redirect(loginUrl)
+  const central = new URL('http://localhost:3000/auth/login')
+  central.searchParams.set('from', 'admin')
+  central.searchParams.set('redirect', pathname)
+  return NextResponse.redirect(central)
   }
 
   // TODO: Validar token con el backend

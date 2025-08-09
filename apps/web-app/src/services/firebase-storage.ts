@@ -10,6 +10,10 @@ import {
   getMetadata,
   updateMetadata
 } from 'firebase/storage'
+
+// Importar servicios Firebase usando aliases consistentes
+import { db, storage } from '@/firebase'
+// Importar funciones mock de Firestore en lugar de las reales
 import { 
   doc,
   setDoc,
@@ -22,8 +26,8 @@ import {
   getDocs,
   serverTimestamp,
   Timestamp
-} from 'firebase/firestore'
-import { storage, db, auth } from '../../config/firebase'
+} from '@/lib/firestore-mock'
+import { storage, db, auth } from '@/firebase'
 
 export interface MedicalDocument {
   id: string

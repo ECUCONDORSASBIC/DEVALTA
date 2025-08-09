@@ -4,6 +4,7 @@ export * from './components/Button';
 export * from './components/Card';
 export * from './components/Input';
 export * from './components/LoadingSpinner';
+export * from './components/Progress';
 export * from './components/Separator';
 
 // ==================== CORPORATE COMPONENTS (NEW) ====================
@@ -30,8 +31,10 @@ export * from './components/dashboard';
 export * from './components/table/Table';
 
 // ==================== AUTH COMPONENTS (NEW) ====================   
-export { LoginForm } from './components/auth/LoginForm';
-export { ProtectedRoute } from './components/auth/ProtectedRoute'; // ==================== HOOKS (NEW) ====================
+// TODO: Auth UI components (LoginForm, ProtectedRoute) pendientes de implementación real
+// export { LoginForm } from './components/auth/LoginForm';
+// export { ProtectedRoute } from './components/auth/ProtectedRoute';
+// ==================== HOOKS (NEW) ====================
 export * from './hooks';
 
 // ==================== THEME (NEW) ====================
@@ -46,7 +49,13 @@ export { Button } from './components/Button';
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './components/Card';
 export { Input } from './components/Input';
 export { LoadingSpinner } from './components/LoadingSpinner';
+export { Progress } from './components/Progress';
 export { Separator } from './components/Separator';
+
+// ==================== RADIX TABS (FALTABAN EN ESTE INDEX) ====================
+// Exportar Tabs para que los consumidores (companies, etc.) puedan importar
+// { Tabs, TabsList, TabsTrigger, TabsContent } desde '@altamedica/ui'
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 
 // ==================== LEGACY EXPORTS (TO BE DEPRECATED) ====================
 // LoadingSpinner re-export eliminado para evitar errores de referencia circular

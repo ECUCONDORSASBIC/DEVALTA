@@ -2,7 +2,16 @@
   "permissions": {
     "allow": [
       "Bash(copy page.tsx page.backup.tsx)",
-      "Bash(copy page.new.tsx page.tsx)"
+      "Bash(copy page.new.tsx page.tsx)",
+      "Bash(node:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(mv:*)",
+      "Bash(powershell:*)",
+      "Bash(npx eslint:*)",
+      "Bash(pnpm servers:start:*)",
+      "Bash(pnpm --filter @altamedica/diagnostic-engine build)",
+      "Bash(taskkill:*)",
+      "Bash(pnpm exec playwright test:*)"
     ],
     "deny": []
   }

@@ -1,50 +1,66 @@
 "use client";
 
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
 import { Button } from '@altamedica/ui';
 import {
-    Activity,
-    ArrowRight,
-    Award,
-    Brain,
-    CheckCircle,
-    Heart,
-    Shield,
-    Star,
-    Stethoscope,
-    Users,
-    Video,
-    Zap
+  Activity,
+  ArrowRight,
+  Award,
+  Brain,
+  CheckCircle,
+  Heart,
+  Shield,
+  Star,
+  Stethoscope,
+  Users,
+  Video,
+  Zap
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 
-// Componentes lazy-loaded para optimización
+// 🚀 OPTIMIZED LAZY LOADING - Componentes críticos diferidos 
 const VideoCarousel = dynamic(() => import("@/components/home/VideoCarousel"), {
-  loading: () => <LoadingPlaceholder icon={Video} text="Cargando demos..." />,
+  loading: () => <OptimizedSkeleton icon={Video} text="Cargando demos..." />,
   ssr: false
 });
 
 const MarketplaceDemoMap = dynamic(() => import("@/components/demo/MarketplaceDemoMapFixed"), {
-  loading: () => <LoadingPlaceholder icon={Users} text="Cargando mapa..." />,
+  loading: () => <OptimizedSkeleton icon={Users} text="Cargando mapa..." />,
   ssr: false
 });
 
-const Medical3DCanvas = dynamic(() => import("@/components/demo/Medical3DCanvas"), {
-  loading: () => <LoadingPlaceholder icon={Activity} text="Cargando modelo médico..." />,
+const Medical3DCanvas = dynamic(() => import("@/components/demo/LazyMedical3DCanvas"), {
+  loading: () => <OptimizedSkeleton icon={Activity} text="Cargando modelo médico..." />,
   ssr: false
 });
 
-// Componente de loading reutilizable
-function LoadingPlaceholder({ icon: Icon, text }: { icon: any; text: string }) {
+// ⚡ DEBUGGING TOOLS - Solo en desarrollo
+const ButtonTester = dynamic(() => import("@/components/debug/ButtonTester"), {
+  ssr: false,
+  loading: () => null
+});
+
+// 🎨 OPTIMIZED SKELETON COMPONENT - Mejor UX
+function OptimizedSkeleton({ icon: Icon, text }: { icon: any; text: string }) {
   return (
-    <div className="animate-pulse bg-neutral-100 rounded-xl p-8 flex items-center justify-center min-h-[400px]">
-      <div className="text-neutral-500 text-center">
-        <Icon className="w-12 h-12 mb-3 mx-auto text-primary-400" />
-        <p className="text-sm font-medium">{text}</p>
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl overflow-hidden min-h-[400px] relative">
+      <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent transform translate-x-[-100%] animate-shimmer"></div>
+      <div className="flex items-center justify-center h-full p-8">
+        <div className="text-center space-y-3">
+          <div className="relative">
+            <div className="w-16 h-16 bg-slate-200 rounded-full mx-auto animate-pulse"></div>
+            <Icon className="w-8 h-8 text-primary-400 absolute inset-0 m-auto animate-bounce" />
+          </div>
+          <div className="space-y-2">
+            <div className="h-4 bg-slate-200 rounded-full w-32 mx-auto animate-pulse"></div>
+            <div className="h-3 bg-slate-200 rounded-full w-24 mx-auto animate-pulse delay-75"></div>
+          </div>
+          <p className="text-xs text-slate-500 font-medium">{text}</p>
+        </div>
       </div>
     </div>
   );
@@ -87,23 +103,32 @@ const stats = [
 ];
 
 export default function HomePage() {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [shouldLoadHeavyComponents, setShouldLoadHeavyComponents] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'patient' | 'doctor' | 'company' | null>(null);
   const router = useRouter();
 
+  // ⚡ OPTIMIZED HYDRATION - Evitar hydration mismatch
   useEffect(() => {
-    setIsLoaded(true);
+    setIsClient(true);
+    
+    // 🚀 SMART LOADING - Cargar componentes pesados después del inicial render
+    const timer = setTimeout(() => {
+      setShouldLoadHeavyComponents(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   // Handlers para autenticación
   const handleLogin = () => {
     console.log('[HomePage] Navegando a login');
-    router.push('/login');
+    router.push('/auth/login');
   };
 
   const handleRegister = () => {
     console.log('[HomePage] Navegando a registro');
-    router.push('/register');
+    router.push('/auth/register');
   };
 
   // Sistema de onboarding basado en rol
@@ -115,7 +140,7 @@ export default function HomePage() {
     sessionStorage.setItem('onboardingStarted', 'true');
     
     // Redirigir directamente al registro con el rol preseleccionado
-    router.push(`/register?role=${role}`);
+    router.push(`/auth/register?role=${role}`);
   };
 
   return (
@@ -131,7 +156,7 @@ export default function HomePage() {
         
         {/* Modelo 3D Container - Posicionado a la derecha */}
         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[500px] h-[600px] hidden xl:block">
-          {isLoaded && <Medical3DCanvas />}
+          {isClient && shouldLoadHeavyComponents && <Medical3DCanvas priority={true} />}
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -186,7 +211,7 @@ export default function HomePage() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center xl:justify-start mt-8">
-              <Link href="/register">
+              <Link href="/auth/register">
                 <Button size="lg" className="min-w-[200px]">
                   Comenzar Gratis
                   <Zap className="ml-2 w-5 h-5" />
@@ -233,7 +258,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="relative h-[400px] bg-neutral-50 rounded-xl overflow-hidden shadow-altamedica-lg">
-            {isLoaded && <Medical3DCanvas />}
+            {isClient && shouldLoadHeavyComponents && <Medical3DCanvas />}
           </div>
         </div>
       </section>
@@ -336,7 +361,7 @@ export default function HomePage() {
             </div>
             
             <div className="relative">
-              {isLoaded && (
+              {isClient && shouldLoadHeavyComponents && (
                 <VideoCarousel 
                   videos={[
                     {
@@ -355,7 +380,7 @@ export default function HomePage() {
                       description: "Consultas médicas desde cualquier lugar"
                     }
                   ]}
-                  autoPlay={true}
+                  autoPlay={false} // Cambiar a false para mejor performance
                   muted={true}
                 />
               )}
@@ -378,7 +403,7 @@ export default function HomePage() {
           
           {/* Marketplace Map Demo */}
           <div className="rounded-xl overflow-hidden shadow-altamedica-lg">
-            {isLoaded && <MarketplaceDemoMap />}
+            {isClient && shouldLoadHeavyComponents && <MarketplaceDemoMap />}
           </div>
         </div>
       </section>
@@ -428,7 +453,7 @@ export default function HomePage() {
             Más de 50,000 profesionales ya digitalizaron sus procesos médicos
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button size="lg" variant="secondary" className="min-w-[200px]">
                 Registrarse Gratis
               </Button>
@@ -443,6 +468,9 @@ export default function HomePage() {
       </section>
 
       <Footer />
+      
+      {/* Button Tester para desarrollo - Solo si es necesario */}
+      {process.env.NODE_ENV === 'development' && isClient && <ButtonTester />}
     </div>
   );
 }

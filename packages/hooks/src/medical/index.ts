@@ -34,7 +34,8 @@ export { usePrescriptions, usePrescription } from './usePrescriptions';
 export { useMedicalRecords, useMedicalRecord } from './useMedicalRecords';
 export { useVitalSigns, useVitalSignsMonitoring } from './useVitalSigns';
 export { useMedicalAI } from './useMedicalAI';
-// TODO: Add useSymptomAnalysis and useDiagnosticAssistant exports once implemented
+export { useDiagnosticEngine } from './useDiagnosticEngine';
+export type { DiagnosticSession, UseDiagnosticEngineOptions } from './useDiagnosticEngine';
 
 // Hooks de telemedicina
 export { useTelemedicine, useVideoCall, useWebRTC } from './useTelemedicine';

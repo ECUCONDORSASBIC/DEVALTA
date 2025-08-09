@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { roleRedirectMiddleware } from '../middleware/role-redirect';
-import { getDashboardUrl } from '../config/app-urls';
+import { roleRedirectMiddleware } from './src/middleware/role-redirect';
+import { getDashboardUrl } from './src/config/app-urls';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
     
     // If no token, redirect to login
     if (!token) {
-      return NextResponse.redirect(new URL('http://localhost:3000/login', request.url));
+      return NextResponse.redirect(new URL('http://localhost:3000/auth/login', request.url));
     }
     
     try {
@@ -43,7 +43,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     } catch (error) {
       // Invalid token, redirect to login
-      return NextResponse.redirect(new URL('http://localhost:3000/login', request.url));
+      return NextResponse.redirect(new URL('http://localhost:3000/auth/login', request.url));
     }
   }
 

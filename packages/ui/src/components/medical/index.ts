@@ -34,6 +34,12 @@ export {
   type ServiceHealth
 } from './SystemHealthMonitor';
 
+// 🤖 ASISTENTE DE DIAGNÓSTICO
+export {
+  DiagnosticAssistant,
+  type DiagnosticAssistantProps
+} from './DiagnosticAssistant';
+
 // 🎯 TIPOS MÉDICOS COMPARTIDOS
 export type MedicalPriority = 'low' | 'medium' | 'high' | 'critical';
 export type VitalSign = 'heartRate' | 'bloodPressure' | 'temperature' | 'oxygenSaturation' | 'glucose';

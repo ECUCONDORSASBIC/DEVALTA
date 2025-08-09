@@ -1,7 +1,7 @@
 import type { LatLngTuple } from 'leaflet';
-import type { MarketplaceDoctor, MarketplaceCompany } from '@/contexts/MarketplaceContext';
+import type { MarketplaceDoctor, MarketplaceCompany, DoctorService } from '@/contexts/MarketplaceContext';
 
-// Datos unificados de médicos para el marketplace
+// Médicos disponibles en el marketplace
 export const marketplaceDoctors: MarketplaceDoctor[] = [
   {
     id: 'dr-martinez-001',
@@ -21,10 +21,12 @@ export const marketplaceDoctors: MarketplaceDoctor[] = [
     isUrgentAvailable: true,
     profileImage: '/doctor-martinez.jpg',
     isOnline: true,
-    lastActive: '2025-08-01T10:30:00Z',
+    lastActive: '2025-08-09T10:30:00Z',
     workArrangement: 'hybrid',
     languages: ['Español', 'Inglés'],
     verificationStatus: 'verified',
+    // Solo disponible para contratación, no publica servicios directos
+    offersDirectServices: false,
   },
   {
     id: 'dr-lopez-002',
@@ -44,10 +46,12 @@ export const marketplaceDoctors: MarketplaceDoctor[] = [
     isUrgentAvailable: false,
     profileImage: '/doctor-lopez.jpg',
     isOnline: true,
-    lastActive: '2025-08-01T09:15:00Z',
+    lastActive: '2025-08-09T09:15:00Z',
     workArrangement: 'remote',
     languages: ['Español', 'Portugués'],
     verificationStatus: 'verified',
+    // Solo disponible para contratación
+    offersDirectServices: false,
   },
   {
     id: 'dr-rodriguez-003',
@@ -71,11 +75,194 @@ export const marketplaceDoctors: MarketplaceDoctor[] = [
     workArrangement: 'on_site',
     languages: ['Español', 'Inglés', 'Francés'],
     verificationStatus: 'verified',
+    // Solo disponible para contratación
+    offersDirectServices: false,
+  },
+  {
+    id: 'dr-garcia-004',
+    name: 'Dr. Roberto García',
+    specialties: ['Dermatología', 'Cirugía Dermatológica'],
+    location: {
+      city: 'Mendoza',
+      country: 'Argentina',
+      coordinates: [-32.8908, -68.8272] as LatLngTuple,
+    },
+    rating: 4.6,
+    experience: 7,
+    hourlyRate: 65,
+    availableForHiring: true,
+    responseTime: 4,
+    totalHires: 23,
+    isUrgentAvailable: false,
+    profileImage: '/doctor-garcia.jpg',
+    isOnline: false,
+    lastActive: '2025-08-09T14:20:00Z',
+    workArrangement: 'on_site',
+    languages: ['Español'],
+    verificationStatus: 'verified',
+    // Este doctor SÍ publica servicios directos
+    offersDirectServices: true,
+    publishedServices: [
+      {
+        id: 'service-garcia-001',
+        title: 'Consulta Dermatológica Preventiva',
+        description: 'Chequeo dermatológico completo para detección temprana de lesiones.',
+        category: 'consultation',
+        price: {
+          amount: 60,
+          currency: 'USD',
+          type: 'per_session'
+        },
+        availability: {
+          schedule: 'Martes y Jueves 16:00-18:00',
+          timeSlots: ['16:00', '16:30', '17:00', '17:30']
+        },
+        deliveryMethod: 'in_person',
+        postedDate: '2025-08-09',
+        isActive: true
+      }
+    ]
+  },
+  {
+    id: 'dr-silva-005',
+    name: 'Dra. Ana Silva',
+    specialties: ['Psiquiatría', 'Psicoterapia'],
+    location: {
+      city: 'Montevideo',
+      country: 'Uruguay',
+      coordinates: [-34.9011, -56.1645] as LatLngTuple,
+    },
+    rating: 4.9,
+    experience: 10,
+    hourlyRate: 80,
+    availableForHiring: true,
+    responseTime: 1,
+    totalHires: 65,
+    isUrgentAvailable: true,
+    profileImage: '/doctor-silva.jpg',
+    isOnline: true,
+    lastActive: '2025-08-09T11:45:00Z',
+    workArrangement: 'flexible',
+    languages: ['Español', 'Inglés', 'Portugués'],
+    verificationStatus: 'verified',
+    // Esta doctora SÍ publica servicios directos
+    offersDirectServices: true,
+    publishedServices: [
+      {
+        id: 'service-silva-001',
+        title: 'Consulta Psiquiátrica Online',
+        description: 'Evaluación psiquiátrica completa por videollamada segura. Diagnóstico y plan de tratamiento personalizado.',
+        category: 'consultation',
+        price: {
+          amount: 80,
+          currency: 'USD',
+          type: 'per_session'
+        },
+        availability: {
+          schedule: 'Lunes a Viernes 9:00-17:00, Sábados 9:00-13:00',
+          timeSlots: ['09:00', '10:30', '12:00', '14:00', '15:30']
+        },
+        deliveryMethod: 'telemedicine',
+        postedDate: '2025-08-09',
+        isActive: true
+      },
+      {
+        id: 'service-silva-002', 
+        title: 'Segunda Opinión Psiquiátrica',
+        description: 'Revisión de diagnóstico existente y recomendaciones de tratamiento alternativo.',
+        category: 'second_opinion',
+        price: {
+          amount: 120,
+          currency: 'USD',
+          type: 'fixed_price'
+        },
+        availability: {
+          schedule: 'Disponible en 24-48 horas',
+          timeSlots: ['flexible']
+        },
+        deliveryMethod: 'telemedicine',
+        postedDate: '2025-08-09',
+        isActive: true
+      }
+    ]
   },
 ];
 
 // Datos unificados de empresas para el marketplace
 export const marketplaceCompanies: MarketplaceCompany[] = [
+  // AltaMedica - Servicios B2B de tecnología médica
+  {
+    id: "altamedica-services-001",
+    name: "AltaMedica - Servicios Tecnológicos",
+    industry: "Tecnología Médica",
+    location: {
+      city: "Buenos Aires",
+      country: "Argentina",
+      coordinates: [-34.6118, -58.3960] as LatLngTuple
+    },
+    rating: 4.9,
+    size: "50-100 empleados",
+    activeJobs: 4,
+    urgentJobs: 1,
+    isActivelyHiring: false, // Proveedor de servicios, no contratante
+    averageResponseTime: 2,
+    totalHires: 0,
+    companyType: 'startup',
+    jobs: [
+      {
+        id: "am-telemedicine-setup",
+        title: "Implementación de Telemedicina para Clínicas",
+        company: "AltaMedica - Servicios Tecnológicos", 
+        companyId: "altamedica-services-001",
+        location: "Remoto - Latinoamérica",
+        specialty: "Tecnología Médica",
+        type: "consultation",
+        salary: "USD 5,000 - 15,000 por proyecto",
+        postedDate: "2025-08-09",
+        applications: 0,
+        rating: 4.9,
+        urgent: false,
+        description: "Implementamos plataformas completas de telemedicina con videollamadas seguras, cumplimiento HIPAA y latencia <100ms.",
+        requirements: [],
+        benefits: [
+          "Setup completo en 2-4 semanas",
+          "Soporte técnico 24/7",
+          "Capacitación del personal incluida",
+          "Cumplimiento HIPAA garantizado"
+        ],
+        experience: "Servicio",
+        schedule: "Por proyecto",
+        remote: true,
+        status: 'active'
+      },
+      {
+        id: "am-medical-ai-integration",
+        title: "Integración de IA para Diagnósticos",
+        company: "AltaMedica - Servicios Tecnológicos",
+        companyId: "altamedica-services-001", 
+        location: "Remoto - Latinoamérica",
+        specialty: "Inteligencia Artificial Médica",
+        type: "consultation",
+        salary: "USD 8,000 - 25,000 por proyecto",
+        postedDate: "2025-08-09",
+        applications: 0,
+        rating: 4.9,
+        urgent: true,
+        description: "Implementamos sistemas de IA para asistir en diagnósticos médicos, análisis de síntomas y predicciones de salud.",
+        requirements: [],
+        benefits: [
+          "IA entrenada con datos médicos certificados",
+          "Integración con sistemas existentes",
+          "Análisis predictivo avanzado",
+          "ROI comprobado del 40-60%"
+        ],
+        experience: "Servicio",
+        schedule: "Por proyecto",
+        remote: true,
+        status: 'active'
+      }
+    ]
+  },
   {
     id: "hospital-san-vicente-001",
     name: "Hospital San Vicente",

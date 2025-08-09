@@ -19,9 +19,9 @@ const PROTECTED_ROUTES = [
 
 // Rutas de autenticación
 const AUTH_ROUTES = [
-  '/login',
-  '/register',
-  '/forgot-password'
+  '/auth/login',
+  '/auth/register',
+  '/auth/forgot-password'
 ];
 
 // Rutas públicas permitidas
@@ -64,7 +64,7 @@ export function middleware(request: NextRequest) {
   
   // Redirigir rutas protegidas si no está autenticado
   if (isProtectedRoute(pathname) && !isAuthenticated) {
-    const loginUrl = new URL('/login', request.url);
+    const loginUrl = new URL('/auth/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }

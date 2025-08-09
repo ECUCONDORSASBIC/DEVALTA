@@ -1,13 +1,13 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import * as Sentry from '@sentry/nextjs';
 
-interface Props {
+interface SentryErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
-interface State {
+interface SentryErrorBoundaryState {
   hasError: boolean;
   error?: Error;
 }
@@ -16,13 +16,13 @@ interface State {
  * Error Boundary de React que integra con Sentry
  * Captura errores de componentes y los reporta a Sentry
  */
-export class SentryErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+export class SentryErrorBoundary extends Component<SentryErrorBoundaryProps, SentryErrorBoundaryState> {
+  constructor(props: SentryErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): SentryErrorBoundaryState {
     // Actualizar estado para mostrar fallback UI
     return { hasError: true, error };
   }

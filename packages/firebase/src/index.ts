@@ -1,9 +1,6 @@
 // Exportar configuración principal
 export * from './config';
 
-// Exportar funciones administrativas
-export * from './admin';
-
 // Exportar funciones de performance
 export * from './performance';
 
@@ -13,6 +10,6 @@ export * from './client';
 // Exportar cliente-only para aplicaciones del lado del cliente
 export * from './client-only';
 
-// Re-exportar funciones clave para facilitar el uso
-export { adminAuth, adminDb, adminStorage, firebaseAdmin, verifyIdToken } from './admin';
+// NO exportar admin directamente para evitar problemas en el cliente
+// Las funciones admin están disponibles en './admin-server' para uso en API routes
 

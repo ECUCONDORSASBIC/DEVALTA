@@ -1,9 +1,11 @@
-﻿@tailwind base;
+﻿/* Importaciones CSS deben ir primero */
+@import '../styles/contrast-fixes.css';
+@import '../styles/button-fixes.css';
+
+/* Tailwind directives */
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Correcciones críticas de contraste */
-@import '../styles/contrast-fixes.css';
 
 /* Leaflet CSS se carga vía componente, no mediante @import aquí */
 
@@ -66,15 +68,7 @@ button[class*="text-primary"] {
   color: #0e7490 !important; /* primary-700 para mejor contraste */
 }
 
-/* Asegurar que todos los botones tengan texto visible */
-.button, [role="button"], button {
-  position: relative;
-}
-
-.button *, [role="button"] *, button * {
-  z-index: 1;
-  position: relative;
-}
+/* REMOVIDO - Potencialmente problemático, reemplazado por button-fixes.css */
 
 /* Fix para iconos de Leaflet */
 .leaflet-container {

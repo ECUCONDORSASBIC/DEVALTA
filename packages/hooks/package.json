@@ -17,47 +17,47 @@
       "types": "./dist/index.d.ts"
     },
     "./medical": {
-      "import": "./dist/medical/index.esm.js",
+      "import": "./dist/medical/index.js",
       "require": "./dist/medical/index.js",
       "types": "./dist/medical/index.d.ts"
     },
     "./auth": {
-      "import": "./dist/auth/index.esm.js",
+      "import": "./dist/auth/index.js",
       "require": "./dist/auth/index.js",
       "types": "./dist/auth/index.d.ts"
     },
     "./api": {
-      "import": "./dist/api/index.esm.js",
+      "import": "./dist/api/index.js",
       "require": "./dist/api/index.js",
       "types": "./dist/api/index.d.ts"
     },
     "./realtime": {
-      "import": "./dist/realtime/index.esm.js",
+      "import": "./dist/realtime/index.js",
       "require": "./dist/realtime/index.js",
       "types": "./dist/realtime/index.d.ts"
     },
     "./ui": {
-      "import": "./dist/ui/index.esm.js",
+      "import": "./dist/ui/index.js",
       "require": "./dist/ui/index.js",
       "types": "./dist/ui/index.d.ts"
     },
     "./utils": {
-      "import": "./dist/utils/index.esm.js",
+      "import": "./dist/utils/index.js",
       "require": "./dist/utils/index.js",
       "types": "./dist/utils/index.d.ts"
     },
     "./performance": {
-      "import": "./dist/performance/index.esm.js",
+      "import": "./dist/performance/index.js",
       "require": "./dist/performance/index.js",
       "types": "./dist/performance/index.d.ts"
     },
     "./forms": {
-      "import": "./dist/forms/index.esm.js",
+      "import": "./dist/forms/index.js",
       "require": "./dist/forms/index.js",
       "types": "./dist/forms/index.d.ts"
     },
     "./composed": {
-      "import": "./dist/composed/index.esm.js",
+      "import": "./dist/composed/index.js",
       "require": "./dist/composed/index.js",
       "types": "./dist/composed/index.d.ts"
     }
@@ -124,6 +124,7 @@
   },
   "dependencies": {
     "@altamedica/types": "workspace:*",
+    "@altamedica/diagnostic-engine": "workspace:*",
     "@tanstack/react-query": "^5.81.2",
     "zod": "^3.22.2"
   },

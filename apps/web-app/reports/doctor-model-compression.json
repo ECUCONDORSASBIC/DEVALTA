@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-08-08T21:11:02.636Z",
+  "originalFile": "doctor_male.glb",
+  "compressedFile": "doctor_male_draco.glb",
+  "originalSize": 3838280,
+  "compressedSize": 3145688,
+  "compressionRatio": 18.044332357201665,
+  "method": "DRACO with medical optimizations",
+  "expectedLoadTimeImprovement": "14%",
+  "estimatedBandwidthSaved": "676 KB per user",
+  "recommendations": [
+    "Use doctor_male_draco.glb in production",
+    "Keep original as fallback for unsupported devices",
+    "Monitor WebGL performance metrics",
+    "Consider A/B testing compression settings"
+  ]
+}

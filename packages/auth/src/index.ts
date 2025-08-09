@@ -40,3 +40,6 @@ export * from './client';
 // Exportaciones adicionales para compatibilidad con auth-service
 export { default as default } from './services/AuthService';
 
+// ============== REDIRECCIONES ==============
+export * from './utils/redirects';
+

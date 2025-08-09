@@ -18,7 +18,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({
   children,
   requireAuth = true,
   requireRole,
-  redirectTo = '/login',
+  redirectTo = '/auth/login',
   fallback
 }) => {
   const { user, userProfile, loading } = useAuth();

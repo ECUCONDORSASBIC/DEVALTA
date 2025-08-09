@@ -15,6 +15,7 @@ import PatientProfile from './profile/PatientProfile';
 import ClinicalTimeline from './timeline/ClinicalTimeline';
 import DocumentsManager from './documents/DocumentsManager';
 import TeamCommunication from './communication/TeamCommunication';
+import DiagnosisAssistantCard from './cards/DiagnosisAssistantCard';
 
 interface PatientDashboardProps {
   patientId: string;
@@ -49,61 +50,22 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({
   // Actualizaciones en tiempo real
   const { subscribe, unsubscribe } = useRealTimeUpdates(patientId);
 
-  // Configuración de navegación
+  // Nueva navegación agrupada y jerárquica
   const navigationSections = [
-    {
-      id: 'overview',
-      label: 'Resumen General',
-      icon: '📊',
-      priority: 1
-    },
-    {
-      id: 'vitals',
-      label: 'Signos Vitales',
-      icon: '❤️',
-      priority: 2,
-      badge: vitalSigns?.hasAnomalies ? 'alert' : null
-    },
-    {
-      id: 'medications',
-      label: 'Medicamentos',
-      icon: '💊',
-      priority: 3,
-      badge: medications?.pendingRefills || 0
-    },
-    {
-      id: 'appointments',
-      label: 'Citas Médicas',
-      icon: '📅',
-      priority: 4,
-      badge: appointments?.upcoming || 0
-    },
-    {
-      id: 'lab',
-      label: 'Laboratorios',
-      icon: '🔬',
-      priority: 5,
-      badge: labResults?.pending || 0
-    },
-    {
-      id: 'history',
-      label: 'Historial Clínico',
-      icon: '📋',
-      priority: 6
-    },
-    {
-      id: 'documents',
-      label: 'Documentos',
-      icon: '📄',
-      priority: 7
-    },
-    {
-      id: 'emergency',
-      label: 'Emergencia',
-      icon: '🚨',
-      priority: 8,
-      urgent: true
-    }
+    { id: 'dashboard', label: 'Inicio', icon: '🏠', priority: 1 },
+    { id: 'expediente', label: 'Expediente', icon: '📋', priority: 2 },
+    { id: 'medicacion', label: 'Medicación', icon: '💊', priority: 3 },
+    { id: 'laboratorio', label: 'Laboratorio', icon: '🔬', priority: 4 },
+    { id: 'citas', label: 'Citas', icon: '📅', priority: 5 },
+    { id: 'telemedicina', label: 'Telemedicina', icon: '�', priority: 6 },
+    { id: 'sos', label: 'SOS 24/7', icon: '�', priority: 7, urgent: true }
+  ];
+
+  // Menú secundario (perfil, preferencias, seguridad)
+  const secondaryMenu = [
+    { id: 'perfil', label: 'Mi Perfil', icon: '�' },
+    { id: 'preferencias', label: 'Preferencias', icon: '⚙️' },
+    { id: 'seguridad', label: 'Seguridad', icon: '🔒' }
   ];
 
   // Efectos
@@ -119,6 +81,66 @@ const PatientDashboard: React.FC<PatientDashboardProps> = ({
         }
       }
     });
+  }, [subscribe]);
+
+  // Layout reorganizado para reducir fatiga visual y priorizar datos personales
+  return (
+    <div className="dashboard-container px-4 py-6 max-w-6xl mx-auto">
+      {/* Barra superior con icono de notificaciones discreto */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl font-semibold text-primary-800">Bienvenido, {patientData?.firstName || 'Paciente'}</span>
+          <button className="ml-2 px-3 py-1 rounded-full bg-primary-50 text-primary-700 hover:bg-primary-100 transition" title="Ver notificaciones">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V9a6 6 0 1 0-12 0v7a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2z" fill="currentColor"/></svg>
+            <span className="sr-only">Notificaciones</span>
+          </button>
+        </div>
+        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition" title="Mi Perfil">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 1.79-8 4v2h16v-2c0-2.21-3.582-4-8-4z" fill="currentColor"/></svg>
+          Mi Perfil
+        </button>
+      </div>
+
+      {/* Datos personales y protección de datos */}
+      <div className="mb-8 p-6 rounded-xl bg-white border border-neutral-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div className="text-lg text-neutral-700 mb-1">Datos de salud</div>
+          <div className="text-sm text-neutral-500">Tu información médica está protegida</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-neutral-400">Cumplimos con estándares HIPAA y protección de datos médicos</span>
+          <span className="inline-block text-neutral-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 17a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2a2 2 0 0 0 2 2zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zm-8-2a4 4 0 1 1 8 0v2H6V9z" fill="currentColor"/></svg></span>
+        </div>
+      </div>
+
+      {/* Fila principal: acciones personales */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <QuickActions patientId={patientId} />
+        <ClinicalTimeline medicalHistory={medicalHistory} />
+        <MedicationTracker medications={medications} />
+      </div>
+
+      {/* Próxima cita y resultados */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <UpcomingAppointments appointments={appointments} />
+        <LabResultsTrends labResults={labResults} />
+      </div>
+
+      {/* Telemedicina y asistente */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <TeamCommunication patientId={patientId} />
+        <DiagnosisAssistantCard
+          age={patientData?.age || 35}
+          gender={patientData?.gender || 'Masculino'}
+          onStart={() => setActiveSection('diagnosis')}
+        />
+      </div>
+
+      {/* Emergencia y alertas */}
+      <EmergencyPanel emergencyContacts={emergencyContacts} />
+      <MedicalAlerts alerts={patientData?.alerts} />
+    </div>
+  );
 
     return () => unsubscribe(subscriptionId);
   }, [subscribe, unsubscribe]);

@@ -91,7 +91,18 @@ export interface RegisterData extends LoginCredentials {
 export class AuthService {
   private _auth: Auth | null = null;
   private _db: Firestore | null = null;
-  private googleProvider = new GoogleAuthProvider();
+  private googleProvider: GoogleAuthProvider;
+
+  constructor() {
+    this.googleProvider = new GoogleAuthProvider();
+    // Configurar scopes para obtener información adicional
+    this.googleProvider.addScope('profile');
+    this.googleProvider.addScope('email');
+    // Forzar selección de cuenta
+    this.googleProvider.setCustomParameters({
+      prompt: 'select_account'
+    });
+  }
 
   private get auth(): Auth {
     if (!this._auth) {

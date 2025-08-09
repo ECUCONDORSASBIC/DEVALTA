@@ -28,11 +28,22 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     
+    /* Timeouts extendidos para operaciones médicas */
+    actionTimeout: 15 * 1000,
+    navigationTimeout: 30 * 1000,
+    
     /* Headers para compliance médico */
     extraHTTPHeaders: {
       'X-Medical-Test': 'playwright',
-      'X-HIPAA-Compliance': 'enabled'
-    }
+      'X-HIPAA-Compliance': 'enabled',
+      'Accept-Language': 'es-ES'
+    },
+    
+    /* Viewport por defecto */
+    viewport: { width: 1280, height: 720 },
+    
+    /* Ignorar HTTPS en desarrollo */
+    ignoreHTTPSErrors: true
   },
 
   /* Proyectos de testing por navegador */

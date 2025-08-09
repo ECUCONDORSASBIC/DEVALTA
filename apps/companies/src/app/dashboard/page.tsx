@@ -4,10 +4,13 @@ import {
   Activity,
   AlertCircle,
   AlertTriangle,
+  Building2,
   Calendar,
   Clock,
   DollarSign,
   Heart,
+  RefreshCw,
+  TrendingUp,
   UserCheck,
   UserPlus,
   Users,
@@ -18,17 +21,15 @@ import { lazy, Suspense, useState } from 'react';
 // Importar componentes del package @altamedica/ui
 import {
   Badge,
+  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  HealthMetricCard,
-  MedicalAIAssistant,
-  VitalSignsChart
 } from '@altamedica/ui';
 
-// Lazy load charts
-const Charts = lazy(() => import('@/components/DashboardCharts'));
+// Importar componente de dashboard hospitalario
+import HospitalNetworkDashboard from '@/components/dashboard/HospitalNetworkDashboard';
 
 interface CompanyMetrics {
   totalDoctors: number;
@@ -76,6 +77,7 @@ const mockMetrics: CompanyMetrics = {
 
 export default function DashboardOverview() {
   const [metrics] = useState<CompanyMetrics>(mockMetrics);
+  const [loading, setLoading] = useState(false);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-ES', { 
@@ -86,333 +88,219 @@ export default function DashboardOverview() {
     }).format(value);
   };
 
+  // Configuración para el dashboard de red hospitalaria
+  const hospitalConfig = {
+    whatsapp: { 
+      enabled: true, 
+      phoneNumber: '+57 310 123-4567', 
+      apiKey: 'demo-whatsapp-key' 
+    },
+    api: { 
+      enabled: true, 
+      endpoint: 'https://api.hospital-demo.com', 
+      apiKey: 'demo-api-key' 
+    },
+    iot: { 
+      enabled: true, 
+      devices: ['sensor-001', 'camera-002', 'beacon-003'] 
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-neutral-50 to-primary-100">
-      <div className="container-altamedica py-8 space-y-8">
-        {/* Header con branding AltaMedica mejorado */}
-        <div className="companies-hero animate-fade-in-up">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 shadow-altamedica">
-                <span className="text-2xl font-bold text-white">A</span>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Dashboard Empresarial</h1>
-                <p className="text-primary-100 text-lg">Gestión completa de clínicas y hospitales con IA avanzada</p>
+    <div className="space-y-6">
+      {/* Header del dashboard - Estilo Torre de Control */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-bold text-white tracking-tight">CENTRO DE CONTROL HOSPITALARIO</h1>
+          <p className="text-slate-400 mt-2 text-lg">Monitoreo y Redistribución Inteligente en Tiempo Real</p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-green-600/20 to-green-500/20 border border-green-500/30 backdrop-blur">
+            <Activity className="h-5 w-5 text-green-400" />
+            <span className="text-green-400 font-medium">Sistema Operativo</span>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setLoading(!loading)}
+            className="flex items-center gap-2 bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            Sincronizar
+          </Button>
+        </div>
+      </div>
+
+      {/* Dashboard de Red Hospitalaria */}
+      <HospitalNetworkDashboard 
+        hospitalId="HOSP-DEMO-001"
+        config={hospitalConfig}
+      />
+
+      {/* Métricas Empresariales - Estilo Torre de Control */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="bg-slate-800/50 backdrop-blur border-slate-700 hover:bg-slate-800/70 transition-all">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">PERSONAL MÉDICO</h3>
+              <div className="h-10 w-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                <Users className="h-6 w-6 text-blue-400" />
               </div>
             </div>
-            <div className="hidden md:flex items-center space-x-4">
-              <div className="glass rounded-lg p-3">
-                <div className="flex items-center space-x-2 text-white">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium">Sistema Activo</span>
-                </div>
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-3xl font-bold text-white">{metrics.activeDoctors}</span>
+              <span className="text-sm text-slate-500">/ {metrics.totalDoctors}</span>
+            </div>
+            <div className="mb-3">
+              <div className="w-full bg-slate-700 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-blue-500 to-blue-400 h-2 rounded-full transition-all duration-500 shadow-lg shadow-blue-500/50"
+                  style={{ width: `${(metrics.activeDoctors / metrics.totalDoctors) * 100}%` }}
+                />
               </div>
             </div>
-          </div>
-        </div>
+            <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">EN SERVICIO</Badge>
+          </CardContent>
+        </Card>
 
-        {/* Métricas Principales con HealthMetricCard mejoradas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="companies-metric-card animate-scale-in hover-lift">
-            <HealthMetricCard
-              icon={<Users className="w-6 h-6 text-blue-600" />}
-              title="Pacientes Activos"
-              value={metrics.activePatients.toLocaleString()}
-              status="excellent"
-              trend="up"
-              description="Pacientes que han tenido actividad reciente"
-            />
-          </div>
-
-          <div className="companies-metric-card animate-scale-in hover-lift" style={{animationDelay: '0.1s'}}>
-            <HealthMetricCard
-              icon={<UserCheck className="w-6 h-6 text-green-600" />}
-              title="Médicos Activos"
-              value={metrics.activeDoctors.toString()}
-              status="excellent"
-              trend="stable"
-              description="Profesionales médicos disponibles"
-            />
-          </div>
-
-          <div className="companies-metric-card animate-scale-in hover-lift" style={{animationDelay: '0.2s'}}>
-            <HealthMetricCard
-              icon={<DollarSign className="w-6 h-6 text-yellow-600" />}
-              title="Ingresos Mensuales"
-              value={formatCurrency(metrics.monthlyRevenue)}
-              status="excellent"
-              trend="up"
-              description="Ingresos del mes actual"
-            />
-          </div>
-
-          <div className="companies-metric-card animate-scale-in hover-lift" style={{animationDelay: '0.3s'}}>
-            <HealthMetricCard
-              icon={<Calendar className="w-6 h-6 text-purple-600" />}
-              title="Citas del Mes"
-              value={metrics.totalAppointments.toString()}
-              status="normal"
-              trend="stable"
-              description="Citas programadas este mes"
-            />
-          </div>
-        </div>
-
-        {/* Métricas de Rendimiento mejoradas */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Satisfacción del Paciente</h3>
-                <Heart className="h-6 w-6 text-red-500" />
+        <Card className="bg-slate-800/50 backdrop-blur border-slate-700 hover:bg-slate-800/70 transition-all">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">INGRESOS MENSUALES</h3>
+              <div className="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                <DollarSign className="h-6 w-6 text-green-400" />
               </div>
-              <div className="flex items-end gap-2 mb-4">
-                <span className="text-3xl font-bold text-gray-900">{metrics.patientSatisfaction}</span>
-                <span className="text-sm text-gray-500 mb-2">/ 5.0</span>
-              </div>
-              <div className="flex items-center gap-1 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-2 w-full rounded transition-all duration-300 ${
-                      i < Math.floor(metrics.patientSatisfaction) 
-                        ? 'bg-green-500 shadow-sm' 
-                        : 'bg-gray-200'
-                    }`}
-                  />
-                ))}
-              </div>
-              <Badge className="bg-green-100 text-green-800">Excelente</Badge>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow" style={{animationDelay: '0.1s'}}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Tiempo de Espera</h3>
-                <Clock className="h-6 w-6 text-blue-500" />
-              </div>
-              <div className="flex items-end gap-2 mb-4">
-                <span className="text-3xl font-bold text-gray-900">{metrics.averageWaitTime}</span>
-                <span className="text-sm text-gray-500 mb-2">minutos</span>
-              </div>
-              <div className="mb-3">
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-blue-400 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min((30 - metrics.averageWaitTime) / 30 * 100, 100)}%` }}
-                  />
-                </div>
-              </div>
-              <Badge className={metrics.averageWaitTime < 30 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                {metrics.averageWaitTime < 30 ? 'Óptimo' : 'Mejorable'}
-              </Badge>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow" style={{animationDelay: '0.2s'}}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Ocupación de Camas</h3>
-                <Activity className="h-6 w-6 text-green-500" />
-              </div>
-              <div className="flex items-end gap-2 mb-4">
-                <span className="text-3xl font-bold text-gray-900">{metrics.bedOccupancyRate}%</span>
-              </div>
-              <div className="mb-3">
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div 
-                    className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-500 relative overflow-hidden"
-                    style={{ width: `${metrics.bedOccupancyRate}%` }}
-                  >
-                    <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                  </div>
-                </div>
-              </div>
-              <Badge className="bg-blue-100 text-blue-800">Estable</Badge>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sección Avanzada: Herramientas Médicas con IA */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Asistente de IA Médica */}
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-sky-600">🤖</span>
-                Sistema de Gestión Inteligente
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <MedicalAIAssistant
-                patient={{ 
-                  id: 'demo',
-                  firstName: 'Sistema',
-                  lastName: 'Empresarial',
-                  dateOfBirth: '2024-01-01',
-                  gender: 'other' as const,
-                  dni: '00000000',
-                  email: 'demo@altamedica.com',
-                  phone: '000000000',
-                  bloodType: 'O+' as const,
-                  allergies: [],
-                  chronicConditions: [],
-                  currentMedications: [],
-                  emergencyContact: {
-                    name: 'Soporte Técnico',
-                    relationship: 'Corporativo',
-                    phone: '+57 1 234-5678'
-                  },
-                  insurance: {
-                    provider: 'AltaMedica Empresarial',
-                    planNumber: 'CORP-001'
-                  },
-                  vitals: {
-                    heartRate: 70,
-                    bloodPressure: { systolic: 120, diastolic: 80 },
-                    temperature: 36.5,
-                    oxygenSaturation: 98,
-                    weight: 70,
-                    height: 170,
-                    bmi: 24.2,
-                    lastUpdated: new Date().toISOString()
-                  },
-                  createdAt: '2024-01-01T00:00:00Z',
-                  updatedAt: new Date().toISOString(),
-                  lastVisit: new Date().toISOString()
-                }}
-                symptoms={[]}
-                onSuggestDiagnosis={() => {/* Optimización empresarial */}}
-                onRecommendTreatment={() => {/* Recomendación corporativa */}}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Gráficos de Rendimiento */}
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-green-500">📈</span>
-                Rendimiento en Tiempo Real
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <VitalSignsChart
-                data={[
-                  { 
-                    timestamp: new Date(Date.now() - 45 * 60 * 1000), 
-                    heartRate: metrics.patientSatisfaction * 20, 
-                    bloodPressure: { systolic: metrics.bedOccupancyRate + 40, diastolic: metrics.bedOccupancyRate + 20 },
-                    temperature: metrics.averageWaitTime + 10 
-                  },
-                  { 
-                    timestamp: new Date(Date.now() - 30 * 60 * 1000), 
-                    heartRate: (metrics.patientSatisfaction * 20) + 5, 
-                    bloodPressure: { systolic: metrics.bedOccupancyRate + 42, diastolic: metrics.bedOccupancyRate + 22 },
-                    temperature: metrics.averageWaitTime + 8 
-                  },
-                  { 
-                    timestamp: new Date(Date.now() - 15 * 60 * 1000), 
-                    heartRate: (metrics.patientSatisfaction * 20) - 2, 
-                    bloodPressure: { systolic: metrics.bedOccupancyRate + 38, diastolic: metrics.bedOccupancyRate + 18 },
-                    temperature: metrics.averageWaitTime + 12 
-                  },
-                  { 
-                    timestamp: new Date(), 
-                    heartRate: (metrics.patientSatisfaction * 20) + 3, 
-                    bloodPressure: { systolic: metrics.bedOccupancyRate + 41, diastolic: metrics.bedOccupancyRate + 21 },
-                    temperature: metrics.averageWaitTime + 9 
-                  }
-                ]}
-                metrics={['heartRate', 'bloodPressure']}
-                timeRange="1h"
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Gráficos con Lazy Loading */}
-        <Suspense fallback={
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="h-96 animate-pulse bg-gray-100" />
-            <Card className="h-96 animate-pulse bg-gray-100" />
-          </div>
-        }>
-          <Charts />
-        </Suspense>
-
-        {/* Alertas y Notificaciones */}
-        <Card className="border-orange-200">
-          <CardHeader className="bg-orange-50">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-orange-600" />
-                Alertas y Notificaciones
-              </CardTitle>
-              <Badge className="bg-orange-100 text-orange-800">
-                3 pendientes
-              </Badge>
             </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y">
-              <div className="p-4 hover:bg-gray-50 cursor-pointer">
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <AlertCircle className="h-5 w-5 text-red-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Stock crítico de medicamentos</p>
-                    <p className="text-xs text-gray-500 mt-1">El inventario de antibióticos está por debajo del nivel mínimo</p>
-                    <p className="text-xs text-gray-400 mt-1">Hace 2 horas</p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-4 hover:bg-gray-50 cursor-pointer">
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Zap className="h-5 w-5 text-yellow-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Mantenimiento programado</p>
-                    <p className="text-xs text-gray-500 mt-1">El equipo de resonancia magnética requiere mantenimiento preventivo</p>
-                    <p className="text-xs text-gray-400 mt-1">Hace 5 horas</p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-4 hover:bg-gray-50 cursor-pointer">
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <UserPlus className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Nuevas aplicaciones recibidas</p>
-                    <p className="text-xs text-gray-500 mt-1">5 nuevos candidatos aplicaron a las ofertas de trabajo</p>
-                    <p className="text-xs text-gray-400 mt-1">Hoy, 09:30 AM</p>
-                  </div>
-                </div>
-              </div>
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-3xl font-bold text-white">{formatCurrency(metrics.monthlyRevenue)}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-green-400" />
+              <span className="text-sm text-green-400">+15% vs mes anterior</span>
             </div>
           </CardContent>
         </Card>
 
-        {/* Banner de Funcionalidades Premium */}
-        <div className="bg-gradient-altamedica rounded-xl p-6 text-white shadow-altamedica-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-xl font-bold mb-2">🎆 Dashboard Empresarial Mejorado</h3>
-              <p className="text-primary-100">Ahora con gestión avanzada, IA integrada y análisis predictivos para clínicas</p>
+        <Card className="bg-slate-800/50 backdrop-blur border-slate-700 hover:bg-slate-800/70 transition-all">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">CITAS PROGRAMADAS</h3>
+              <div className="h-10 w-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-purple-400" />
+              </div>
             </div>
-            <div className="flex gap-3">
-              <button className="bg-white text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg font-medium transition-colors hover-lift">
-                Ver Marketplace →
-              </button>
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-3xl font-bold text-white">{metrics.totalAppointments}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-slate-400">{metrics.completedAppointments} completadas</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Panel de Control Rápido - Estilo Torre de Control */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card className="bg-slate-800/50 backdrop-blur border-blue-500/30 hover:bg-slate-800/70 hover:border-blue-400/50 transition-all">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-400">
+              <Building2 className="h-5 w-5" />
+              RED HOSPITALARIA
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-slate-400 mb-4">
+              Control central de hospitales conectados y monitoreo de capacidad en tiempo real
+            </p>
+            <Button className="w-full bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30">
+              ACCEDER AL CONTROL
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800/50 backdrop-blur border-green-500/30 hover:bg-slate-800/70 hover:border-green-400/50 transition-all">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-green-400">
+              <UserPlus className="h-5 w-5" />
+              CONTRATACIÓN ACTIVA
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-slate-400 mb-4">
+              <span className="text-2xl font-bold text-green-400">{metrics.pendingApplications}</span> aplicaciones en espera
+            </p>
+            <Button className="w-full bg-green-600/20 hover:bg-green-600/30 text-green-400 border border-green-500/30">
+              REVISAR CANDIDATOS
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800/50 backdrop-blur border-purple-500/30 hover:bg-slate-800/70 hover:border-purple-400/50 transition-all">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-purple-400">
+              <TrendingUp className="h-5 w-5" />
+              ANALYTICS CENTER
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-slate-400 mb-4">
+              Centro de análisis avanzado y reportes de rendimiento hospitalario
+            </p>
+            <Button className="w-full bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 border border-purple-500/30">
+              ABRIR ANALYTICS
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Centro de Alertas - Estilo Torre de Control */}
+      <Card className="bg-slate-800/50 backdrop-blur border-orange-500/30">
+        <CardHeader className="bg-orange-900/20 border-b border-orange-500/30">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-orange-400">
+              <AlertTriangle className="h-5 w-5" />
+              CENTRO DE ALERTAS DEL SISTEMA
+            </CardTitle>
+            <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30 animate-pulse">
+              2 ALERTAS ACTIVAS
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y divide-slate-700">
+            <div className="p-4 hover:bg-slate-700/30 cursor-pointer transition-all">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 bg-yellow-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="h-5 w-5 text-yellow-400 animate-pulse" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">ALERTA CRÍTICA: Hospital Las Américas</p>
+                  <p className="text-xs text-slate-400 mt-1">95% de ocupación en urgencias - Activar protocolo de redistribución</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-xs text-slate-500">Hace 15 minutos</span>
+                    <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">PRIORIDAD ALTA</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 hover:bg-slate-700/30 cursor-pointer transition-all">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <UserPlus className="h-5 w-5 text-blue-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Notificación: Nuevas aplicaciones recibidas</p>
+                  <p className="text-xs text-slate-400 mt-1">3 cardiólogos aplicaron a posiciones críticas</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-xs text-slate-500">Hace 2 horas</span>
+                    <span className="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded">RECLUTAMIENTO</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

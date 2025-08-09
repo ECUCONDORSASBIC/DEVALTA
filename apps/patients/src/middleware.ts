@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // Rutas públicas que no requieren autenticación
 const PUBLIC_PATHS = [
@@ -26,7 +26,9 @@ const PUBLIC_API_PATHS = [
   '/api/public',
 ];
 
-export function middleware(request: NextRequest) {
+// Middleware de autenticación SSO para Patients App
+// Debe ser async para permitir el uso de await (verificación remota con API Server)
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Permitir acceso a archivos estáticos y recursos
@@ -40,17 +42,34 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Verificar tokens de autenticación
-  const accessToken = request.cookies.get('altamedica_access_token');
-  const userCookie = request.cookies.get('altamedica_user');
+  // 🔐 NUEVO SISTEMA SSO - Verificar cookies httpOnly
+  const authToken = request.cookies.get('auth-token');
+  const refreshToken = request.cookies.get('refresh-token');
   
-  // Parser del usuario si existe
+  // No podemos leer el contenido de las cookies httpOnly desde el cliente
+  // Necesitamos verificar con el servidor
   let user = null;
-  if (userCookie?.value) {
+  let isAuthenticated = false;
+  
+  // Si hay cookies de auth, verificar con el servidor
+  if (authToken || refreshToken) {
     try {
-      user = JSON.parse(userCookie.value);
+      // Verificar token con el API server
+      const verifyResponse = await fetch('http://localhost:3008/api/v1/auth/verify', {
+        method: 'GET',
+        headers: {
+          'Cookie': request.headers.get('cookie') || ''
+        }
+      });
+      
+      if (verifyResponse.ok) {
+        const data = await verifyResponse.json();
+        user = data.user;
+        isAuthenticated = true;
+      }
     } catch (error) {
-      console.error('Error parsing user cookie:', error);
+  // En entorno edge evitamos logs ruidosos; dejar solo traza mínima
+  console.warn('[Middleware] Falló verificación remota de auth');
     }
   }
 
@@ -60,18 +79,19 @@ export function middleware(request: NextRequest) {
   
   if (isPublicPath || isPublicAPI) {
     // Si el usuario está autenticado y trata de acceder a login/register, redirigir a dashboard
-    if (accessToken && (pathname === '/login' || pathname === '/register')) {
+    if (isAuthenticated && (pathname === '/login' || pathname === '/register')) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     return NextResponse.next();
   }
 
-  // Si no hay token, redirigir a login
-  if (!accessToken) {
-    const url = new URL('/login', request.url);
+  // Si no está autenticado, redirigir al login central SSO
+  if (!isAuthenticated) {
+    // Redirigir al gateway de autenticación centralizado
+    const ssoLoginUrl = new URL('http://localhost:3000/login');
     // Guardar la URL original para redirigir después del login
-    url.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(url);
+    ssoLoginUrl.searchParams.set('redirect', `http://localhost:3003${pathname}`);
+    return NextResponse.redirect(ssoLoginUrl);
   }
 
   // Verificar rol de paciente

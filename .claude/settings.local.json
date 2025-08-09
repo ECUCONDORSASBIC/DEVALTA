@@ -110,7 +110,11 @@
       "Bash(del \"C:\\Users\\Eduardo\\Documents\\devaltamedica\\tools\\scripts\\execute-now.cmd\")",
       "Bash(if exist .next rmdir /S /Q .next)",
       "Bash(git checkout:*)",
-      "Bash(Remove-Item \"C:\\Users\\Eduardo\\Documents\\devaltamedica\\apps\\patients\\src\\services\\ApiService.ts\" -Force)"
+      "Bash(Remove-Item \"C:\\Users\\Eduardo\\Documents\\devaltamedica\\apps\\patients\\src\\services\\ApiService.ts\" -Force)",
+      "Bash(start cmd /k \"cd /d C:\\Users\\Eduardo\\Documents\\devaltamedica\\apps\\web-app && npm run dev\")",
+      "Bash(dir:*)",
+      "Bash(more:*)",
+      "Bash(start cmd /c \"npx playwright test --config=playwright.config.sso.js\")"
     ],
     "deny": []
   }

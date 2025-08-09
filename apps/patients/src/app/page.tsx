@@ -11,47 +11,44 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
-  Calendar,
-  FileText,
-  Pill,
-  User,
-  Heart,
   Activity,
-  Clock,
   AlertCircle,
+  Bell,
+  Calendar,
   CheckCircle,
+  Clock,
+  Download,
+  FileText,
+  Heart,
+  LogOut,
   MapPin,
   Phone,
-  Video,
-  Download,
-  Bell,
+  Pill,
   RefreshCw,
-  LogOut,
-  Brain,
-  Stethoscope,
-  MessageSquare,
-  TrendingUp,
   Shield,
-  Sparkles,
+  Stethoscope,
+  User,
+  Video
 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 // Importación de componentes desde @altamedica/ui centralizado
+import { useDiagnosticEngine } from "@altamedica/hooks/medical";
 import {
+  ButtonCorporate,
+  CardContentCorporate,
   CardCorporate,
   CardHeaderCorporate,
-  CardContentCorporate,
-  ButtonCorporate,
-  LoadingSpinner,
-  HealthMetricCard
+  DiagnosticAssistant,
+  HealthMetricCard,
+  LoadingSpinner
 } from "@altamedica/ui";
-import DiagnosisPresuntivo from "../components/ai-diagnosis/DiagnosisPresuntivo";
 import AccessibilityControls from "../components/accessibility/AccessibilityControls";
 // 🚫 DESACTIVADO TEMPORALMENTE PARA TESTING
 // import { useAuth } from "../providers/AuthProviderSimple";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // 📝 Interfaces TypeScript robustas
 interface Appointment {
@@ -242,11 +239,28 @@ export default function PatientDashboardImproved() {
       id: 'patient_test_12345',
       firstName: 'Juan',
       lastName: 'Pérez',
-      email: 'paciente.test@email.com'
+      email: 'paciente.test@email.com',
+      age: 35,
+      sex: 'M' as 'M' | 'F'
     },
     firebaseUser: null,
     logout: () => console.log('Logout mock')
   };
+  
+  // Diagnostic Engine State
+  const [diagnosticStarted, setDiagnosticStarted] = useState<boolean>(false);
+  const diagnosticEngine = useDiagnosticEngine({
+    age: authState.user.age || 35,
+    sex: authState.user.sex || 'M',
+    onSafetyWarning: (warnings) => {
+      console.warn('⚠️ Safety warnings:', warnings);
+      // Show urgent care modal if needed
+      if (warnings.length > 0) {
+        setGlobalError(`Atención médica urgente recomendada: ${warnings.join(', ')}`);
+      }
+    },
+    maxQuestions: 12
+  });
 
   // Estado del dashboard
   const [dashboardState, setDashboardState] = useState<DashboardState>({
@@ -385,7 +399,7 @@ export default function PatientDashboardImproved() {
     const hasActivePrescriptions = dashboardState.activePrescriptions.length > 0;
     const hasNotifications = dashboardState.notifications > 0;
 
-    if (hasNotifications > 0) {
+  if (typeof dashboardState.notifications === 'number' && dashboardState.notifications > 0) {
       return {
         title: "Tienes actualizaciones importantes",
         subtitle: "Revisa tus notificaciones para mantenerte al día",
@@ -456,9 +470,17 @@ export default function PatientDashboardImproved() {
                 <h1 className="text-xl font-bold text-neutral-800">
                   Bienvenido, {userInfo.displayName}
                 </h1>
-                <p className="text-sm text-neutral-500">
+                <div className="flex items-center gap-2 mt-1">
+                  <User className="w-4 h-4 text-primary-600" />
+                  <Link href="/profile" className="text-sm text-primary-700 font-medium hover:underline">Mi Perfil</Link>
+                </div>
+                <p className="text-sm text-neutral-500 mt-1">
                   Tu portal de salud personal.
                 </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <Shield className="w-4 h-4 text-success-600" />
+                  <span className="text-xs text-success-700">Cumplimos con estándares HIPAA y protección de datos médicos</span>
+                </div>
               </div>
             </div>
 
@@ -592,7 +614,24 @@ export default function PatientDashboardImproved() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Diagnóstico Presuntivo - 1/3 del espacio en desktop */}
             <div className="lg:col-span-1">
-              <DiagnosisPresuntivo />
+              <DiagnosticAssistant
+                currentQuestion={diagnosticEngine.currentQuestion}
+                hypotheses={diagnosticEngine.session?.hypotheses || []}
+                progress={diagnosticEngine.progress || { answered: 0 }}
+                isLoading={diagnosticEngine.isLoading}
+                isComplete={diagnosticEngine.isComplete}
+                onAnswer={diagnosticEngine.submitAnswer}
+                onReset={diagnosticEngine.resetSession}
+                onStart={() => {
+                  setDiagnosticStarted(true);
+                  diagnosticEngine.startSession();
+                }}
+                sessionStarted={diagnosticStarted && !!diagnosticEngine.session}
+                patientInfo={{
+                  age: authState.user.age || 35,
+                  sex: authState.user.sex || 'M'
+                }}
+              />
             </div>
             
             {/* Accesos Rápidos - 2/3 del espacio en desktop */}
@@ -622,74 +661,58 @@ export default function PatientDashboardImproved() {
                     </button>
                     
                     {/* Agendar Cita */}
-                    <button
-                      onClick={() => router.push("/appointments/new")}
-                      className="flex flex-col items-center justify-center p-4 bg-success-50 hover:bg-success-100 rounded-lg transition-colors"
-                    >
-                      <Calendar className="w-8 h-8 text-success-600 mb-2" />
-                      <span className="text-sm font-medium text-neutral-900">Agendar Cita</span>
-                      <span className="text-xs text-neutral-600">Presencial</span>
-                    </button>
-                    
-                    {/* Historial Médico */}
-                    <button
-                      onClick={() => router.push("/medical-history")}
-                      className="flex flex-col items-center justify-center p-4 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
-                    >
-                      <FileText className="w-8 h-8 text-primary-600 mb-2" />
-                      <span className="text-sm font-medium text-neutral-900">Historial</span>
-                      <span className="text-xs text-neutral-600">Expediente médico</span>
-                    </button>
-                    
-                    {/* Medicamentos */}
-                    <button
-                      onClick={() => router.push("/prescriptions")}
-                      className="flex flex-col items-center justify-center p-4 bg-alert-50 hover:bg-alert-100 rounded-lg transition-colors"
-                    >
-                      <Pill className="w-8 h-8 text-alert-600 mb-2" />
-                      <span className="text-sm font-medium text-neutral-900">Medicamentos</span>
-                      <span className="text-xs text-neutral-600">Recetas activas</span>
-                    </button>
-                    
-                    {/* Resultados Lab */}
-                    <button
-                      onClick={() => router.push("/lab-results")}
-                      className="flex flex-col items-center justify-center p-4 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
-                    >
-                      <Activity className="w-8 h-8 text-primary-600 mb-2" />
-                      <span className="text-sm font-medium text-neutral-900">Laboratorio</span>
-                      <span className="text-xs text-neutral-600">Resultados</span>
-                    </button>
-                    
-                    {/* Emergencia */}
-                    <button
-                      onClick={() => router.push("/emergency")}
-                      className="flex flex-col items-center justify-center p-4 bg-alert-50 hover:bg-alert-100 rounded-lg transition-colors"
-                    >
-                      <AlertCircle className="w-8 h-8 text-alert-600 mb-2" />
-                      <span className="text-sm font-medium text-neutral-900">Emergencia</span>
-                      <span className="text-xs text-neutral-600">SOS 24/7</span>
-                    </button>
-                    
-                    {/* Médicos */}
-                    <button
-                      onClick={() => router.push("/doctors")}
-                      className="flex flex-col items-center justify-center p-4 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
-                    >
-                      <Stethoscope className="w-8 h-8 text-primary-600 mb-2" />
-                      <span className="text-sm font-medium text-neutral-900">Médicos</span>
-                      <span className="text-xs text-neutral-600">Buscar especialista</span>
-                    </button>
-                    
-                    {/* Perfil de Salud */}
-                    <button
-                      onClick={() => router.push("/health-metrics")}
-                      className="flex flex-col items-center justify-center p-4 bg-neutral-50 hover:bg-neutral-100 rounded-lg transition-colors"
-                    >
-                      <User className="w-8 h-8 text-neutral-600 mb-2" />
-                      <span className="text-sm font-medium text-neutral-900">Mi Perfil</span>
-                      <span className="text-xs text-neutral-600">Datos de salud</span>
-                    </button>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                      {/* Agendar Cita */}
+                      <button
+                        onClick={() => router.push("/appointments/new")}
+                        className="flex flex-col items-center justify-center p-6 bg-success-50 hover:bg-success-100 rounded-xl shadow transition-colors"
+                      >
+                        <Calendar className="w-10 h-10 text-success-600 mb-2" />
+                        <span className="text-base font-semibold text-neutral-900">Agendar Cita</span>
+                        <span className="text-xs text-neutral-600">Presencial</span>
+                      </button>
+                      {/* Historial Médico */}
+                      <button
+                        onClick={() => router.push("/medical-history")}
+                        className="flex flex-col items-center justify-center p-6 bg-primary-50 hover:bg-primary-100 rounded-xl shadow transition-colors"
+                      >
+                        <FileText className="w-10 h-10 text-primary-600 mb-2" />
+                        <span className="text-base font-semibold text-neutral-900">Historial</span>
+                        <span className="text-xs text-neutral-600">Expediente médico</span>
+                      </button>
+                      {/* Medicamentos */}
+                      <button
+                        onClick={() => router.push("/prescriptions")}
+                        className="flex flex-col items-center justify-center p-6 bg-alert-50 hover:bg-alert-100 rounded-xl shadow transition-colors"
+                      >
+                        <Pill className="w-10 h-10 text-alert-600 mb-2" />
+                        <span className="text-base font-semibold text-neutral-900">Medicamentos</span>
+                        <span className="text-xs text-neutral-600">Recetas activas</span>
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      {/* Accesos secundarios */}
+                      <button onClick={() => router.push("/lab-results")} className="flex flex-col items-center justify-center p-4 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors">
+                        <Activity className="w-8 h-8 text-primary-600 mb-2" />
+                        <span className="text-sm font-medium text-neutral-900">Laboratorio</span>
+                        <span className="text-xs text-neutral-600">Resultados</span>
+                      </button>
+                      <button onClick={() => router.push("/emergency")} className="flex flex-col items-center justify-center p-4 bg-alert-50 hover:bg-alert-100 rounded-lg transition-colors">
+                        <AlertCircle className="w-8 h-8 text-alert-600 mb-2" />
+                        <span className="text-sm font-medium text-neutral-900">Emergencia</span>
+                        <span className="text-xs text-neutral-600">SOS 24/7</span>
+                      </button>
+                      <button onClick={() => router.push("/doctors")} className="flex flex-col items-center justify-center p-4 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors">
+                        <Stethoscope className="w-8 h-8 text-primary-600 mb-2" />
+                        <span className="text-sm font-medium text-neutral-900">Médicos</span>
+                        <span className="text-xs text-neutral-600">Buscar especialista</span>
+                      </button>
+                      <button onClick={() => router.push("/health-metrics")} className="flex flex-col items-center justify-center p-4 bg-neutral-50 hover:bg-neutral-100 rounded-lg transition-colors">
+                        <User className="w-8 h-8 text-neutral-600 mb-2" />
+                        <span className="text-sm font-medium text-neutral-900">Mi Perfil</span>
+                        <span className="text-xs text-neutral-600">Datos de salud</span>
+                      </button>
+                    </div>
                   </div>
                   
                   {/* Banner informativo */}
@@ -718,47 +741,39 @@ export default function PatientDashboardImproved() {
               <>
                 <HealthMetricCard
                   icon={<Heart className="w-5 h-5 text-primary-600" />}
-                  label="Presión Arterial"
+                  title="Presión Arterial"
                   value={dashboardState.healthMetrics.bloodPressure.systolic > 0 
                     ? `${dashboardState.healthMetrics.bloodPressure.systolic}/${dashboardState.healthMetrics.bloodPressure.diastolic}`
                     : 'Sin datos'
                   }
-                  status={dashboardState.healthMetrics.bloodPressure.status === 'unknown' ? 'Sin datos' : 'Normal'}
-                  statusColor="bg-green-100 text-green-700"
-                  link="/health-metrics/blood-pressure"
+                  status="normal"
                 />
                 <HealthMetricCard
                   icon={<Activity className="w-5 h-5 text-primary-600" />}
-                  label="Ritmo Cardíaco"
+                  title="Ritmo Cardíaco"
                   value={dashboardState.healthMetrics.heartRate.value > 0 
                     ? `${dashboardState.healthMetrics.heartRate.value} bpm`
                     : 'Sin datos'
                   }
-                  status={dashboardState.healthMetrics.heartRate.status === 'unknown' ? 'Sin datos' : 'Estable'}
-                  statusColor="bg-green-100 text-green-700"
-                  link="/health-metrics/heart-rate"
+                  status="normal"
                 />
                 <HealthMetricCard
                   icon={<User className="w-5 h-5 text-primary-600" />}
-                  label="Peso Corporal"
+                  title="Peso Corporal"
                   value={dashboardState.healthMetrics.weight.value > 0 
                     ? `${dashboardState.healthMetrics.weight.value} kg`
                     : 'Sin datos'
                   }
-                  status="Estable"
-                  statusColor="bg-neutral-100 text-neutral-700"
-                  link="/health-metrics/weight"
+                  status="normal"
                 />
                 <HealthMetricCard
                   icon={<CheckCircle className="w-5 h-5 text-primary-600" />}
-                  label="Último Chequeo"
+                  title="Último Chequeo"
                   value={dashboardState.healthMetrics.lastCheckup 
                     ? new Date(dashboardState.healthMetrics.lastCheckup).toLocaleDateString()
                     : 'No disponible'
                   }
-                  status="Reciente"
-                  statusColor="bg-blue-100 text-primary-700"
-                  link="/health-metrics"
+                  status="normal"
                 />
               </>
             ) : (
@@ -766,35 +781,27 @@ export default function PatientDashboardImproved() {
               <>
                 <HealthMetricCard
                   icon={<Heart className="w-5 h-5 text-primary-600" />}
-                  label="Presión Arterial"
+                  title="Presión Arterial"
                   value="Sin datos"
-                  status="Agregar"
-                  statusColor="bg-neutral-100 text-neutral-700"
-                  link="/health-metrics/blood-pressure"
+                  status="normal"
                 />
                 <HealthMetricCard
                   icon={<Activity className="w-5 h-5 text-primary-600" />}
-                  label="Ritmo Cardíaco"
+                  title="Ritmo Cardíaco"
                   value="Sin datos"
-                  status="Agregar"
-                  statusColor="bg-neutral-100 text-neutral-700"
-                  link="/health-metrics/heart-rate"
+                  status="normal"
                 />
                 <HealthMetricCard
                   icon={<User className="w-5 h-5 text-primary-600" />}
-                  label="Peso Corporal"
+                  title="Peso Corporal"
                   value="Sin datos"
-                  status="Agregar"
-                  statusColor="bg-neutral-100 text-neutral-700"
-                  link="/health-metrics/weight"
+                  status="normal"
                 />
                 <HealthMetricCard
                   icon={<CheckCircle className="w-5 h-5 text-primary-600" />}
-                  label="Último Chequeo"
+                  title="Último Chequeo"
                   value="No disponible"
-                  status="Agendar"
-                  statusColor="bg-blue-100 text-primary-700"
-                  link="/appointments/new"
+                  status="normal"
                 />
               </>
             )}
@@ -806,7 +813,7 @@ export default function PatientDashboardImproved() {
           {/* Próximas Citas - Sección más compacta */}
           <div className="w-full">
             <CardCorporate variant="default" size="lg">
-              <CardHeaderCorporate className="px-4 sm:px-6 py-3 sm:py-4 border-b border-neutral-200">
+              <CardHeaderCorporate title="Citas" className="px-4 sm:px-6 py-3 sm:py-4 border-b border-neutral-200">
                 <div className="flex items-center justify-between">
                   <h2 className="flex items-center text-base sm:text-lg font-medium text-neutral-900">
                     <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-primary-600" />
@@ -928,7 +935,7 @@ export default function PatientDashboardImproved() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             {/* Medicación Activa */}
             <CardCorporate variant="default" size="md">
-              <CardHeaderCorporate className="px-4 py-3 border-b border-neutral-200">
+              <CardHeaderCorporate title="Prescripciones" className="px-4 py-3 border-b border-neutral-200">
                 <h3 className="flex items-center text-base font-medium text-neutral-900">
                   <Pill className="w-4 h-4 mr-2 text-success-600" />
                   Medicación Activa
@@ -965,7 +972,7 @@ export default function PatientDashboardImproved() {
 
             {/* Accesos Rápidos Compactos */}
             <CardCorporate variant="default" size="md">
-              <CardHeaderCorporate className="px-4 py-3 border-b border-neutral-200">
+              <CardHeaderCorporate title="Historial Médico" className="px-4 py-3 border-b border-neutral-200">
                 <h3 className="text-base font-medium text-neutral-900">Accesos Rápidos</h3>
               </CardHeaderCorporate>
               <CardContentCorporate className="p-4">

@@ -32,6 +32,7 @@ module.exports = {
         'float': 'float 6s ease-in-out infinite',
         'slide-in-right': 'slideInRight 0.5s ease-out',
         'slide-in-left': 'slideInLeft 0.5s ease-out',
+        'shimmer': 'shimmer 2s infinite',
       },
       
       keyframes: {
@@ -47,6 +48,10 @@ module.exports = {
         slideInLeft: {
           '0%': { transform: 'translateX(-100%)', opacity: '0' },
           '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
         },
       },
     },

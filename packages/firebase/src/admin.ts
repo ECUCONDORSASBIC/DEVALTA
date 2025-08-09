@@ -1,10 +1,19 @@
-import admin from '@altamedica/firebase-admin';
-import type { app } from 'firebase-admin';
+// Solo importar Firebase Admin en el servidor
+let firebaseAdmin: any;
+let admin: any;
 
-// Configurar Firebase Admin solo si no está ya inicializado
-let firebaseAdmin: app.App;
-
-if (admin.apps.length === 0) {
+// Función asíncrona para inicializar Firebase Admin solo en el servidor
+const initializeFirebaseAdmin = async () => {
+  if (typeof window !== 'undefined') {
+    throw new Error('Firebase Admin no puede usarse en el cliente');
+  }
+  
+  if (!admin) {
+    // Importación dinámica para evitar errores en el cliente
+    admin = (await import('@altamedica/firebase-admin')).default;
+  }
+  
+  if (!firebaseAdmin && admin.apps.length === 0) {
   // Verificar que las variables de entorno están disponibles
   const projectId = process.env.FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;

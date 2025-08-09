@@ -1,0 +1,28 @@
+﻿{
+    "applications":  {
+                         "api_server":  {
+                                            "critical":  true,
+                                            "port":  3001
+                                        },
+                         "doctors_app":  {
+                                             "critical":  true,
+                                             "port":  3002
+                                         },
+                         "patients_app":  {
+                                              "critical":  true,
+                                              "port":  3003
+                                          },
+                         "web_app":  {
+                                         "critical":  true,
+                                         "port":  3000
+                                     }
+                     },
+    "project":  "AltaMedica Medical Platform",
+    "version":  "2.0",
+    "setup_date":  "2025-08-08 19:59:59",
+    "medical_compliance":  {
+                               "hipaa_enabled":  true,
+                               "audit_logging":  true,
+                               "phi_encryption":  true
+                           }
+}

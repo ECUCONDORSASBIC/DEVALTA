@@ -1,19 +1,15 @@
-import { createSSOMiddleware, ssoMiddlewareConfig } from '@altamedica/shared/auth';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-// Configuración del middleware SSO para doctors-app
-const middleware = createSSOMiddleware({
-  appName: 'doctors',
-  publicPaths: [
-    '/api/health',
-    '/_next',
-    '/favicon.ico',
-    '/public',
-    '/images',
-  ],
-  loginPath: process.env.NODE_ENV === 'production' 
-    ? 'https://altamedica.com/login' 
-    : 'http://localhost:3000/login'
-});
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  if (pathname.startsWith('/login')) {
+    const url = new URL('http://localhost:3000/auth/login')
+    url.searchParams.set('from', 'doctors')
+    if (pathname !== '/login') url.searchParams.set('path', pathname)
+    return NextResponse.redirect(url)
+  }
+  return NextResponse.next()
+}
 
-export default middleware;
-export const config = ssoMiddlewareConfig;
+export const config = { matcher: ['/login', '/login/:path*'] }

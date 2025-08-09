@@ -1,20 +1,20 @@
-'use client'
-
+// Importar servicios Firebase usando aliases consistentes
+import { db, auth } from '@/firebase'
+// Importar funciones mock de Firestore
 import { 
-  collection,
   doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  collection,
   addDoc,
-  onSnapshot,
   query,
   where,
-  orderBy,
-  updateDoc,
-  serverTimestamp,
-  Timestamp,
   getDocs,
-  limit
-} from 'firebase/firestore'
-import { db, auth } from '../../config/firebase'
+  onSnapshot,
+  serverTimestamp,
+  Timestamp
+} from '@/lib/firestore-mock'
 
 export interface MedicalNotification {
   id: string

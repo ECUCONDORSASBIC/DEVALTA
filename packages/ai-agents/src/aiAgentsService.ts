@@ -2,7 +2,7 @@
 // Archivo: packages/ai/src/aiAgentsService.ts
 
 export interface AIJobRequest {
-  type: 'summarize_medical_record' | 'analyze_symptoms' | 'generate_prescription' | 
+  type: 'summarize_medical_record' | 'analyze_symptoms' | 'generate_prescription' |
         'analyze_lab_results' | 'generate_treatment_plan' | 'medical_risk_assessment' |
         'drug_interaction_check' | 'diagnostic_assistance';
   patientId: string;
@@ -171,6 +171,14 @@ class AIAgentsService {
       context: { medications }
     });
   }
+  /** Asistencia diagnóstica remota */
+  async diagnosticAssistance(patientId: string, context: any) {
+    return this.createJob({
+      type: 'diagnostic_assistance',
+      patientId,
+      context
+    });
+  }
 }
 
 // Singleton instance
@@ -215,6 +223,23 @@ export const MedicalAI = {
 
     // Esperar resultado inmediato para urgencias
     return aiAgents.waitForCompletion(job.id, 60000); // 1 minuto max
+  }
+  ,
+  /** Prototipo diagnóstico local */
+  async localDiagnosticPrototype(input: { patientId: string; context: any }) {
+    try {
+      const { DiagnosticEngine } = await import('@altamedica/diagnostic-engine');
+      const engine = new DiagnosticEngine();
+      const session = engine.startSession({ ...input.context });
+      for (let i = 0; i < 3; i++) {
+        const q = engine.nextQuestion(session.id);
+        if (!q) break;
+        engine.submitAnswer(session.id, q.id, { value: i % 2 === 0 });
+      }
+      return engine.generateReport(session.id);
+    } catch (e:any) {
+      return { error: 'diagnostic-engine not available', detail: e?.message };
+    }
   }
 };
 

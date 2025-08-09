@@ -35,7 +35,7 @@ export class AltamedicaAPI {
         // Redirigir al login en caso de no autorizado
         if (typeof window !== 'undefined') {
           // No necesitamos limpiar localStorage ya que usamos cookies HttpOnly
-          window.location.href = '/login'
+          window.location.href = '/auth/login'
         }
       }
       

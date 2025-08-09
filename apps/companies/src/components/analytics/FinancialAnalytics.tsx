@@ -1,8 +1,15 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@altamedica/ui';
+
+// Componente Progress simple
+const Progress = ({ value, className }: { value: number; className?: string }) => (
+  <div className={`bg-gray-200 rounded-full overflow-hidden ${className}`}>
+    <div 
+      className="bg-blue-500 h-full transition-all duration-300"
+      style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+    />
+  </div>
+);
+
 import {
     AlertCircle,
     Banknote,
@@ -264,26 +271,24 @@ const FinancialAnalytics: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Select value={selectedPeriod} onValueChange={(value: any) => setSelectedPeriod(value)}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Período" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="month">Mensual</SelectItem>
-              <SelectItem value="quarter">Trimestral</SelectItem>
-              <SelectItem value="year">Anual</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={selectedCurrency} onValueChange={(value: any) => setSelectedCurrency(value)}>
-            <SelectTrigger className="w-[100px]">
-              <SelectValue placeholder="Moneda" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="USD">USD</SelectItem>
-              <SelectItem value="EUR">EUR</SelectItem>
-              <SelectItem value="MXN">MXN</SelectItem>
-            </SelectContent>
-          </Select>
+          <select 
+            value={selectedPeriod} 
+            onChange={(e) => setSelectedPeriod(e.target.value as any)}
+            className="w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="month">Mensual</option>
+            <option value="quarter">Trimestral</option>
+            <option value="year">Anual</option>
+          </select>
+          <select 
+            value={selectedCurrency} 
+            onChange={(e) => setSelectedCurrency(e.target.value as any)}
+            className="w-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="MXN">MXN</option>
+          </select>
         </div>
       </div>
 

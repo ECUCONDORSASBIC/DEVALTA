@@ -1,0 +1,88 @@
+# Page snapshot
+
+```yaml
+- button "Abrir controles de accesibilidad"
+- text: A
+- heading "Bienvenido, Juan Pérez" [level=1]
+- link "Mi Perfil":
+  - /url: /profile
+- paragraph: Tu portal de salud personal.
+- text: Cumplimos con estándares HIPAA y protección de datos médicos
+- link "3":
+  - /url: /notifications
+  - button "3"
+- button
+- button
+- text: Tienes actualizaciones importantes
+- paragraph: Revisa tus notificaciones para mantenerte al día
+- button "Ver Notificaciones"
+- text: Sistema Activo
+- paragraph: "Última actualización: 2025-08-09T05:06:33.396Z"
+- img
+- heading "Asistente de Diagnóstico Inteligente" [level=2]
+- paragraph: Te ayudaré a entender mejor tus síntomas mediante preguntas específicas
+- img
+- text: 35 años Masculino
+- img
+- paragraph: Nota Importante
+- paragraph: Este asistente es una herramienta de orientación. No reemplaza la consulta médica profesional.
+- button "Comenzar Evaluación":
+  - img
+  - text: Comenzar Evaluación
+- heading "Centro de Salud Digital" [level=2]
+- heading "Tu Salud al Alcance" [level=2]
+- button "Telemedicina Consulta virtual"
+- button "Agendar Cita Presencial"
+- button "Historial Expediente médico"
+- button "Medicamentos Recetas activas"
+- button "Laboratorio Resultados"
+- button "Emergencia SOS 24/7"
+- button "Médicos Buscar especialista"
+- button "Mi Perfil Datos de salud"
+- paragraph: Tu información médica está protegida
+- paragraph: Cumplimos con estándares HIPAA y protección de datos médicos
+- text: Normal
+- heading "Presión Arterial" [level=3]
+- text: 120/80 Normal
+- heading "Ritmo Cardíaco" [level=3]
+- text: 72 bpm Normal
+- heading "Peso Corporal" [level=3]
+- text: 70 kg Normal
+- heading "Último Chequeo" [level=3]
+- text: 1/14/2025
+- heading "Citas" [level=2]
+- heading "Próximas Citas" [level=2]
+- button "Ver todas"
+- heading "Dr. Carlos Mendoza" [level=3]
+- paragraph: Cardiología
+- text: Confirmada 2025-02-15 - 14:30 Consultorio 205, 2do Piso
+- paragraph: Control de presión arterial
+- button "Ver detalles"
+- button "Direcciones"
+- heading "Dra. Ana López" [level=3]
+- paragraph: Medicina General
+- text: Programada 2025-02-20 - 10:00 Telemedicina
+- paragraph: Revisión de análisis de laboratorio
+- button "Ver detalles"
+- heading "Prescripciones" [level=2]
+- heading "Medicación Activa" [level=3]
+- heading "Enalapril" [level=4]
+- paragraph: 10mg - 1 vez al día
+- heading "Aspirina" [level=4]
+- paragraph: 100mg - 1 vez al día
+- button "Ver todas"
+- heading "Historial Médico" [level=2]
+- heading "Accesos Rápidos" [level=3]
+- button "Historial"
+- button "Resultados"
+- button "Doctores"
+- button "Soporte 24/7"
+- button "Open Tanstack query devtools":
+  - img
+- alert
+- button "Open Next.js Dev Tools":
+  - img
+- button "Open issues overlay": 2 Issue
+- button "Collapse issues badge":
+  - img
+```

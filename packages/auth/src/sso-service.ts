@@ -3,14 +3,14 @@
  * Maneja la autenticación centralizada entre todas las aplicaciones
  */
 
-import { 
-  getAuth, 
-  onAuthStateChanged, 
-  User as FirebaseUser,
-  signInWithCustomToken,
-  Auth
+import {
+    Auth,
+    User as FirebaseUser,
+    getAuth,
+    onAuthStateChanged,
+    signInWithCustomToken
 } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc, Firestore } from 'firebase/firestore';
+import { doc, Firestore, getDoc, getFirestore } from 'firebase/firestore';
 
 interface SSOConfig {
   apiServerUrl: string;
@@ -53,12 +53,22 @@ class SingleSignOnService {
     admin: 'http://localhost:3005'
   };
 
-  constructor(config: SSOConfig) {
+  /**
+   * Permite inyectar instancia Firestore (mock o real).
+   * Si se pasa un mock y NO estamos en producción, se usa el mock.
+   * En producción, siempre se usa la instancia real.
+   */
+  constructor(config: SSOConfig, firestoreInstance?: Firestore) {
     this.config = config;
-    
+    // Detectar entorno de producción
+    const isProd = typeof process !== 'undefined' && process.env.NODE_ENV === 'production';
     // Inicializar Firebase solo si estamos en el cliente
     if (typeof window !== 'undefined') {
-      this.initializeFirebase();
+      if (firestoreInstance && !isProd) {
+        this.db = firestoreInstance;
+      } else {
+        this.initializeFirebase();
+      }
     }
   }
 
@@ -86,7 +96,7 @@ class SingleSignOnService {
 
     // 2. Verificar con el servidor API (usando el nuevo endpoint SSO)
     try {
-      const response = await fetch(`${this.config.apiServerUrl}/api/v1/auth/sso`, {
+  const response = await fetch(`${this.config.apiServerUrl}/api/v1/auth/login`, {
         method: 'GET',
         credentials: 'include', // Importante para cookies
         headers: {
@@ -181,7 +191,7 @@ class SingleSignOnService {
     
     try {
       // 1. Cerrar sesión en el servidor SSO
-      await fetch(`${this.config.apiServerUrl}/api/v1/auth/sso?action=logout`, {
+  await fetch(`${this.config.apiServerUrl}/api/v1/auth/logout`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -445,7 +455,7 @@ class SingleSignOnService {
         throw new Error('No hay refresh token disponible');
       }
 
-      const response = await fetch(`${this.config.apiServerUrl}/api/v1/auth/sso?action=refresh`, {
+  const response = await fetch(`${this.config.apiServerUrl}/api/v1/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -487,9 +497,14 @@ class SingleSignOnService {
 // Singleton para uso global
 let ssoInstance: SingleSignOnService | null = null;
 
-export function initializeSSO(config: SSOConfig): SingleSignOnService {
+/**
+ * Inicializa SSO permitiendo inyectar Firestore (mock o real).
+ * @param config Configuración SSO
+ * @param firestoreInstance Instancia Firestore (mock para test, real para prod)
+ */
+export function initializeSSO(config: SSOConfig, firestoreInstance?: Firestore): SingleSignOnService {
   if (!ssoInstance) {
-    ssoInstance = new SingleSignOnService(config);
+    ssoInstance = new SingleSignOnService(config, firestoreInstance);
   }
   return ssoInstance;
 }
@@ -501,4 +516,4 @@ export function getSSO(): SingleSignOnService {
   return ssoInstance;
 }
 
-export { SingleSignOnService, type SSOConfig, type SSOUser, type SSOToken };
+export { SingleSignOnService, type SSOConfig, type SSOToken, type SSOUser };

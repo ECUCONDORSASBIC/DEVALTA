@@ -2,10 +2,19 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  // 🚀 PERFORMANCE OPTIMIZATIONS
+  // 🚀 PERFORMANCE OPTIMIZATIONS - ENHANCED FOR DEVELOPMENT
   poweredByHeader: false,
   generateEtags: false,
   compress: true,
+  // swcMinify removido - es default en Next.js 15+
+  
+  // 🔥 DESARROLLO OPTIMIZADO
+  typescript: {
+    ignoreBuildErrors: process.env.NODE_ENV === 'development', // Solo para dev
+  },
+  eslint: {
+    ignoreDuringBuilds: process.env.NODE_ENV === 'development',
+  },
   
   // 🖼️ OPTIMIZACIÓN DE IMÁGENES MÉDICAS
   images: {
@@ -98,6 +107,13 @@ const nextConfig = {
         'firebase-admin/auth': 'commonjs firebase-admin/auth',
         'firebase-admin/firestore': 'commonjs firebase-admin/firestore',
       });
+      
+      // 🎯 OPTIMIZE THREE.JS BUNDLE - Evitar duplicaciones
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'three': require.resolve('three'),
+        '@react-three/fiber': require.resolve('@react-three/fiber'),
+      };
     }
 
     // 🌐 WebAssembly support removed - Firebase Admin now server-only
@@ -119,10 +135,18 @@ const nextConfig = {
             },
             // Librerías médicas (Three.js, Leaflet, etc.)
             medical: {
-              test: /[\\/]node_modules[\\/](three|leaflet|@tensorflow)[\\/]/,
+              test: /[\\/]node_modules[\\/](three|leaflet|@tensorflow|@react-three)[\\/]/,
               name: 'medical-libs',
               chunks: 'all',
               priority: 15,
+              enforce: true,
+            },
+            // Librerías de UI pesadas
+            ui: {
+              test: /[\\/]node_modules[\\/](framer-motion|recharts|canvas-confetti)[\\/]/,
+              name: 'ui-libs',
+              chunks: 'all',
+              priority: 12,
             },
             // React y Next.js
             framework: {
@@ -146,9 +170,22 @@ const nextConfig = {
     return config;
   },
   
-  // 📊 EXPERIMENTAL FEATURES
+  // 📊 EXPERIMENTAL FEATURES - ENHANCED FOR PERFORMANCE
   experimental: {
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+    optimizePackageImports: [
+      'lucide-react', 
+      '@radix-ui/react-icons',
+      '@react-three/fiber',
+      '@react-three/drei',
+      'framer-motion',
+      'recharts'
+    ],
+    // 🎯 Optimizaciones específicas para Three.js y componentes pesados
+    optimizeCss: true,
+    webpackBuildWorker: true,
+    scrollRestoration: true,
+    largePageDataBytes: 128 * 1000, // 128KB para páginas grandes
+    // serverComponentsExternalPackages removido - causaba conflicto con Turbopack
   },
 
   // 🔧 TURBOPACK CONFIGURATION (Next.js 15+)
@@ -159,6 +196,8 @@ const nextConfig = {
         as: '*.js',
       },
     },
+    // Optimizaciones adicionales
+    memoryLimit: 4096, // Aumentar memoria para componentes 3D
   },
   
   // 🎯 CONFIGURACIÓN ESPECÍFICA PARA TELEMEDICINA

@@ -68,14 +68,14 @@ export function useLogout() {
       console.log('✅ [Gateway] Logout successful')
       
       // Redirect to login
-      window.location.href = '/login'
+      window.location.href = '/auth/login'
     },
     onError: (error: any) => {
       console.error('❌ [Gateway] Logout error:', error)
       // Force logout anyway
       clearAuthToken()
       queryClient.clear()
-      window.location.href = '/login'
+      window.location.href = '/auth/login'
     }
   })
 }
@@ -91,7 +91,7 @@ export function useRefreshToken() {
     onError: (error: any) => {
       console.error('❌ [Gateway] Token refresh failed:', error)
       clearAuthToken()
-      window.location.href = '/login'
+      window.location.href = '/auth/login'
     }
   })
 }
@@ -179,7 +179,7 @@ export function useRoleRedirection() {
       return protectedPaths.some(path => currentPath.startsWith(path))
     },
     getRedirectUrl: () => {
-      if (!user) return '/login'
+      if (!user) return '/auth/login'
       
       const urls = {
         patient: '/dashboard', // Stay in web-app
@@ -188,7 +188,7 @@ export function useRoleRedirection() {
         admin: 'http://localhost:3005/dashboard'
       }
       
-      return urls[user.role] || '/login'
+      return urls[user.role] || '/auth/login'
     }
   }
 }

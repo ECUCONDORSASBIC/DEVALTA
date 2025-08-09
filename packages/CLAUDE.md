@@ -4,7 +4,7 @@ Este archivo proporciona orientación exhaustiva a Claude Code (claude.ai/code) 
 
 ## 🎯 Visión General
 
-El directorio **packages/** contiene **26 paquetes compartidos** que forman la base arquitectónica de toda la plataforma AltaMedica. Estos paquetes proporcionan funcionalidad central, componentes reutilizables, servicios médicos especializados y utilidades que son consumidas por las 7 aplicaciones principales del ecosistema.
+contiene **26 paquetes compartidos** que forman la base arquitectónica de toda la plataforma AltaMedica. Estos paquetes proporcionan funcionalidad central, componentes reutilizables, servicios médicos especializados y utilidades que son consumidas por las 7 aplicaciones principales del ecosistema Y ES PRIORIDAD QUE SE EREVISE ANTES DE CREAR ARCHIVOS EN LAS CARPETAS DE LAS APLICACIONES EVITANDO ASI LA DUPLICACION.
 
 ## 🏗️ Arquitectura de Paquetes
 

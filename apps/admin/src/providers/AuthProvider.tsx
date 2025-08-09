@@ -1,7 +1,5 @@
 'use client';
 
-// Re-export de autenticación centralizada
-export {
-    AuthContext, AuthProvider, useAuth
-} from "@altamedica/auth';
+// Re-export de autenticación centralizada (corrección de comillas)
+export { AuthContext, AuthProvider, useAuth } from '@altamedica/auth';
 

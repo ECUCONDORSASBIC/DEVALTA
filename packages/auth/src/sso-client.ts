@@ -18,8 +18,12 @@ export class SSOClient {
   
   constructor(config: SSOConfig) {
     this.config = config;
+    // Use environment variable for API URL, fallback to config
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || config.apiUrl || 'http://localhost:3008';
+    console.log('[SSO Client] Using API URL:', apiUrl);
+    
     this.ssoService = initializeSSO({
-      apiServerUrl: config.apiUrl,
+      apiServerUrl: apiUrl,
       webAppUrl: 'http://localhost:3000',
       currentAppPort: '3003',
       appName: 'patients'

@@ -1,8 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@altamedica/ui';
 import {
     Activity,
     AlertCircle,
@@ -31,6 +27,16 @@ import {
     XAxis,
     YAxis
 } from 'recharts';
+
+// Componente Progress simple
+const Progress = ({ value, className = '' }: { value: number; className?: string }) => (
+  <div className={`w-full bg-gray-200 rounded-full h-2.5 ${className}`}>
+    <div 
+      className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+      style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+    />
+  </div>
+);
 
 // Interfaces para métricas de citas
 interface AppointmentMetrics {

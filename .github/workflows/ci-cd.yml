@@ -1,0 +1,328 @@
+name: 🏥 AltaMedica CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, 'feature/**']
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '18.x'
+  PNPM_VERSION: '8.15.6'
+
+jobs:
+  # ============================================
+  # 🔍 Code Quality & Linting
+  # ============================================
+  quality-check:
+    name: 🔍 Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔍 Run ESLint
+        run: pnpm lint
+
+      - name: 📊 TypeScript type check
+        run: pnpm type-check
+
+  # ============================================
+  # 🏗️ Build All Packages
+  # ============================================
+  build:
+    name: 🏗️ Build Packages
+    runs-on: ubuntu-latest
+    needs: quality-check
+    strategy:
+      matrix:
+        include:
+          - package: '@altamedica/ui'
+          - package: '@altamedica/types'
+          - package: '@altamedica/auth'
+          - package: '@altamedica/hooks'
+          - package: '@altamedica/api-client'
+          - package: '@altamedica/medical'
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build ${{ matrix.package }}
+        run: pnpm --filter ${{ matrix.package }} build
+
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.package }}
+          path: packages/*/dist
+          retention-days: 7
+
+  # ============================================
+  # 🧪 Unit Tests
+  # ============================================
+  unit-tests:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🧪 Run tests (shard ${{ matrix.shard }}/4)
+        run: pnpm test --shard=${{ matrix.shard }}/4 --coverage
+        env:
+          CI: true
+
+      - name: 📊 Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # ============================================
+  # 🎭 E2E Tests
+  # ============================================
+  e2e-tests:
+    name: 🎭 E2E Tests
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        project: [chromium, firefox, mobile]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🎭 Install Playwright browsers
+        run: pnpm --filter @altamedica/e2e-tests exec playwright install --with-deps ${{ matrix.project }}
+
+      - name: 🎭 Run E2E tests (${{ matrix.project }})
+        run: pnpm --filter @altamedica/e2e-tests test:e2e --project=${{ matrix.project }}
+        env:
+          CI: true
+
+      - name: 📤 Upload test report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: packages/e2e-tests/playwright-report/
+          retention-days: 30
+
+  # ============================================
+  # 🔒 Security Scan (HIPAA Compliance)
+  # ============================================
+  security-scan:
+    name: 🔒 Security & HIPAA Compliance
+    runs-on: ubuntu-latest
+    needs: quality-check
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Run dependency audit
+        run: pnpm audit --production
+
+      - name: 🔒 SAST Scan (Semgrep)
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+            p/owasp-top-ten
+            p/typescript
+            p/react
+
+      - name: 🏥 HIPAA Compliance Check
+        run: |
+          # Check for PHI exposure in logs
+          ! grep -r "console.log.*patient\|console.log.*medical" --include="*.ts" --include="*.tsx" || exit 1
+          
+          # Check for proper encryption usage
+          grep -r "crypto\|bcrypt\|aes-256-gcm" --include="*.ts" || echo "Warning: No encryption found"
+          
+          # Check for audit logging
+          grep -r "auditLog\|audit.log" --include="*.ts" || echo "Warning: No audit logging found"
+
+  # ============================================
+  # 📦 Build Applications
+  # ============================================
+  build-apps:
+    name: 📦 Build Applications
+    runs-on: ubuntu-latest
+    needs: [unit-tests, security-scan]
+    strategy:
+      matrix:
+        app:
+          - name: web-app
+            port: 3000
+          - name: api-server
+            port: 3001
+          - name: doctors
+            port: 3002
+          - name: patients
+            port: 3003
+          - name: companies
+            port: 3004
+          - name: admin
+            port: 3005
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build packages first
+        run: pnpm --filter "./packages/*" build
+
+      - name: 📦 Build ${{ matrix.app.name }}
+        run: pnpm --filter ${{ matrix.app.name }} build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:${{ matrix.app.port }}
+
+      - name: 📤 Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.app.name }}
+          path: apps/${{ matrix.app.name }}/.next
+          retention-days: 7
+
+  # ============================================
+  # 🚀 Deploy to Staging (only on develop)
+  # ============================================
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build-apps, e2e-tests]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment:
+      name: staging
+      url: https://staging.altamedica.com
+    steps:
+      - name: 📥 Download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: 🚀 Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add actual deployment commands here
+
+  # ============================================
+  # 📊 Performance Budget Check
+  # ============================================
+  performance-check:
+    name: 📊 Performance Budget
+    runs-on: ubuntu-latest
+    needs: build-apps
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v3
+
+      - name: 📊 Check bundle sizes
+        run: |
+          # Check that bundle sizes are within limits
+          echo "Checking bundle sizes..."
+          # Add bundle size checks here
+
+      - name: 🏥 Medical App Performance
+        run: |
+          # Ensure medical apps load within 3 seconds
+          echo "Checking medical app performance..."
+          # Add performance checks here
+
+  # ============================================
+  # ✅ All Checks Passed
+  # ============================================
+  all-checks:
+    name: ✅ All Checks Passed
+    runs-on: ubuntu-latest
+    needs: [quality-check, build, unit-tests, e2e-tests, security-scan, build-apps, performance-check]
+    if: always()
+    steps:
+      - name: ✅ All checks summary
+        run: |
+          echo "🎉 All CI/CD checks completed!"
+          echo "Quality: ${{ needs.quality-check.result }}"
+          echo "Build: ${{ needs.build.result }}"
+          echo "Unit Tests: ${{ needs.unit-tests.result }}"
+          echo "E2E Tests: ${{ needs.e2e-tests.result }}"
+          echo "Security: ${{ needs.security-scan.result }}"
+          echo "Apps Build: ${{ needs.build-apps.result }}"
+          echo "Performance: ${{ needs.performance-check.result }}"

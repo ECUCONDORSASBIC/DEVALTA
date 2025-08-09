@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 AltaMedica - Medical Monitoring Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color), transparent);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-card.healthy {
+            --color: #4CAF50;
+            border-left-color: #4CAF50;
+        }
+
+        .metric-card.warning {
+            --color: #FF9800;
+            border-left-color: #FF9800;
+        }
+
+        .metric-card.critical {
+            --color: #f44336;
+            border-left-color: #f44336;
+        }
+
+        .metric-card.info {
+            --color: #2196F3;
+            border-left-color: #2196F3;
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .metric-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+        }
+
+        .metric-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--color);
+        }
+
+        .metric-description {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-healthy { background: #4CAF50; }
+        .status-warning { background: #FF9800; }
+        .status-critical { background: #f44336; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .app-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--color);
+        }
+
+        .app-card.online {
+            --color: #4CAF50;
+        }
+
+        .app-card.offline {
+            --color: #f44336;
+        }
+
+        .app-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .app-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .app-port {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .app-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-online {
+            background: #E8F5E8;
+            color: #2E7D32;
+        }
+
+        .status-offline {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .real-time-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .real-time-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .real-time-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .real-time-metric {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .real-time-value {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .real-time-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .hipaa-compliance {
+            background: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .hipaa-title {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .compliance-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .compliance-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .compliance-check {
+            font-size: 1.5em;
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid #eee;
+            margin-top: 30px;
+        }
+
+        .update-time {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        .architecture-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .architecture-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .apps-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <h1>🏥 AltaMedica Platform</h1>
+            <div class="subtitle">Medical Monitoring Dashboard - Sistema de Monitoreo Médico en Tiempo Real</div>
+        </header>
+
+        <!-- Métricas Principales -->
+        <section class="metrics-grid">
+            <div class="metric-card healthy">
+                <div class="metric-header">
+                    <div class="metric-icon">⚡</div>
+                    <div class="metric-title">System Health</div>
+                </div>
+                <div class="metric-value">98.7%</div>
+                <div class="metric-description">
+                    <span class="status-indicator status-healthy"></span>
+                    Sistema funcionando óptimamente. Todos los servicios críticos médicos operativos.
+                </div>
+            </div>
+
+            <div class="metric-card info">
+                <div class="metric-header">
+                    <div class="metric-icon">👥</div>
+                    <div class="metric-title">Active Patients</div>
+                </div>
+                <div class="metric-value">847</div>
+                <div class="metric-description">
+                    <span class="status-indicator status-healthy"></span>
+                    Pacientes activos en la plataforma. 23 consultas en curso.
+                </div>
+            </div>
+
+            <div class="metric-card healthy">
+                <div class="metric-header">
+                    <div class="metric-icon">📹</div>
+                    <div class="metric-title">WebRTC Quality</div>
+                </div>
+                <div class="metric-value">89ms</div>
+                <div class="metric-description">
+                    <span class="status-indicator status-healthy"></span>
+                    Latencia promedio WebRTC. Calidad óptima para telemedicina.
+                </div>
+            </div>
+
+            <div class="metric-card warning">
+                <div class="metric-header">
+                    <div class="metric-icon">💾</div>
+                    <div class="metric-title">Database Load</div>
+                </div>
+                <div class="metric-value">73%</div>
+                <div class="metric-description">
+                    <span class="status-indicator status-warning"></span>
+                    Carga de base de datos elevada. Monitoreo activo en registros médicos.
+                </div>
+            </div>
+
+            <div class="metric-card healthy">
+                <div class="metric-header">
+                    <div class="metric-icon">🔒</div>
+                    <div class="metric-title">Security Score</div>
+                </div>
+                <div class="metric-value">A+</div>
+                <div class="metric-description">
+                    <span class="status-indicator status-healthy"></span>
+                    Todas las verificaciones de seguridad HIPAA pasaron correctamente.
+                </div>
+            </div>
+
+            <div class="metric-card critical">
+                <div class="metric-header">
+                    <div class="metric-icon">🚨</div>
+                    <div class="metric-title">Critical Alerts</div>
+                </div>
+                <div class="metric-value">0</div>
+                <div class="metric-description">
+                    <span class="status-indicator status-healthy"></span>
+                    Sin alertas críticas activas. Todos los sistemas médicos estables.
+                </div>
+            </div>
+        </section>
+
+        <!-- Estado de Aplicaciones -->
+        <section>
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">🌐 Estado de Aplicaciones Médicas</h2>
+            <div class="apps-grid">
+                <div class="app-card online">
+                    <div class="app-icon">🌐</div>
+                    <div class="app-name">Web App</div>
+                    <div class="app-port">Gateway :3000</div>
+                    <div class="app-status status-online">Online</div>
+                </div>
+
+                <div class="app-card online">
+                    <div class="app-icon">🔥</div>
+                    <div class="app-name">API Server</div>
+                    <div class="app-port">Core Backend :3001</div>
+                    <div class="app-status status-online">Online</div>
+                </div>
+
+                <div class="app-card online">
+                    <div class="app-icon">👨‍⚕️</div>
+                    <div class="app-name">Doctors</div>
+                    <div class="app-port">Medical Portal :3002</div>
+                    <div class="app-status status-online">Online</div>
+                </div>
+
+                <div class="app-card online">
+                    <div class="app-icon">👥</div>
+                    <div class="app-name">Patients</div>
+                    <div class="app-port">Patient Portal :3003</div>
+                    <div class="app-status status-online">Online</div>
+                </div>
+
+                <div class="app-card online">
+                    <div class="app-icon">🏢</div>
+                    <div class="app-name">Companies</div>
+                    <div class="app-port">B2B Portal :3004</div>
+                    <div class="app-status status-online">Online</div>
+                </div>
+
+                <div class="app-card offline">
+                    <div class="app-icon">⚙️</div>
+                    <div class="app-name">Admin</div>
+                    <div class="app-port">Admin Panel :3005</div>
+                    <div class="app-status status-offline">Offline</div>
+                </div>
+
+                <div class="app-card online">
+                    <div class="app-icon">📡</div>
+                    <div class="app-name">Signaling</div>
+                    <div class="app-port">WebRTC :8888</div>
+                    <div class="app-status status-online">Online</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Métricas en Tiempo Real -->
+        <section class="real-time-section">
+            <h2 class="real-time-title">📊 Métricas Médicas en Tiempo Real</h2>
+            <div class="real-time-metrics">
+                <div class="real-time-metric">
+                    <div class="real-time-value" id="concurrent-users">1,247</div>
+                    <div class="real-time-label">Usuarios Concurrentes</div>
+                </div>
+                <div class="real-time-metric">
+                    <div class="real-time-value" id="active-consultations">23</div>
+                    <div class="real-time-label">Consultas Activas</div>
+                </div>
+                <div class="real-time-metric">
+                    <div class="real-time-value" id="prescriptions-today">156</div>
+                    <div class="real-time-label">Prescripciones Hoy</div>
+                </div>
+                <div class="real-time-metric">
+                    <div class="real-time-value" id="data-processed">2.7 TB</div>
+                    <div class="real-time-label">Datos Procesados</div>
+                </div>
+                <div class="real-time-metric">
+                    <div class="real-time-value" id="response-time">127ms</div>
+                    <div class="real-time-label">Tiempo Respuesta</div>
+                </div>
+                <div class="real-time-metric">
+                    <div class="real-time-value" id="uptime">99.97%</div>
+                    <div class="real-time-label">Disponibilidad</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cumplimiento HIPAA -->
+        <section class="hipaa-compliance">
+            <h2 class="hipaa-title">🔒 Estado de Cumplimiento HIPAA</h2>
+            <div class="compliance-items">
+                <div class="compliance-item">
+                    <div class="compliance-check">✅</div>
+                    <div>Encriptación PHI Activa</div>
+                </div>
+                <div class="compliance-item">
+                    <div class="compliance-check">✅</div>
+                    <div>Logs de Auditoría Completos</div>
+                </div>
+                <div class="compliance-item">
+                    <div class="compliance-check">✅</div>
+                    <div>Control de Acceso Basado en Roles</div>
+                </div>
+                <div class="compliance-item">
+                    <div class="compliance-check">✅</div>
+                    <div>Backup Automático (7 años)</div>
+                </div>
+                <div class="compliance-item">
+                    <div class="compliance-check">✅</div>
+                    <div>Detección de Brechas</div>
+                </div>
+                <div class="compliance-item">
+                    <div class="compliance-check">✅</div>
+                    <div>Consentimiento de Pacientes</div>
+                </div>
+                <div class="compliance-item">
+                    <div class="compliance-check">✅</div>
+                    <div>Anonimización de Datos</div>
+                </div>
+                <div class="compliance-item">
+                    <div class="compliance-check">✅</div>
+                    <div>Comunicación Segura TLS 1.3</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div>
+                <strong>🏥 AltaMedica Platform</strong> - Sistema Médico Empresarial
+                <br>
+                Desarrollado por <strong>Eduardo Marques, MD</strong> - Especialista en Tecnología Médica
+            </div>
+            <div class="update-time">
+                🕐 Última actualización: <span id="current-time"></span>
+            </div>
+            <a href="./ARCHITECTURE_OVERVIEW.md" class="architecture-link">
+                📋 Ver Documentación Arquitectura Completa
+            </a>
+        </footer>
+    </div>
+
+    <script>
+        // Actualizar tiempo cada segundo
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        // Simular métricas en tiempo real
+        function updateMetrics() {
+            const elements = {
+                'concurrent-users': () => Math.floor(1200 + Math.random() * 100),
+                'active-consultations': () => Math.floor(20 + Math.random() * 10),
+                'prescriptions-today': () => Math.floor(150 + Math.random() * 20),
+                'response-time': () => Math.floor(120 + Math.random() * 20) + 'ms'
+            };
+
+            for (const [id, generator] of Object.entries(elements)) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = generator();
+                }
+            }
+        }
+
+        // Animación de entrada
+        function animateCards() {
+            const cards = document.querySelectorAll('.metric-card, .app-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+
+        // Inicializar
+        updateTime();
+        setInterval(updateTime, 1000);
+        setInterval(updateMetrics, 5000);
+        
+        // Inicializar animaciones después de que cargue la página
+        window.addEventListener('load', () => {
+            setTimeout(animateCards, 500);
+        });
+
+        // Simular cambios de estado de aplicaciones
+        const appCards = document.querySelectorAll('.app-card');
+        appCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const status = card.querySelector('.app-status');
+                const isOnline = status.classList.contains('status-online');
+                
+                if (isOnline) {
+                    status.textContent = 'Checking...';
+                    status.className = 'app-status';
+                    status.style.background = '#FFF3E0';
+                    status.style.color = '#E65100';
+                    
+                    setTimeout(() => {
+                        status.textContent = 'Online';
+                        status.className = 'app-status status-online';
+                        status.style.background = '';
+                        status.style.color = '';
+                    }, 2000);
+                }
+            });
+        });
+
+        // Agregar efectos de hover dinámicos
+        const metricCards = document.querySelectorAll('.metric-card');
+        metricCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

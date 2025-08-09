@@ -40,7 +40,7 @@ export class GatewayAPI {
         // Auto logout on 401
         if (typeof window !== 'undefined') {
           localStorage.removeItem('authToken')
-          window.location.href = '/login'
+          window.location.href = '/auth/login'
         }
       }
       throw new Error(`API Error: ${response.status} ${response.statusText}`)

@@ -1,0 +1,40 @@
+// Backup creado el 9 de agosto de 2025
+// Archivo original: PatientDashboard.tsx
+
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { usePatientData } from '../../hooks/usePatientData';
+import { useRealTimeUpdates } from '../../hooks/useRealTimeUpdates';
+import HealthSummaryCard from './cards/HealthSummaryCard';
+import VitalSignsMonitor from './monitors/VitalSignsMonitor';
+import MedicationTracker from './trackers/MedicationTracker';
+import UpcomingAppointments from './appointments/UpcomingAppointments';
+import LabResultsTrends from './lab/LabResultsTrends';
+import EmergencyPanel from './emergency/EmergencyPanel';
+import MedicalAlerts from './alerts/MedicalAlerts';
+import QuickActions from './actions/QuickActions';
+import PatientProfile from './profile/PatientProfile';
+import ClinicalTimeline from './timeline/ClinicalTimeline';
+import DocumentsManager from './documents/DocumentsManager';
+import TeamCommunication from './communication/TeamCommunication';
+
+interface PatientDashboardProps {
+  patientId: string;
+  viewMode?: 'complete' | 'summary' | 'emergency';
+  locale?: string;
+}
+
+const PatientDashboard: React.FC<PatientDashboardProps> = ({
+  patientId,
+  viewMode = 'complete',
+  locale = 'es-MX'
+}) => {
+  // Estados principales
+  const [activeSection, setActiveSection] = useState<string>('overview');
+  const [isEmergencyMode, setIsEmergencyMode] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  // ...existing code...
+}
+
+export default PatientDashboard;

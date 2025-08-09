@@ -43,6 +43,28 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={`${inter.variable} ${lexend.variable} scroll-smooth`}>
+      <head>
+        {/* 🚀 CRITICAL RESOURCE PRELOADING */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="//firebaseapp.com" />
+        <link rel="dns-prefetch" href="//firebase.googleapis.com" />
+        <link rel="dns-prefetch" href="//firestore.googleapis.com" />
+        
+        {/* Preload critical 3D models */}
+        <link 
+          rel="preload" 
+          href="/models/doctor_male.glb" 
+          as="fetch" 
+          crossOrigin="anonymous"
+        />
+        
+        {/* Preload critical CSS */}
+        <link rel="preload" href="/api/font-css" as="style" />
+        
+        {/* Performance hints */}
+        <meta httpEquiv="x-dns-prefetch-control" content="on" />
+      </head>
       <body className="font-sans antialiased">
         <QueryProvider>
           <FirebaseInit />

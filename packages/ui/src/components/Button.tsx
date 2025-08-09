@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps, cva } from 'class-variance-authority';
+import * as React from 'react';
 import { cn } from '../lib/utils';
 
 const buttonVariants = cva(
@@ -8,23 +8,23 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // NUEVO: Azul Cyan Brillante - Sin gradientes
+        // NUEVO: Azul Cyan Brillante - Garantizando contraste blanco sobre cyan
         default: "bg-primary-500 text-white hover:bg-primary-600 focus-visible:ring-primary-500 shadow-altamedica hover:shadow-altamedica-lg",
         
         // Destructivo - Rojo sólido para acciones peligrosas
         destructive: "bg-alert-500 text-white hover:bg-alert-600 focus-visible:ring-alert-500",
         
-        // Outline - Solo borde con el nuevo cyan
-        outline: "border-2 border-primary-500 bg-transparent text-primary-600 hover:bg-primary-50 focus-visible:ring-primary-500",
+        // Outline - Solo borde con texto oscuro para mejor contraste
+        outline: "border-2 border-primary-500 bg-white text-primary-700 hover:bg-primary-50 hover:text-primary-800 focus-visible:ring-primary-500",
         
-        // Secundario - Fondo suave con texto cyan
-        secondary: "bg-primary-50 text-primary-700 hover:bg-primary-100 focus-visible:ring-primary-500",
+        // Secundario - Fondo suave con texto oscuro para mejor contraste
+        secondary: "bg-primary-50 text-primary-800 hover:bg-primary-100 hover:text-primary-900 focus-visible:ring-primary-500",
         
         // Ghost - Mínimo, sin bordes
         ghost: "bg-transparent text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900",
         
-        // Link - Estilo de enlace con cyan
-        link: "text-primary-500 underline-offset-4 hover:underline hover:text-primary-600",
+        // Link - Estilo de enlace con cyan oscuro para mejor contraste
+        link: "text-primary-700 underline-offset-4 hover:underline hover:text-primary-800",
         
         // Medical - Verde sólido para acciones médicas
         medical: "bg-success-500 text-white hover:bg-success-600 focus-visible:ring-success-500",

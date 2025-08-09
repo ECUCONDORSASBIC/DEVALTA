@@ -19,7 +19,6 @@ const nextConfig = {
   
   // Configuración experimental para mejor performance
   experimental: {
-    asyncWebAssembly: true, // 🔧 Enable WebAssembly support for Firebase Admin
     optimizeCss: true,
     scrollRestoration: true,
     optimizePackageImports: ['lucide-react'],

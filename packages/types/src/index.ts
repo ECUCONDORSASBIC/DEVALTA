@@ -18,6 +18,7 @@ export * from './security';
 
 // ==================== BUSINESS DOMAIN ====================
 export * from './employee';
+export * from './company';
 
 // ==================== B2C COMMUNICATION ====================
 export * from './b2c/company-doctor-communication.types';

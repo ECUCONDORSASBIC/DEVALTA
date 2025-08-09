@@ -22,6 +22,22 @@ const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), {
   ssr: false,
 });
 
+// Tipos para servicios médicos
+interface MedicalService {
+  id: string;
+  title: string;
+  description: string;
+  price: {
+    amount: number;
+    currency: string;
+    type: 'per_session' | 'per_hour' | 'per_consultation' | 'fixed';
+  };
+  deliveryMethod: 'telemedicine' | 'in_person' | 'hybrid';
+  duration: number; // en minutos
+  category: string;
+  isActive: boolean;
+}
+
 // Tipos específicos para el marketplace
 interface MarketplaceDoctor {
   id: string;
@@ -45,6 +61,9 @@ interface MarketplaceDoctor {
   workArrangement: 'remote' | 'hybrid' | 'on_site' | 'flexible';
   languages: string[];
   verificationStatus: 'verified' | 'pending' | 'unverified';
+  // Nuevas propiedades para servicios directos
+  offersDirectServices?: boolean;
+  publishedServices?: MedicalService[];
 }
 
 interface MarketplaceCompany {
@@ -116,7 +135,23 @@ const MapControls: React.FC<{
   onReset: () => void;
   onToggleFilters: () => void;
   filtersOpen: boolean;
-}> = ({ zoom, onZoomIn, onZoomOut, onReset, onToggleFilters, filtersOpen }) => {
+  onRegionSelect: (region: string) => void;
+  onFocusOnDoctors: () => void;
+  activeRegion: string;
+  doctorCount: number;
+}> = ({ 
+  zoom, 
+  onZoomIn, 
+  onZoomOut, 
+  onReset, 
+  onToggleFilters, 
+  filtersOpen, 
+  onRegionSelect, 
+  onFocusOnDoctors, 
+  activeRegion, 
+  doctorCount 
+}) => {
+  const [regionsOpen, setRegionsOpen] = useState(false);
   return (
     <div className="absolute top-4 right-4 flex flex-col space-y-2 z-[1000]">
       {/* Controles de Zoom */}
@@ -163,6 +198,79 @@ const MapControls: React.FC<{
           🔍
         </button>
       </div>
+
+      {/* Controles de Región - Desplegable */}
+      <div className="bg-white border border-gray-200 rounded-lg shadow-lg">
+        <button
+          onClick={() => setRegionsOpen(!regionsOpen)}
+          className="w-full p-2 text-gray-600 transition-colors hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center justify-between"
+          title="Seleccionar región"
+        >
+          <div className="flex items-center gap-1">
+            <span className="text-sm">🌎</span>
+            <span className="text-xs font-medium">
+              {Object.entries({
+                argentina: '🇦🇷',
+                mexico: '🇲🇽', 
+                colombia: '🇨🇴',
+                chile: '🇨🇱',
+                uruguay: '🇺🇾'
+              }).find(([key]) => key === activeRegion)?.[1] || '🌎'}
+            </span>
+          </div>
+          <div className={`transform transition-transform text-xs ${regionsOpen ? 'rotate-180' : ''}`}>
+            ▼
+          </div>
+        </button>
+        
+        {regionsOpen && (
+          <div className="border-t border-gray-200 p-2 space-y-1">
+            {Object.entries({
+              argentina: '🇦🇷',
+              mexico: '🇲🇽',
+              colombia: '🇨🇴',
+              chile: '🇨🇱',
+              uruguay: '🇺🇾'
+            }).map(([key, flag]) => (
+              <button
+                key={key}
+                onClick={() => {
+                  onRegionSelect(key);
+                  setRegionsOpen(false);
+                }}
+                className={`w-full px-2 py-1 text-xs rounded transition-colors flex items-center gap-2 ${
+                  activeRegion === key
+                    ? 'bg-blue-100 text-blue-800 font-medium'
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+                title={`Ir a ${key.charAt(0).toUpperCase() + key.slice(1)}`}
+              >
+                <span>{flag}</span>
+                <span>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Controles Inteligentes */}
+      <div className="flex flex-col bg-white border border-gray-200 rounded-lg shadow-lg">
+        <button
+          onClick={onFocusOnDoctors}
+          className="p-2 text-gray-600 transition-colors rounded-t-lg hover:text-green-600 hover:bg-green-50"
+          title={`Enfocar en ${doctorCount} médicos disponibles`}
+          disabled={doctorCount === 0}
+        >
+          🎯
+        </button>
+        <button
+          onClick={onReset}
+          className="p-2 text-gray-600 transition-colors border-t border-gray-100 rounded-b-lg hover:text-blue-600 hover:bg-blue-50"
+          title="Vista general"
+        >
+          🌍
+        </button>
+      </div>
     </div>
   );
 };
@@ -198,6 +306,7 @@ const CustomMarker: React.FC<{
               <span class="text-xl">👨‍⚕️</span>
             </div>
             ${doctor.verificationStatus === 'verified' ? '<div class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold shadow-md">✓</div>' : ''}
+            ${doctor.offersDirectServices ? '<div class="absolute -top-1 -left-1 w-5 h-5 bg-purple-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold shadow-md">💼</div>' : ''}
             ${doctor.isUrgentAvailable ? '<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-ping"></div>' : ''}
             ${doctor.isOnline ? '<div class="absolute -bottom-1 -left-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>' : ''}
           </div>
@@ -277,6 +386,33 @@ const CustomMarker: React.FC<{
                 </div>
               </div>
               
+              {/* Servicios directos si los ofrece */}
+              {(entity as MarketplaceDoctor).offersDirectServices && (entity as MarketplaceDoctor).publishedServices && (entity as MarketplaceDoctor).publishedServices!.length > 0 && (
+                <div className="pt-3 mt-3 border-t border-gray-100">
+                  <h4 className="text-sm font-semibold text-purple-900 mb-2">💼 Servicios Disponibles</h4>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {(entity as MarketplaceDoctor).publishedServices!.slice(0, 2).map((service: MedicalService) => (
+                      <div key={service.id} className="bg-purple-50 p-2 rounded border border-purple-200">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <p className="text-xs font-medium text-purple-900">{service.title}</p>
+                            <p className="text-xs text-purple-700 mt-0.5">
+                              {service.price.currency} ${service.price.amount} 
+                              {service.price.type === 'per_session' ? '/sesión' : 
+                               service.price.type === 'per_hour' ? '/hora' : ''}
+                            </p>
+                          </div>
+                          <span className="text-xs bg-purple-200 text-purple-800 px-1.5 py-0.5 rounded-full">
+                            {service.deliveryMethod === 'telemedicine' ? '💻' : 
+                             service.deliveryMethod === 'in_person' ? '🏥' : '🔄'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               <div className="pt-3 mt-3 border-t border-gray-100 space-y-2">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-gray-500">Match Score</span>
@@ -287,15 +423,32 @@ const CustomMarker: React.FC<{
                     <span className="text-xs font-bold text-green-600">85%</span>
                   </div>
                 </div>
-                <button 
-                  onClick={() => console.log('Iniciar proceso de match')}
-                  className="w-full px-4 py-2 text-sm text-white transition-colors bg-gradient-to-r from-blue-600 to-blue-700 rounded-md hover:from-blue-700 hover:to-blue-800 font-medium shadow-md"
-                >
-                  🎯 Iniciar Proceso de Match
-                </button>
-                <button className="w-full px-4 py-2 text-sm text-purple-600 border border-purple-300 rounded-md hover:bg-purple-50 transition-colors">
-                  💬 Chat Directo
-                </button>
+                {/* Mostrar botones diferentes según si ofrece servicios */}
+                {(entity as MarketplaceDoctor).offersDirectServices ? (
+                  <>
+                    <button className="w-full px-4 py-2 text-sm text-white transition-colors bg-gradient-to-r from-purple-600 to-purple-700 rounded-md hover:from-purple-700 hover:to-purple-800 font-medium shadow-md">
+                      💼 Contratar Servicio Directo
+                    </button>
+                    <button 
+                      onClick={() => console.log('Iniciar proceso de match')}
+                      className="w-full px-4 py-2 text-sm text-blue-600 border border-blue-300 rounded-md hover:bg-blue-50 transition-colors"
+                    >
+                      🎯 O Contratar como Empleado
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button 
+                      onClick={() => console.log('Iniciar proceso de match')}
+                      className="w-full px-4 py-2 text-sm text-white transition-colors bg-gradient-to-r from-blue-600 to-blue-700 rounded-md hover:from-blue-700 hover:to-blue-800 font-medium shadow-md"
+                    >
+                      🎯 Iniciar Proceso de Match
+                    </button>
+                    <button className="w-full px-4 py-2 text-sm text-purple-600 border border-purple-300 rounded-md hover:bg-purple-50 transition-colors">
+                      💬 Chat Directo
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ) : (
@@ -380,7 +533,48 @@ export default function MarketplaceMap({
   const [mapView, setMapView] = useState<'roadmap' | 'satellite' | 'terrain'>('roadmap');
   const [showMatchModal, setShowMatchModal] = useState(false);
   const [matchStep, setMatchStep] = useState<'offer' | 'interview' | 'contract' | 'payment'>('offer');
+  const [activeRegion, setActiveRegion] = useState<string>('argentina');
   const { sendNotification } = useMarketplaceNotifications();
+
+  // Definir áreas geográficas permitidas (Latinoamérica principalmente)
+  const GEOGRAPHIC_BOUNDS: [LatLngTuple, LatLngTuple] = [
+    [-55.0, -110.0], // Southwest bound (Chile/Argentina sur, México oeste)
+    [32.0, -30.0]     // Northeast bound (México norte, Brasil este)
+  ];
+
+  // Regiones predefinidas para navegación rápida
+  const MEDICAL_REGIONS = {
+    argentina: {
+      name: 'Argentina',
+      center: [-34.6037, -58.3816] as LatLngTuple,
+      zoom: 6,
+      bounds: [[-55.0, -73.5], [-21.8, -53.6]] as [LatLngTuple, LatLngTuple]
+    },
+    mexico: {
+      name: 'México',
+      center: [23.6345, -102.5528] as LatLngTuple,
+      zoom: 5,
+      bounds: [[14.5, -118.4], [32.7, -86.7]] as [LatLngTuple, LatLngTuple]
+    },
+    colombia: {
+      name: 'Colombia',
+      center: [4.5709, -74.2973] as LatLngTuple,
+      zoom: 6,
+      bounds: [[-4.2, -81.8], [15.5, -66.8]] as [LatLngTuple, LatLngTuple]
+    },
+    chile: {
+      name: 'Chile',
+      center: [-35.6751, -71.5430] as LatLngTuple,
+      zoom: 5,
+      bounds: [[-56.0, -75.6], [-17.5, -66.4]] as [LatLngTuple, LatLngTuple]
+    },
+    uruguay: {
+      name: 'Uruguay',
+      center: [-32.5228, -55.7658] as LatLngTuple,
+      zoom: 7,
+      bounds: [[-35.0, -58.4], [-30.1, -53.1]] as [LatLngTuple, LatLngTuple]
+    }
+  };
 
   // Hospital San Vicente - Datos por defecto
   const hospitalSanVicente: MarketplaceCompany = {
@@ -545,6 +739,63 @@ export default function MarketplaceMap({
     console.log('Doctor profile viewed:', doctor.id);
   }, [onDoctorSelect, sendNotification]);
 
+  // Funciones de navegación por regiones
+  const handleRegionSelect = useCallback((regionKey: string) => {
+    const region = MEDICAL_REGIONS[regionKey as keyof typeof MEDICAL_REGIONS];
+    if (region && mapRef.current) {
+      setActiveRegion(regionKey);
+      setMapCenter(region.center);
+      setZoom(region.zoom);
+      setSelectedDoctor(null);
+      
+      // Aplicar bounds de la región si está disponible
+      const map = mapRef.current;
+      if (map && region.bounds) {
+        setTimeout(() => {
+          map.fitBounds(region.bounds, {
+            padding: [20, 20],
+            maxZoom: region.zoom
+          });
+        }, 100);
+      }
+    }
+  }, []);
+
+  // Función para enfocar automáticamente en área con más médicos
+  const handleFocusOnDoctors = useCallback(() => {
+    if (filteredDoctors.length === 0) return;
+
+    const doctorCoords = filteredDoctors.map(doctor => doctor.location.coordinates);
+    
+    if (doctorCoords.length === 1) {
+      // Si solo hay un doctor, centrar en él
+      setMapCenter(doctorCoords[0]);
+      setZoom(10);
+    } else if (doctorCoords.length > 1) {
+      // Si hay múltiples doctores, calcular bounds óptimos
+      const lats = doctorCoords.map(coord => coord[0]);
+      const lngs = doctorCoords.map(coord => coord[1]);
+      
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
+      
+      const bounds: [LatLngTuple, LatLngTuple] = [
+        [minLat - 0.5, minLng - 0.5],
+        [maxLat + 0.5, maxLng + 0.5]
+      ];
+      
+      if (mapRef.current) {
+        setTimeout(() => {
+          mapRef.current.fitBounds(bounds, {
+            padding: [50, 50],
+            maxZoom: 12
+          });
+        }, 100);
+      }
+    }
+  }, [filteredDoctors]);
 
   // Función para obtener la URL del tile layer - usando CartoDB Positron para un mapa más limpio
   const getTileLayerUrl = () => {
@@ -571,149 +822,24 @@ export default function MarketplaceMap({
 
   return (
     <div className="relative">
-      {/* Barra de búsqueda superior estilo Airbnb */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000]">
-        <div className="bg-white rounded-full shadow-lg p-2 flex items-center gap-2 min-w-[400px]">
-          <input
-            type="text"
-            placeholder="Buscar médicos o empresas..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 px-4 py-2 outline-none text-sm"
-          />
-          <button className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
-            🔍
-          </button>
-        </div>
-      </div>
+      {/* Barra de búsqueda - temporalmente deshabilitada */}
       
-      {/* Leyenda del mapa */}
-      <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3 z-[1000]">
-        <div className="space-y-2 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="text-base">👨‍⚕️</span>
-            <span className="text-gray-600">Médicos ({filteredDoctors.length})</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-base">🏥</span>
-            <span className="text-gray-600">Hospitales ({filteredCompanies.filter(c => c.companyType === 'hospital').length})</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-base">🏢</span>
-            <span className="text-gray-600">Clínicas ({filteredCompanies.filter(c => c.companyType === 'clinic').length})</span>
-          </div>
-          
-          {/* Hospital San Vicente - Destacado */}
-          <div className="border-t pt-2 mt-2">
-            <div className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-green-50 p-2 rounded-md border border-blue-200">
-              <div className="flex items-center gap-2">
-                <span className="text-base animate-pulse">🏥</span>
-                <div>
-                  <span className="text-gray-800 font-semibold text-sm">Hospital San Vicente</span>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <span className="text-green-600 font-medium text-xs">Activo</span>
-                    <span className="text-gray-500 text-xs">• 15 ofertas</span>
-                  </div>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-semibold">
-                  3 URGENTES
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Leyenda del mapa - temporalmente deshabilitada */}
 
 
-      {/* Panel de filtros mejorado */}
-      {filtersOpen && (
-        <div className="absolute top-20 right-4 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-[1000] w-72">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="text-sm font-semibold text-gray-900">Filtros del Mapa</h4>
-            <button 
-              onClick={() => setFiltersOpen(false)}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              ×
-            </button>
-          </div>
-          
-          <div className="space-y-4">
-            {/* Qué mostrar */}
-            <div>
-              <label className="block mb-2 text-xs font-medium text-gray-700 uppercase">Mostrar en el mapa</label>
-              <div className="space-y-2">
-                <label className="flex items-center">
-                  <input 
-                    type="checkbox" 
-                    checked={showDoctors}
-                    onChange={(e) => {/* toggle doctors */}}
-                    className="mr-2" 
-                  />
-                  <span className="text-sm text-gray-700">👨‍⚕️ Médicos disponibles</span>
-                </label>
-                <label className="flex items-center">
-                  <input 
-                    type="checkbox" 
-                    checked={showCompanies}
-                    onChange={(e) => {/* toggle companies */}}
-                    className="mr-2" 
-                  />
-                  <span className="text-sm text-gray-700">🏥 Empresas contratando</span>
-                </label>
-              </div>
-            </div>
-            
-            {/* Filtros para médicos */}
-            <div className="border-t pt-3">
-              <label className="block mb-2 text-xs font-medium text-gray-700 uppercase">Filtrar médicos</label>
-              <div className="space-y-2">
-                <select className="w-full px-3 py-2 text-sm border rounded-lg">
-                  <option>Todas las especialidades</option>
-                  <option>Cardiología</option>
-                  <option>Pediatría</option>
-                  <option>Oncología</option>
-                  <option>Neurología</option>
-                </select>
-                <select className="w-full px-3 py-2 text-sm border rounded-lg">
-                  <option>Cualquier experiencia</option>
-                  <option>2+ años</option>
-                  <option>5+ años</option>
-                  <option>10+ años</option>
-                </select>
-              </div>
-            </div>
-            
-            {/* Filtros adicionales */}
-            <div className="border-t pt-3 space-y-2">
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-2" />
-                <span className="text-sm text-gray-700">Solo verificados ✅</span>
-              </label>
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-2" />
-                <span className="text-sm text-gray-700">Con ofertas urgentes 🚨</span>
-              </label>
-            </div>
-            
-            {/* Botón de aplicar */}
-            <button className="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
-              Aplicar Filtros
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Filtros del mapa - temporalmente deshabilitados */}
 
       {/* Mapa de Leaflet */}
       <MapContainer
         center={mapCenter}
         zoom={zoom}
-        className="h-[600px] w-full rounded-lg border border-gray-200"
+        className="h-full w-full rounded-lg border border-gray-200"
         ref={mapRef}
         zoomControl={false}
+        maxBounds={GEOGRAPHIC_BOUNDS}
+        maxBoundsViscosity={1.0}
+        minZoom={3}
+        maxZoom={18}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -745,15 +871,7 @@ export default function MarketplaceMap({
         ))}
       </MapContainer>
 
-      {/* Controles del mapa */}
-      <MapControls
-        zoom={zoom}
-        onZoomIn={handleZoomIn}
-        onZoomOut={handleZoomOut}
-        onReset={handleReset}
-        onToggleFilters={() => setFiltersOpen(!filtersOpen)}
-        filtersOpen={filtersOpen}
-      />
+      {/* Controles del mapa - temporalmente deshabilitados */}
 
 
       {/* Panel de información del candidato seleccionado */}

@@ -9,7 +9,20 @@
       "Bash(rm:*)",
       "Bash(find:*)",
       "Bash(npm install:*)",
-      "Bash(pnpm remove:*)"
+      "Bash(pnpm remove:*)",
+      "Bash(tree:*)",
+      "Bash(powershell:*)",
+      "Bash(pnpm:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx:*)",
+      "Bash(curl:*)",
+      "Bash(copy Medical3DCanvas.tsx Medical3DCanvas.original.tsx)",
+      "Bash(cp:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm:*)",
+      "Bash(start \"\" \"C:\\Users\\Eduardo\\Documents\\devaltamedica\\docs\\architecture\\MONITORING_DASHBOARD.html\")",
+      "Bash(dir:*)",
+      "Bash(pwsh:*)"
     ],
     "deny": []
   }

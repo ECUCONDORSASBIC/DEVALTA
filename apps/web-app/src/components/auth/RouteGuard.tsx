@@ -17,7 +17,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({
   children,
   requireAuth = true,
   allowedUserTypes,
-  fallbackRedirect = '/login',
+  fallbackRedirect = '/auth/login',
   loadingMessage = 'Verificando acceso...'
 }) => {
   const { user, userProfile, loading } = useAuth();
@@ -116,7 +116,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({
               </button>
               
               <button
-                onClick={() => window.location.href = '/login'}
+                onClick={() => window.location.href = '/auth/login'}
                 className="w-full border-2 border-blue-300 text-blue-600 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300"
               >
                 Volver al Login

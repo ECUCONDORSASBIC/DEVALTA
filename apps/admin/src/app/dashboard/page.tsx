@@ -1,27 +1,27 @@
 'use client'
 
-import { useAuth } from "@altamedica/auth'
-import { 
-  Badge, 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle,
-  HealthMetricCard,
-  VitalSignsChart,
-  SystemHealthMonitor
+import { useAuth } from '@altamedica/auth'
+import {
+    Badge,
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    HealthMetricCard,
+    SystemHealthMonitor,
+    VitalSignsChart
 } from '@altamedica/ui'
-import { 
-  Activity, 
-  Users, 
-  FileText, 
-  DollarSign,
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  TrendingUp,
-  Database,
-  Cpu
+import {
+    Activity,
+    AlertTriangle,
+    CheckCircle,
+    Cpu,
+    Database,
+    DollarSign,
+    FileText,
+    Shield,
+    TrendingUp,
+    Users
 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -75,7 +75,7 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
             <p className="text-gray-600">Gestión integral de la plataforma AltaMedica</p>
             <p className="text-sm text-gray-500">
-              Bienvenido, {user?.name || 'Administrador'} | Super Admin
+              Bienvenido, {user?.displayName || user?.email || 'Administrador'} | Super Admin
             </p>
           </div>
         </div>

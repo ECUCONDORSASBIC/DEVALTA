@@ -21,6 +21,25 @@
   --color-primary-800: 21 94 117;
   --color-primary-900: 22 78 99;
 
+  /* VS Code Dark Theme Variables */
+  --vscode-background: #1e1e1e;
+  --vscode-foreground: #cccccc;
+  --vscode-sidebar: #252526;
+  --vscode-activity-bar: #333333;
+  --vscode-activity-badge: #007acc;
+  --vscode-panel: #252526;
+  --vscode-border: #3c3c3c;
+  --vscode-input: #3c3c3c;
+  --vscode-button: #0e639c;
+  --vscode-button-hover: #1177bb;
+  --vscode-list-hover: #2a2d2e;
+  --vscode-list-active: #094771;
+  --vscode-status-bar: #007acc;
+  --vscode-crisis-critical: #f85149;
+  --vscode-crisis-warning: #f9826c;
+  --vscode-crisis-info: #58a6ff;
+  --vscode-crisis-success: #3fb950;
+
   /* Colores de estado */
   --color-success-500: 34 197 94;
   --color-warning-500: 245 158 11;

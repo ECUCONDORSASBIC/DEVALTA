@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "AltaMedica - Plataforma de Telemedicina Integral",
   "private": true,
+  
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -14,7 +15,22 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "clean": "turbo run clean",
-    "type-check": "turbo run type-check"
+    "type-check": "turbo run type-check",
+    "clean:node-modules": "python scripts/clean-monorepo.py",
+    "clean:complete": "python scripts/clean-monorepo.py --install",
+    "fresh-install": "python scripts/clean-monorepo.py --fresh-install",
+    "clean:reset": "python scripts/clean-monorepo.py --reset",
+    "clean:deps": "python scripts/clean-monorepo.py --deps",
+    "clean:cache": "python scripts/clean-monorepo.py --cache",
+    "clean:builds": "python scripts/clean-monorepo.py --builds",
+    "clean:logs": "python scripts/clean-monorepo.py --logs",
+    "clean:python": "python scripts/clean-monorepo.py --python",
+    "clean:analyze": "python scripts/clean-monorepo.py --analyze",
+    "clean:dry-run": "python scripts/clean-monorepo.py --dry-run",
+    "clean:check-env": "python scripts/clean-monorepo.py --check-env",
+    "clean:fix-permissions": "python scripts/clean-monorepo.py --fix-permissions",
+    "clean:help": "python scripts/clean-monorepo.py --help",
+    "audit:single-login": "node tools/scripts/enforce-single-login.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",

@@ -10,7 +10,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@altamedica/types": "workspace:*"
+    "@altamedica/types": "workspace:*",
+    "@altamedica/diagnostic-engine": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

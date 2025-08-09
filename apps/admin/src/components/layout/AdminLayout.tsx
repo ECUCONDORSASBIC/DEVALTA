@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from "@altamedica/auth'
+import { useAuth } from "@altamedica/auth"
 import { cn } from '@altamedica/utils'
 import {
     Activity,
@@ -198,11 +198,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {sidebarOpen && (
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                  {user?.name?.charAt(0).toUpperCase() || 'A'}
+                  {(user?.displayName || user?.email || 'Admin').charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-sm font-medium">{user?.name || 'Admin'}</p>
-                  <p className="text-xs text-gray-500">{user?.email}</p>
+                  <p className="text-sm font-medium">{user?.displayName || user?.email || 'Admin'}</p>
+                  {user?.email && <p className="text-xs text-gray-500">{user.email}</p>}
                 </div>
               </div>
             )}

@@ -14,15 +14,15 @@ export interface FirebaseConfig {
   measurementId?: string;
 }
 
-// Default configuration for development
+// Default configuration for development - Updated with correct AltaMedica config
 const defaultConfig: FirebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "demo-api-key",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "altamedica-apis.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "altamedica-apis",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "altamedica-apis.appspot.com",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:123456789:web:demo",
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyAkzR3fZjtwsGu4wJ6jNnbjcSLGu3rWoGs",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "altamedic-20f69.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "altamedic-20f69",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "altamedic-20f69.firebasestorage.app",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "131880235210",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:131880235210:web:35d867452b6488c245c433",
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-X3FJNH06PN",
 };
 
 // Firebase app instance
@@ -84,51 +84,69 @@ function connectToEmulators() {
   }
 }
 
-// Export services
+// Export services with automatic initialization
 export function getFirebaseAuth(): Auth {
   if (!auth) {
-    throw new Error('Firebase not initialized. Call initializeFirebase() first.');
+    console.log('Auto-initializing Firebase...');
+    const firebaseApp = initializeFirebase();
+    if (!firebaseApp) {
+      throw new Error('Failed to initialize Firebase app');
+    }
+    auth = getAuth(firebaseApp);
+  }
+  if (!auth) {
+    throw new Error('Firebase Auth is not initialized');
   }
   return auth;
 }
 
 export function getFirebaseFirestore(): Firestore {
   if (!firestore) {
-    throw new Error('Firebase not initialized. Call initializeFirebase() first.');
+    console.log('Auto-initializing Firebase for Firestore...');
+    const firebaseApp = initializeFirebase();
+    if (!firebaseApp) {
+      throw new Error('Failed to initialize Firebase app');
+    }
+    firestore = getFirestore(firebaseApp);
+  }
+  if (!firestore) {
+    throw new Error('Firebase Firestore is not initialized');
   }
   return firestore;
 }
 
 export function getFirebaseStorage(): FirebaseStorage {
   if (!storage) {
-    throw new Error('Firebase not initialized. Call initializeFirebase() first.');
+    console.log('Auto-initializing Firebase for Storage...');
+    initializeFirebase();
   }
   return storage;
 }
 
 export function getFirebaseApp(): FirebaseApp {
   if (!app) {
-    throw new Error('Firebase not initialized. Call initializeFirebase() first.');
+    console.log('Auto-initializing Firebase App...');
+    initializeFirebase();
   }
   return app;
 }
 
 // Re-export Firebase types and functions for convenience
 export {
-  createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updateProfile, type User,
-  type UserCredential
+    createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updateProfile, type User,
+    type UserCredential
 } from 'firebase/auth';
 
 export {
-  addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc,
-  getDoc,
-  getDocs, increment, limit, onSnapshot, orderBy, query, serverTimestamp, setDoc, startAfter, updateDoc, where, type CollectionReference, type DocumentData, type DocumentReference, type DocumentSnapshot, type Query, type QuerySnapshot
+    addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc,
+    getDoc,
+    getDocs, increment, limit, onSnapshot, orderBy, query, serverTimestamp, setDoc, startAfter, updateDoc, where, type CollectionReference, type DocumentData, type DocumentReference, type DocumentSnapshot, type Query, type QuerySnapshot
 } from 'firebase/firestore';
 
 export {
-  deleteObject, getDownloadURL, listAll, ref,
-  uploadBytes,
-  uploadString, type StorageReference,
-  type UploadResult
+    deleteObject, getDownloadURL, listAll, ref,
+    uploadBytes,
+    uploadString, type StorageReference,
+    type UploadResult
 } from 'firebase/storage';
 

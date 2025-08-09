@@ -3,6 +3,26 @@
 import type { LatLngTuple } from 'leaflet';
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
+// Interfaz para servicios que médicos publican opcionalmente
+interface DoctorService {
+  id: string;
+  title: string;
+  description: string;
+  category: 'consultation' | 'procedure' | 'second_opinion' | 'training';
+  price: {
+    amount: number;
+    currency: 'USD' | 'ARS';
+    type: 'per_hour' | 'per_session' | 'fixed_price';
+  };
+  availability: {
+    schedule: string;
+    timeSlots: string[];
+  };
+  deliveryMethod: 'telemedicine' | 'in_person' | 'hybrid';
+  postedDate: string;
+  isActive: boolean;
+}
+
 // Interfaces compartidas
 interface MarketplaceDoctor {
   id: string;
@@ -26,6 +46,9 @@ interface MarketplaceDoctor {
   workArrangement: 'remote' | 'hybrid' | 'on_site' | 'flexible';
   languages: string[];
   verificationStatus: 'verified' | 'pending' | 'unverified';
+  // NUEVO: Servicios opcionales que el médico puede publicar
+  publishedServices?: DoctorService[];
+  offersDirectServices?: boolean;
 }
 
 interface MarketplaceCompany {
@@ -247,4 +270,4 @@ export function useMarketplace() {
 }
 
 // Exportar tipos para usar en otros componentes
-export type { JobOffer, MarketplaceCompany, MarketplaceDoctor, MarketplaceFilters };
+export type { DoctorService, JobOffer, MarketplaceCompany, MarketplaceDoctor, MarketplaceFilters };

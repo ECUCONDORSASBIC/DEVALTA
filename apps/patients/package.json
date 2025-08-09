@@ -21,10 +21,10 @@
     "full-health-check": "playwright test --reporter=html"
   },
   "dependencies": {
+    "@altamedica/hooks": "workspace:*",
     "@altamedica/api-client": "workspace:*",
     "@altamedica/auth": "workspace:*",
     "@altamedica/firebase": "workspace:*",
-    "@altamedica/hooks": "workspace:*",
     "@altamedica/shared": "workspace:*",
     "@altamedica/types": "workspace:*",
     "@altamedica/ui": "workspace:*",

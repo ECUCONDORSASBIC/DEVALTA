@@ -2,13 +2,13 @@
  * Hook personalizado para gestión de SSO en la aplicación de pacientes
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { initializeSSO, getSSO, type SSOUser } from '@altamedica/auth/sso-service';
+import { getSSO, initializeSSO, type SSOUser } from '@altamedica/auth/sso-service';
 import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 // Configuración SSO para la app de pacientes
 const SSO_CONFIG = {
-  apiServerUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  apiServerUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3008',
   webAppUrl: process.env.NEXT_PUBLIC_WEB_APP_URL || 'http://localhost:3000',
   currentAppPort: '3003',
   appName: 'patients'
@@ -24,6 +24,7 @@ interface UseSSO {
   loading: boolean;
   error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   checkSession: () => Promise<void>;
   refreshSession: () => Promise<void>;
@@ -34,6 +35,42 @@ export function useSSO(): UseSSO {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  // Iniciar sesión con Google
+  const signInWithGoogle = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const sso = getSSO();
+      if (!sso.auth) throw new Error('Firebase Auth no inicializado');
+      const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(sso.auth, provider);
+      const firebaseUser = result.user;
+      const idToken = await firebaseUser.getIdToken();
+      // Enviar el token de Google al backend para crear sesión SSO
+      const response = await fetch(`${SSO_CONFIG.apiServerUrl}/api/v1/auth/login-google`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ idToken })
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || error.message || 'Error autenticando con Google');
+      }
+      const data = await response.json();
+      // Actualizar usuario local con datos del backend
+      setUser(data.user);
+      router.push('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'Error al iniciar sesión con Google');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
 
   // Verificar sesión SSO al montar el componente
   useEffect(() => {
@@ -168,6 +205,7 @@ export function useSSO(): UseSSO {
     loading,
     error,
     signIn,
+    signInWithGoogle,
     signOut,
     checkSession,
     refreshSession

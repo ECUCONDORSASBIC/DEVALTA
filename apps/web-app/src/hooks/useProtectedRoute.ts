@@ -11,7 +11,7 @@ interface UseProtectedRouteOptions {
 export const useProtectedRoute = ({
   requireAuth = true,
   requireRole,
-  redirectTo = '/login'
+  redirectTo = '/auth/login'
 }: UseProtectedRouteOptions = {}) => {
   const { user, userProfile, loading } = useAuth();
   const router = useRouter();

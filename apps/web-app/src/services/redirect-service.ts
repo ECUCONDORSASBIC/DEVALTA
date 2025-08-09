@@ -130,7 +130,7 @@ export class RedirectService {
    */
   static redirectToLogin(router?: NextRouter | any): void {
     this.saveCurrentRoute();
-    this.performRedirect('/login', router);
+    this.performRedirect('/auth/login', router);
   }
   
   /**
@@ -166,7 +166,7 @@ export class RedirectService {
     }
     
     // Si es otro rol y está en rutas protegidas de web-app, debe redirigir
-    const protectedWebAppRoutes = ['/dashboard', '/profile', '/appointments', '/login'];
+    const protectedWebAppRoutes = ['/dashboard', '/profile', '/appointments', '/auth/login'];
     return protectedWebAppRoutes.some(route => currentPath.startsWith(route));
   }
   
