@@ -1,5 +1,6 @@
 'use client';
 
+import DoctorLayout from '@/components/layout/DoctorLayout';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { 
   Badge, 
@@ -61,7 +62,8 @@ export default function DashboardOverview() {
   }
 
   return (
-    <div className="space-y-8 p-6 bg-gradient-to-br from-primary-50 to-primary-50 min-h-screen">
+    <DoctorLayout>
+      <div className="space-y-8 p-6 bg-gradient-to-br from-primary-50 to-primary-50 min-h-screen">
       {/* Header con branding AltaMedica */}
       <div className="mb-8">
         <div className="flex items-center space-x-4 mb-4">
@@ -265,5 +267,6 @@ export default function DashboardOverview() {
         </div>
       </div>
     </div>
+    </DoctorLayout>
   );
 }

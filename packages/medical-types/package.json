@@ -7,15 +7,15 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs --format esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs --format esm --dts --watch",
-    "clean": "rm -rf dist",
+    "clean": "pwsh -Command \"if (Test-Path dist) { Remove-Item -Path dist -Recurse -Force }\"",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

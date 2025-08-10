@@ -1,7 +1,10 @@
 {
   "extends": "@altamedica/typescript-config/base.json",
   "compilerOptions": {
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

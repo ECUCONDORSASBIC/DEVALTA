@@ -33,8 +33,6 @@
     "noImplicitThis": false,
     "noImplicitOverride": false,
     "useUnknownInCatchVariables": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
     "plugins": [
       {
         "name": "next"

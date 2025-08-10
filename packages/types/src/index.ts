@@ -17,14 +17,82 @@ export * from './api';
 export * from './security';
 
 // ==================== BUSINESS DOMAIN ====================
+// Export everything except conflicting types (JobApplication, Optional, PaginatedResponse)
+export type {
+  // Address and Contact Types
+  Address,
+  ContactInfo,
+  BusinessHours,
+  
+  // Company Types
+  CompanyType,
+  CompanySize,
+  CompanyStatus,
+  Company,
+  
+  // Doctor Types in Company
+  DoctorStatus,
+  EmploymentType,
+  CompanyDoctor,
+  
+  // Job Offer Types
+  JobType,
+  JobStatus,
+  ExperienceLevel,
+  JobOffer,
+  
+  // Application Status (but not JobApplication itself - it's in B2C types)
+  ApplicationStatus,
+  
+  // Analytics
+  CompanyAnalytics,
+  
+  // Filter Types
+  CompanyFilters,
+  JobFilters,
+  
+  // API Types (excluding PaginatedResponse which conflicts with core)
+  APIResponse,
+  
+  // Form Data Types
+  CompanyFormData,
+  JobOfferFormData,
+  
+  // Data Types (excluding Optional which conflicts with core)
+  CreateCompanyData,
+  CreateJobOfferData
+} from './company';
+
+// Export Zod schemas separately (not types)
+export {
+  AddressSchema,
+  ContactInfoSchema,
+  BusinessHoursSchema,
+  CompanySchema,
+  JobOfferSchema
+} from './company';
 export * from './employee';
-export * from './company';
 
 // ==================== B2C COMMUNICATION ====================
+// This exports JobApplication and other B2C communication types
 export * from './b2c/company-doctor-communication.types';
 
 // ==================== AI TYPES ====================
 export * from './ai';
+
+// ==================== MARKETPLACE DOMAIN ====================
+// Export everything except Coordinates to avoid conflict with core types
+export type {
+  // Marketplace Doctor Types
+  MarketplaceWorkArrangement,
+  MarketplaceDoctorVerificationStatus,
+  MarketplaceDoctorService,
+  MarketplaceDoctor,
+  
+  // Marketplace Company Types
+  MarketplaceCompanyType,
+  MarketplaceJobOffer
+} from './marketplace';
 
 
 // ==================== LEGACY EXPORTS (DEPRECATED) ====================

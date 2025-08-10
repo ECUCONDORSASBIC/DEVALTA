@@ -76,11 +76,12 @@
     "package.json"
   ],
   "scripts": {
-    "build": "pnpm clean && pnpm build:cjs && pnpm build:esm",
+    "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm rename:esm",
     "build:cjs": "tsc --build tsconfig.cjs.json",
     "build:esm": "tsc --build tsconfig.esm.json",
+    "rename:esm": "powershell -ExecutionPolicy Bypass -File scripts/rename-esm.ps1",
     "build:watch": "concurrently \"pnpm build:cjs --watch\" \"pnpm build:esm --watch\"",
-    "clean": "powershell -Command \"Remove-Item -Path dist -Recurse -Force -ErrorAction SilentlyContinue\"",
+    "clean": "powershell -Command \"Remove-Item -Path dist,dist-esm -Recurse -Force -ErrorAction SilentlyContinue\"",
     "type-check": "tsc --noEmit",
     "lint": "tsc --noEmit && tsc --pretty",
     "analyze-bundle": "node scripts/analyze-bundle.js",

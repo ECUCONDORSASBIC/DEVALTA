@@ -85,6 +85,11 @@ const altamedicaColors = {
 // Configuración de tema unificada
 const altamedicaTheme = {
   colors: {
+  // Colores básicos necesarios para utilidades estándar
+  white: '#ffffff',
+  black: '#000000',
+  transparent: 'transparent',
+  current: 'currentColor',
     // Colores principales (4 colores)
     primary: altamedicaColors.primary,
     neutral: altamedicaColors.neutral,

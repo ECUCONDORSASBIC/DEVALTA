@@ -2,7 +2,7 @@
 
 import { initializeFirebaseSimple } from '@/lib/firebase-simple';
 import { QueryProvider } from '@/providers/QueryProvider';
-import { AuthProvider } from "@altamedica/auth';
+import { AuthProvider } from "@altamedica/auth";
 import { firebaseService } from '@altamedica/database';
 import { useEffect, useState } from 'react';
 

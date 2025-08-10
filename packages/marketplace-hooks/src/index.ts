@@ -1,6 +1,7 @@
 // Marketplace Hooks - B2C Communication System
 export * from './hooks/useCompanyProfile';
 export * from './hooks/useDoctorProfile';
+export * from './hooks/useDoctorSearch';
 export * from './hooks/useJobApplications';
 export * from './hooks/useMarketplaceAnalytics';
 export * from './hooks/useMarketplaceJobs';

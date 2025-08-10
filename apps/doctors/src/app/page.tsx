@@ -1,5 +1,7 @@
-import DoctorsDashboard from "@/app/dashboard/page";
+import VSCodeLayout from "@/components/layout/VSCodeLayout";
 
 export default function DoctorsPage() {
-  return <DoctorsDashboard />;
+  return (
+    <VSCodeLayout />
+  );
 }

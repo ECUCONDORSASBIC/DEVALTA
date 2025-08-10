@@ -19,6 +19,7 @@ export interface UseTelemedicineWebSocketProps {
   reconnectAttempts?: number;
   reconnectDelay?: number;
   heartbeatInterval?: number;
+  connectionTimeout?: number;
 }
 
 export interface UseTelemedicineWebSocketReturn {
@@ -40,7 +41,8 @@ export function useTelemedicineWebSocket(
     autoConnect = true,
     reconnectAttempts = 5,
     reconnectDelay = 3000,
-    heartbeatInterval = 30000
+    heartbeatInterval = 30000,
+    connectionTimeout = 10000
   } = props;
 
   const { user } = useAuth();
@@ -53,13 +55,25 @@ export function useTelemedicineWebSocket(
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const connectionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectCountRef = useRef(0);
   const subscribedSessionsRef = useRef<Set<string>>(new Set());
 
-  // URL del WebSocket
+  // URL del WebSocket con detección automática HTTPS/WSS
   const getWebSocketUrl = useCallback(() => {
-    const baseUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001';
-    return `${baseUrl}/api/v1/notifications/websocket`;
+    if (process.env.NEXT_PUBLIC_WS_URL) {
+      return `${process.env.NEXT_PUBLIC_WS_URL}/api/v1/notifications/websocket`;
+    }
+
+    // Detección automática del protocolo
+    if (typeof window !== 'undefined') {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.host;
+      return `${protocol}//${host}/api/v1/notifications/websocket`;
+    }
+
+    // Fallback para SSR
+    return 'ws://localhost:3001/api/v1/notifications/websocket';
   }, []);
 
   // Enviar mensaje WebSocket
@@ -124,8 +138,25 @@ export function useTelemedicineWebSocket(
       const ws = new WebSocket(getWebSocketUrl());
       wsRef.current = ws;
 
+      // Configurar timeout de conexión
+      connectionTimeoutRef.current = setTimeout(() => {
+        if (ws.readyState === WebSocket.CONNECTING) {
+          ws.close();
+          setError(`Timeout de conexión WebSocket (${connectionTimeout}ms)`);
+          setConnectionStatus('error');
+        }
+      }, connectionTimeout);
+
       ws.onopen = () => {
-        console.log('🔌 WebSocket conectado para telemedicina');
+        // Limpiar timeout de conexión
+        if (connectionTimeoutRef.current) {
+          clearTimeout(connectionTimeoutRef.current);
+          connectionTimeoutRef.current = null;
+        }
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔌 WebSocket conectado para telemedicina');
+        }
         setIsConnected(true);
         setConnectionStatus('connected');
         setError(null);
@@ -170,14 +201,21 @@ export function useTelemedicineWebSocket(
             return;
           }
 
-          console.log('📨 Mensaje WebSocket recibido:', message);
+          // Solo mostrar tipo de mensaje en producción (HIPAA compliance)
+          if (process.env.NODE_ENV === 'development') {
+            console.log('📨 Mensaje WebSocket recibido:', message);
+          } else {
+            console.log('📨 WebSocket message type:', message.type, 'sessionId:', message.sessionId ? 'present' : 'none');
+          }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
         }
       };
 
       ws.onclose = (event) => {
-        console.log('🔌 WebSocket desconectado:', event.code, event.reason);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔌 WebSocket desconectado:', event.code, event.reason);
+        }
         setIsConnected(false);
         setConnectionStatus('disconnected');
         clearHeartbeat();
@@ -185,7 +223,9 @@ export function useTelemedicineWebSocket(
         // Intentar reconectar si no fue un cierre intencional
         if (event.code !== 1000 && reconnectCountRef.current < reconnectAttempts) {
           const delay = reconnectDelay * Math.pow(2, reconnectCountRef.current);
-          console.log(`🔄 Reintentando conexión en ${delay}ms (intento ${reconnectCountRef.current + 1}/${reconnectAttempts})`);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`🔄 Reintentando conexión en ${delay}ms (intento ${reconnectCountRef.current + 1}/${reconnectAttempts})`);
+          }
           
           reconnectTimeoutRef.current = setTimeout(() => {
             reconnectCountRef.current++;
@@ -215,6 +255,11 @@ export function useTelemedicineWebSocket(
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = null;
+    }
+
+    if (connectionTimeoutRef.current) {
+      clearTimeout(connectionTimeoutRef.current);
+      connectionTimeoutRef.current = null;
     }
 
     clearHeartbeat();

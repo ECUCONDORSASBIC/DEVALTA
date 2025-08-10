@@ -1,7 +1,7 @@
 // 🎥 Hook Centralizado para WebRTC Telemedicina
 // Usado por doctors y patients apps - Sistema completo y seguro
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 export interface WebRTCConfig {
@@ -14,6 +14,10 @@ export interface WebRTCConfig {
   enableVideo?: boolean;
   enableScreenShare?: boolean;
   enableRecording?: boolean;
+  // Opciones Socket.IO (opcionales)
+  socketPath?: string; // por defecto '/socket.io'
+  socketTransports?: Array<'websocket' | 'polling'>; // por defecto ['websocket']
+  withCredentials?: boolean; // por defecto true
 }
 
 export interface ConnectionStats {
@@ -153,8 +157,17 @@ export function useWebRTC(config: WebRTCConfig) {
       console.log('🚀 Iniciando conexión WebRTC...');
       setState(prev => ({ ...prev, isConnecting: true, error: null }));
 
-      // Conectar Socket.IO
-      const socket = io(config.serverUrl);
+      // Conectar Socket.IO con opciones robustas
+      const socket = io(config.serverUrl, {
+        path: config.socketPath ?? '/socket.io',
+        transports: config.socketTransports ?? ['websocket'],
+        withCredentials: config.withCredentials ?? true,
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 10000,
+      });
       socketRef.current = socket;
 
       socket.on('connect', async () => {
@@ -235,13 +248,24 @@ export function useWebRTC(config: WebRTCConfig) {
         }));
       });
 
-      socket.on('connect_error', (error) => {
+      socket.on('connect_error', (error: any) => {
         console.error('❌ Error de conexión Socket.IO:', error);
+        const msg = error?.message || error?.description || error?.type || 'Error de conexión desconocido';
         setState(prev => ({
           ...prev,
-          error: `Error de conexión: ${error.message}`,
+          error: `Error de WebSocket: ${msg}`,
           isConnecting: false
         }));
+      });
+
+      socket.on('error', (error: any) => {
+        const msg = error?.message || error?.type || String(error);
+        console.error('❌ Error de WebSocket:', msg);
+        setState(prev => ({ ...prev, error: `Error de WebSocket: ${msg}` }));
+      });
+
+      socket.io.on('reconnect_attempt', (attempt: number) => {
+        console.log('♻️  Reintentando conexión WebSocket. Intento:', attempt);
       });
 
     } catch (error) {
