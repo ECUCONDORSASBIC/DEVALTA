@@ -3,10 +3,10 @@
  * Maneja autenticación, cookies httpOnly y redirección por roles
  */
 
-import { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from '../constants/auth-cookies';
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from '../constants/auth-cookies';
 import { getAuthAdmin } from '../lib/firebase-admin';
 
 // Esquemas de validación

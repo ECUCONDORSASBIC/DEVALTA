@@ -1,5 +1,5 @@
-import type { NextRequest } from 'next/server'
 import { createSSOMiddleware } from '@altamedica/auth'
+import type { NextRequest } from 'next/server'
 
 // SSO centralizado para Patients
 const sso = createSSOMiddleware({

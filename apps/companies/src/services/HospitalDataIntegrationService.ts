@@ -5,9 +5,9 @@
 
 import { addDoc, collection, getFirebaseFirestore, limit, onSnapshot, orderBy, query } from '@altamedica/firebase/client';
 import type {
-  DataSource,
-  SaturationLevel,
-  ValidationResult
+    DataSource,
+    SaturationLevel,
+    ValidationResult
 } from '@altamedica/types';
 import { HospitalAPIClient } from './integrations/HospitalAPIService';
 import { IoTSensorService } from './integrations/IoTSensorService';

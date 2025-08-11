@@ -6,7 +6,7 @@ export const authVersion = '1.1.0';
 // ============== SERVICIOS ==============
 // Servicio de autenticación consolidado (migrado desde auth-service)
 export {
-    AuthService, PublicUserRole, UserRole, getAuthService
+    AuthService, getAuthService, PublicUserRole, UserRole
 } from './services/AuthService';
 
 // Tipos principales
@@ -44,13 +44,19 @@ export { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from './constants/cookies';
 
 // ============== MIDDLEWARE ==============
 // SSO Middleware para Next.js apps
-export { 
-  createAuthMiddleware,
-  authGuard 
+export {
+    authGuard, createAuthMiddleware
 } from './middleware/auth-guard';
-export { 
-  createSSOMiddleware, 
-  ssoMiddlewareConfig,
-  type SSOConfig 
+export {
+    createSSOMiddleware,
+    ssoMiddlewareConfig,
+    type SSOConfig
 } from './middleware/sso-middleware';
+
+// ============== COMPONENTES ==============
+// Componentes unificados de autenticación
+export {
+    AuthGuard, ProtectedRoute,
+    PublicRoute, RouteGuard, type AuthGuardProps
+} from './components';
 

@@ -1,6 +1,6 @@
+import { createSSOMiddleware } from '@altamedica/auth';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { createSSOMiddleware } from '@altamedica/auth';
 
 /**
  * 🏥 AltaMedica Web App SSO Middleware

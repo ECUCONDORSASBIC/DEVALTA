@@ -1,17 +1,23 @@
-// 🏥 HOOK ESPECIALIZADO DE PACIENTES - ALTAMEDICA  
-// Gestión granular de datos de pacientes con estado optimizado
-// MIGRADO COMPLETAMENTE AL SERVICIO CENTRALIZADO @altamedica/patient-services
+// 🚀 MIGRATED: Hook migrado para usar @altamedica/api-client
+// Mantiene funcionalidad especializada de patients app
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { patientsService } from '../services/patients-service-new';
-import type { 
-  Patient, 
-  PatientsResponse,
-  CreatePatientRequest,
-  UpdatePatientRequest
-} from '../services/patients-service-new';
+import { 
+  usePatients as usePatientsBase,
+  usePatient,
+  useCreatePatient,
+  useUpdatePatient,
+  useDeletePatient,
+  usePatientAppointments,
+  usePatientMedicalHistory,
+  usePatientPrescriptions,
+  usePatientDocuments,
+  useUploadPatientDocument
+} from '@altamedica/api-client/hooks';
 
-// 📝 TIPOS ESPECIALIZADOS PARA EL HOOK
+import { useState, useCallback, useEffect } from 'react';
+import type { Patient } from '@altamedica/types';
+
+// 📝 TIPOS ESPECIALIZADOS (mantenidos para compatibilidad)
 export interface UsePatientState {
   patients: Patient[];
   currentPatient: Patient | null;
@@ -25,256 +31,174 @@ export interface UsePatientState {
     hasNextPage: boolean;
     hasPrevPage: boolean;
   } | null;
-  lastFetch: string | null;
+  lastSync: string | null;
 }
 
 export interface UsePatientActions {
-  searchPatients: (params?: PatientSearchParams) => Promise<void>;
+  searchPatients: (filters?: any) => Promise<void>;
   getPatientById: (id: string) => Promise<Patient | null>;
+  createPatient: (data: Partial<Patient>) => Promise<Patient | null>;
   updatePatient: (id: string, data: Partial<Patient>) => Promise<Patient | null>;
+  deletePatient: (id: string) => Promise<boolean>;
   refreshPatients: () => Promise<void>;
   clearError: () => void;
   resetState: () => void;
-  setCurrentPatient: (patient: Patient | null) => void;
 }
 
 export interface UsePatientOptions {
+  doctorId?: string;
   initialFetch?: boolean;
-  autoRefreshInterval?: number;
-  cacheTimeout?: number;
+  autoSync?: boolean;
+  syncInterval?: number;
   defaultLimit?: number;
 }
 
-// 🎯 HOOK PRINCIPAL DE PACIENTES
-export function usePatients(options: UsePatientOptions = {}): UsePatientState & UsePatientActions {
+// 🎯 HOOK ESPECIALIZADO PARA PATIENTS APP
+export function usePatients(options: UsePatientOptions = {}) {
   const {
-    initialFetch = false,
-    autoRefreshInterval = 0,
-    cacheTimeout = 300000, // 5 minutos
+    doctorId,
+    initialFetch = true,
+    autoSync = false,
+    syncInterval = 300000, // 5 minutos por defecto
     defaultLimit = 10
   } = options;
 
-  // 📊 ESTADO PRINCIPAL
-  const [state, setState] = useState<UsePatientState>({
-    patients: [],
-    currentPatient: null,
-    loading: false,
-    error: null,
-    pagination: null,
-    lastFetch: null
+  // Usar hooks centralizados
+  const baseQuery = usePatientsBase({
+    doctorId,
+    limit: defaultLimit
   });
 
-  // 🔄 PARÁMETROS DE BÚSQUEDA ACTUALES
-  const [currentParams, setCurrentParams] = useState<PatientSearchParams>({
-    limit: defaultLimit,
-    page: 1
-  });
+  const createMutation = useCreatePatient();
+  const updateMutation = useUpdatePatient();
+  const deleteMutation = useDeletePatient();
+  const getPatientQuery = usePatient;
 
-  // 🔍 BÚSQUEDA DE PACIENTES
-  const searchPatients = useCallback(async (params: PatientSearchParams = {}) => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      
-      const searchParams = { ...currentParams, ...params };
-      setCurrentParams(searchParams);
+  // Estado local adicional
+  const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);
+  const [lastSync, setLastSync] = useState<string | null>(null);
 
-      const response: PaginatedResponse<Patient> = await medicalService.getPatients(searchParams);
-      
-      setState(prev => ({
-        ...prev,
-        patients: response.data,
-        pagination: {
-          page: searchParams.page || 1,
-          limit: searchParams.limit || defaultLimit,
-          total: response.total,
-          totalPages: Math.ceil(response.total / (searchParams.limit || defaultLimit)),
-          hasNextPage: response.hasNextPage,
-          hasPrevPage: response.hasPrevPage
-        },
-        loading: false,
-        lastFetch: new Date().toISOString()
-      }));
+  // Acciones wrapper
+  const searchPatients = useCallback(async (filters?: any) => {
+    await baseQuery.refetch();
+    setLastSync(new Date().toISOString());
+  }, [baseQuery]);
 
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Error al buscar pacientes'
-      }));
+  const getPatientById = useCallback(async (id: string) => {
+    const result = await getPatientQuery(id);
+    if (result.data) {
+      setCurrentPatient(result.data);
+      return result.data;
     }
-  }, [currentParams, defaultLimit]);
-
-  // 👤 OBTENER PACIENTE POR ID
-  const getPatientById = useCallback(async (id: string): Promise<Patient | null> => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      
-      const patient = await medicalService.getPatientById(id);
-      
-      setState(prev => ({
-        ...prev,
-        currentPatient: patient,
-        loading: false
-      }));
-
-      return patient;
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Error al obtener paciente'
-      }));
-      return null;
-    }
+    return null;
   }, []);
 
-  // ✏️ ACTUALIZAR PACIENTE
-  const updatePatient = useCallback(async (id: string, data: Partial<Patient>): Promise<Patient | null> => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      
-      const updatedPatient = await medicalService.updatePatient(id, data);
-      
-      setState(prev => ({
-        ...prev,
-        currentPatient: prev.currentPatient?.id === id ? updatedPatient : prev.currentPatient,
-        patients: prev.patients.map(p => p.id === id ? updatedPatient : p),
-        loading: false
-      }));
-
-      return updatedPatient;
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Error al actualizar paciente'
-      }));
-      return null;
+  const createPatient = useCallback(async (data: Partial<Patient>) => {
+    const result = await createMutation.mutateAsync(data);
+    if (result) {
+      await baseQuery.refetch();
+      return result;
     }
-  }, []);
+    return null;
+  }, [createMutation, baseQuery]);
 
-  // 🔄 REFRESCAR PACIENTES
+  const updatePatient = useCallback(async (id: string, data: Partial<Patient>) => {
+    const result = await updateMutation.mutateAsync({ id, data });
+    if (result) {
+      await baseQuery.refetch();
+      if (currentPatient?.id === id) {
+        setCurrentPatient(result);
+      }
+      return result;
+    }
+    return null;
+  }, [updateMutation, baseQuery, currentPatient]);
+
+  const deletePatient = useCallback(async (id: string) => {
+    try {
+      await deleteMutation.mutateAsync(id);
+      await baseQuery.refetch();
+      if (currentPatient?.id === id) {
+        setCurrentPatient(null);
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  }, [deleteMutation, baseQuery, currentPatient]);
+
   const refreshPatients = useCallback(async () => {
-    await searchPatients(currentParams);
-  }, [searchPatients, currentParams]);
+    await baseQuery.refetch();
+    setLastSync(new Date().toISOString());
+  }, [baseQuery]);
 
-  // 🧹 LIMPIAR ERROR
   const clearError = useCallback(() => {
-    setState(prev => ({ ...prev, error: null }));
+    // Los hooks de TanStack Query manejan errores internamente
   }, []);
 
-  // 🔄 RESETEAR ESTADO
   const resetState = useCallback(() => {
-    setState({
-      patients: [],
-      currentPatient: null,
-      loading: false,
-      error: null,
-      pagination: null,
-      lastFetch: null
-    });
-    setCurrentParams({ limit: defaultLimit, page: 1 });
-  }, [defaultLimit]);
-
-  // 👤 ESTABLECER PACIENTE ACTUAL
-  const setCurrentPatient = useCallback((patient: Patient | null) => {
-    setState(prev => ({ ...prev, currentPatient: patient }));
+    setCurrentPatient(null);
+    setLastSync(null);
   }, []);
 
-  // 🤖 AUTO-REFRESH (SI ESTÁ HABILITADO)
+  // Auto-sync si está habilitado
   useEffect(() => {
-    if (autoRefreshInterval > 0 && state.patients.length > 0) {
-      const interval = setInterval(refreshPatients, autoRefreshInterval);
-      return () => clearInterval(interval);
-    }
-  }, [autoRefreshInterval, refreshPatients, state.patients.length]);
+    if (!autoSync) return;
 
-  // 🚀 FETCH INICIAL (SI ESTÁ HABILITADO)
+    const interval = setInterval(() => {
+      refreshPatients();
+    }, syncInterval);
+
+    return () => clearInterval(interval);
+  }, [autoSync, syncInterval, refreshPatients]);
+
+  // Fetch inicial
   useEffect(() => {
     if (initialFetch) {
-      searchPatients();
+      refreshPatients();
     }
-  }, [initialFetch]); // Solo en el primer render
+  }, [initialFetch]);
 
-  // 📊 DATOS MEMOIZADOS PARA OPTIMIZACIÓN
-  const memoizedState = useMemo(() => ({
-    ...state,
-    hasPatients: state.patients.length > 0,
-    isFirstPage: state.pagination?.page === 1,
-    isLastPage: !state.pagination?.hasNextPage,
-    isCacheValid: state.lastFetch ? 
-      (Date.now() - new Date(state.lastFetch).getTime()) < cacheTimeout : 
-      false
-  }), [state, cacheTimeout]);
+  // Mapear datos al formato esperado
+  const state: UsePatientState = {
+    patients: baseQuery.data?.patients || [],
+    currentPatient,
+    loading: baseQuery.isLoading || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
+    error: baseQuery.error?.message || createMutation.error?.message || updateMutation.error?.message || deleteMutation.error?.message || null,
+    pagination: baseQuery.data ? {
+      page: baseQuery.data.page || 1,
+      limit: baseQuery.data.limit || defaultLimit,
+      total: baseQuery.data.total || 0,
+      totalPages: baseQuery.data.totalPages || 1,
+      hasNextPage: baseQuery.data.hasNextPage || false,
+      hasPrevPage: baseQuery.data.hasPrevPage || false
+    } : null,
+    lastSync
+  };
 
-  return {
-    ...memoizedState,
+  const actions: UsePatientActions = {
     searchPatients,
     getPatientById,
+    createPatient,
     updatePatient,
+    deletePatient,
     refreshPatients,
     clearError,
-    resetState,
-    setCurrentPatient
+    resetState
   };
-}
-
-// 🎯 HOOK ESPECIALIZADO PARA PACIENTE ÚNICO
-export function usePatient(patientId: string | null) {
-  const [patient, setPatient] = useState<Patient | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchPatient = useCallback(async (id: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const fetchedPatient = await medicalService.getPatientById(id);
-      setPatient(fetchedPatient);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al obtener paciente');
-      setPatient(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (patientId) {
-      fetchPatient(patientId);
-    } else {
-      setPatient(null);
-      setError(null);
-    }
-  }, [patientId, fetchPatient]);
-
-  const updatePatient = useCallback(async (data: Partial<Patient>) => {
-    if (!patientId) return null;
-
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const updated = await medicalService.updatePatient(patientId, data);
-      setPatient(updated);
-      return updated;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar paciente');
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, [patientId]);
 
   return {
-    patient,
-    loading,
-    error,
-    updatePatient,
-    refreshPatient: () => patientId ? fetchPatient(patientId) : Promise.resolve(),
-    clearError: () => setError(null)
+    ...state,
+    ...actions
   };
 }
 
-export default usePatients;
+// Re-exportar hooks adicionales para conveniencia
+export {
+  usePatient,
+  usePatientAppointments,
+  usePatientMedicalHistory,
+  usePatientPrescriptions,
+  usePatientDocuments,
+  useUploadPatientDocument
+} from '@altamedica/api-client/hooks';

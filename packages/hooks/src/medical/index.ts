@@ -4,32 +4,32 @@
  * @description Hooks para manejo de datos médicos: pacientes, citas, prescripciones, etc.
  */
 
-// TODO: Re-enable these exports once @altamedica/api-client/hooks is available
-// // Hooks principales de pacientes - MIGRADO A API-CLIENT ROBUSTO
-// export { 
-//   usePatients, 
-//   usePatient,
-//   useCreatePatient,
-//   useUpdatePatient,
-//   useDeletePatient,
-//   usePatientAppointments,
-//   usePatientMedicalHistory,
-//   usePatientPrescriptions,
-//   usePatientDocuments,
-//   useUploadPatientDocument
-// } from '@altamedica/api-client/hooks';
-// // Re-exportar useAppointments robusto desde api-client
-// export { 
-//   useAppointments, 
-//   useAppointment, 
-//   useCreateAppointment, 
-//   useUpdateAppointment,
-//   useCancelAppointment,
-//   useConfirmAppointment,
-//   useRescheduleAppointment,
-//   useAvailableSlots,
-//   useCompleteAppointment
-// } from '@altamedica/api-client/hooks';
+// ✅ Hooks principales de pacientes - MIGRADO A API-CLIENT ROBUSTO
+export { 
+  usePatients, 
+  usePatient,
+  useCreatePatient,
+  useUpdatePatient,
+  useDeletePatient,
+  usePatientAppointments,
+  usePatientMedicalHistory,
+  usePatientPrescriptions,
+  usePatientDocuments,
+  useUploadPatientDocument
+} from '@altamedica/api-client/hooks';
+
+// ✅ Re-exportar useAppointments robusto desde api-client
+export { 
+  useAppointments, 
+  useAppointment, 
+  useCreateAppointment, 
+  useUpdateAppointment,
+  useCancelAppointment,
+  useConfirmAppointment,
+  useRescheduleAppointment,
+  useAvailableSlots,
+  useCompleteAppointment
+} from '@altamedica/api-client/hooks';
 export { usePrescriptions, usePrescription } from './usePrescriptions';
 export { useMedicalRecords, useMedicalRecord } from './useMedicalRecords';
 export { useVitalSigns, useVitalSignsMonitoring } from './useVitalSigns';

@@ -16,15 +16,20 @@ module.exports = {
 ```
 
 Notas
+
 - Evita duplicación de headers en cada app.
 - CSP cambia en dev para habilitar HMR.
 - Si tu herramienta no resuelve workspaces durante build, puedes usar fallback relativo:
 
 ```js
-let createNextConfig; 
-try { ({ createNextConfig } = require('@altamedica/config-next')); }
-catch { ({ createNextConfig } = require('../../packages/config-next/dist')); }
+let createNextConfig;
+try {
+  ({ createNextConfig } = require('@altamedica/config-next'));
+} catch {
+  ({ createNextConfig } = require('../../packages/config-next/dist'));
+}
 ```
 
 Mantenimiento
+
 - Cualquier cambio en contratos de headers requiere actualizar esta librería y reconstruir.

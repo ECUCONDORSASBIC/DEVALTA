@@ -1,14 +1,19 @@
 # @altamedica/e2e-tests
 
-E2E smoke tests (Playwright) for API and optional UI.
+E2E smoke tests (Playwright) para API y UI de la plataforma.
 
-- API health tests hit http://localhost:3001/api/v1/health.\*
-- UI test is optional; set E2E_FRONTEND=1 and ensure the web app runs at BASE_URL (default http://localhost:3000).
+- API health pega a http://localhost:3001/api/v1/health.*
+- UI smoke opcional para web-app (3000).
 
-## Run
+## Requisitos
 
-pnpm --filter @altamedica/e2e-tests test
+- Servicios locales levantados (mínimo api-server y web-app)
+- Playwright instalado: `pnpm --filter @altamedica/e2e-tests exec playwright install`
 
-Optionally install browsers first:
+## Ejecutar
 
-pnpm --filter @altamedica/e2e-tests exec playwright install
+`pnpm --filter @altamedica/e2e-tests test`
+
+Variables opcionales:
+- `API_BASE_URL` (default http://localhost:3001)
+- `WEB_BASE_URL` (default http://localhost:3000)

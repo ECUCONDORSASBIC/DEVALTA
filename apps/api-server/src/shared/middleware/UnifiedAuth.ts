@@ -4,8 +4,8 @@
  * Versión: 2.0.0 - Refactorizado para arquitectura orientada a dominios
  */
 
-import { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from '../../constants/auth-cookies';
 import { NextRequest, NextResponse } from 'next/server';
+import { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from '../../constants/auth-cookies';
 import { adminAuth, adminDb } from '../lib/firebase-admin';
 
 export interface AuthUser {

@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from "@altamedica/auth";
+// 🚀 MIGRATED: Este archivo ahora usa el AuthGuard unificado de @altamedica/auth
+// Mantiene compatibilidad con el código existente de web-app
+
+import { AuthGuard as UnifiedAuthGuard } from '@altamedica/auth';
 import { LoadingScreen } from '@/components/common/LoadingScreen';
-import { getDashboardUrl } from '../config/app-urls';
+import { UserRole } from '@altamedica/auth';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -14,6 +15,14 @@ interface AuthGuardProps {
   fallback?: React.ReactNode;
 }
 
+// Mapeo de roles string a UserRole enum
+const roleMap: Record<string, UserRole> = {
+  'patient': UserRole.PATIENT,
+  'doctor': UserRole.DOCTOR,
+  'company': UserRole.COMPANY,
+  'admin': UserRole.ADMIN
+};
+
 const AuthGuard: React.FC<AuthGuardProps> = ({
   children,
   requireAuth = true,
@@ -21,56 +30,21 @@ const AuthGuard: React.FC<AuthGuardProps> = ({
   redirectTo = '/auth/login',
   fallback
 }) => {
-  const { user, userProfile, loading } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
+  // Convertir requireRole string a UserRole enum si existe
+  const mappedRole = requireRole ? roleMap[requireRole] : undefined;
 
-  useEffect(() => {
-    if (loading) return;
-
-    // Si requiere autenticación y no hay usuario
-    if (requireAuth && !user) {
-      // Guardar la ruta intentada para redirigir después del login
-      sessionStorage.setItem('redirectAfterLogin', pathname);
-      router.push(redirectTo);
-      return;
-    }
-
-    // Si requiere un rol específico
-    if (requireRole && userProfile) {
-      if (userProfile.role !== requireRole) {
-        // Redirigir según el rol del usuario
-        const userRedirect = userProfile.role === 'patient' 
-          ? '/dashboard'
-          : getDashboardUrl(userProfile.role as any);
-        
-        // Si es una URL externa, usar window.location
-        if (userRedirect.startsWith('http')) {
-          window.location.href = userRedirect;
-        } else {
-          router.push(userRedirect);
-        }
-      }
-    }
-  }, [user, userProfile, loading, requireAuth, requireRole, router, pathname, redirectTo]);
-
-  // Mostrar loading mientras se verifica la autenticación
-  if (loading) {
-    return fallback || <LoadingScreen />;
-  }
-
-  // Si requiere auth y no hay usuario, no renderizar nada (se está redirigiendo)
-  if (requireAuth && !user) {
-    return fallback || null;
-  }
-
-  // Si requiere un rol específico y no coincide, no renderizar
-  if (requireRole && userProfile && userProfile.role !== requireRole) {
-    return fallback || null;
-  }
-
-  // Todo OK, renderizar children
-  return <>{children}</>;
+  return (
+    <UnifiedAuthGuard
+      requireAuth={requireAuth}
+      requireRole={mappedRole}
+      fallbackRedirect={redirectTo}
+      loadingComponent={fallback || <LoadingScreen />}
+      checkSSO={true} // Habilitar verificación SSO
+      debugMode={process.env.NODE_ENV === 'development'}
+    >
+      {children}
+    </UnifiedAuthGuard>
+  );
 };
 
 export default AuthGuard;

@@ -479,7 +479,18 @@ pnpm start:medical    # Agentes médicos
 
 # Testing
 pnpm test:collaborative    # Tests colaborativos
-pnpm test:patient-monitoring # Tests de monitoreo
+E2E (Playwright)
+
+- Paquete: `packages/e2e-tests`
+- Instalar navegadores: `pnpm --filter @altamedica/e2e-tests exec playwright install`
+- Ejecutar smoke: `pnpm --filter @altamedica/e2e-tests test`
+
+Variables (opcionales):
+- `API_BASE_URL` (default http://localhost:3001)
+- `WEB_BASE_URL` (default http://localhost:3000)
+- `PATIENTS_BASE_URL` (default http://localhost:3003)
+- `DOCTORS_BASE_URL` (default http://localhost:3002)
+- `COMPANIES_BASE_URL` (default http://localhost:3004)
 ```
 
 ## 📖 Documentación Adicional

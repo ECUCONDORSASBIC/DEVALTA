@@ -1,5 +1,5 @@
-import type { NextRequest } from 'next/server'
 import { createSSOMiddleware } from '@altamedica/auth'
+import type { NextRequest } from 'next/server'
 
 // SSO centralizado para Companies (rol opcional: 'company-admin' / 'company-user')
 const sso = createSSOMiddleware({
@@ -18,3 +18,4 @@ export async function middleware(request: NextRequest) {
 }
 
 export { ssoMiddlewareConfig as config } from '@altamedica/auth'
+

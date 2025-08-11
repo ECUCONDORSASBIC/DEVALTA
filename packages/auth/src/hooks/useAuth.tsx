@@ -81,6 +81,7 @@ interface AuthContextValue extends AuthState {
   isCompanyUser: () => boolean;
   canAccessTelemedicine: () => boolean;
   hasCompletedProfile: () => boolean;
+  checkSession: () => Promise<boolean>;
   
   // Métodos de navegación
   redirectToRole: () => void;
@@ -349,6 +350,34 @@ export function AuthProvider({
     return authState.user?.profileComplete === true;
   }, [authState.user]);
 
+  // Verificar sesión SSO
+  const checkSession = useCallback(async (): Promise<boolean> => {
+    try {
+      // Verificar si hay usuario en el estado actual
+      if (authState.user && authState.isAuthenticated) {
+        return true;
+      }
+
+      // Intentar obtener el usuario actual del servicio
+      const user = await authService.getCurrentUser();
+      
+      if (user) {
+        setAuthState({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null
+        });
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('[useAuth] Error verificando sesión:', error);
+      return false;
+    }
+  }, [authState, authService]);
+
   // Navegación
   const redirectToRole = useCallback(() => {
     if (authState.user?.role) {
@@ -383,6 +412,7 @@ export function AuthProvider({
     isCompanyUser,
     canAccessTelemedicine,
     hasCompletedProfile,
+    checkSession,
     redirectToRole,
     redirectToLogin
   };
