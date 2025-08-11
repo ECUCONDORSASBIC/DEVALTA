@@ -1,7 +1,11 @@
 'use client'
-// @ts-nocheck
-import React from 'react'
-export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+
+type ErrorProps = {
+  error: Error
+  reset: () => void
+}
+
+export default function Error({ error, reset }: ErrorProps) {
   return (
     <div className="p-6 text-center">
       <h2 className="text-xl font-semibold mb-4">Algo salió mal</h2>

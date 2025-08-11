@@ -10,8 +10,8 @@
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+  "lint": "eslint . --ext .ts,.tsx,.js,.jsx --no-error-on-unmatched-pattern",
+  "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix --no-error-on-unmatched-pattern",
     "playwright:install": "playwright install",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf .next && rm -rf node_modules/.cache",
@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@altamedica/auth": "workspace:*",
+  "@altamedica/config-next": "workspace:*",
   "@altamedica/hooks": "workspace:*",
     "@altamedica/firebase-config": "workspace:*",
     "@altamedica/shared": "workspace:*",
@@ -81,6 +82,7 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
+  "@altamedica/eslint-config": "workspace:*",
     "@eslint/eslintrc": "^3.3.1",
     "@playwright/test": "^1.49.1",
     "@types/node": "^20.19.9",

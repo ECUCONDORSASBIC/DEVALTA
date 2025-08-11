@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from "@altamedica/auth";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface MarketplaceNotification {
   id: string;
@@ -60,7 +60,94 @@ export function useMarketplaceNotifications(): UseMarketplaceNotificationsReturn
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
 
-  // Conectar al WebSocket
+  // Obtener notificaciones del marketplace (definir primero para evitar TDZ)
+  const refreshNotifications = useCallback(async () => {
+    if (!user?.id) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `/api/v1/marketplace/notifications?userId=${user.id}&limit=50`,
+        {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setNotifications(result.data.notifications || []);
+          setUnreadCount(result.data.unreadCount || 0);
+        }
+      } else {
+        throw new Error('Failed to fetch notifications');
+      }
+    } catch (error) {
+      console.error('Error fetching marketplace notifications:', error);
+      setError('Failed to load notifications');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.id, user?.token]);
+
+  // Manejar mensajes del WebSocket (depende de refreshNotifications)
+  const handleWebSocketMessage = useCallback((data: any) => {
+    switch (data.type) {
+      case 'AUTHENTICATED':
+        console.log('WebSocket authenticated');
+        refreshNotifications();
+        break;
+
+      case 'NEW_NOTIFICATION':
+        if (data.notification && data.notification.data?.marketplace) {
+          setNotifications(prev => [data.notification, ...prev]);
+          setUnreadCount(prev => prev + 1);
+          
+          // Mostrar notificación del navegador si está permitido
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(data.notification.title, {
+              body: data.notification.message,
+              icon: '/icons/marketplace-notification.png',
+              badge: '/icons/badge.png',
+              tag: data.notification.id,
+            });
+          }
+        }
+        break;
+
+      case 'INITIAL_NOTIFICATIONS':
+      case 'NOTIFICATIONS_LIST':
+        if (data.notifications) {
+          const marketplaceNotifications = data.notifications.filter(
+            (n: any) => n.data?.marketplace
+          );
+          setNotifications(marketplaceNotifications);
+          setUnreadCount(data.unreadCount || 0);
+        }
+        break;
+
+      case 'SUBSCRIBED':
+        console.log(`Subscribed to channel: ${data.channel}`);
+        break;
+
+      case 'HEARTBEAT_ACK':
+        // Heartbeat acknowledged
+        break;
+
+      case 'ERROR':
+      case 'AUTH_ERROR':
+        console.error('WebSocket error:', data.error);
+        setError(data.error);
+        break;
+
+      default:
+        console.log('Unknown WebSocket message type:', data.type);
+    }
+  }, [refreshNotifications]);
+
+  // Conectar al WebSocket (depende de handleWebSocketMessage)
   const connect = useCallback(() => {
     if (!user?.token) return;
 
@@ -142,103 +229,7 @@ export function useMarketplaceNotifications(): UseMarketplaceNotificationsReturn
       console.error('Error connecting to WebSocket:', error);
       setError('Failed to connect to notification service');
     }
-  }, [user?.token]);
-
-  // Manejar mensajes del WebSocket
-  const handleWebSocketMessage = useCallback((data: any) => {
-    switch (data.type) {
-      case 'AUTHENTICATED':
-        console.log('WebSocket authenticated');
-        refreshNotifications();
-        break;
-
-      case 'NEW_NOTIFICATION':
-        if (data.notification && data.notification.data?.marketplace) {
-          setNotifications(prev => [data.notification, ...prev]);
-          setUnreadCount(prev => prev + 1);
-          
-          // Mostrar notificación del navegador si está permitido
-          if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification(data.notification.title, {
-              body: data.notification.message,
-              icon: '/icons/marketplace-notification.png',
-              badge: '/icons/badge.png',
-              tag: data.notification.id,
-            });
-          }
-        }
-        break;
-
-      case 'INITIAL_NOTIFICATIONS':
-        if (data.notifications) {
-          const marketplaceNotifications = data.notifications.filter(
-            (n: any) => n.data?.marketplace
-          );
-          setNotifications(marketplaceNotifications);
-          setUnreadCount(data.unreadCount || 0);
-        }
-        break;
-
-      case 'NOTIFICATIONS_LIST':
-        if (data.notifications) {
-          const marketplaceNotifications = data.notifications.filter(
-            (n: any) => n.data?.marketplace
-          );
-          setNotifications(marketplaceNotifications);
-          setUnreadCount(data.unreadCount || 0);
-        }
-        break;
-
-      case 'SUBSCRIBED':
-        console.log(`Subscribed to channel: ${data.channel}`);
-        break;
-
-      case 'HEARTBEAT_ACK':
-        // Heartbeat acknowledged
-        break;
-
-      case 'ERROR':
-      case 'AUTH_ERROR':
-        console.error('WebSocket error:', data.error);
-        setError(data.error);
-        break;
-
-      default:
-        console.log('Unknown WebSocket message type:', data.type);
-    }
-  }, []);
-
-  // Obtener notificaciones del marketplace
-  const refreshNotifications = useCallback(async () => {
-    if (!user?.id) return;
-
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `/api/v1/marketplace/notifications?userId=${user.id}&limit=50`,
-        {
-          headers: {
-            'Authorization': `Bearer ${user.token}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          setNotifications(result.data.notifications || []);
-          setUnreadCount(result.data.unreadCount || 0);
-        }
-      } else {
-        throw new Error('Failed to fetch notifications');
-      }
-    } catch (error) {
-      console.error('Error fetching marketplace notifications:', error);
-      setError('Failed to load notifications');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user?.id, user?.token]);
+  }, [user?.token, handleWebSocketMessage]);
 
   // Marcar notificaciones como leídas
   const markAsRead = useCallback(async (notificationIds: string[]) => {
@@ -360,7 +351,7 @@ export function useMarketplaceNotifications(): UseMarketplaceNotificationsReturn
         clearInterval(heartbeatIntervalRef.current);
       }
     };
-  }, [user?.token, connect]);
+  }, [user?.token, connect, handleWebSocketMessage]);
 
   // Cargar notificaciones iniciales
   useEffect(() => {

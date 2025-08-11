@@ -24,9 +24,9 @@ export type {
  * Esta función será eliminada en la próxima versión
  */
 export function useLegacyAPI() {
-  console.warn(
-    '⚠️ useLegacyAPI está deprecated. Migrar a @altamedica/api-client'
-  );
+  // console.warn(
+  //   '⚠️ useLegacyAPI está deprecated. Migrar a @altamedica/api-client'
+  // );
   
   // Retornar métodos básicos para compatibilidad durante migración
   return {

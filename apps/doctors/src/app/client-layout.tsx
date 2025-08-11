@@ -1,9 +1,7 @@
 'use client';
 
-import { initializeFirebaseSimple } from '@/lib/firebase-simple';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { AuthProvider } from "@altamedica/auth";
-import { firebaseService } from '@altamedica/database';
 import { useEffect, useState } from 'react';
 
 interface ClientLayoutProps {
@@ -16,22 +14,15 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   useEffect(() => {
     const initializeFirebase = async () => {
       try {
-        if (!firebaseService.isReady) {
-          // La configuración ahora viene de @altamedica/database
-          console.log('Inicializando Firebase desde configuración centralizada...');
-        }
-        setFirebaseInitialized(true);
+  // Inicialización real usando el wrapper centralizado
+  console.log('Inicializando Firebase (wrapper centralizado)...');
+  // initializeFirebase maneja validación y emuladores vía envs
+  initializeFirebase();
+  setFirebaseInitialized(true);
       } catch (error) {
-        console.error('Error with main Firebase service, trying simple initialization:', error);
-        // Fallback a método simple
-        try {
-          initializeFirebaseSimple();
-          setFirebaseInitialized(true);
-        } catch (simpleError) {
-          console.error('Error with simple Firebase initialization:', simpleError);
-          // Continuar de todas formas para desarrollo
-          setFirebaseInitialized(true);
-        }
+  console.error('Error inicializando Firebase:', error);
+  // Continuar de todas formas para desarrollo
+  setFirebaseInitialized(true);
       }
     };
     initializeFirebase();

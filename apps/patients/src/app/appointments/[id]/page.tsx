@@ -24,9 +24,9 @@ import {
   CardHeaderCorporate,
   LoadingSpinner
 } from "@altamedica/ui";
-import { useAuth } from "@altamedica/auth';
-import { useMarketplaceJobs, useJobApplications } from '@altamedica/marketplace-hooks';
-import { useTelemedicineUnified } from '@altamedica/telemedicine-core';
+import { useAuth } from "@altamedica/auth";
+// import { useMarketplaceJobs, useJobApplications } from '@altamedica/marketplace-hooks';
+// import { useTelemedicineUnified } from '@altamedica/telemedicine-core';
 
 // Interfaces TypeScript
 interface AppointmentDetail {

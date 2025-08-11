@@ -4,6 +4,7 @@
  * Versión: 2.0.0 - Refactorizado para arquitectura orientada a dominios
  */
 
+import { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from '../../constants/auth-cookies';
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '../lib/firebase-admin';
 
@@ -117,9 +118,9 @@ async function extractAndVerifyToken(request: NextRequest): Promise<AuthUser | n
     // Try different token sources
     let token = request.headers.get('authorization')?.replace('Bearer ', '');
     
-    // Fallback to cookie
+    // Fallback to cookie (standard name with legacy fallback)
     if (!token) {
-      token = request.cookies.get('auth-token')?.value;
+      token = request.cookies.get(AUTH_COOKIES.token)?.value || request.cookies.get(LEGACY_AUTH_COOKIES.token)?.value || request.cookies.get('auth-token')?.value;
     }
     
     if (!token) {
@@ -132,10 +133,14 @@ async function extractAndVerifyToken(request: NextRequest): Promise<AuthUser | n
     }
 
     // Verify Firebase token
+    if (!adminAuth || !adminDb) {
+      console.error('Firebase Admin no inicializado');
+      return null;
+    }
     const decodedToken = await adminAuth.verifyIdToken(token);
     
     // Get user profile from Firestore
-    const userDoc = await adminDb.collection('users').doc(decodedToken.uid).get();
+  const userDoc = await adminDb.collection('users').doc(decodedToken.uid).get();
     
     if (!userDoc.exists) {
       console.error('User profile not found for uid:', decodedToken.uid);

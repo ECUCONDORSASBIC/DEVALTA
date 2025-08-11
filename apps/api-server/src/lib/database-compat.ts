@@ -4,17 +4,14 @@
  * Este archivo proporcionaa un wrapper temporal mientras se migra todo el código
  */
 
-import { 
-  initializeAltaMedicaDatabase, 
-  dbConnection,
-  patientRepository,
-  doctorRepository,
-  appointmentRepository,
-  medicalRecordRepository,
-  type Patient,
-  type Doctor,
-  type Appointment,
-  type MedicalRecord
+import {
+    appointmentRepository,
+    dbConnection,
+    doctorRepository,
+    initializeAltaMedicaDatabase,
+    medicalRecordRepository,
+    patientRepository,
+    type ServiceContext
 } from '@altamedica/database';
 
 // Inicializar la base de datos centralizada
@@ -27,6 +24,14 @@ async function ensureInitialized() {
   }
 }
 
+// ServiceContext por defecto para compat (ajustar si se dispone de contexto real por request)
+function defaultContext(): ServiceContext {
+  return {
+    userId: 'system',
+    userRole: 'admin'
+  };
+}
+
 /**
  * Capa de compatibilidad para patientsDb
  * Mapea las funciones del sistema anterior a los nuevos repositorios
@@ -34,61 +39,40 @@ async function ensureInitialized() {
 export const patientsDb = {
   async create(patientData: any) {
     await ensureInitialized();
-    const result = await patientRepository.create(patientData);
-    if (!result.success) {
-      throw new Error(result.error || 'Error creating patient');
-    }
-    return result.data;
+    return await patientRepository.create(patientData, defaultContext());
   },
 
   async findById(id: string) {
     await ensureInitialized();
-    const result = await patientRepository.findById(id);
-    if (!result.success) {
-      throw new Error(result.error || 'Error finding patient');
-    }
-    return result.data;
+    return await patientRepository.findById(id, defaultContext());
   },
 
   async findByEmail(email: string) {
     await ensureInitialized();
-    const result = await patientRepository.findByEmail(email);
-    if (!result.success) {
-      throw new Error(result.error || 'Error finding patient by email');
-    }
-    return result.data;
+    return await patientRepository.findByEmail(email, defaultContext());
   },
 
   async update(id: string, updateData: any) {
     await ensureInitialized();
-    const result = await patientRepository.update(id, updateData);
-    if (!result.success) {
-      throw new Error(result.error || 'Error updating patient');
-    }
-    return result.data;
+    return await patientRepository.update(id, updateData, defaultContext());
   },
 
   async delete(id: string) {
     await ensureInitialized();
-    const result = await patientRepository.delete(id);
-    if (!result.success) {
-      throw new Error(result.error || 'Error deleting patient');
-    }
-    return true;
+    return await patientRepository.delete(id, defaultContext());
   },
 
   async search(filters: any) {
     await ensureInitialized();
-    // Para búsquedas complejas, usar findMany con filtros básicos
-    const result = await patientRepository.findMany({}, { limit: filters.limit || 20 });
-    if (!result.success) {
-      throw new Error(result.error || 'Error searching patients');
-    }
+    const page = filters.page || 1;
+    const limit = filters.limit || 20;
+    const res = await patientRepository.findMany({ limit }, defaultContext());
     return {
-      patients: result.data || [],
-      total: result.data?.length || 0,
-      page: filters.page || 1,
-      limit: filters.limit || 20
+      patients: res.data,
+      total: res.total,
+      hasMore: res.hasMore,
+      page,
+      limit
     };
   }
 };
@@ -99,38 +83,23 @@ export const patientsDb = {
 export const doctorsDb = {
   async create(doctorData: any) {
     await ensureInitialized();
-    const result = await doctorRepository.create(doctorData);
-    if (!result.success) {
-      throw new Error(result.error || 'Error creating doctor');
-    }
-    return result.data;
+  return await doctorRepository.create(doctorData, defaultContext());
   },
 
   async findById(id: string) {
     await ensureInitialized();
-    const result = await doctorRepository.findById(id);
-    if (!result.success) {
-      throw new Error(result.error || 'Error finding doctor');
-    }
-    return result.data;
+  return await doctorRepository.findById(id, defaultContext());
   },
 
   async findBySpecialty(specialty: string) {
     await ensureInitialized();
-    const result = await doctorRepository.findBySpecialty(specialty);
-    if (!result.success) {
-      throw new Error(result.error || 'Error finding doctors by specialty');
-    }
-    return result.data || [];
+  const res = await doctorRepository.findBySpecialty(specialty, defaultContext());
+  return res.data;
   },
 
   async update(id: string, updateData: any) {
     await ensureInitialized();
-    const result = await doctorRepository.update(id, updateData);
-    if (!result.success) {
-      throw new Error(result.error || 'Error updating doctor');
-    }
-    return result.data;
+  return await doctorRepository.update(id, updateData, defaultContext());
   }
 };
 
@@ -140,47 +109,29 @@ export const doctorsDb = {
 export const appointmentsDb = {
   async create(appointmentData: any) {
     await ensureInitialized();
-    const result = await appointmentRepository.createWithAppointmentNumber(appointmentData);
-    if (!result.success) {
-      throw new Error(result.error || 'Error creating appointment');
-    }
-    return result.data;
+  return await appointmentRepository.createWithAppointmentNumber(appointmentData, defaultContext());
   },
 
   async findById(id: string) {
     await ensureInitialized();
-    const result = await appointmentRepository.findById(id);
-    if (!result.success) {
-      throw new Error(result.error || 'Error finding appointment');
-    }
-    return result.data;
+  return await appointmentRepository.findById(id, defaultContext());
   },
 
   async findByPatient(patientId: string, filters?: any) {
     await ensureInitialized();
-    const result = await appointmentRepository.findByPatient(patientId, filters);
-    if (!result.success) {
-      throw new Error(result.error || 'Error finding appointments by patient');
-    }
-    return result.data || [];
+  const res = await appointmentRepository.findByPatient(patientId, defaultContext(), filters);
+  return res.data;
   },
 
   async findByDoctor(doctorId: string, filters?: any) {
     await ensureInitialized();
-    const result = await appointmentRepository.findByDoctor(doctorId, filters);
-    if (!result.success) {
-      throw new Error(result.error || 'Error finding appointments by doctor');
-    }
-    return result.data || [];
+  const res = await appointmentRepository.findByDoctor(doctorId, defaultContext(), filters);
+  return res.data;
   },
 
   async update(id: string, updateData: any) {
     await ensureInitialized();
-    const result = await appointmentRepository.update(id, updateData);
-    if (!result.success) {
-      throw new Error(result.error || 'Error updating appointment');
-    }
-    return result.data;
+  return await appointmentRepository.update(id, updateData, defaultContext());
   }
 };
 
@@ -190,29 +141,18 @@ export const appointmentsDb = {
 export const medicalRecordsDb = {
   async create(recordData: any) {
     await ensureInitialized();
-    const result = await medicalRecordRepository.create(recordData);
-    if (!result.success) {
-      throw new Error(result.error || 'Error creating medical record');
-    }
-    return result.data;
+  return await medicalRecordRepository.create(recordData, defaultContext());
   },
 
   async findByPatient(patientId: string) {
     await ensureInitialized();
-    const result = await medicalRecordRepository.findByPatientId(patientId);
-    if (!result.success) {
-      throw new Error(result.error || 'Error finding medical records by patient');
-    }
-    return result.data || [];
+  const res = await medicalRecordRepository.findByPatientId(patientId, defaultContext());
+  return res?.data ?? [];
   },
 
   async findById(id: string) {
     await ensureInitialized();
-    const result = await medicalRecordRepository.findById(id);
-    if (!result.success) {
-      throw new Error(result.error || 'Error finding medical record');
-    }
-    return result.data;
+  return await medicalRecordRepository.findById(id, defaultContext());
   }
 };
 

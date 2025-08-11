@@ -45,6 +45,9 @@ export { useTelemedicineUI } from './useTelemedicineUI';
 // Hooks de accesibilidad
 export { useAccessibility } from './useAccessibility';
 
+// Hooks de debugging CSS (migrado desde companies app)
+export { useCSSDebugger } from './useCSSDebugger';
+
 // Tipos principales
 export type {
   DisclosureState,

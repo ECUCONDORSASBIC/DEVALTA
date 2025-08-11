@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import dynamic from 'next/dynamic';
-import "leaflet/dist/leaflet.css";
+import { useMarketplaceNotifications } from "@/hooks/useMarketplaceNotifications";
+import type { LatLngTuple } from "leaflet";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import type { LatLngTuple } from "leaflet";
-import { useMarketplaceNotifications } from "@/hooks/useMarketplaceNotifications";
+import "leaflet/dist/leaflet.css";
+import dynamic from 'next/dynamic';
+import { useCallback, useEffect, useMemo, useRef, useState, type ButtonHTMLAttributes, type ComponentType, type HTMLAttributes, type ReactNode } from "react";
+// Usar tipos compartidos del paquete @altamedica/types
+import type { MarketplaceCompany, MarketplaceDoctor, DoctorService as MedicalService } from '@/contexts/MarketplaceContext';
 
 // Importación dinámica para evitar problemas de SSR con Leaflet
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), {
@@ -21,92 +23,11 @@ const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), 
 const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), {
   ssr: false,
 });
+const Polyline = dynamic(() => import('react-leaflet').then((mod) => mod.Polyline), {
+  ssr: false,
+});
 
-// Tipos para servicios médicos
-interface MedicalService {
-  id: string;
-  title: string;
-  description: string;
-  price: {
-    amount: number;
-    currency: string;
-    type: 'per_session' | 'per_hour' | 'per_consultation' | 'fixed';
-  };
-  deliveryMethod: 'telemedicine' | 'in_person' | 'hybrid';
-  duration: number; // en minutos
-  category: string;
-  isActive: boolean;
-}
-
-// Tipos específicos para el marketplace
-interface MarketplaceDoctor {
-  id: string;
-  name: string;
-  specialties: string[];
-  location: {
-    city: string;
-    country: string;
-    coordinates: LatLngTuple;
-  };
-  rating: number;
-  experience: number;
-  hourlyRate: number;
-  availableForHiring: boolean;
-  responseTime: number;
-  totalHires: number;
-  isUrgentAvailable: boolean;
-  profileImage?: string;
-  isOnline: boolean;
-  lastActive: string;
-  workArrangement: 'remote' | 'hybrid' | 'on_site' | 'flexible';
-  languages: string[];
-  verificationStatus: 'verified' | 'pending' | 'unverified';
-  // Nuevas propiedades para servicios directos
-  offersDirectServices?: boolean;
-  publishedServices?: MedicalService[];
-}
-
-interface MarketplaceCompany {
-  id: string;
-  name: string;
-  industry: string;
-  location: {
-    city: string;
-    country: string;
-    coordinates: LatLngTuple;
-  };
-  rating: number;
-  size: string;
-  activeJobs: number;
-  urgentJobs: number;
-  logo?: string;
-  isActivelyHiring: boolean;
-  averageResponseTime: number;
-  totalHires: number;
-  companyType: 'hospital' | 'clinic' | 'pharmacy' | 'insurance' | 'startup';
-  jobs?: JobOffer[];
-}
-
-interface JobOffer {
-  id: string;
-  title: string;
-  company: string;
-  companyId: string;
-  location: string;
-  specialty: string;
-  type: 'job' | 'contract' | 'consultation' | 'partnership';
-  salary: string;
-  postedDate: string;
-  applications: number;
-  rating: number;
-  urgent?: boolean;
-  description: string;
-  requirements: string[];
-  benefits: string[];
-  experience: string;
-  schedule: string;
-  remote?: boolean;
-}
+// Tipos ya provienen de @altamedica/types
 
 interface MarketplaceMapProps {
   doctors: MarketplaceDoctor[];
@@ -116,6 +37,9 @@ interface MarketplaceMapProps {
   showCompanies?: boolean;
   onDoctorSelect?: (doctor: MarketplaceDoctor) => void;
   onCompanySelect?: (company: MarketplaceCompany) => void;
+  // Permitir selección controlada desde fuera (para sincronizar lista ↔ mapa)
+  selectedDoctorId?: string;
+  selectedCompanyId?: string;
   filters?: {
     specialties?: string[];
     maxHourlyRate?: number;
@@ -125,6 +49,15 @@ interface MarketplaceMapProps {
     verifiedOnly?: boolean;
   };
   mode?: 'hiring' | 'networking' | 'discovery';
+  theme?: 'vscode' | 'slate';
+  enableControls?: boolean;
+  includeDefaultHospital?: boolean;
+  ui?: {
+    Button?: ComponentType<React.ButtonHTMLAttributes<HTMLButtonElement>>;
+    Badge?: ComponentType<{ children?: ReactNode; className?: string; variant?: string } & React.HTMLAttributes<HTMLSpanElement>>;
+  };
+  // Modo demo: muestra ruta y hospital receptor de ejemplo
+  demoMode?: boolean;
 }
 
 // Componente personalizado para controles del mapa
@@ -282,11 +215,19 @@ const CustomMarker: React.FC<{
   type: 'doctor' | 'company';
   isSelected: boolean;
   onClick: () => void;
-}> = ({ position, entity, type, isSelected, onClick }) => {
+  ui?: MarketplaceMapProps['ui'];
+}> = ({ position, entity, type, isSelected, onClick, ui }) => {
+  // Permitir overrides de UI para botones y badges
+  const ButtonEl = (ui?.Button ?? ('button' as unknown)) as ComponentType<ButtonHTMLAttributes<HTMLButtonElement>>;
+  const BadgeEl = (ui?.Badge ?? ((props: any) => <span {...props} />)) as ComponentType<{
+    children?: ReactNode;
+    className?: string;
+    variant?: string;
+  } & HTMLAttributes<HTMLSpanElement>>;
   const getMarkerIcon = useCallback(() => {
     if (typeof window === 'undefined') return null;
     
-    const L = (window as any).L;
+    const L = (window as { L?: any }).L;
     if (!L) return null;
     
     if (type === 'doctor') {
@@ -402,10 +343,10 @@ const CustomMarker: React.FC<{
                                service.price.type === 'per_hour' ? '/hora' : ''}
                             </p>
                           </div>
-                          <span className="text-xs bg-purple-200 text-purple-800 px-1.5 py-0.5 rounded-full">
+                          <BadgeEl className="text-xs bg-purple-200 text-purple-800 px-1.5 py-0.5 rounded-full">
                             {service.deliveryMethod === 'telemedicine' ? '💻' : 
                              service.deliveryMethod === 'in_person' ? '🏥' : '🔄'}
-                          </span>
+                          </BadgeEl>
                         </div>
                       </div>
                     ))}
@@ -426,27 +367,27 @@ const CustomMarker: React.FC<{
                 {/* Mostrar botones diferentes según si ofrece servicios */}
                 {(entity as MarketplaceDoctor).offersDirectServices ? (
                   <>
-                    <button className="w-full px-4 py-2 text-sm text-white transition-colors bg-gradient-to-r from-purple-600 to-purple-700 rounded-md hover:from-purple-700 hover:to-purple-800 font-medium shadow-md">
+                    <ButtonEl className="w-full px-4 py-2 text-sm text-white transition-colors bg-gradient-to-r from-purple-600 to-purple-700 rounded-md hover:from-purple-700 hover:to-purple-800 font-medium shadow-md">
                       💼 Contratar Servicio Directo
-                    </button>
-                    <button 
+                    </ButtonEl>
+                    <ButtonEl 
                       onClick={() => console.log('Iniciar proceso de match')}
                       className="w-full px-4 py-2 text-sm text-blue-600 border border-blue-300 rounded-md hover:bg-blue-50 transition-colors"
                     >
                       🎯 O Contratar como Empleado
-                    </button>
+                    </ButtonEl>
                   </>
                 ) : (
                   <>
-                    <button 
+                    <ButtonEl 
                       onClick={() => console.log('Iniciar proceso de match')}
                       className="w-full px-4 py-2 text-sm text-white transition-colors bg-gradient-to-r from-blue-600 to-blue-700 rounded-md hover:from-blue-700 hover:to-blue-800 font-medium shadow-md"
                     >
                       🎯 Iniciar Proceso de Match
-                    </button>
-                    <button className="w-full px-4 py-2 text-sm text-purple-600 border border-purple-300 rounded-md hover:bg-purple-50 transition-colors">
+                    </ButtonEl>
+                    <ButtonEl className="w-full px-4 py-2 text-sm text-purple-600 border border-purple-300 rounded-md hover:bg-purple-50 transition-colors">
                       💬 Chat Directo
-                    </button>
+                    </ButtonEl>
                   </>
                 )}
               </div>
@@ -489,19 +430,19 @@ const CustomMarker: React.FC<{
               
               {/* Botones de acción para empresas */}
               <div className="pt-3 mt-3 border-t border-gray-100 space-y-2">
-                <button 
+                <ButtonEl 
                   onClick={() => console.log('Ver ofertas disponibles', entity)}
                   className="w-full px-4 py-2 text-sm text-white transition-colors bg-gradient-to-r from-purple-600 to-blue-600 rounded-md hover:from-purple-700 hover:to-blue-700 font-medium shadow-md"
                 >
                   🏥 Ver Ofertas Disponibles
-                </button>
-                <button className="w-full px-4 py-2 text-sm text-blue-600 border border-blue-300 rounded-md hover:bg-blue-50 transition-colors">
+                </ButtonEl>
+                <ButtonEl className="w-full px-4 py-2 text-sm text-blue-600 border border-blue-300 rounded-md hover:bg-blue-50 transition-colors">
                   📊 Perfil de la Empresa
-                </button>
+                </ButtonEl>
                 {(entity as MarketplaceCompany).urgentJobs > 0 && (
-                  <button className="w-full px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors font-medium">
+                  <ButtonEl className="w-full px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors font-medium">
                     🚨 Ver Ofertas Urgentes ({(entity as MarketplaceCompany).urgentJobs})
-                  </button>
+                  </ButtonEl>
                 )}
               </div>
             </div>
@@ -520,10 +461,24 @@ export default function MarketplaceMap({
   showCompanies = true,
   onDoctorSelect,
   onCompanySelect,
+  selectedDoctorId,
+  selectedCompanyId,
   filters,
-  mode = 'hiring'
+  mode = 'hiring',
+  theme = 'vscode',
+  enableControls = false,
+  includeDefaultHospital = true,
+  ui,
+  demoMode = false
 }: MarketplaceMapProps) {
   const mapRef = useRef<any>(null);
+  // Overrides de UI para botones y badges (compatibilidad con @altamedica/ui)
+  const ButtonEl = (ui?.Button ?? ('button' as unknown)) as ComponentType<ButtonHTMLAttributes<HTMLButtonElement>>;
+  const BadgeEl = (ui?.Badge ?? ((props: any) => <span {...props} />)) as ComponentType<{
+    children?: ReactNode;
+    className?: string;
+    variant?: string;
+  } & HTMLAttributes<HTMLSpanElement>>;
   const [mapCenter, setMapCenter] = useState<LatLngTuple>(center || [-34.6037, -58.3816]);
   const [zoom, setZoom] = useState(5);
   const [selectedDoctor, setSelectedDoctor] = useState<MarketplaceDoctor | null>(null);
@@ -542,8 +497,8 @@ export default function MarketplaceMap({
     [32.0, -30.0]     // Northeast bound (México norte, Brasil este)
   ];
 
-  // Regiones predefinidas para navegación rápida
-  const MEDICAL_REGIONS = {
+  // Regiones predefinidas para navegación rápida (memoizado)
+  const MEDICAL_REGIONS = useMemo(() => ({
     argentina: {
       name: 'Argentina',
       center: [-34.6037, -58.3816] as LatLngTuple,
@@ -574,10 +529,10 @@ export default function MarketplaceMap({
       zoom: 7,
       bounds: [[-35.0, -58.4], [-30.1, -53.1]] as [LatLngTuple, LatLngTuple]
     }
-  };
+  }), []);
 
   // Hospital San Vicente - Datos por defecto
-  const hospitalSanVicente: MarketplaceCompany = {
+  const hospitalSanVicente = {
     id: 'hospital-san-vicente-001',
     name: 'Hospital San Vicente',
     industry: 'Salud y Medicina',
@@ -657,18 +612,43 @@ export default function MarketplaceMap({
         remote: false
       }
     ]
-  };
+  } as any;
 
   // Agregar Hospital San Vicente a las empresas si no está ya incluido
-  const companiesWithHospital = companies.find(c => c.id === hospitalSanVicente.id) 
-    ? companies 
-    : [...companies, hospitalSanVicente];
+  const companiesWithHospital = includeDefaultHospital
+    ? (companies.find(c => c.id === hospitalSanVicente.id) ? companies : [...companies, hospitalSanVicente])
+    : companies;
+
+  // Demo: hospital receptor y ruta
+  const demoReceivingHospital = useMemo(() => ({
+    id: 'hospital-receptor-demo',
+    name: 'Hospital Receptor Central',
+    industry: 'Salud y Medicina',
+    location: {
+      city: 'Avellaneda',
+      country: 'Argentina',
+      coordinates: [-34.659, -58.365] as LatLngTuple,
+    },
+    rating: 4.6,
+    size: 'Grande',
+    activeJobs: 2,
+    urgentJobs: 0,
+    isActivelyHiring: true,
+    totalHires: 78,
+    companyType: 'hospital',
+  } as MarketplaceCompany), []);
+
+  const companiesForRender = demoMode
+    ? (companiesWithHospital.find(c => c.id === demoReceivingHospital.id)
+        ? companiesWithHospital
+        : [...companiesWithHospital, demoReceivingHospital])
+    : companiesWithHospital;
 
   // Fix Leaflet default icons for SSR
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const L = (window as any).L;
-      if (L) {
+      const L = (window as { L?: any }).L;
+      if (L && L.Icon?.Default?.prototype) {
         delete L.Icon.Default.prototype._getIconUrl;
         L.Icon.Default.mergeOptions({
           iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
@@ -707,13 +687,27 @@ export default function MarketplaceMap({
   });
 
   // Filtrar empresas según búsqueda (incluyendo Hospital San Vicente)
-  const filteredCompanies = companiesWithHospital.filter(company => {
+  const filteredCompanies = companiesForRender.filter(company => {
     if (searchQuery && !company.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
         !company.location.city.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
     return true;
   });
+
+  // Trayecto demo: entre San Vicente y receptor
+  const demoRoute: LatLngTuple[] | null = useMemo(() => {
+    if (!demoMode) return null;
+    const from = hospitalSanVicente.location.coordinates as LatLngTuple;
+    const to = demoReceivingHospital.location.coordinates as LatLngTuple;
+    return [from, to];
+  }, [demoMode, hospitalSanVicente.location.coordinates, demoReceivingHospital.location.coordinates]);
+
+  const demoAmbulancePos: LatLngTuple | null = useMemo(() => {
+    if (!demoRoute) return null;
+    const [a, b] = demoRoute;
+    return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  }, [demoRoute]);
 
   // Funciones de control del mapa
   const handleZoomIn = useCallback(() => {
@@ -737,7 +731,7 @@ export default function MarketplaceMap({
 
     // TODO: Implementar notificaciones una vez que el tipo esté correcto
     console.log('Doctor profile viewed:', doctor.id);
-  }, [onDoctorSelect, sendNotification]);
+  }, [onDoctorSelect]);
 
   // Funciones de navegación por regiones
   const handleRegionSelect = useCallback((regionKey: string) => {
@@ -759,7 +753,7 @@ export default function MarketplaceMap({
         }, 100);
       }
     }
-  }, []);
+  }, [MEDICAL_REGIONS]);
 
   // Función para enfocar automáticamente en área con más médicos
   const handleFocusOnDoctors = useCallback(() => {
@@ -809,19 +803,64 @@ export default function MarketplaceMap({
     }
   };
 
-  if (typeof window === "undefined") {
-    return (
-      <div className="h-[600px] bg-gradient-to-br from-blue-50 to-sky-100 rounded-lg flex items-center justify-center border border-gray-200">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600 mx-auto"></div>
-          <p className="text-sm font-medium text-gray-700">Cargando mapa del marketplace...</p>
-        </div>
-      </div>
-    );
-  }
+  const isClient = typeof window !== 'undefined';
+
+  // Reflows robustos del mapa al cambiar layout (MapShell emite 'map:invalidate-size')
+  useEffect(() => {
+    const handler = () => {
+      setTimeout(() => {
+        try { (mapRef.current as any)?.invalidateSize?.(); } catch {}
+      }, 50);
+    };
+    window.addEventListener('map:invalidate-size', handler);
+    return () => window.removeEventListener('map:invalidate-size', handler);
+  }, []);
+
+  // Reflow inicial tras el montaje para evitar mapa en blanco por altura/medidas
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try { (mapRef.current as any)?.invalidateSize?.(); } catch {}
+    }, 150);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Sincronizar selección externa con el mapa (centrar y resaltar)
+  useEffect(() => {
+    if (!isClient) return;
+    if (selectedDoctorId) {
+      const doc = filteredDoctors.find(d => d.id === selectedDoctorId);
+      if (doc) {
+        setSelectedDoctor(doc);
+        setMapCenter(doc.location.coordinates);
+        setZoom(z => Math.max(z, 12));
+        setTimeout(() => { try { (mapRef.current as any)?.panTo?.(doc.location.coordinates); } catch {} }, 50);
+      }
+    }
+  }, [selectedDoctorId, filteredDoctors, isClient]);
+
+  useEffect(() => {
+    if (!isClient) return;
+    if (selectedCompanyId) {
+      const comp = filteredCompanies.find(c => c.id === selectedCompanyId);
+      if (comp) {
+        setSelectedDoctor(null);
+        setMapCenter(comp.location.coordinates as LatLngTuple);
+        setZoom(z => Math.max(z, 12));
+        setTimeout(() => { try { (mapRef.current as any)?.panTo?.(comp.location.coordinates); } catch {} }, 50);
+      }
+    }
+  }, [selectedCompanyId, filteredCompanies, isClient]);
 
   return (
-    <div className="relative">
+    <div className="relative h-full w-full">
+      {!isClient ? (
+        <div className={`h-[600px] rounded-lg flex items-center justify-center border ${theme === 'vscode' ? 'bg-vscode-panel border-vscode-border text-vscode-foreground' : 'bg-white border-gray-200'}`}>
+          <div className="text-center space-y-4">
+            <div className={`animate-spin rounded-full h-12 w-12 border-4 mx-auto ${theme === 'vscode' ? 'border-vscode-border border-t-vscode-activity-badge' : 'border-blue-200 border-t-blue-600'}`}></div>
+            <p className={`${theme === 'vscode' ? 'text-vscode-foreground' : 'text-gray-700'} text-sm font-medium`}>Cargando mapa del marketplace...</p>
+          </div>
+        </div>
+      ) : null}
       {/* Barra de búsqueda - temporalmente deshabilitada */}
       
       {/* Leyenda del mapa - temporalmente deshabilitada */}
@@ -830,10 +869,11 @@ export default function MarketplaceMap({
       {/* Filtros del mapa - temporalmente deshabilitados */}
 
       {/* Mapa de Leaflet */}
-      <MapContainer
+  {isClient && (
+  <MapContainer
         center={mapCenter}
         zoom={zoom}
-        className="h-full w-full rounded-lg border border-gray-200"
+        className={`h-full w-full rounded-lg border ${theme === 'vscode' ? 'border-vscode-border' : 'border-gray-200'}`}
         ref={mapRef}
         zoomControl={false}
         maxBounds={GEOGRAPHIC_BOUNDS}
@@ -853,11 +893,12 @@ export default function MarketplaceMap({
             position={doctor.location.coordinates as [number, number]}
             entity={doctor}
             type="doctor"
-            isSelected={selectedDoctor?.id === doctor.id}
+            isSelected={(selectedDoctor?.id === doctor.id) || (selectedDoctorId === doctor.id)}
             onClick={() => handleDoctorSelect(doctor)}
+            ui={ui}
           />
         ))}
-        
+
         {/* Renderizar empresas */}
         {showCompanies && filteredCompanies.map((company) => (
           <CustomMarker
@@ -865,34 +906,74 @@ export default function MarketplaceMap({
             position={company.location.coordinates as [number, number]}
             entity={company}
             type="company"
-            isSelected={false}
-            onClick={() => onCompanySelect?.(company)}
+            isSelected={selectedCompanyId === company.id} 
+            onClick={() => onCompanySelect?.(company)} 
+            ui={ui}
           />
         ))}
-      </MapContainer>
 
-      {/* Controles del mapa - temporalmente deshabilitados */}
+        {/* Ruta de demo */}
+        {demoRoute && (
+          <Polyline positions={demoRoute as any} pathOptions={{ color: '#ef4444', weight: 4, dashArray: '8 6' }} />
+        )}
+
+        {/* Ambulancia demo (estática en punto medio) */}
+        {demoAmbulancePos && (
+          <Marker position={demoAmbulancePos as any} icon={(function(){
+            if (typeof window === 'undefined') return undefined as any;
+            const L = (window as any).L;
+            if (!L || typeof L.divIcon !== 'function') return undefined as any;
+            try {
+              return L.divIcon({
+                className: 'demo-ambulance',
+                html: '<div class="text-2xl">🚑</div>',
+                iconSize: [24,24],
+                iconAnchor: [12,12]
+              });
+            } catch {
+              return undefined as any;
+            }
+          })()} />
+        )}
+  </MapContainer>
+  )}
+
+      {/* Controles del mapa (opcional) */}
+      {enableControls && (
+        <MapControls
+          zoom={zoom}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onReset={handleReset}
+          onToggleFilters={() => setFiltersOpen(v => !v)}
+          filtersOpen={filtersOpen}
+          onRegionSelect={handleRegionSelect}
+          onFocusOnDoctors={handleFocusOnDoctors}
+          activeRegion={activeRegion}
+          doctorCount={filteredDoctors.length}
+        />
+      )}
 
 
       {/* Panel de información del candidato seleccionado */}
       {selectedDoctor && (
-        <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:bottom-auto md:top-20 md:w-96 bg-white rounded-lg shadow-xl z-[1000] border border-gray-200">
-          <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-sky-50">
+        <div className={`absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:bottom-auto md:top-20 md:w-96 rounded-lg shadow-xl z-[1000] border ${theme === 'vscode' ? 'bg-vscode-panel border-vscode-border text-vscode-foreground' : 'bg-white border-gray-200'}`}>
+          <div className={`p-4 border-b ${theme === 'vscode' ? 'border-vscode-border' : ''}`}>
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">{selectedDoctor.name}</h3>
+                <h3 className={`text-lg font-semibold ${theme === 'vscode' ? 'text-white' : 'text-gray-900'}`}>{selectedDoctor.name}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   {selectedDoctor.verificationStatus === 'verified' && (
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✓ Verificado</span>
+                    <BadgeEl className={`text-xs px-2 py-0.5 rounded-full ${theme === 'vscode' ? 'bg-vscode-input text-vscode-foreground' : 'bg-green-100 text-green-700'}`}>✓ Verificado</BadgeEl>
                   )}
                   {selectedDoctor.isOnline && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">● En línea</span>
+                    <BadgeEl className={`text-xs px-2 py-0.5 rounded-full ${theme === 'vscode' ? 'bg-vscode-input text-vscode-foreground' : 'bg-blue-100 text-blue-700'}`}>● En línea</BadgeEl>
                   )}
                 </div>
               </div>
               <button 
                 onClick={() => setSelectedDoctor(null)}
-                className="text-gray-400 hover:text-gray-600 text-xl"
+                className={`${theme === 'vscode' ? 'text-vscode-foreground hover:text-white' : 'text-gray-400 hover:text-gray-600'} text-xl`}
               >
                 ×
               </button>
@@ -903,21 +984,21 @@ export default function MarketplaceMap({
             {/* Información clave */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <p className="text-xs text-gray-500 uppercase">Especialidad</p>
+                <p className={`text-xs uppercase ${theme === 'vscode' ? 'text-vscode-foreground/70' : 'text-gray-500'}`}>Especialidad</p>
                 <p className="text-sm font-medium">{selectedDoctor.specialties.join(', ')}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 uppercase">Experiencia</p>
+                <p className={`text-xs uppercase ${theme === 'vscode' ? 'text-vscode-foreground/70' : 'text-gray-500'}`}>Experiencia</p>
                 <p className="text-sm font-medium">{selectedDoctor.experience} años</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 uppercase">Tarifa por hora</p>
-                <p className="text-sm font-medium text-green-600">${selectedDoctor.hourlyRate}</p>
+                <p className={`text-xs uppercase ${theme === 'vscode' ? 'text-vscode-foreground/70' : 'text-gray-500'}`}>Tarifa por hora</p>
+                <p className={`text-sm font-medium ${theme === 'vscode' ? 'text-vscode-foreground' : 'text-green-600'}`}>${selectedDoctor.hourlyRate}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 uppercase">Calificación</p>
+                <p className={`text-xs uppercase ${theme === 'vscode' ? 'text-vscode-foreground/70' : 'text-gray-500'}`}>Calificación</p>
                 <p className="text-sm font-medium flex items-center">
-                  <span className="text-yellow-400 mr-1">⭐</span> {selectedDoctor.rating}
+                  <span className={`${theme === 'vscode' ? 'text-vscode-foreground' : 'text-yellow-400'} mr-1`}>⭐</span> {selectedDoctor.rating}
                 </p>
               </div>
             </div>
@@ -948,22 +1029,22 @@ export default function MarketplaceMap({
             
             {/* Acciones */}
             <div className="space-y-2 pt-3">
-              <button 
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" 
+              <ButtonEl 
+                className={`w-full px-4 py-2 rounded-lg transition-colors font-medium ${theme === 'vscode' ? 'bg-vscode-activity-badge hover:brightness-110 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`} 
                 disabled={isLoading}
               >
                 {isLoading ? 'Procesando...' : '📧 Invitar a aplicar a una posición'}
-              </button>
-              <button 
-                className="w-full px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+              </ButtonEl>
+              <ButtonEl 
+                className={`w-full px-4 py-2 rounded-lg transition-colors font-medium ${theme === 'vscode' ? 'border border-vscode-border text-vscode-foreground hover:bg-vscode-list-hover' : 'border border-blue-600 text-blue-600 hover:bg-blue-50'}`}
               >
                 👁️ Ver perfil completo
-              </button>
-              <button 
-                className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              </ButtonEl>
+              <ButtonEl 
+                className={`w-full px-4 py-2 rounded-lg transition-colors ${theme === 'vscode' ? 'border border-vscode-border text-vscode-foreground hover:bg-vscode-list-hover' : 'border border-gray-300 text-gray-700 hover:bg-gray-50'}`}
               >
                 📎 Guardar candidato
-              </button>
+              </ButtonEl>
             </div>
           </div>
         </div>
@@ -972,17 +1053,17 @@ export default function MarketplaceMap({
       {/* Modal de Proceso de Match y Contratación */}
       {showMatchModal && selectedDoctor && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[2000]">
-          <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+          <div className={`rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden ${theme === 'vscode' ? 'bg-vscode-panel text-vscode-foreground border border-vscode-border' : 'bg-white'}`}>
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+            <div className={`${theme === 'vscode' ? 'bg-vscode-activity-bar text-white' : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'} p-6`}>
               <div className="flex justify-between items-start">
                 <div>
                   <h2 className="text-2xl font-bold mb-2">Proceso de Match con {selectedDoctor.name}</h2>
-                  <p className="text-blue-100">Complete los pasos para finalizar la contratación</p>
+                  <p className={`${theme === 'vscode' ? 'text-vscode-foreground/80' : 'text-blue-100'}`}>Complete los pasos para finalizar la contratación</p>
                 </div>
                 <button 
                   onClick={() => { setShowMatchModal(false); setMatchStep('offer'); }}
-                  className="text-white hover:text-gray-200 text-2xl"
+                  className={`${theme === 'vscode' ? 'text-white hover:text-gray-200' : 'text-white hover:text-gray-200'} text-2xl`}
                 >
                   ×
                 </button>
@@ -990,7 +1071,7 @@ export default function MarketplaceMap({
             </div>
             
             {/* Progress Bar */}
-            <div className="bg-gray-100 px-6 py-4">
+            <div className={`${theme === 'vscode' ? 'bg-vscode-editor' : 'bg-gray-100'} px-6 py-4`}>
               <div className="flex items-center justify-between">
                 {[
                   { id: 'offer', label: 'Oferta', icon: '📝' },
@@ -1001,15 +1082,15 @@ export default function MarketplaceMap({
                   <div key={step.id} className="flex-1 relative">
                     <div className="flex items-center">
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold ${
-                        matchStep === step.id ? 'bg-blue-600 text-white' : 
+                        matchStep === step.id ? (theme === 'vscode' ? 'bg-vscode-activity-badge text-white' : 'bg-blue-600 text-white') : 
                         ['offer', 'interview', 'contract', 'payment'].indexOf(matchStep) > index ? 'bg-green-500 text-white' : 
-                        'bg-gray-300 text-gray-600'
+                        (theme === 'vscode' ? 'bg-vscode-input text-vscode-foreground' : 'bg-gray-300 text-gray-600')
                       }`}>
                         {step.icon}
                       </div>
                       {index < 3 && (
                         <div className={`flex-1 h-1 ${
-                          ['offer', 'interview', 'contract', 'payment'].indexOf(matchStep) > index ? 'bg-green-500' : 'bg-gray-300'
+                          ['offer', 'interview', 'contract', 'payment'].indexOf(matchStep) > index ? 'bg-green-500' : (theme === 'vscode' ? 'bg-vscode-input' : 'bg-gray-300')
                         }`} />
                       )}
                     </div>

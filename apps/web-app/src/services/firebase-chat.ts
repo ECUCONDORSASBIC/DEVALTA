@@ -1,22 +1,22 @@
 'use client'
 
-import { 
-  collection,
-  doc,
-  addDoc,
-  onSnapshot,
-  query,
-  orderBy,
-  where,
-  limit,
-  serverTimestamp,
-  updateDoc,
-  getDocs,
-  setDoc,
-  getDoc,
-  Timestamp
-} from 'firebase/firestore'
-import { db, auth } from '../../config/firebase'
+import { auth, db } from '../../config/firebase'
+import {
+    addDoc,
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    limit,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    Timestamp,
+    updateDoc,
+    where,
+    writeBatch
+} from '../lib/firestore-mock'
 
 export interface ChatMessage {
   id: string
@@ -25,14 +25,14 @@ export interface ChatMessage {
   senderName: string
   senderRole: 'patient' | 'doctor' | 'company'
   message: string
-  timestamp: Timestamp
+  timestamp: any
   messageType: 'text' | 'image' | 'file' | 'prescription' | 'appointment'
   fileUrl?: string
   fileName?: string
   fileSize?: number
   read: boolean
-  edited?: boolean
-  editedAt?: Timestamp
+    edited?: boolean
+    editedAt?: any
   // Campos médicos específicos
   prescriptionData?: {
     medications: Array<{
@@ -63,12 +63,12 @@ export interface ChatConversation {
   type: 'doctor-patient' | 'doctor-doctor' | 'support'
   title: string
   lastMessage?: string
-  lastMessageTimestamp?: Timestamp
+  lastMessageTimestamp?: any
   lastMessageSender?: string
   unreadCount: { [uid: string]: number }
   isActive: boolean
-  createdAt: Timestamp
-  updatedAt: Timestamp
+  createdAt: any
+  updatedAt: any
   // Campos médicos
   patientId?: string
   doctorId?: string
@@ -110,8 +110,7 @@ class FirebaseChatService implements ChatService {
     title: string
   ): Promise<string> {
     try {
-      const authInstance = auth()
-      if (!authInstance?.currentUser) throw new Error('Usuario no autenticado')
+  if (!auth.currentUser) throw new Error('Usuario no autenticado')
 
       const conversationData: Omit<ChatConversation, 'id'> = {
         participants,
@@ -184,10 +183,8 @@ class FirebaseChatService implements ChatService {
     messageType: ChatMessage['messageType'] = 'text'
   ): Promise<void> {
     try {
-      const authInstance = auth()
-      if (!authInstance?.currentUser) throw new Error('Usuario no autenticado')
-
-      const user = authInstance.currentUser
+  if (!auth.currentUser) throw new Error('Usuario no autenticado')
+  const user = auth.currentUser
       
       // Obtener datos del usuario (esto debería venir del perfil)
       const userProfile = await this.getUserProfile(user.uid)
@@ -218,10 +215,8 @@ class FirebaseChatService implements ChatService {
     prescriptionData: ChatMessage['prescriptionData']
   ): Promise<void> {
     try {
-      const authInstance = auth()
-      if (!authInstance?.currentUser) throw new Error('Usuario no autenticado')
-
-      const user = authInstance.currentUser
+  if (!auth.currentUser) throw new Error('Usuario no autenticado')
+  const user = auth.currentUser
       const userProfile = await this.getUserProfile(user.uid)
 
       const messageData: Omit<ChatMessage, 'id'> = {
@@ -248,10 +243,8 @@ class FirebaseChatService implements ChatService {
     appointmentData: ChatMessage['appointmentData']
   ): Promise<void> {
     try {
-      const authInstance = auth()
-      if (!authInstance?.currentUser) throw new Error('Usuario no autenticado')
-
-      const user = authInstance.currentUser
+  if (!auth.currentUser) throw new Error('Usuario no autenticado')
+  const user = auth.currentUser
       const userProfile = await this.getUserProfile(user.uid)
 
       const messageData: Omit<ChatMessage, 'id'> = {
@@ -328,19 +321,11 @@ class FirebaseChatService implements ChatService {
       )
 
       const querySnapshot = await getDocs(q)
-      const batch = db().batch ? db().batch() : null
-      
-      if (batch) {
-        querySnapshot.docs.forEach(doc => {
-          batch.update(doc.ref, { read: true })
-        })
-        await batch.commit()
-      } else {
-        // Fallback sin batch
-        for (const docSnapshot of querySnapshot.docs) {
-          await updateDoc(docSnapshot.ref, { read: true })
-        }
-      }
+      const batch = writeBatch(db)
+      querySnapshot.docs.forEach(d => {
+        batch.update(d.ref, { read: true })
+      })
+      await batch.commit()
 
       // Resetear contador de no leídos en la conversación
       const conversationRef = doc(db, this.conversationsCollection, conversationId)

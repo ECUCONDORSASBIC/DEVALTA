@@ -5,9 +5,9 @@
 
 'use client'
 
+import { useAuth } from '@altamedica/auth'
 import { useState } from 'react'
 import JobApplicationsManager from '../../components/b2c/JobApplicationsManager'
-import { useAuth } from "@altamedica/auth'
 
 export default function B2CCommunicationPage() {
   const { user } = useAuth()

@@ -1,6 +1,10 @@
 /**
  * 🏢 COMPANY SERVICE - ALTAMEDICA DATABASE
  * Servicios de gestión de empresas, marketplace y analíticas
+ * 
+ * @deprecated Este servicio está obsoleto. Use CompanyRepository y MarketplaceRepository en su lugar.
+ * Este servicio viola las mejores prácticas usando Firebase Client SDK sin ServiceContext.
+ * Será eliminado en la próxima versión.
  */
 
 import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit } from 'firebase/firestore'

@@ -227,15 +227,15 @@ class PatientsService {
   /**
    * Obtener historial médico de un paciente
    */
-  async getPatientMedicalRecords(patientId: string): Promise<ApiResponse<any[]>> {
-    return apiClient.get<any[]>(API_CONFIG.PATIENTS.RECORDS(patientId));
+  async getPatientMedicalRecords(patientId: string): Promise<ApiResponse<MedicalRecord[]>> {
+    return apiClient.get<MedicalRecord[]>(API_CONFIG.PATIENTS.RECORDS(patientId));
   }
 
   /**
    * Obtener citas de un paciente
    */
-  async getPatientAppointments(patientId: string): Promise<ApiResponse<any[]>> {
-    return apiClient.get<any[]>(API_CONFIG.PATIENTS.APPOINTMENTS(patientId));
+  async getPatientAppointments(patientId: string): Promise<ApiResponse<Appointment[]>> {
+    return apiClient.get<Appointment[]>(API_CONFIG.PATIENTS.APPOINTMENTS(patientId));
   }
 
   /**
@@ -256,7 +256,7 @@ class PatientsService {
     byAgeGroup: Record<string, number>;
     byGender: Record<string, number>;
   }>> {
-    return apiClient.get<any>('/api/v1/patients/stats');
+    return apiClient.get<{ total: number; active: number; inactive: number; newThisMonth: number; byAgeGroup: Record<string, number>; byGender: Record<string, number> }>('/api/v1/patients/stats');
   }
 
   /**
@@ -279,8 +279,8 @@ class PatientsService {
   /**
    * Obtener próximas citas del paciente
    */
-  async getUpcomingAppointments(patientId: string): Promise<ApiResponse<any[]>> {
-    return apiClient.get<any[]>(
+  async getUpcomingAppointments(patientId: string): Promise<ApiResponse<Appointment[]>> {
+    return apiClient.get<Appointment[]>(
       `${API_CONFIG.PATIENTS.APPOINTMENTS(patientId)}?status=scheduled&upcoming=true`
     );
   }
@@ -288,8 +288,8 @@ class PatientsService {
   /**
    * Obtener historial de sesiones de telemedicina del paciente
    */
-  async getTelemedicineHistory(patientId: string): Promise<ApiResponse<any[]>> {
-    return apiClient.get<any[]>(
+  async getTelemedicineHistory(patientId: string): Promise<ApiResponse<TelemedicineSession[]>> {
+    return apiClient.get<TelemedicineSession[]>(
       `/api/v1/telemedicine/sessions?patientId=${patientId}&status=completed`
     );
   }

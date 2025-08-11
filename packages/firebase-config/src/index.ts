@@ -3,25 +3,27 @@
  * Configuración centralizada de Firebase para toda la plataforma AltaMedica
  */
 
-import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { 
-  getAuth, 
-  Auth, 
-  connectAuthEmulator,
+import { Analytics, getAnalytics, isSupported } from 'firebase/analytics';
+import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app';
+import {
+  Auth,
+  User,
   browserLocalPersistence,
-  setPersistence 
+  connectAuthEmulator,
+  getAuth,
+  sendEmailVerification,
+  setPersistence
 } from 'firebase/auth';
-import { 
-  getFirestore, 
-  Firestore, 
-  connectFirestoreEmulator 
+import {
+  Firestore,
+  connectFirestoreEmulator,
+  getFirestore
 } from 'firebase/firestore';
-import { 
-  getStorage, 
-  FirebaseStorage, 
-  connectStorageEmulator 
+import {
+  FirebaseStorage,
+  connectStorageEmulator,
+  getStorage
 } from 'firebase/storage';
-import { getAnalytics, Analytics, isSupported } from 'firebase/analytics';
 
 // Tipos de configuración
 export interface FirebaseConfig {
@@ -250,7 +252,7 @@ export const useFirebase = (): FirebaseServices => {
 };
 
 // Exportar tipos
-export type { FirebaseApp, Auth, Firestore, FirebaseStorage, Analytics };
+export type { Analytics, Auth, FirebaseApp, FirebaseStorage, Firestore };
 
 // Inicialización automática (opcional, comentar si prefieres control manual)
 if (typeof window !== 'undefined') {
@@ -271,3 +273,44 @@ export default {
   getFirebaseStorage,
   useFirebase
 };
+
+// Helpers convenientes
+export const sendVerificationEmail = async (user: User): Promise<void> => {
+  // Asegura inicialización
+  if (!firebaseAuth) initializeFirebase();
+  return sendEmailVerification(user);
+};
+
+// Exportaciones convenientes (singletons) para DX
+// Se inicializan de forma perezosa para evitar errores en SSR
+export const app: FirebaseApp = (() => {
+  try {
+    return getFirebaseApp();
+  } catch {
+    return initializeFirebase().app;
+  }
+})();
+
+export const auth: Auth = (() => {
+  try {
+    return getFirebaseAuth();
+  } catch {
+    return initializeFirebase().auth;
+  }
+})();
+
+export const db: Firestore = (() => {
+  try {
+    return getFirebaseDb();
+  } catch {
+    return initializeFirebase().db;
+  }
+})();
+
+export const storage: FirebaseStorage = (() => {
+  try {
+    return getFirebaseStorage();
+  } catch {
+    return initializeFirebase().storage;
+  }
+})();

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Datos simulados de sesiones de telemedicina
-let telemedicineSessions = [
+const telemedicineSessions = [
   {
     id: '1',
     patientId: '1',
@@ -98,41 +98,43 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type') || '';
 
     // Filtrar sesiones según los parámetros
-    let filteredSessions = telemedicineSessions;
+    const filteredSessions = [...telemedicineSessions];
 
+    let filtered = filteredSessions;
+    
     if (status) {
-      filteredSessions = filteredSessions.filter(session =>
+      filtered = filtered.filter(session =>
         session.status === status
       );
     }
 
     if (doctorId) {
-      filteredSessions = filteredSessions.filter(session =>
+      filtered = filtered.filter(session =>
         session.doctorId === doctorId
       );
     }
 
     if (patientId) {
-      filteredSessions = filteredSessions.filter(session =>
+      filtered = filtered.filter(session =>
         session.patientId === patientId
       );
     }
 
     if (type) {
-      filteredSessions = filteredSessions.filter(session =>
+      filtered = filtered.filter(session =>
         session.type === type
       );
     }
 
     // Ordenar por fecha de inicio (más recientes primero)
-    filteredSessions.sort((a, b) => 
+    filtered.sort((a, b) => 
       new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
     );
 
     return NextResponse.json({
       success: true,
-      data: filteredSessions,
-      total: filteredSessions.length,
+      data: filtered,
+      total: filtered.length,
       filters: {
         status,
         doctorId,
@@ -142,7 +144,10 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error obteniendo sesiones de telemedicina:', error);
+    // Log error for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error obteniendo sesiones de telemedicina:', error);
+    }
     return NextResponse.json(
       { 
         success: false, 
@@ -186,7 +191,8 @@ export async function POST(request: NextRequest) {
       followUpDate: null
     };
 
-    telemedicineSessions.push(newSession);
+    // Add to sessions array (simulated DB operation)
+    (telemedicineSessions as any[]).push(newSession);
 
     return NextResponse.json({
       success: true,
@@ -195,7 +201,10 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error creando sesión de telemedicina:', error);
+    // Log error for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error creando sesión de telemedicina:', error);
+    }
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
       { status: 500 }
@@ -241,7 +250,10 @@ export async function PUT(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error actualizando sesión de telemedicina:', error);
+    // Log error for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error actualizando sesión de telemedicina:', error);
+    }
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
       { status: 500 }

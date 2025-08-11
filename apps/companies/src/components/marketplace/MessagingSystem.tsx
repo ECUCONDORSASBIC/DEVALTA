@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from "@altamedica/auth';
+import { useAuth } from '@altamedica/auth';
 import { useEffect, useRef, useState } from 'react';
 
 interface Message {
@@ -209,7 +209,7 @@ export default function MessagingSystem({ onClose }: MessagingSystemProps) {
       const message: Message = {
         id: `msg-${Date.now()}`,
         senderId: user?.id || 'current-user',
-        senderName: user?.name || 'Usuario Actual',
+        senderName: (user as any)?.name || (user as any)?.displayName || (user as any)?.email || 'Usuario Actual',
         senderType: 'company',
         content: newMessage,
         timestamp: new Date().toISOString(),

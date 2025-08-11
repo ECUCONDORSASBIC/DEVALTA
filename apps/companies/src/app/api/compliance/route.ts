@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "../../../lib/auth-middleware";
+import { UnifiedAuth, UserRole } from "../../../../../api-server/src/auth/UnifiedAuthSystem";
 import { auditLog, encryptData, validateCompliance, logger } from "../../../lib/medical-mocks";
 
 interface ComplianceStatus {
@@ -71,9 +71,17 @@ interface ComplianceStatus {
   }>;
 }
 
-export const GET = requireRole(['company', 'admin'], async (request: NextRequest, user: any) => {
+export async function GET(request: NextRequest) {
+  // Autenticación y autorización usando UnifiedAuth
+  const authResult = await UnifiedAuth(request, [UserRole.COMPANY, UserRole.ADMIN]);
+  
+  if (!authResult.success) {
+    return authResult.response;
+  }
+  
+  const user = authResult.user!;
   try {
-    const companyId = user.companyId || user.custom_claims?.companyId;
+    const companyId = user.companyId;
     
     if (!companyId) {
       return NextResponse.json(
@@ -205,7 +213,7 @@ export const GET = requireRole(['company', 'admin'], async (request: NextRequest
     // Log de auditoría para acceso a compliance
     await auditLog({
       action: 'compliance_status_viewed',
-      userId: user.uid,
+      userId: user.userId,
       companyId,
       metadata: { 
         complianceScore: complianceStatus.complianceScore,
@@ -227,7 +235,7 @@ export const GET = requireRole(['company', 'admin'], async (request: NextRequest
   } catch (error) {
     logger.error('Error getting compliance status:', {
       error: error instanceof Error ? error.message : String(error),
-      userId: user?.uid,
+      userId: user?.userId,
       companyId: user?.companyId
     });
 
@@ -239,9 +247,17 @@ export const GET = requireRole(['company', 'admin'], async (request: NextRequest
 });
 
 // Endpoint para generar reporte de compliance
-export const POST = requireRole(['company', 'admin'], async (request: NextRequest, user: any) => {
+export async function POST(request: NextRequest) {
+  // Autenticación y autorización usando UnifiedAuth
+  const authResult = await UnifiedAuth(request, [UserRole.COMPANY, UserRole.ADMIN]);
+  
+  if (!authResult.success) {
+    return authResult.response;
+  }
+  
+  const user = authResult.user!;
   try {
-    const companyId = user.companyId || user.custom_claims?.companyId;
+    const companyId = user.companyId;
     const body = await request.json();
     const { 
       reportType = 'full', 
@@ -260,7 +276,7 @@ export const POST = requireRole(['company', 'admin'], async (request: NextReques
     // Log de auditoría crítico para generación de reportes
     await auditLog({
       action: 'compliance_report_generated',
-      userId: user.uid,
+      userId: user.userId,
       companyId,
       metadata: { 
         reportType,
@@ -286,7 +302,7 @@ export const POST = requireRole(['company', 'admin'], async (request: NextReques
     logger.info('Compliance report generated:', {
       reportId,
       companyId,
-      userId: user.uid,
+      userId: user.userId,
       reportType,
       format
     });
@@ -308,7 +324,7 @@ export const POST = requireRole(['company', 'admin'], async (request: NextReques
   } catch (error) {
     logger.error('Error generating compliance report:', {
       error: error instanceof Error ? error.message : String(error),
-      userId: user?.uid,
+      userId: user?.userId,
       companyId: user?.companyId
     });
 
@@ -320,9 +336,17 @@ export const POST = requireRole(['company', 'admin'], async (request: NextReques
 });
 
 // Endpoint para actualizar estado de acciones correctivas
-export const PUT = requireRole(['company', 'admin'], async (request: NextRequest, user: any) => {
+export async function PUT(request: NextRequest) {
+  // Autenticación y autorización usando UnifiedAuth
+  const authResult = await UnifiedAuth(request, [UserRole.COMPANY, UserRole.ADMIN]);
+  
+  if (!authResult.success) {
+    return authResult.response;
+  }
+  
+  const user = authResult.user!;
   try {
-    const companyId = user.companyId || user.custom_claims?.companyId;
+    const companyId = user.companyId;
     const body = await request.json();
     const { actionId, status, notes } = body;
     
@@ -343,7 +367,7 @@ export const PUT = requireRole(['company', 'admin'], async (request: NextRequest
     // Log de auditoría para cambios en acciones correctivas
     await auditLog({
       action: 'compliance_action_updated',
-      userId: user.uid,
+      userId: user.userId,
       companyId,
       metadata: { 
         actionId,
@@ -358,7 +382,7 @@ export const PUT = requireRole(['company', 'admin'], async (request: NextRequest
     logger.info('Compliance action updated:', {
       actionId,
       companyId,
-      userId: user.uid,
+      userId: user.userId,
       status,
       notes
     });
@@ -369,7 +393,7 @@ export const PUT = requireRole(['company', 'admin'], async (request: NextRequest
         actionId,
         status,
         updatedAt: new Date(),
-        updatedBy: user.uid
+        updatedBy: user.userId
       },
       message: "Acción correctiva actualizada exitosamente"
     });
@@ -377,7 +401,7 @@ export const PUT = requireRole(['company', 'admin'], async (request: NextRequest
   } catch (error) {
     logger.error('Error updating compliance action:', {
       error: error instanceof Error ? error.message : String(error),
-      userId: user?.uid,
+      userId: user?.userId,
       companyId: user?.companyId
     });
 

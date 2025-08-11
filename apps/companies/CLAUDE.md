@@ -1,16 +1,32 @@
 # CLAUDE.md - App: Companies 🏢
-**Última actualización:** 9 de agosto de 2025
+
+**Última actualización:** 11 de agosto de 2025
+
+## ⚠️ FILOSOFÍA E2E (End-to-End) OBLIGATORIA
+
+**CRÍTICO**: Todas las sugerencias y soluciones para esta app deben ser **end-to-end (E2E)**, abarcando desde frontend hasta backend, base de datos y configuración. **No ofrecer soluciones parciales o incompletas**.
+
+### 🎯 Principios E2E para Companies App
+- **Frontend + Backend**: Considera tanto React/Next.js como API routes
+- **Tipos Compartidos**: Actualiza @altamedica/types para contratos
+- **Estado Global**: Integra con TanStack Query y providers
+- **Testing E2E**: Unit tests + integration + Playwright
+- **Documentación**: Actualiza este CLAUDE.md tras cambios
+- **Sistemas Unificados**: SIEMPRE usar UnifiedAuthSystem, UnifiedNotificationSystem, UnifiedMarketplaceSystem
 
 ## 🎯 Resumen de la Aplicación
+
 - **Propósito:** Portal B2B para que las clínicas y hospitales gestionen su personal, publiquen ofertas de trabajo y gestionen pacientes huérfanos. Incluye un **Sistema de Control Hospitalario** tipo torre de control aéreo para redistribución inteligente de pacientes.
 - **Tecnologías Clave:** Next.js 15, React 18, TypeScript, Tailwind CSS, Firebase v9+, Leaflet, react-leaflet
 - **Puerto:** 3004
 - **Estado:** ✅ Funcional con Sistema de Redistribución Activo
 
 ### Rutas Principales
+
 - `/`: Dashboard principal con métricas y vista general
 - `/dashboard`: **Centro de Control Hospitalario** con redistribución en tiempo real
-- `/staff`: Gestión de personal médico 
+- `/operations-hub`: **Centro de Operaciones Unificado** (Crisis + Marketplace)
+- `/staff`: Gestión de personal médico
 - `/patients`: Gestión de pacientes
 - `/appointments`: Gestión de citas
 - `/analytics`: Reportes y visualizaciones
@@ -21,9 +37,11 @@
 ## 🚨 NUEVA FUNCIONALIDAD: Sistema de Control Hospitalario
 
 ### 🎮 Centro de Control (Torre de Control Aéreo)
+
 El dashboard ahora incluye un sistema de redistribución de pacientes inspirado en torres de control de tráfico aéreo:
 
 #### **Características Principales:**
+
 1. **Monitoreo en Tiempo Real**
    - Vista de mapa interactivo con hospitales de la red
    - Indicadores de saturación con códigos de color
@@ -47,17 +65,20 @@ El dashboard ahora incluye un sistema de redistribución de pacientes inspirado 
 ### 🗺️ Componentes del Sistema
 
 #### **HospitalNetworkDashboard** (`src/components/dashboard/HospitalNetworkDashboard.tsx`)
+
 - Dashboard principal con métricas de red
 - Gestión de redistribuciones y alertas
 - Controles automáticos/manuales
 
 #### **HospitalRedistributionMap** (`src/components/dashboard/HospitalRedistributionMap.tsx`)
+
 - Mapa interactivo basado en Leaflet
 - Visualización de hospitales con saturación
 - Rutas de redistribución animadas
 - Popups con información detallada
 
 #### **HospitalDataIntegrationService** (`src/services/HospitalDataIntegrationService.ts`)
+
 - Servicio de integración multi-canal
 - Recolección de datos de WhatsApp, API, IoT
 - Cálculo de saturación y recomendaciones
@@ -74,9 +95,61 @@ El layout ha sido completamente rediseñado con estética de torre de control:
 
 ---
 
+## 🧭 Operations Hub (Crisis + Marketplace unificado)
+
+Unificamos la experiencia de “Centro de Control” y “Marketplace” en una sola vista operativa con estilo VS Code, sin romper mapas ni el layout al colapsar paneles.
+
+### Componentes Clave
+
+- `OperationsTopBar` (`src/components/operations-hub/OperationsTopBar.tsx`)
+  - Tabs: network / redistribution / marketplace
+  - Indicadores (crisis, perfiles), zen mode y acciones rápidas
+  - Tematizado con tokens VS Code
+
+- `MapShell` (`src/components/operations-hub/MapShell.tsx`)
+  - Contenedor común para mapas con header, leyenda colapsable, fullscreen
+  - Reflows robustos: emite eventos de layout y dispara re-size del mapa
+  - Persistencia de UI (leyenda visible) vía localStorage
+
+- `CrisisMapPanel` (envuelve `HospitalRedistributionMap`)
+  - Depende de `CrisisDataProvider`; la página del hub ya lo provee
+
+- `MarketplaceMap` (`src/components/MarketplaceMap.tsx`)
+  - Mapa SSR-safe (dynamic import react-leaflet)
+  - Markers de doctores/empresas, popups y panel lateral de candidato
+  - Alineado a tema VS Code; escucha `map:invalidate-size`
+
+### Reflow de Leaflet sin roturas
+
+- El shell (y otros paneles) disparan `window.dispatchEvent(new Event('map:invalidate-size'))` al cambiar layout.
+- Los mapas (Marketplace/Crisis) escuchan ese evento y ejecutan `invalidateSize()` con un pequeño retardo para estabilizar.
+- Esto evita el “mapa roto” al plegar/expandir secciones o cambiar pestañas.
+
+### Tema y consistencia visual
+
+- Tokens tipo VS Code: `bg-vscode-*`, `text-vscode-*`, `border-vscode-*` en TopBar, Shell y paneles.
+- El gradiente global se enmascara dentro del contenedor del hub con fondo VS Code.
+- MarketplaceMap soporta overrides de UI via prop `ui` (`Button`, `Badge`) para integrar `@altamedica/ui` sin romper estilos.
+
+### Persistencia ligera de UI
+
+- Estado de leyenda, pestaña activa y preferencias mínimas se guardan en localStorage (namespace `ops.*`).
+- No se persisten datos sensibles ni tokens; cumple flujo de seguridad (sesiones en cookies HttpOnly desde `api-server`).
+
+### Estado actual del Hub
+
+- ✅ Pestañas operativas: network (placeholder), redistribution (CrisisMapPanel), marketplace (MarketplaceMap)
+- ✅ Hidratación estable (sin overlays SSR divergentes)
+- ✅ Reflows del mapa bajo colapsables y fullscreen
+- ✅ Tema VS Code aplicado en TopBar/MapShell/MarketplaceMap
+- ⚠️ Pendiente: theming completo de markers/botones en popups y clustering para alta densidad
+
+---
+
 ## 🏗️ Arquitectura Backend - AltaMedica
 
 ### 📍 **Ubicación de Servicios Backend**
+
 ```
 🌐 API Server (Puerto 3001)
 ├── 📂 /mnt/c/Users/Eduardo/Documents/devaltamedica/apps/api-server/
@@ -91,18 +164,20 @@ El layout ha sido completamente rediseñado con estética de torre de control:
 ```
 
 ### 🔌 **APIs Principales para Companies App**
-| Endpoint | Propósito | Estado |
-|---|---|---|
-| `/api/v1/auth/*` | Login empresarial | ✅ **PRODUCCIÓN** |
-| `/api/v1/jobs` | **Sistema B2B completo** (696 líneas) | ✅ **NIVEL EMPRESARIAL** |
-| `/api/v1/marketplace` | Gestión pacientes huérfanos | ✅ **PRODUCCIÓN** |
-| `/api/v1/users` | Gestión de empleados médicos | ✅ **PRODUCCIÓN** |
-| `/api/v1/hospitals/*/status` | Estado de hospitales en tiempo real | ✅ **NUEVO** |
-| `/api/v1/hospitals/*/metrics` | Métricas históricas | ✅ **NUEVO** |
-| `/api/v1/payments/mercadopago/*` | Facturación empresarial | ✅ **PRODUCCIÓN** |
-| `/api/v1/finops/cost-estimation` | Sistema FinOps empresarial | ✅ **NIVEL EMPRESARIAL** |
+
+| Endpoint                         | Propósito                             | Estado                   |
+| -------------------------------- | ------------------------------------- | ------------------------ |
+| `/api/v1/auth/*`                 | Login empresarial                     | ✅ **PRODUCCIÓN**        |
+| `/api/v1/jobs`                   | **Sistema B2B completo** (696 líneas) | ✅ **NIVEL EMPRESARIAL** |
+| `/api/v1/marketplace`            | Gestión pacientes huérfanos           | ✅ **PRODUCCIÓN**        |
+| `/api/v1/users`                  | Gestión de empleados médicos          | ✅ **PRODUCCIÓN**        |
+| `/api/v1/hospitals/*/status`     | Estado de hospitales en tiempo real   | ✅ **NUEVO**             |
+| `/api/v1/hospitals/*/metrics`    | Métricas históricas                   | ✅ **NUEVO**             |
+| `/api/v1/payments/mercadopago/*` | Facturación empresarial               | ✅ **PRODUCCIÓN**        |
+| `/api/v1/finops/cost-estimation` | Sistema FinOps empresarial            | ✅ **NIVEL EMPRESARIAL** |
 
 ### 🚀 **Funcionalidades Tiempo Real**
+
 - ✅ **Hospital Monitoring:** Monitoreo de saturación en tiempo real
 - ✅ **Auto Redistribution:** Redistribución automática de pacientes
 - ✅ **Staff Shortage Detection:** Detección de déficit de personal
@@ -113,6 +188,7 @@ El layout ha sido completamente rediseñado con estética de torre de control:
 - ✅ **Marketplace Events:** Eventos del marketplace médico
 
 ### 🔐 **Express + Middleware Stack**
+
 - ✅ **UnifiedAuth:** Middleware de autenticación centralizado
 - ✅ **Rate Limiting:** Protección contra spam
 - ✅ **HIPAA Compliance:** Auditoría automática de acciones médicas
@@ -123,12 +199,15 @@ El layout ha sido completamente rediseñado con estética de torre de control:
 ## ⚠️ **Configuración Especial**
 
 ### **Turbopack Deshabilitado**
+
 Esta aplicación NO debe usar Turbopack debido a problemas de compilación:
+
 - **Problema:** Turbopack cuelga indefinidamente con ciertas librerías
 - **Solución:** package.json modificado sin `--turbopack`
 - **Librerías problemáticas:** recharts, lucide-react
 
 ### **Firebase v9+ Modular API**
+
 - Usar imports modulares: `import { collection, doc, query } from '@altamedica/firebase/client'`
 - NO usar API antigua: `db.collection()` está deprecado
 - Siempre obtener Firestore con: `const db = getFirebaseFirestore()`
@@ -138,6 +217,7 @@ Esta aplicación NO debe usar Turbopack debido a problemas de compilación:
 ## 🔗 Integraciones Técnicas
 
 ### APIs Backend
+
 - **API Principal:** Consume datos del `api-server` (Puerto 3001) especializado en funciones B2B
 - **Autenticación:** Firebase Auth con roles de `company-admin`
 - **Base de datos:** Firebase Firestore para datos empresariales en tiempo real
@@ -145,9 +225,11 @@ Esta aplicación NO debe usar Turbopack debido a problemas de compilación:
 - **Sensores IoT:** Protocolo MQTT para datos de sensores
 
 ### Estado Actual del Dashboard
+
 - **Vista General:** ✅ Implementada con métricas principales
 - **Centro de Control:** ✅ Sistema de redistribución completo
 - **Mapa Interactivo:** ✅ Visualización geográfica de hospitales
+- **Operations Hub (Crisis + Marketplace):** ✅ Primera versión funcional integrada
 - **Personal Médico:** 🚧 En desarrollo
 - **Pacientes:** 🚧 En desarrollo
 - **Citas:** 🚧 En desarrollo
@@ -186,29 +268,42 @@ src/
 ## 4. Componentes y Librerías
 
 ### Componentes UI Principales
+
 - **Torre de Control UI**: Tema oscuro con efectos de transparencia
 - **Mapa Interactivo**: Leaflet + react-leaflet para visualización
 - **Cards de Métricas**: Con gradientes y animaciones
 - **Sistema de Alertas**: Notificaciones en tiempo real
 
+### MarketplaceMap (contrato y uso)
+
+- Props principales:
+  - `doctors`, `companies`, `center?`, `filters?`, `showDoctors?`, `showCompanies?`
+  - Nuevas: `theme = 'vscode'`, `enableControls = false`, `includeDefaultHospital = true`, `ui?` (overrides de `Button`/`Badge`)
+- Callbacks: `onDoctorSelect`, `onCompanySelect`
+- SSR-safe: dynamic imports de react-leaflet + placeholder tematizado
+- Reflow: suscripción a `map:invalidate-size` y `invalidateSize()`
+- Controles opcionales (zoom/reset/filtros/región/foco): se pueden integrar al TopBar/MapShell
+- Pendiente: clustering para >500 marcadores y consolidar estilos de markers (divIcon)
+
 ### Servicios de Integración
+
 ```typescript
 // Configuración de integración
 const hospitalConfig = {
-  whatsapp: { 
-    enabled: true, 
-    phoneNumber: '+57 310 123-4567', 
-    apiKey: 'demo-whatsapp-key' 
+  whatsapp: {
+    enabled: true,
+    phoneNumber: '+57 310 123-4567',
+    apiKey: 'demo-whatsapp-key',
   },
-  api: { 
-    enabled: true, 
-    endpoint: 'https://api.hospital-demo.com', 
-    apiKey: 'demo-api-key' 
+  api: {
+    enabled: true,
+    endpoint: 'https://api.hospital-demo.com',
+    apiKey: 'demo-api-key',
   },
-  iot: { 
-    enabled: true, 
-    devices: ['sensor-001', 'camera-002', 'beacon-003'] 
-  }
+  iot: {
+    enabled: true,
+    devices: ['sensor-001', 'camera-002', 'beacon-003'],
+  },
 };
 ```
 
@@ -231,16 +326,118 @@ npm run test:watch
 # Linting y Type Check
 npm run lint
 npm run type-check
+
+Nota: Este proyecto convive en monorepo pnpm. En esta app específica, `npm run dev` funciona de forma aislada; para orquestar todo el monorepo usar los scripts raíz con pnpm.
 ```
+
+## 5.1. Reglas Operativas (IA y equipo)
+
+Estas reglas son obligatorias para mantener estabilidad y calidad. Usa tono imperativo (DEBES/PROHIBIDO) y aplícalas antes de abrir PR.
+
+### A) Cuándo correr Lint/Typecheck
+
+- DEBES ejecutar lint y type-check:
+  - Antes de cada commit significativo (>20 líneas o refactors).
+  - Antes de cada push y antes de abrir PR.
+  - Tras cambiar tipos compartidos (`@altamedica/types`) o contratos públicos.
+  - Tras modificar `.tsx`, `.ts`, `.css`, `.md` o configuración (`next.config`, `tsconfig`).
+
+Comandos sugeridos:
+
+```powershell
+# En la raíz del monorepo (preferido)
+pnpm -w lint:fix
+pnpm -w type-check
+
+# Solo para esta app (aislado)
+npm run lint
+npm run type-check
+```
+
+También puedes usar las tareas de VS Code: “🧹 Lint Fix” y “🧪 Run Tests”.
+
+### B) Regla de Lectura (lee antes de escribir)
+
+- DEBES identificar contrato y dependencias ANTES de editar:
+  - Tipos en `@altamedica/types` y utilidades en `packages/`.
+  - Providers/contexts (ej.: `CrisisDataProvider`, `OperationsUIProvider`).
+  - Archivos hermano (tests, docs, índices) para coherencia.
+- PROHIBIDO duplicar lógica existente en `packages/` si puede reutilizarse.
+- Para mapas, verifica SSR-safety (imports dinámicos) y reflow (`map:invalidate-size`).
+
+Checklist mínimo de lectura:
+
+- [ ] Componente/servicio a tocar
+- [ ] Tipos/contratos vinculados
+- [ ] Contexto/provider y usos
+- [ ] Docs (este CLAUDE.md) / notas de arquitectura
+
+### C) Regla de Edición (cambios mínimos y seguros)
+
+- DEBES introducir cambios mínimos; PROHIBIDO re-formatear archivos completos sin necesidad.
+- Mantén estilo y no rompas APIs públicas sin actualizar tipos, docs y usos.
+- React/Next.js:
+  - Evita `window`/`document` en server; usa `dynamic(..., { ssr:false })` cuando aplique.
+  - Leaflet: llama `invalidateSize()` tras cambios de layout.
+- Actualiza pruebas y docs en el mismo PR cuando cambie el comportamiento.
+- Usa Conventional Commits con ámbito claro (ej.: `fix(companies): reflow robusto en mapa`).
+
+### D) Regla de Razonamiento (antes de codear)
+
+- Define un micro-contrato en el PR o descripción técnica:
+  - Inputs/outputs y formas (enlaza a tipos Zod/TS si existen).
+  - 3–5 casos borde (SSR/hidratación, vacíos, errores red, timeouts, permisos).
+  - Criterios de éxito y validación (lint/tests/smoke).
+- Para mapas/UI sensibles al layout, documenta estrategia de reflow y eventos escuchados/emitidos.
+
+### E) Regla en Archivos Paralelos (mantén coherencia)
+
+Cuando edites/crees uno, DEBES revisar/actualizar sus pares:
+
+- Componente React (`src/components/**/Nombre.tsx`)
+  - Test (`src/components/**/Nombre.test.tsx` o en paquete de tests)
+  - `index.ts` de exportación si existe
+  - Tipos (`src/types/*.ts` o `@altamedica/types`)
+  - Docs (este `CLAUDE.md` o README de la feature)
+- Página App Router (`src/app/**/page.tsx`)
+  - `loading.tsx` / `error.tsx` si la ruta los requiere
+  - Provider/navegación si introduce estado/contexto
+- Servicio (`src/services/**/NombreService.ts`)
+  - Tipos de request/response y validaciones
+  - Puntos de consumo (componentes/contexts)
+- Mapas (Leaflet)
+  - Emisor `map:invalidate-size` (p. ej., `MapShell`)
+  - Listener `map:invalidate-size` en el mapa afectado
+
+### F) Patrón de Archivos en Paralelo (globs sugeridos)
+
+- Componentes:
+  - `src/components/**/[A-Z]*.tsx`
+  - `src/components/**/[A-Z]*.test.tsx`
+  - `src/components/**/index.ts`
+- Tipos/contratos:
+  - `src/types/**/*.ts`
+  - `packages/@altamedica/types/src/**/*.ts`
+- Servicios:
+  - `src/services/**/[A-Z]*Service.ts`
+- Rutas App Router:
+  - `src/app/**/page.tsx`
+  - `src/app/**/loading.tsx`
+  - `src/app/**/error.tsx`
+- Mapas y shell:
+  - `src/components/operations-hub/MapShell.tsx`
+  - `src/components/**/Map*.tsx`
 
 ## 6. Solución de Problemas
 
 ### Errores de Hidratación SSR
+
 - **Problema**: `Hydration failed because the server rendered text didn't match`
 - **Causa**: Uso de `Date.now()` o `Math.random()` en render inicial
 - **Solución**: Usar `useEffect` para valores dinámicos o crear componentes client-only
 
 ### Errores de Firebase
+
 - **Problema**: `db.collection is not a function`
 - **Causa**: Usando API antigua de Firebase
 - **Solución**: Usar imports modulares v9+:
@@ -251,12 +448,20 @@ npm run type-check
   ```
 
 ### Si la compilación se cuelga:
+
 1. Asegúrate de NO estar usando Turbopack
 2. Limpia el caché: `rm -rf .next`
 3. Verifica que no haya imports circulares
 4. Revisa el script check-circular-deps.js
 
+### Si los mapas se “rompen” tras colapsar paneles:
+
+1. Verifica que `MapShell` emite el evento `map:invalidate-size`
+2. Confirma que el mapa escucha el evento y llama `invalidateSize()`
+3. Asegúrate de no renderizar contenido condicional SSR-only que cambie en hidratación
+
 ### Si hay errores de módulos no encontrados:
+
 1. Verifica que las dependencias estén instaladas: `npm install`
 2. Revisa que los imports sean correctos
 3. Considera usar imports directos en lugar de barrel exports
@@ -264,6 +469,7 @@ npm run type-check
 ## 7. Arquitectura de Redistribución de Pacientes
 
 ### Flujo de Decisión
+
 ```
 1. MONITOREO CONTINUO
    └─> Recolección de datos cada 30s
@@ -292,6 +498,7 @@ npm run type-check
 ```
 
 ### Criterios de Redistribución
+
 - **Proximidad**: Máximo 50km de distancia
 - **Capacidad**: Hospital receptor <70% ocupación
 - **Especialidad**: Matching de especialidades requeridas
@@ -318,6 +525,19 @@ npm run type-check
 
 ### 📝 Changelog
 
+- **9 de agosto 2025**: Reglas operativas añadidas
+  - Reglas de Lint/Typecheck obligatorias y momentos de ejecución
+  - Reglas de lectura previa, edición mínima, razonamiento y archivos paralelos
+  - Patrones de archivos en paralelo para coherencia del código
+
+- **9 de agosto 2025**: Operations Hub + mejoras de mapa
+  - Nueva ruta `/operations-hub` con TopBar + MapShell
+  - Integración de CrisisMapPanel y MarketplaceMap en pestañas
+  - Estrategia de reflow del mapa vía `map:invalidate-size`
+  - Theming VS Code aplicado; eliminación de gradientes problemáticos
+  - Fix de hidratación: se removieron overlays SSR-only en shells
+  - `CrisisDataProvider` envuelve el Hub para evitar errores de contexto
+
 - **9 de agosto 2025**: Implementación completa del Sistema de Control Hospitalario
   - Nuevo diseño UI estilo torre de control
   - Mapa interactivo con redistribución de pacientes
@@ -327,3 +547,43 @@ npm run type-check
   - Solución de problemas de hidratación SSR
 
 - **28 de enero 2025**: Versión inicial del portal B2B
+
+ejemplo de como crear una pagina: hagamos una cosa, ayudame a crear marketplace en una pagina. con todas las funciones que esta en el archivo components
+
+Referencia de 1 usada
+Buscaré los componentes del Marketplace y el árbol de app para crear una página marketplace que los use con imports SSR-safe y los providers apropiados; luego generaré la página con el shell y funcionalidades integradas.
+
+Se buscaron archivos que coinciden con **/apps/companies/**/MarketplaceMap.tsx, no hay coincidencias
+
+Haré una búsqueda amplia en el repositorio para ubicar MarketplaceMap u otros componentes del marketplace y confirmar sus rutas reales antes de crear la nueva página.
+
+Texto buscado para MarketplaceMap|marketplace map|MarketplaceProvider|marketplace, resultados 200
+Para crear/confirmar la página Marketplace, revisaré si ya existe page.tsx y, si falta, la crearé con Providers y el componente MarketplaceMap SSR-safe, reutilizando funciones desde components. Luego validaré imports y tipos.
+
+---
+
+## 🔁 Recarga segura de chunks en desarrollo
+
+Para evitar pantallas en blanco por `ChunkLoadError` durante HMR, el layout raíz inyecta un pequeño handler en cliente que hace reload con `?nocache` cuando detecta el error en `console.error`.
+
+- No existe ningún componente `ChunkReload` en el proyecto. Si aparece `ReferenceError: ChunkReload is not defined`, elimina su uso del layout y conserva el handler inline:
+  - Archivo: `src/app/layout.tsx`
+  - Mantén solo: `<script dangerouslySetInnerHTML={{ __html: handlerScript }} />`
+
+Buenas prácticas:
+
+- Evita side-effects en el server (App Router). Cualquier lógica dependiente de `window` debe vivir en componentes `"use client"` o scripts inline controlados.
+- Limpia `.next` si persisten errores tras cambios de dependencias.
+
+## 🗺️ Mapa SSR-safe y reflows robustos
+
+- `MarketplaceMap` y mapas de Crisis usan imports dinámicos de `react-leaflet` con `ssr: false`.
+- Al cambiar el layout (colapsar paneles, fullscreen), emite `window.dispatchEvent(new Event('map:invalidate-size'))`.
+- Los mapas escuchan ese evento y llaman `invalidateSize()` con un pequeño `setTimeout`.
+- Asegúrate de que el contenedor tenga `h-full w-full` y que el wrapper del mapa haga un `invalidateSize()` inicial tras montar.
+
+## 🧭 Operations Hub (Crisis + Marketplace)
+
+- Ruta: `/marketplace` u `/operations-hub` según despliegue actual.
+- Shell estilo VS Code con paneles colapsables y tabs; el mapa está al centro.
+- Onboarding de demo de crisis: activa modo demo (ruta y ambulancia) y dispara reflow al avanzar pasos.

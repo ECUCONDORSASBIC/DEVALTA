@@ -147,7 +147,7 @@ export default function DoctorsDirectoryPage() {
 
   // Filtrar y ordenar doctores
   const filteredDoctors = useMemo(() => {
-    let filtered = doctors.filter((doctor) => {
+    const filtered = doctors.filter((doctor) => {
       // Búsqueda por nombre
       if (filters.search && !`${doctor.firstName} ${doctor.lastName}`.toLowerCase().includes(filters.search.toLowerCase())) {
         return false;

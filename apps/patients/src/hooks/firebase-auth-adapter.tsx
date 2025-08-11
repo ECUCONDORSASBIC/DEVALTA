@@ -98,14 +98,7 @@ export class FirebaseAuthAdapter {
 
     const mockToken = "mock-jwt-token";
 
-    // Guardar en localStorage para compatibilidad
-    if (credentials.rememberMe) {
-      localStorage.setItem("altamedica_token", mockToken);
-      localStorage.setItem("altamedica_user", JSON.stringify(mockUser));
-    } else {
-      sessionStorage.setItem("altamedica_token", mockToken);
-      sessionStorage.setItem("altamedica_user", JSON.stringify(mockUser));
-    }
+  // No guardar tokens en storage; api-server gestionará cookies HttpOnly
 
     return { user: mockUser, token: mockToken };
   }
@@ -137,9 +130,7 @@ export class FirebaseAuthAdapter {
 
     const mockToken = "mock-jwt-token";
 
-    // Guardar en localStorage
-    localStorage.setItem("altamedica_token", mockToken);
-    localStorage.setItem("altamedica_user", JSON.stringify(mockUser));
+  // No guardar tokens en storage
 
     return { user: mockUser, token: mockToken };
   }
@@ -152,11 +143,7 @@ export class FirebaseAuthAdapter {
     // Versión mock temporal
     console.log("Mock logout");
 
-    // Limpiar localStorage
-    localStorage.removeItem("altamedica_token");
-    localStorage.removeItem("altamedica_user");
-    sessionStorage.removeItem("altamedica_token");
-    sessionStorage.removeItem("altamedica_user");
+  // Nada que limpiar en storage (cookies HttpOnly se limpian en backend)
   }
 
   /**
@@ -164,20 +151,8 @@ export class FirebaseAuthAdapter {
    * Verifica si hay sesión activa
    */
   async getCurrentUser(): Promise<User | null> {
-    // Versión mock temporal
-    const storedUser =
-      localStorage.getItem("altamedica_user") ||
-      sessionStorage.getItem("altamedica_user");
-
-    if (storedUser) {
-      try {
-        return JSON.parse(storedUser);
-      } catch {
-        return null;
-      }
-    }
-
-    return null;
+  // Versión mock temporal: sin storage, retornar null
+  return null;
   }
 
   /**
@@ -195,22 +170,16 @@ export class FirebaseAuthAdapter {
    * Mantiene la sesión activa
    */
   async refreshToken(): Promise<string | null> {
-    // Versión mock temporal
-    const storage = localStorage.getItem("altamedica_token")
-      ? localStorage
-      : sessionStorage;
-    return storage.getItem("altamedica_token");
+  // Versión mock temporal: sin storage
+  return null;
   }
 
   /**
    * Verificar si el usuario está autenticado
    */
   isAuthenticated(): boolean {
-    // Versión mock temporal
-    return !!(
-      localStorage.getItem("altamedica_token") ||
-      sessionStorage.getItem("altamedica_token")
-    );
+  // Versión mock temporal: sin storage
+  return false;
   }
 }
 
@@ -234,10 +203,8 @@ export function useFirebaseAuth() {
     // Verificar estado inicial
     const checkInitialAuth = async () => {
       try {
-        const user = await firebaseAuthAdapter.getCurrentUser();
-        const token =
-          localStorage.getItem("altamedica_token") ||
-          sessionStorage.getItem("altamedica_token");
+  const user = await firebaseAuthAdapter.getCurrentUser();
+  const token = null; // Tokens manejados vía cookies HttpOnly
 
         setAuthState({
           user,

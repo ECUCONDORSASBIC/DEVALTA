@@ -1,11 +1,9 @@
-import { getAuthAdmin, getFirestoreAdmin } from '../lib/firebase-admin';
+import { getAuthAdmin, adminDb } from '../lib/firebase-admin';
 import { 
   UserRole, 
-  generateAuthToken, 
-  generateRefreshToken,
-  setUserClaims,
-  AuthToken
-} from '../lib/auth';
+  UnifiedAuthService,
+  type AuthToken
+} from '../auth/UnifiedAuthSystem';
 import { UserRecord } from 'firebase-admin/auth';
 
 // Interfaz para datos de usuario en Firestore
@@ -67,7 +65,7 @@ const rolePermissions: Record<UserRole, string[]> = {
 
 export class FirebaseAuthService {
   private auth = getAuthAdmin();
-  private db = getFirestoreAdmin();
+  private db = adminDb;
 
   /**
    * Crear un nuevo usuario en Firebase y Firestore
@@ -93,7 +91,7 @@ export class FirebaseAuthService {
 
       // Establecer custom claims (rol y permisos)
       const permissions = rolePermissions[role] || [];
-      await setUserClaims(userRecord.uid, role, permissions);
+      await this.auth.setCustomUserClaims(userRecord.uid, { role, permissions });
 
       // Crear documento en Firestore
       const userDoc: UserDocument = {
@@ -118,8 +116,8 @@ export class FirebaseAuthService {
         permissions
       };
 
-      const token = generateAuthToken(authToken);
-      const refreshToken = generateRefreshToken(userRecord.uid);
+      const token = UnifiedAuthService.generateAuthToken(authToken);
+      const refreshToken = UnifiedAuthService.generateRefreshToken(userRecord.uid);
 
       console.log(`✅ User created: ${email} with role: ${role}`);
 
@@ -163,8 +161,8 @@ export class FirebaseAuthService {
         permissions: userData.permissions || rolePermissions[userData.role] || []
       };
 
-      const token = generateAuthToken(authToken);
-      const refreshToken = generateRefreshToken(decodedToken.uid);
+      const token = UnifiedAuthService.generateAuthToken(authToken);
+      const refreshToken = UnifiedAuthService.generateRefreshToken(decodedToken.uid);
 
       console.log(`✅ User authenticated: ${email}`);
 
@@ -210,7 +208,7 @@ export class FirebaseAuthService {
       const permissions = rolePermissions[newRole] || [];
 
       // Actualizar custom claims en Firebase Auth
-      await setUserClaims(uid, newRole, permissions);
+      await this.auth.setCustomUserClaims(uid, { role: newRole, permissions });
 
       // Actualizar documento en Firestore
       await this.db.collection('users').doc(uid).update({
@@ -247,7 +245,7 @@ export class FirebaseAuthService {
       const newPermissions = [...new Set([...currentPermissions, ...additionalPermissions])];
 
       // Actualizar custom claims
-      await setUserClaims(uid, userDoc.role, newPermissions);
+      await this.auth.setCustomUserClaims(uid, { role: userDoc.role, permissions: newPermissions });
 
       // Actualizar Firestore
       await this.db.collection('users').doc(uid).update({

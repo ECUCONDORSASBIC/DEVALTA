@@ -3,10 +3,11 @@
  * Maneja autenticación, cookies httpOnly y redirección por roles
  */
 
+import { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from '../constants/auth-cookies';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { Response, Request } from 'express';
-import { getAuthAdmin } from '../lib/firebase-admin';
 import { z } from 'zod';
+import { getAuthAdmin } from '../lib/firebase-admin';
 
 // Esquemas de validación
 const LoginSchema = z.object({
@@ -77,11 +78,15 @@ export class SSOAuthService {
       });
 
       // Establecer cookies httpOnly
-      res.cookie('auth-token', accessToken, COOKIE_OPTIONS);
-      res.cookie('refresh-token', refreshToken, {
+  // Escribir cookies con nombre estandarizado y mantener legacy durante la migración
+  res.cookie(AUTH_COOKIES.token, accessToken, COOKIE_OPTIONS);
+  res.cookie(AUTH_COOKIES.refresh, refreshToken, {
         ...COOKIE_OPTIONS,
         maxAge: 30 * 24 * 60 * 60 * 1000
       });
+  // Backward-compat: legacy
+  res.cookie(LEGACY_AUTH_COOKIES.token, accessToken, COOKIE_OPTIONS);
+  res.cookie(LEGACY_AUTH_COOKIES.refresh, refreshToken, { ...COOKIE_OPTIONS, maxAge: 30 * 24 * 60 * 60 * 1000 });
 
       // Registrar en auditoría
       await this.auditLog({
@@ -144,11 +149,14 @@ export class SSOAuthService {
       });
       
       // 5. Establecer cookies httpOnly
-      res.cookie('auth-token', accessToken, COOKIE_OPTIONS);
-      res.cookie('refresh-token', refreshToken, {
+  res.cookie(AUTH_COOKIES.token, accessToken, COOKIE_OPTIONS);
+  res.cookie(AUTH_COOKIES.refresh, refreshToken, {
         ...COOKIE_OPTIONS,
         maxAge: 30 * 24 * 60 * 60 * 1000 // 30 días para refresh
       });
+  // Backward-compat: legacy
+  res.cookie(LEGACY_AUTH_COOKIES.token, accessToken, COOKIE_OPTIONS);
+  res.cookie(LEGACY_AUTH_COOKIES.refresh, refreshToken, { ...COOKIE_OPTIONS, maxAge: 30 * 24 * 60 * 60 * 1000 });
       
       // 6. Registrar en auditoría (HIPAA)
       await this.auditLog({
@@ -197,10 +205,10 @@ export class SSOAuthService {
   /**
    * Verificar token desde cookie httpOnly
    */
-  async verifyAuth(req: Request, res: Response, next?: Function) {
+  async verifyAuth(req: Request, res: Response, next?: Function): Promise<Response | void> {
     try {
       // 1. Obtener token de la cookie
-      const token = req.cookies['auth-token'];
+  const token = req.cookies[AUTH_COOKIES.token] || req.cookies[LEGACY_AUTH_COOKIES.token];
       
       if (!token) {
         return res.status(401).json({
@@ -221,18 +229,19 @@ export class SSOAuthService {
       
       // 5. Renovar token si está próximo a expirar
       if (this.shouldRenewToken(decoded)) {
-        const newToken = this.renewAccessToken(validToken);
-        res.cookie('auth-token', newToken, COOKIE_OPTIONS);
+  const newToken = this.renewAccessToken(validToken);
+  res.cookie(AUTH_COOKIES.token, newToken, COOKIE_OPTIONS);
+  res.cookie(LEGACY_AUTH_COOKIES.token, newToken, COOKIE_OPTIONS); // mantener por compatibilidad
       }
       
-      if (next) next();
-      else return res.status(200).json({ success: true, user: validToken });
+  if (next) return next();
+  else return res.status(200).json({ success: true, user: validToken });
       
     } catch (error: any) {
       console.error('[SSO] Token inválido:', error.message);
       
       // Intentar refresh token
-      const refreshToken = req.cookies['refresh-token'];
+  const refreshToken = req.cookies[AUTH_COOKIES.refresh] || req.cookies[LEGACY_AUTH_COOKIES.refresh];
       if (refreshToken) {
         return this.refreshAuth(req, res, next);
       }
@@ -251,7 +260,7 @@ export class SSOAuthService {
   async logout(req: Request, res: Response) {
     try {
       // 1. Obtener usuario de la sesión actual
-      const token = req.cookies['auth-token'];
+  const token = req.cookies[AUTH_COOKIES.token] || req.cookies[LEGACY_AUTH_COOKIES.token];
       let userId = 'unknown';
       
       if (token) {
@@ -262,8 +271,11 @@ export class SSOAuthService {
       }
       
       // 2. Limpiar cookies
-      res.clearCookie('auth-token', { path: '/', domain: COOKIE_OPTIONS.domain });
-      res.clearCookie('refresh-token', { path: '/', domain: COOKIE_OPTIONS.domain });
+  // Limpiar ambas cookies (estándar y legacy)
+  res.clearCookie(AUTH_COOKIES.token, { path: '/', domain: COOKIE_OPTIONS.domain });
+  res.clearCookie(AUTH_COOKIES.refresh, { path: '/', domain: COOKIE_OPTIONS.domain });
+  res.clearCookie(LEGACY_AUTH_COOKIES.token, { path: '/', domain: COOKIE_OPTIONS.domain });
+  res.clearCookie(LEGACY_AUTH_COOKIES.refresh, { path: '/', domain: COOKIE_OPTIONS.domain });
       
       // 3. Registrar en auditoría
       await this.auditLog({
@@ -291,9 +303,9 @@ export class SSOAuthService {
    * Middleware para proteger rutas
    */
   requireAuth(allowedRoles?: string[]) {
-    return async (req: Request, res: Response, next: Function) => {
+    return async (req: Request, res: Response, next: Function): Promise<void | Response> => {
       // Verificar autenticación
-      await this.verifyAuth(req, res, async () => {
+      return this.verifyAuth(req, res, async () => {
         // Verificar rol si es necesario
         if (allowedRoles && allowedRoles.length > 0) {
           const user = (req as any).user;
@@ -307,14 +319,13 @@ export class SSOAuthService {
               path: req.path
             });
             
-            return res.status(403).json({
+      return res.status(403).json({
               success: false,
               message: 'No tienes permisos para acceder a este recurso'
             });
           }
         }
-        
-        next();
+    return next();
       });
     };
   }
@@ -393,9 +404,9 @@ export class SSOAuthService {
     );
   }
   
-  private async refreshAuth(req: Request, res: Response, next?: Function) {
+  private async refreshAuth(req: Request, res: Response, next?: Function): Promise<Response | void> {
     try {
-      const refreshToken = req.cookies['refresh-token'];
+  const refreshToken = req.cookies[AUTH_COOKIES.refresh] || req.cookies[LEGACY_AUTH_COOKIES.refresh];
       const decoded = jwt.verify(refreshToken, this.JWT_REFRESH_SECRET) as any;
       
       // Obtener perfil actualizado
@@ -408,12 +419,13 @@ export class SSOAuthService {
       });
       
       // Establecer nueva cookie
-      res.cookie('auth-token', newAccessToken, COOKIE_OPTIONS);
+  res.cookie(AUTH_COOKIES.token, newAccessToken, COOKIE_OPTIONS);
+  res.cookie(LEGACY_AUTH_COOKIES.token, newAccessToken, COOKIE_OPTIONS);
       
       // Adjuntar usuario al request
       (req as any).user = { uid: decoded.uid, ...userProfile };
       
-      if (next) next();
+  if (next) return next();
       
     } catch (error) {
       return res.status(401).json({

@@ -1,94 +1,31 @@
+const { appConfigs } = require('@altamedica/config-next');
+const { attachChunkErrorHandler } = require('@altamedica/utils');
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
+module.exports = appConfigs.webApp({
+  // Custom configuration for web-app
+  transpilePackages: [
+    // Additional packages specific to web-app
+    '@altamedica/medical-components',
+    '@altamedica/patient-services',
+    '@altamedica/telemedicine-core',
+  ],
   
-  // 🚀 PERFORMANCE OPTIMIZATIONS - ENHANCED FOR DEVELOPMENT
-  poweredByHeader: false,
-  generateEtags: false,
-  compress: true,
-  // swcMinify removido - es default en Next.js 15+
-  
-  // 🔥 DESARROLLO OPTIMIZADO
-  typescript: {
-    ignoreBuildErrors: process.env.NODE_ENV === 'development', // Solo para dev
-  },
-  eslint: {
-    ignoreDuringBuilds: process.env.NODE_ENV === 'development',
-  },
-  
-  // 🖼️ OPTIMIZACIÓN DE IMÁGENES MÉDICAS
+  // Image domains for medical content
   images: {
-    formats: ['image/webp', 'image/avif'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 31536000, // 1 año para imágenes médicas
-    dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    domains: [
+      'localhost',
+      'altamedica.com',
+      'firebasestorage.googleapis.com',
+      'lh3.googleusercontent.com', // Google OAuth avatars
+    ],
   },
   
-  // 🛡️ SECURITY HEADERS HIPAA
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          // Content Security Policy para aplicaciones médicas
-          {
-            key: 'Content-Security-Policy-Report-Only',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' *.googleapis.com *.firebase.com",
-              "style-src 'self' 'unsafe-inline' *.googleapis.com fonts.googleapis.com",
-              "img-src 'self' data: blob: *.googleapis.com *.firebase.com",
-              "font-src 'self' fonts.gstatic.com",
-              "connect-src 'self' *.firebase.com *.googleapis.com wss://localhost:8888",
-              "media-src 'self' blob:",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-              "frame-ancestors 'none'",
-              "upgrade-insecure-requests"
-            ].join('; ')
-          },
-          // Headers de seguridad médica
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on'
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY'
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block'
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(*), microphone=(*), geolocation=(self), notifications=(self)'
-          },
-          // Headers específicos para telemedicina
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains; preload'
-          }
-        ]
-      }
-    ];
-  },
-  
-  // ⚡ WEBPACK OPTIMIZATIONS
+  // Custom webpack config for web-app
   webpack: (config, { isServer, dev }) => {
-    // Fallbacks para módulos Node.js
+    // Client-side optimizations
     if (!isServer) {
+      // Node.js polyfills
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -100,7 +37,7 @@ const nextConfig = {
         events: false,
       };
 
-      // 🔧 Exclude Firebase Admin from client bundle
+      // Exclude Firebase Admin from client bundle
       config.externals = config.externals || [];
       config.externals.push({
         'firebase-admin': 'commonjs firebase-admin',
@@ -108,7 +45,7 @@ const nextConfig = {
         'firebase-admin/firestore': 'commonjs firebase-admin/firestore',
       });
       
-      // 🎯 OPTIMIZE THREE.JS BUNDLE - Evitar duplicaciones
+      // Optimize Three.js bundle
       config.resolve.alias = {
         ...config.resolve.alias,
         'three': require.resolve('three'),
@@ -116,24 +53,19 @@ const nextConfig = {
       };
     }
 
-    // 🌐 WebAssembly support removed - Firebase Admin now server-only
-    
-    // Optimizaciones de producción
+    // Production optimizations
     if (!dev) {
-      // Chunk splitting optimizado
       config.optimization = {
         ...config.optimization,
         splitChunks: {
           chunks: 'all',
           cacheGroups: {
-            // Firebase y servicios médicos
             firebase: {
               test: /[\\/]node_modules[\\/](firebase|@firebase)[\\/]/,
               name: 'firebase',
               chunks: 'all',
               priority: 20,
             },
-            // Librerías médicas (Three.js, Leaflet, etc.)
             medical: {
               test: /[\\/]node_modules[\\/](three|leaflet|@tensorflow|@react-three)[\\/]/,
               name: 'medical-libs',
@@ -141,21 +73,18 @@ const nextConfig = {
               priority: 15,
               enforce: true,
             },
-            // Librerías de UI pesadas
             ui: {
               test: /[\\/]node_modules[\\/](framer-motion|recharts|canvas-confetti)[\\/]/,
               name: 'ui-libs',
               chunks: 'all',
               priority: 12,
             },
-            // React y Next.js
             framework: {
               test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
               name: 'framework',
               chunks: 'all',
               priority: 10,
             },
-            // Otras librerías
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendor',
@@ -170,7 +99,7 @@ const nextConfig = {
     return config;
   },
   
-  // 📊 EXPERIMENTAL FEATURES - ENHANCED FOR PERFORMANCE
+  // Additional experimental features
   experimental: {
     optimizePackageImports: [
       'lucide-react', 
@@ -180,30 +109,22 @@ const nextConfig = {
       'framer-motion',
       'recharts'
     ],
-    // 🎯 Optimizaciones específicas para Three.js y componentes pesados
-    optimizeCss: true,
     webpackBuildWorker: true,
     scrollRestoration: true,
-    largePageDataBytes: 128 * 1000, // 128KB para páginas grandes
-    // serverComponentsExternalPackages removido - causaba conflicto con Turbopack
+    largePageDataBytes: 128 * 1000,
   },
 
-  // 🔧 TURBOPACK CONFIGURATION (Next.js 15+)
-  turbopack: {
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
-    },
-    // Optimizaciones adicionales
-    memoryLimit: 4096, // Aumentar memoria para componentes 3D
+  // TypeScript and ESLint for development
+  typescript: {
+    ignoreBuildErrors: process.env.NODE_ENV === 'development',
+  },
+  eslint: {
+    ignoreDuringBuilds: process.env.NODE_ENV === 'development',
   },
   
-  // 🎯 CONFIGURACIÓN ESPECÍFICA PARA TELEMEDICINA
-  redirects: async () => {
+  // App-specific redirects
+  async redirects() {
     return [
-      // Redirecciones para URLs legacy
       {
         source: '/telemedicine',
         destination: '/patients',
@@ -217,7 +138,7 @@ const nextConfig = {
     ];
   },
   
-  // 📱 PWA PREPARATION
+  // PWA preparation
   async rewrites() {
     return [
       {
@@ -226,6 +147,4 @@ const nextConfig = {
       }
     ];
   }
-};
-
-module.exports = nextConfig;
+});

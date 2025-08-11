@@ -28,7 +28,11 @@
       "@/types/*": ["./src/types/*"],
       "@/hooks/*": ["./src/hooks/*"],
       "@/styles/*": ["./src/styles/*"],
-      "@/public/*": ["./public/*"]
+  "@/public/*": ["./public/*"],
+  "@altamedica/marketplace-hooks": ["../../packages/marketplace-hooks/src"],
+  "@altamedica/marketplace-hooks/*": ["../../packages/marketplace-hooks/src/*"],
+  "@altamedica/types": ["../../packages/types/src/index.ts"],
+  "@altamedica/types/*": ["../../packages/types/src/*"]
     }
   },
   "include": [

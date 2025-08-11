@@ -1,0 +1,305 @@
+📦 Bundle Analysis Report
+========================
+
+📊 Summary:
+- Total files: 96
+- Total size: 295.85 KB
+- Total exports: 196
+- Tree-shakable files: 94/96
+- Files with side effects: 2
+
+⚠️  Files with Side Effects:
+- dist\validators\lazy-schemas.esm.js: console usage
+- dist\validators\lazy-schemas.js: console usage
+
+📋 File Details:
+🌳 dist\validators\medical-validators.js (15.19KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\validators\medical-validators.esm.js (14.01KB)
+   Exports: 10, Re-exports: 0, Default: 0
+
+⚠️ dist\validators\lazy-schemas.js (12.61KB)
+   Exports: 0, Re-exports: 0, Default: 0
+   Side effects: console usage
+
+⚠️ dist\validators\lazy-schemas.esm.js (11.94KB)
+   Exports: 11, Re-exports: 0, Default: 0
+   Side effects: console usage
+
+🌳 dist\guards\medical-guards.js (11KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\utils\validation-utils.js (10.82KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\utils\validation-utils.esm.js (10.71KB)
+   Exports: 1, Re-exports: 0, Default: 0
+
+🌳 dist\guards\medical-guards.esm.js (10.07KB)
+   Exports: 19, Re-exports: 0, Default: 0
+
+🌳 dist\guards\validation-guards.js (9.94KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\security\hipaa.types.js (9.34KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\patient.js (9.25KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\guards\validation-guards.esm.js (9.04KB)
+   Exports: 27, Re-exports: 0, Default: 0
+
+🌳 dist\security\hipaa.types.esm.js (8.65KB)
+   Exports: 11, Re-exports: 0, Default: 0
+
+🌳 dist\patient.esm.js (8KB)
+   Exports: 15, Re-exports: 0, Default: 0
+
+🌳 dist\appointment.js (6.67KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\ai\medical-events.types.js (6.58KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\utils\type-utils.js (6.2KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\ai\medical-events.types.esm.js (6.11KB)
+   Exports: 5, Re-exports: 0, Default: 0
+
+🌳 dist\utils\type-utils.esm.js (6.1KB)
+   Exports: 1, Re-exports: 0, Default: 0
+
+🌳 dist\appointment.esm.js (5.68KB)
+   Exports: 10, Re-exports: 0, Default: 0
+
+🌳 dist\medical\doctor\doctor.types.js (4.97KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\clinical\appointment.types.js (4.64KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\ai\ml-types.js (4.59KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\security\encryption.types.js (4.54KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\doctor\doctor.types.esm.js (4.44KB)
+   Exports: 6, Re-exports: 0, Default: 0
+
+🌳 dist\ai\ml-types.esm.js (4.16KB)
+   Exports: 5, Re-exports: 0, Default: 0
+
+🌳 dist\medical\clinical\appointment.types.esm.js (4.14KB)
+   Exports: 7, Re-exports: 0, Default: 0
+
+🌳 dist\security\encryption.types.esm.js (4.08KB)
+   Exports: 7, Re-exports: 0, Default: 0
+
+🌳 dist\medical\clinical\medical-record.types.js (3.96KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\patient\patient.types.js (3.79KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\company.js (3.73KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\clinical\medical-record.types.esm.js (3.55KB)
+   Exports: 6, Re-exports: 0, Default: 0
+
+🌳 dist\ai.js (3.53KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\patient\patient.types.esm.js (3.24KB)
+   Exports: 6, Re-exports: 0, Default: 0
+
+🌳 dist\company.esm.js (3.21KB)
+   Exports: 5, Re-exports: 0, Default: 0
+
+🌳 dist\core\branded.types.js (3.01KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\index.js (2.96KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\ai.esm.js (2.66KB)
+   Exports: 10, Re-exports: 0, Default: 0
+
+🌳 dist\core\base.types.js (2.66KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\core\branded.types.esm.js (2.65KB)
+   Exports: 8, Re-exports: 0, Default: 0
+
+🌳 dist\core\base.types.esm.js (2.22KB)
+   Exports: 9, Re-exports: 0, Default: 0
+
+🌳 dist\index.esm.js (2KB)
+   Exports: 4, Re-exports: 7, Default: 0
+
+🌳 dist\index-simple.js (1.53KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\ai-jobs.js (1.49KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\api\response.types.js (1.49KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\ai-jobs.esm.js (1.27KB)
+   Exports: 3, Re-exports: 0, Default: 0
+
+🌳 dist\api\response.types.esm.js (1.17KB)
+   Exports: 3, Re-exports: 0, Default: 0
+
+🌳 dist\doctor.js (1.08KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\index.js (1.05KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\api\index.js (1.01KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\core\index.js (1.01KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\clinical\index.js (0.99KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\validators\index.js (0.98KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\guards\index.js (0.98KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\security\index.js (0.97KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\utils\index.js (0.97KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\ai\index.js (0.96KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\patient\index.js (0.93KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\doctor\index.js (0.92KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\doctor.esm.js (0.9KB)
+   Exports: 1, Re-exports: 0, Default: 0
+
+🌳 dist\employee.js (0.74KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\index-simple.esm.js (0.67KB)
+   Exports: 2, Re-exports: 4, Default: 0
+
+🌳 dist\employee.esm.js (0.59KB)
+   Exports: 1, Re-exports: 0, Default: 0
+
+🌳 dist\api\request.types.js (0.59KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\core\utility.types.js (0.58KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\core\utility.types.esm.js (0.49KB)
+   Exports: 2, Re-exports: 0, Default: 0
+
+🌳 dist\api\request.types.esm.js (0.44KB)
+   Exports: 1, Re-exports: 0, Default: 0
+
+🌳 dist\types\common.js (0.33KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\types\common.esm.js (0.27KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\index.esm.js (0.26KB)
+   Exports: 0, Re-exports: 3, Default: 0
+
+🌳 dist\b2c\company-doctor-communication.types.js (0.25KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\api\endpoints.types.js (0.23KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\marketplace.js (0.23KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\types\medical.js (0.23KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\api\index.esm.js (0.22KB)
+   Exports: 0, Re-exports: 3, Default: 0
+
+🌳 dist\core\index.esm.js (0.21KB)
+   Exports: 0, Re-exports: 3, Default: 0
+
+🌳 dist\medical\clinical\index.esm.js (0.21KB)
+   Exports: 0, Re-exports: 2, Default: 0
+
+🌳 dist\validators\index.esm.js (0.2KB)
+   Exports: 0, Re-exports: 2, Default: 0
+
+🌳 dist\guards\index.esm.js (0.2KB)
+   Exports: 0, Re-exports: 2, Default: 0
+
+🌳 dist\security\index.esm.js (0.2KB)
+   Exports: 0, Re-exports: 2, Default: 0
+
+🌳 dist\utils\index.esm.js (0.19KB)
+   Exports: 0, Re-exports: 2, Default: 0
+
+🌳 dist\ai\index.esm.js (0.19KB)
+   Exports: 0, Re-exports: 2, Default: 0
+
+🌳 dist\b2c\company-doctor-communication.types.esm.js (0.18KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\medical\patient\index.esm.js (0.17KB)
+   Exports: 0, Re-exports: 1, Default: 0
+
+🌳 dist\medical\doctor\index.esm.js (0.17KB)
+   Exports: 0, Re-exports: 1, Default: 0
+
+🌳 dist\api\endpoints.types.esm.js (0.16KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\marketplace.esm.js (0.16KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\types\medical.esm.js (0.16KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\types\base.js (0.16KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\types\api.js (0.16KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\common.js (0.16KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\api.js (0.14KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\types\base.esm.js (0.1KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\types\api.esm.js (0.09KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\common.esm.js (0.09KB)
+   Exports: 0, Re-exports: 0, Default: 0
+
+🌳 dist\api.esm.js (0.08KB)
+   Exports: 0, Re-exports: 0, Default: 0
+

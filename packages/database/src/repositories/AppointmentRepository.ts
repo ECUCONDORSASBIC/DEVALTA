@@ -4,10 +4,8 @@
  * avanzadas de programación, recordatorios y telemedicina
  */
 
-import { BaseRepository, BaseEntity, ServiceContext, QueryOptions, RepositoryResult } from './BaseRepository';
-import { z } from 'zod';
-import { dbConnection } from '../core/DatabaseConnection';
-import { AppointmentExtendedSchema } from '../schemas/appointment-schemas';
+import { AppointmentExtendedSchema } from '../schemas/appointment-schemas.js';
+import { BaseEntity, BaseRepository, RepositoryResult, ServiceContext } from './BaseRepository.js';
 
 // Appointment entity interface que extiende BaseEntity
 export interface Appointment extends BaseEntity {
@@ -94,21 +92,20 @@ export interface Appointment extends BaseEntity {
 }
 
 export class AppointmentRepository extends BaseRepository<Appointment> {
-  constructor() {
-    super('appointments', AppointmentExtendedSchema);
-  }
+  protected collectionName = 'appointments';
+  protected entitySchema = AppointmentExtendedSchema;
 
   /**
    * Buscar citas por paciente
    */
-  async findByPatient(patientId: string, filters?: {
+  async findByPatient(patientId: string, context: ServiceContext, filters?: {
     status?: string[];
     fromDate?: Date;
     toDate?: Date;
     limit?: number;
-  }, context?: ServiceContext): Promise<RepositoryResult<Appointment[]>> {
+  }): Promise<RepositoryResult<Appointment>> {
     try {
-      const db = await dbConnection.getFirestore();
+      const db = await this.ensureFirestore();
       let query = db.collection(this.collectionName)
         .where('patientId', '==', patientId);
 
@@ -140,28 +137,29 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
         });
       }
 
-      await this.auditLog('READ_BY_PATIENT', { patientId, filters }, context);
+      await this.logAudit('read_by_patient', 'collection', context, { patientId, filters });
 
-      return {
-        success: true,
-        data: appointments
+  return {
+        data: appointments,
+        total: appointments.length,
+        hasMore: false
       };
     } catch (error) {
-      return this.handleError(error, 'findByPatient');
+      throw error;
     }
   }
 
   /**
    * Buscar citas por doctor
    */
-  async findByDoctor(doctorId: string, filters?: {
+  async findByDoctor(doctorId: string, context: ServiceContext, filters?: {
     status?: string[];
     fromDate?: Date;
     toDate?: Date;
     limit?: number;
-  }, context?: ServiceContext): Promise<RepositoryResult<Appointment[]>> {
+  }): Promise<RepositoryResult<Appointment>> {
     try {
-      const db = await dbConnection.getFirestore();
+      const db = await this.ensureFirestore();
       let query = db.collection(this.collectionName)
         .where('doctorId', '==', doctorId);
 
@@ -193,21 +191,22 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
         });
       }
 
-      await this.auditLog('READ_BY_DOCTOR', { doctorId, filters }, context);
+      await this.logAudit('read_by_doctor', 'collection', context, { doctorId, filters });
 
-      return {
-        success: true,
-        data: appointments
+  return {
+        data: appointments,
+        total: appointments.length,
+        hasMore: false
       };
     } catch (error) {
-      return this.handleError(error, 'findByDoctor');
+      throw error;
     }
   }
 
   /**
    * Crear cita con número único
    */
-  async createWithAppointmentNumber(data: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt' | 'appointmentNumber'>, context?: ServiceContext): Promise<RepositoryResult<Appointment | null>> {
+  async createWithAppointmentNumber(data: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt' | 'appointmentNumber'>, context: ServiceContext): Promise<Appointment> {
     try {
       // Generar número único de cita
       const appointmentNumber = this.generateAppointmentNumber();
@@ -219,24 +218,20 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
         updatedAt: new Date()
       };
 
-      const result = await this.create(appointmentData as any, context);
-      
-      if (result.success) {
-        await this.auditLog('CREATE_WITH_NUMBER', { appointmentNumber }, context);
-      }
-
-      return result;
+  const created = await this.create(appointmentData as any, context);
+  await this.logAudit('create_with_number', created.id, context, { appointmentNumber });
+  return created as Appointment;
     } catch (error) {
-      return this.handleError(error, 'createWithAppointmentNumber');
+  throw error;
     }
   }
 
   /**
    * Buscar citas por número
    */
-  async findByAppointmentNumber(appointmentNumber: string, context?: ServiceContext): Promise<RepositoryResult<Appointment | null>> {
+  async findByAppointmentNumber(appointmentNumber: string, context: ServiceContext): Promise<Appointment | null> {
     try {
-      const db = await dbConnection.getFirestore();
+      const db = await this.ensureFirestore();
       
       const query = db.collection(this.collectionName)
         .where('appointmentNumber', '==', appointmentNumber)
@@ -245,7 +240,7 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
       const snapshot = await query.get();
       
       if (snapshot.empty) {
-        return { success: true, data: null };
+  return null;
       }
 
       const appointment = { 
@@ -253,21 +248,17 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
         ...snapshot.docs[0].data() 
       } as Appointment;
 
-      await this.auditLog('READ_BY_NUMBER', { appointmentNumber }, context);
-
-      return {
-        success: true,
-        data: appointment
-      };
+  await this.logAudit('read_by_number', appointment.id, context, { appointmentNumber });
+  return appointment;
     } catch (error) {
-      return this.handleError(error, 'findByAppointmentNumber');
+  throw error;
     }
   }
 
   /**
    * Actualizar estado de cita
    */
-  async updateStatus(appointmentId: string, status: Appointment['appointmentStatus'], notes?: string, context?: ServiceContext): Promise<RepositoryResult<Appointment | null>> {
+  async updateStatus(appointmentId: string, status: Appointment['appointmentStatus'], notes: string | undefined, context: ServiceContext): Promise<Appointment | null> {
     try {
       const updateData: any = {
         appointmentStatus: status,
@@ -282,8 +273,8 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
         
         // Calcular duración real si hay tiempo de inicio
         const appointment = await this.findById(appointmentId, context);
-        if (appointment.success && appointment.data?.actualStartTime) {
-          const startTime = new Date(appointment.data.actualStartTime);
+        if (appointment?.actualStartTime) {
+          const startTime = new Date(appointment.actualStartTime);
           const endTime = new Date();
           updateData.actualDuration = Math.floor((endTime.getTime() - startTime.getTime()) / 60000); // minutos
         }
@@ -295,20 +286,18 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
         updateData.internalNotes = notes;
       }
 
-      const result = await this.update(appointmentId, updateData, context);
-      
-      await this.auditLog('UPDATE_STATUS', { appointmentId, status, notes }, context);
-
-      return result;
+  const result = await this.update(appointmentId, updateData, context);
+  await this.logAudit('update_status', appointmentId, context, { status, notes });
+  return result as Appointment | null;
     } catch (error) {
-      return this.handleError(error, 'updateStatus');
+  throw error;
     }
   }
 
   /**
    * Reagendar cita
    */
-  async reschedule(appointmentId: string, newScheduledDate: Date, newStartTime: string, newEndTime: string, reason?: string, context?: ServiceContext): Promise<RepositoryResult<Appointment | null>> {
+  async reschedule(appointmentId: string, newScheduledDate: Date, newStartTime: string, newEndTime: string, reason: string | undefined, context: ServiceContext): Promise<Appointment | null> {
     try {
       const updateData = {
         scheduledDate: newScheduledDate,
@@ -319,28 +308,28 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
         updatedAt: new Date()
       };
 
-      const result = await this.update(appointmentId, updateData, context);
+  const result = await this.update(appointmentId, updateData, context);
       
-      await this.auditLog('RESCHEDULE', { 
+  await this.logAudit('reschedule', appointmentId, context, { 
         appointmentId, 
         newScheduledDate, 
         newStartTime, 
         newEndTime, 
         reason 
-      }, context);
+  });
 
-      return result;
+  return result as Appointment | null;
     } catch (error) {
-      return this.handleError(error, 'reschedule');
+  throw error;
     }
   }
 
   /**
    * Buscar conflictos de horario para un doctor
    */
-  async findScheduleConflicts(doctorId: string, scheduledDate: Date, startTime: string, endTime: string, excludeAppointmentId?: string, context?: ServiceContext): Promise<RepositoryResult<Appointment[]>> {
+  async findScheduleConflicts(doctorId: string, scheduledDate: Date, startTime: string, endTime: string, excludeAppointmentId: string | undefined, context: ServiceContext): Promise<RepositoryResult<Appointment>> {
     try {
-      const db = await dbConnection.getFirestore();
+  const db = await this.ensureFirestore();
       
       // Crear fecha de inicio y fin del día
       const dayStart = new Date(scheduledDate);
@@ -373,29 +362,30 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
         );
       });
 
-      await this.auditLog('CHECK_CONFLICTS', { 
+      await this.logAudit('check_conflicts', 'collection', context, { 
         doctorId, 
         scheduledDate, 
         startTime, 
         endTime,
         conflictsFound: conflicts.length 
-      }, context);
+      });
 
-      return {
-        success: true,
-        data: conflicts
+  return {
+        data: conflicts,
+        total: conflicts.length,
+        hasMore: false
       };
     } catch (error) {
-      return this.handleError(error, 'findScheduleConflicts');
+      throw error;
     }
   }
 
   /**
    * Buscar citas de telemedicina activas
    */
-  async findActiveTelemedicine(context?: ServiceContext): Promise<RepositoryResult<Appointment[]>> {
+  async findActiveTelemedicine(context: ServiceContext): Promise<RepositoryResult<Appointment>> {
     try {
-      const db = await dbConnection.getFirestore();
+      const db = await this.ensureFirestore();
       
       const now = new Date();
       const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
@@ -411,14 +401,15 @@ export class AppointmentRepository extends BaseRepository<Appointment> {
         ...doc.data() 
       } as Appointment));
 
-      await this.auditLog('READ_ACTIVE_TELEMEDICINE', { count: appointments.length }, context);
+      await this.logAudit('read_active_telemedicine', 'collection', context, { count: appointments.length });
 
-      return {
-        success: true,
-        data: appointments
+  return {
+        data: appointments,
+        total: appointments.length,
+        hasMore: false
       };
     } catch (error) {
-      return this.handleError(error, 'findActiveTelemedicine');
+      throw error;
     }
   }
 

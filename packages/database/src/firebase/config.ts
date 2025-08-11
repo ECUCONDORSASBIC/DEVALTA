@@ -49,7 +49,7 @@ export function getFirebaseAuth(): Auth {
     auth = getAuth(app)
     
     // Conectar a emulador en desarrollo
-    if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+  if (process.env.NODE_ENV === 'development') {
       connectToEmulators()
     }
   }
@@ -65,7 +65,7 @@ export function getFirebaseFirestore(): Firestore {
     db = getFirestore(app)
     
     // Conectar a emulador en desarrollo
-    if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+  if (process.env.NODE_ENV === 'development') {
       connectToEmulators()
     }
   }
@@ -90,7 +90,7 @@ function connectToEmulators(): void {
   try {
     // Solo conectar si no están ya conectados
     const currentAuth = getFirebaseAuth()
-    if (currentAuth && !currentAuth.config.emulator) {
+  if (currentAuth && !(currentAuth as any)?.config?.emulator) {
       connectAuthEmulator(currentAuth, 'http://localhost:9099', { 
         disableWarnings: true 
       })
@@ -98,8 +98,8 @@ function connectToEmulators(): void {
     
     const currentDb = getFirebaseFirestore()
     // Para Firestore, verificar si ya está conectado
-    const firestoreSettings = (currentDb as any)._delegate?._databaseId
-    if (currentDb && (!firestoreSettings || !firestoreSettings.includes('localhost'))) {
+  const isEmulated = (currentDb as any)?._settings?.host?.includes?.('localhost') || (currentDb as any)?._delegate?._settings?.host?.includes?.('localhost')
+  if (currentDb && !isEmulated) {
       connectFirestoreEmulator(currentDb, 'localhost', 8080)
     }
   } catch (error) {
@@ -144,7 +144,7 @@ export const firebaseUtils = {
 export { app, auth, db, storage }
 
 // Re-exportar tipos útiles
-export type { FirebaseApp, Auth, Firestore, FirebaseStorage }
+export type { Auth, FirebaseApp, FirebaseStorage, Firestore }
 
 // Exportar la app inicializada por defecto
 export default initializeFirebaseApp()

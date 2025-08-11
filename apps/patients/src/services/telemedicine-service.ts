@@ -112,7 +112,7 @@ class TelemedicineService {
   /**
    * Enviar señal WebRTC (offer, answer, ice candidate)
    */
-  async sendWebRTCSignal(roomId: string, signal: any): Promise<ApiResponse<{ success: boolean }>> {
+  async sendWebRTCSignal(roomId: string, signal: RTCSessionDescriptionInit | RTCIceCandidate): Promise<ApiResponse<{ success: boolean }>> {
     return apiClient.post<{ success: boolean }>(
       `/api/v1/telemedicine/webrtc/signaling`,
       {
@@ -188,8 +188,8 @@ class TelemedicineService {
   /**
    * Obtener mensajes de chat de la sesión
    */
-  async getChatMessages(sessionId: string): Promise<ApiResponse<any[]>> {
-    return apiClient.get<any[]>(
+  async getChatMessages(sessionId: string): Promise<ApiResponse<ChatMessage[]>> {
+    return apiClient.get<ChatMessage[]>(
       `/api/v1/telemedicine/sessions/${sessionId}/chat`
     );
   }

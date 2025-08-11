@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Video, 
   VideoOff, 
@@ -12,9 +12,15 @@ import {
   Calendar,
   FileText,
   Activity,
-  MessageSquare
+  MessageSquare,
+  Brain,
+  History,
+  AlertCircle,
+  CheckCircle,
+  Clock
 } from 'lucide-react';
 import TelemedicineErrorBoundary from '../ErrorBoundary/TelemedicineErrorBoundary';
+import { useDiagnosisMock } from '../../hooks/useDiagnosis';
 
 interface VSCodeLayoutProps {
   children?: React.ReactNode;
@@ -24,12 +30,38 @@ export default function VSCodeLayout({ children }: VSCodeLayoutProps) {
   const [activeTab, setActiveTab] = useState('video-call');
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
+  const [showDiagnosisPanel, setShowDiagnosisPanel] = useState(false);
+  const [currentPatientData, setCurrentPatientData] = useState({
+    id: 'patient-001',
+    name: 'María González',
+    age: 32
+  });
+  
+  // Hook de diagnóstico IA
+  const {
+    isAnalyzing,
+    currentAnalysis,
+    history,
+    error: diagnosisError,
+    analyzeDiagnosis,
+    saveToHistory,
+    loadHistory,
+    clearCurrentAnalysis
+  } = useDiagnosisMock();
+
+  // Cargar historial al montar
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
+
   const [sidebarItems] = useState([
     { id: 'patients', icon: Users, label: 'Pacientes', count: 12 },
     { id: 'appointments', icon: Calendar, label: 'Citas', count: 5 },
     { id: 'records', icon: FileText, label: 'Historiales', count: 3 },
     { id: 'vitals', icon: Activity, label: 'Signos Vitales' },
     { id: 'chat', icon: MessageSquare, label: 'Chat', count: 2 },
+    { id: 'diagnosis', icon: Brain, label: 'IA Diagnosis', badge: 'NEW' },
+    { id: 'history', icon: History, label: 'Historial IA', count: history.length },
     { id: 'settings', icon: Settings, label: 'Configuración' },
   ]);
 
@@ -80,9 +112,14 @@ export default function VSCodeLayout({ children }: VSCodeLayoutProps) {
                         {item.label}
                       </span>
                     </div>
-                    {item.count && (
+                    {item.count !== undefined && (
                       <span className="bg-monokai-accent-pink text-monokai-background text-xs px-1.5 py-0.5 rounded-full font-medium">
                         {item.count}
+                      </span>
+                    )}
+                    {item.badge && (
+                      <span className="bg-monokai-accent-green text-monokai-background text-xs px-2 py-0.5 rounded-full font-bold">
+                        {item.badge}
                       </span>
                     )}
                   </div>
@@ -248,6 +285,12 @@ export default function VSCodeLayout({ children }: VSCodeLayoutProps) {
                     <button className="medical-button-monokai w-full text-left">
                       📋 Historial Médico
                     </button>
+                    <button 
+                      onClick={() => setShowDiagnosisPanel(true)}
+                      className="medical-button-monokai w-full text-left bg-monokai-accent-blue hover:bg-monokai-accent-green transition-colors"
+                    >
+                      🤖 Analizar con IA
+                    </button>
                     <button className="medical-button-monokai w-full text-left">
                       📅 Programar Seguimiento
                     </button>
@@ -285,6 +328,204 @@ export default function VSCodeLayout({ children }: VSCodeLayoutProps) {
                   <p className="text-monokai-text-secondary">
                     Contenido en desarrollo...
                   </p>
+                </div>
+              </div>
+            )}
+
+            {/* Panel de Diagnóstico IA */}
+            {showDiagnosisPanel && (
+              <div className="absolute inset-0 bg-monokai-background/95 backdrop-blur-sm flex items-center justify-center p-8 z-50">
+                <div className="max-w-3xl w-full bg-monokai-surface rounded-lg border border-monokai-border p-6 shadow-2xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-monokai-text-primary flex items-center space-x-2">
+                      <Brain className="w-6 h-6 text-monokai-accent-blue" />
+                      <span>Análisis IA - {currentPatientData.name}</span>
+                    </h2>
+                    <button
+                      onClick={() => {
+                        setShowDiagnosisPanel(false);
+                        clearCurrentAnalysis();
+                      }}
+                      className="text-monokai-text-muted hover:text-monokai-text-primary"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Formulario de síntomas */}
+                  {!currentAnalysis && !isAnalyzing && (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-monokai-text-primary mb-2 font-medium">
+                          Síntomas principales
+                        </label>
+                        <textarea
+                          id="symptoms-input"
+                          className="w-full p-3 bg-monokai-background border border-monokai-border rounded-md text-monokai-text-primary focus:border-monokai-accent-blue focus:outline-none"
+                          rows={3}
+                          placeholder="Dolor de garganta, fiebre, tos..."
+                          defaultValue="Dolor de garganta severo, fiebre de 38.5°C, dificultad para tragar"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-monokai-text-primary mb-2 font-medium">
+                          Duración de síntomas
+                        </label>
+                        <input
+                          id="duration-input"
+                          type="text"
+                          className="w-full p-3 bg-monokai-background border border-monokai-border rounded-md text-monokai-text-primary focus:border-monokai-accent-blue focus:outline-none"
+                          placeholder="Ej: 3 días"
+                          defaultValue="2 días"
+                        />
+                      </div>
+
+                      <button
+                        onClick={async () => {
+                          const symptomsInput = document.getElementById('symptoms-input') as HTMLTextAreaElement;
+                          const durationInput = document.getElementById('duration-input') as HTMLInputElement;
+                          
+                          await analyzeDiagnosis({
+                            patientId: currentPatientData.id,
+                            symptoms: symptomsInput.value.split(',').map(s => s.trim()),
+                            chiefComplaint: symptomsInput.value.split(',')[0]?.trim() || 'Dolor de garganta',
+                            duration: durationInput.value,
+                            severity: 'moderate'
+                          });
+                        }}
+                        className="w-full bg-monokai-accent-blue hover:bg-monokai-accent-green text-white font-bold py-3 px-6 rounded-md transition-colors flex items-center justify-center space-x-2"
+                      >
+                        <Brain className="w-5 h-5" />
+                        <span>Analizar con IA</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Analizando */}
+                  {isAnalyzing && (
+                    <div className="text-center py-12">
+                      <div className="animate-spin w-16 h-16 border-4 border-monokai-accent-blue border-t-transparent rounded-full mx-auto mb-4"></div>
+                      <p className="text-monokai-text-primary">Analizando síntomas con IA...</p>
+                      <p className="text-monokai-text-muted text-sm mt-2">Esto puede tomar unos segundos</p>
+                    </div>
+                  )}
+
+                  {/* Resultados del análisis */}
+                  {currentAnalysis && !isAnalyzing && (
+                    <div className="space-y-6">
+                      {/* Diagnóstico principal */}
+                      <div className="bg-monokai-background p-4 rounded-lg border border-monokai-accent-blue">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="text-lg font-semibold text-monokai-text-primary">
+                            Diagnóstico Principal
+                          </h3>
+                          <span className="text-monokai-accent-green text-sm">
+                            {Math.round(currentAnalysis.confidence * 100)}% confianza
+                          </span>
+                        </div>
+                        <p className="text-monokai-accent-blue font-medium text-xl mb-1">
+                          {currentAnalysis.primaryDiagnosis.condition}
+                        </p>
+                        <p className="text-monokai-text-secondary text-sm mb-2">
+                          ICD: {currentAnalysis.primaryDiagnosis.icdCode}
+                        </p>
+                        <p className="text-monokai-text-primary">
+                          {currentAnalysis.primaryDiagnosis.description}
+                        </p>
+                      </div>
+
+                      {/* Diagnósticos diferenciales */}
+                      {currentAnalysis.differentialDiagnoses.length > 0 && (
+                        <div>
+                          <h4 className="text-monokai-text-primary font-medium mb-3">Diagnósticos Diferenciales</h4>
+                          <div className="space-y-2">
+                            {currentAnalysis.differentialDiagnoses.map((dx, idx) => (
+                              <div key={idx} className="bg-monokai-background p-3 rounded-md border border-monokai-border">
+                                <div className="flex justify-between mb-1">
+                                  <span className="text-monokai-text-primary font-medium">{dx.condition}</span>
+                                  <span className="text-monokai-text-muted text-sm">
+                                    {Math.round(dx.probability * 100)}%
+                                  </span>
+                                </div>
+                                <p className="text-monokai-text-secondary text-sm">{dx.reasoning}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Tratamiento sugerido */}
+                      {currentAnalysis.treatmentSuggestions.length > 0 && (
+                        <div>
+                          <h4 className="text-monokai-text-primary font-medium mb-3">Tratamiento Sugerido</h4>
+                          <div className="space-y-2">
+                            {currentAnalysis.treatmentSuggestions.map((treatment, idx) => (
+                              <div key={idx} className="bg-monokai-background p-3 rounded-md border border-monokai-border">
+                                <div className="flex items-center space-x-2 mb-1">
+                                  <span className="text-monokai-accent-purple">💊</span>
+                                  <span className="text-monokai-text-primary font-medium">{treatment.treatment}</span>
+                                  <span className="text-xs bg-monokai-accent-orange text-monokai-background px-2 py-0.5 rounded-full">
+                                    {treatment.type}
+                                  </span>
+                                </div>
+                                <p className="text-monokai-text-secondary text-sm">{treatment.details}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* CTAs */}
+                      <div className="flex space-x-3 pt-4 border-t border-monokai-border">
+                        <button
+                          onClick={async () => {
+                            await saveToHistory(currentAnalysis, {
+                              patientName: currentPatientData.name,
+                              patientAge: currentPatientData.age,
+                              doctorNotes: 'Diagnóstico realizado durante videollamada'
+                            });
+                            setShowDiagnosisPanel(false);
+                            clearCurrentAnalysis();
+                            // Actualizar contador del historial
+                            loadHistory();
+                          }}
+                          className="flex-1 bg-monokai-accent-green hover:bg-green-600 text-white font-bold py-3 px-6 rounded-md transition-colors flex items-center justify-center space-x-2"
+                        >
+                          <CheckCircle className="w-5 h-5" />
+                          <span>Guardar en Historial</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            clearCurrentAnalysis();
+                          }}
+                          className="flex-1 bg-monokai-accent-orange hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-md transition-colors flex items-center justify-center space-x-2"
+                        >
+                          <Brain className="w-5 h-5" />
+                          <span>Nuevo Análisis</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowDiagnosisPanel(false);
+                            clearCurrentAnalysis();
+                          }}
+                          className="bg-monokai-panel hover:bg-monokai-hover text-monokai-text-primary font-bold py-3 px-6 rounded-md transition-colors"
+                        >
+                          Cerrar
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Error */}
+                  {diagnosisError && (
+                    <div className="bg-monokai-accent-pink/20 border border-monokai-accent-pink p-4 rounded-md">
+                      <p className="text-monokai-accent-pink flex items-center space-x-2">
+                        <AlertCircle className="w-5 h-5" />
+                        <span>{diagnosisError}</span>
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

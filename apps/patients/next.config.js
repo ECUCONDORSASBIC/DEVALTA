@@ -1,33 +1,29 @@
+const { appConfigs } = require('@altamedica/config-next');
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
+module.exports = appConfigs.patients({
+  // Custom configuration for patients app
+  transpilePackages: [
+    // Additional packages specific to patients
+    '@altamedica/patient-services',
+    '@altamedica/medical-hooks',
+    '@altamedica/telemedicine-core',
+  ],
   
-  // Optimización de performance (swcMinify is default in Next.js 15)
-  
-  // Configuración básica de imágenes
+  // Image domains for patient content
   images: {
-    domains: ['localhost', 'firebasestorage.googleapis.com'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    formats: ['image/webp', 'image/avif'],
+    domains: [
+      'localhost',
+      'altamedica.com',
+      'firebasestorage.googleapis.com',
+      'lh3.googleusercontent.com', // Google OAuth avatars
+    ],
   },
   
-  // Configuración de compilación optimizada
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
-  
-  // Configuración experimental para mejor performance
-  experimental: {
-    optimizeCss: true,
-    scrollRestoration: true,
-    optimizePackageImports: ['lucide-react'],
-  },
-  
-  // Configuración webpack para excluir módulos de Node.js en el cliente
+  // Custom webpack config for patients app
   webpack: (config, { isServer, dev }) => {
     if (!isServer) {
-      // Excluir módulos de Node.js que no funcionan en el navegador
+      // Node.js polyfills
       config.resolve.fallback = {
         ...config.resolve.fallback,
         net: false,
@@ -46,17 +42,32 @@ const nextConfig = {
       };
     }
     
-    // Optimizaciones de bundle en producción
+    // Production optimizations
     if (!dev) {
       config.optimization = {
         ...config.optimization,
         splitChunks: {
           chunks: 'all',
           cacheGroups: {
+            // Medical libraries for patients
+            medical: {
+              test: /[\\/]node_modules[\\/](@tensorflow|chart\.js|webcamjs)[\\/]/,
+              name: 'medical-libs',
+              chunks: 'all',
+              priority: 15,
+            },
+            // Firebase for real-time features
+            firebase: {
+              test: /[\\/]node_modules[\\/](firebase|@firebase)[\\/]/,
+              name: 'firebase',
+              chunks: 'all',
+              priority: 20,
+            },
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               chunks: 'all',
+              priority: 5,
             },
           },
         },
@@ -66,43 +77,32 @@ const nextConfig = {
     return config;
   },
   
-  // Headers optimizados con cache y seguridad
+  // Additional experimental features
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+    scrollRestoration: true,
+  },
+
+  // TypeScript and ESLint
+  typescript: {
+    ignoreBuildErrors: process.env.NODE_ENV === 'development',
+  },
+  eslint: {
+    ignoreDuringBuilds: process.env.NODE_ENV === 'development',
+  },
+  
+  // Compiler optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' && {
+      exclude: ['error', 'warn'],
+    },
+  },
+  
+  // Patient-specific caching headers
   async headers() {
+    const baseHeaders = await appConfigs.patients().headers();
     return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Access-Control-Allow-Origin',
-            value: '*'
-          },
-          {
-            key: 'Access-Control-Allow-Methods',
-            value: 'GET, POST, PUT, DELETE, OPTIONS'
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY'
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block'
-          },
-        ]
-      },
-      {
-        source: '/static/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
+      ...baseHeaders,
       {
         source: '/ai-diagnosis',
         headers: [
@@ -116,8 +116,15 @@ const nextConfig = {
           },
         ],
       },
-    ]
+      {
+        source: '/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
   }
-};
-
-export default nextConfig;
+});

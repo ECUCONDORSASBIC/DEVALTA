@@ -190,18 +190,28 @@ export function CrisisDataProvider({ children, hospitalSeeds = DEFAULT_SEEDS, re
     return shortages;
   }, []);
 
+  // Estabilizar referencias para evitar recrear refresh en cada render
+  const seedsRef = useRef(hospitalSeeds);
+  const useMockRef = useRef(useMock);
+  const refreshIntervalRef = useRef(refreshIntervalMs);
+  useEffect(() => { seedsRef.current = hospitalSeeds; }, [hospitalSeeds]);
+  useEffect(() => { useMockRef.current = useMock; }, [useMock]);
+  useEffect(() => { refreshIntervalRef.current = refreshIntervalMs; }, [refreshIntervalMs]);
+
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
       const svc = serviceRef.current!;
       const metricsList: HospitalMetrics[] = [];
-      for (const seed of hospitalSeeds) {
-        if (useMock) {
+      const seeds = seedsRef.current;
+      const mock = useMockRef.current;
+      for (const seed of seeds) {
+        if (mock) {
           metricsList.push(buildMockMetrics(seed));
         } else {
           try {
             const m = await svc.collectHospitalData(seed.id);
-            metricsList.push(m);
+            metricsList.push(m as HospitalMetrics);
           } catch (e) {
             // fallback a mock si falla
             metricsList.push(buildMockMetrics(seed));
@@ -209,7 +219,7 @@ export function CrisisDataProvider({ children, hospitalSeeds = DEFAULT_SEEDS, re
         }
       }
 
-      const mapped = hospitalSeeds.map((seed, idx) => toMapHospital(seed, metricsList[idx]!));
+      const mapped = seeds.map((seed, idx) => toMapHospital(seed, metricsList[idx]!));
       setHospitals(mapped);
       setRoutes(computeRoutes(mapped));
       setStaffShortages(computeShortages(mapped));
@@ -222,13 +232,19 @@ export function CrisisDataProvider({ children, hospitalSeeds = DEFAULT_SEEDS, re
     } finally {
       setLoading(false);
     }
-  }, [hospitalSeeds, useMock, toMapHospital, buildMockMetrics, computeRoutes, computeShortages]);
+  }, [buildMockMetrics, computeRoutes, computeShortages, toMapHospital]);
 
   useEffect(() => {
-    refresh();
-    const id = setInterval(refresh, refreshIntervalMs);
-    return () => clearInterval(id);
-  }, [refresh, refreshIntervalMs]);
+    let cancelled = false;
+    (async () => {
+      if (!cancelled) await refresh();
+    })();
+    const id = setInterval(() => {
+      // usar el callback estable sin cerrar sobre props mutables
+      refresh();
+    }, refreshIntervalRef.current);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [refresh]);
 
   const value = useMemo<CrisisDataContextValue>(() => ({ hospitals, routes, staffShortages, networkStats, loading, refresh }), [hospitals, routes, staffShortages, networkStats, loading, refresh]);
 

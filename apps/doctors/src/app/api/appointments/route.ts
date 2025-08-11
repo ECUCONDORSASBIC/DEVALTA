@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Datos simulados de citas
-let appointments = [
+const appointments = [
   {
     id: '1',
     patientName: 'María González',
@@ -141,46 +141,48 @@ export async function GET(request: NextRequest) {
     const specialty = searchParams.get('specialty') || '';
 
     // Filtrar citas según los parámetros
-    let filteredAppointments = appointments;
+    const filteredAppointments = [...appointments];
 
+    let filtered = filteredAppointments;
+    
     if (status) {
-      filteredAppointments = filteredAppointments.filter(appointment =>
+      filtered = filtered.filter(appointment =>
         appointment.status === status
       );
     }
 
     if (doctorId) {
-      filteredAppointments = filteredAppointments.filter(appointment =>
+      filtered = filtered.filter(appointment =>
         appointment.doctorId === doctorId
       );
     }
 
     if (patientId) {
-      filteredAppointments = filteredAppointments.filter(appointment =>
+      filtered = filtered.filter(appointment =>
         appointment.patientId === patientId
       );
     }
 
     if (type) {
-      filteredAppointments = filteredAppointments.filter(appointment =>
+      filtered = filtered.filter(appointment =>
         appointment.type === type
       );
     }
 
     if (date) {
-      filteredAppointments = filteredAppointments.filter(appointment =>
+      filtered = filtered.filter(appointment =>
         appointment.date === date
       );
     }
 
     if (specialty) {
-      filteredAppointments = filteredAppointments.filter(appointment =>
+      filtered = filtered.filter(appointment =>
         appointment.specialty.toLowerCase() === specialty.toLowerCase()
       );
     }
 
     // Ordenar por fecha y hora
-    filteredAppointments.sort((a, b) => {
+    filtered.sort((a, b) => {
       const dateA = new Date(`${a.date}T${a.time}`);
       const dateB = new Date(`${b.date}T${b.time}`);
       return dateA.getTime() - dateB.getTime();
@@ -188,8 +190,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: filteredAppointments,
-      total: filteredAppointments.length,
+      data: filtered,
+      total: filtered.length,
       filters: {
         status,
         doctorId,
@@ -201,7 +203,10 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error obteniendo citas:', error);
+    // Log error for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error obteniendo citas:', error);
+    }
     return NextResponse.json(
       { 
         success: false, 
@@ -261,7 +266,8 @@ export async function POST(request: NextRequest) {
       symptoms: symptoms || []
     };
 
-    appointments.push(newAppointment);
+    // Add to appointments array (simulated DB operation)
+    (appointments as any[]).push(newAppointment);
 
     return NextResponse.json({
       success: true,
@@ -270,7 +276,10 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error creando cita:', error);
+    // Log error for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error creando cita:', error);
+    }
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
       { status: 500 }
@@ -322,7 +331,10 @@ export async function PUT(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error actualizando cita:', error);
+    // Log error for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error actualizando cita:', error);
+    }
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
       { status: 500 }

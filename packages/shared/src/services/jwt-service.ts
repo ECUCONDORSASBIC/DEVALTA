@@ -310,12 +310,7 @@ export class JWTService {
    */
   static clearAuthData(): void {
     this.removeToken('all');
-    
-    // Limpiar localStorage si existe
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('altamedica_user');
-      localStorage.removeItem('altamedica_preferences');
-    }
+  // No interactuar con localStorage para tokens/sesión; backend maneja cookies HttpOnly
   }
 }
 

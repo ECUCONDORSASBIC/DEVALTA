@@ -83,82 +83,78 @@ export interface HospitalRedistributionMapProps {
 }
 
 // Componente para marcador de hospital con estado visual
-const HospitalMarker: React.FC<{
+interface HospitalMarkerProps {
   hospital: Hospital;
   staffShortages: StaffShortage[];
   isSelected: boolean;
   onClick: () => void;
   emergencyMode: boolean;
-}> = ({ hospital, staffShortages, isSelected, onClick, emergencyMode }) => {
+}
+
+function HospitalMarker({ hospital, staffShortages, isSelected, onClick, emergencyMode }: HospitalMarkerProps) {
   
   const getHospitalIcon = useCallback(() => {
     if (typeof window === 'undefined') return null;
-    
     const L = (window as any).L;
     if (!L) return null;
 
     const capacityPercentage = (hospital.currentCapacity / hospital.maxCapacity) * 100;
-    const hospitalShortages = staffShortages.filter(s => s.hospitalId === hospital.id);
-    const criticalShortages = hospitalShortages.filter(s => s.severity === 'critical').length;
-    
-    // Determinar color basado en estado
-    let color: string;
+    const hospitalShortages = staffShortages.filter((s) => s.hospitalId === hospital.id);
+    const criticalShortages = hospitalShortages.filter((s) => s.severity === 'critical').length;
+
+    let color = '#16a34a';
     let pulseClass = '';
-    
     if (hospital.status === 'saturated' || capacityPercentage > 95) {
-      color = '#dc2626'; // rojo crítico
+      color = '#dc2626';
       pulseClass = emergencyMode ? 'animate-pulse' : '';
     } else if (hospital.status === 'critical' || capacityPercentage > 85) {
-      color = '#ea580c'; // naranja crítico
+      color = '#ea580c';
       pulseClass = 'animate-pulse';
     } else if (hospital.status === 'warning' || capacityPercentage > 75) {
-      color = '#d97706'; // amarillo advertencia
-    } else {
-      color = '#16a34a'; // verde normal
+      color = '#d97706';
     }
+
+    const selectedClass = isSelected ? 'scale-125 ring-4 ring-blue-400' : '';
+    const capacityClass = capacityPercentage > 95
+      ? 'text-red-600'
+      : capacityPercentage > 85
+        ? 'text-orange-600'
+        : capacityPercentage > 75
+          ? 'text-yellow-600'
+          : 'text-green-600';
+
+    const shortageBadge = criticalShortages > 0
+      ? '<div class="absolute -bottom-2 -left-2 bg-red-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-lg animate-bounce">' +
+        String(criticalShortages) +
+        '</div>'
+      : '';
+
+    const waitingBadge = hospital.waitingPatients > 10
+      ? '<div class="absolute -bottom-2 -right-2 bg-orange-600 text-white text-xs px-1.5 py-0.5 rounded-full font-semibold border-2 border-white shadow-md">' +
+        String(hospital.waitingPatients) +
+        '</div>'
+      : '';
+
+    const emergencyBadge = hospital.emergencyPatients > 0
+      ? '<div class="absolute -top-2 -left-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white animate-ping">!<\/div>'
+      : '';
+
+    const html =
+      '<div class="relative">' +
+        '<div class="w-16 h-16 rounded-xl border-4 border-white shadow-2xl flex items-center justify-center text-white font-bold transition-all duration-300 ' + selectedClass + ' ' + pulseClass + '" ' +
+             'style="background: linear-gradient(135deg, ' + color + ' 0%, ' + color + 'cc 100%); box-shadow: 0 4px 20px ' + color + '66">' +
+          '<span class="text-2xl">🏥<\/span>' +
+        '<\/div>' +
+        '<div class="absolute -top-2 -right-2 bg-white border-2 border-gray-200 rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold ' + capacityClass + '">' +
+          String(Math.round(capacityPercentage)) + '%<\/div>' +
+        shortageBadge +
+        waitingBadge +
+        emergencyBadge +
+      '<\/div>';
 
     return L.divIcon({
       className: 'custom-hospital-marker',
-      html: `
-        <div class="relative">
-          <div class="w-16 h-16 rounded-xl border-4 border-white shadow-2xl flex items-center justify-center text-white font-bold transition-all duration-300 ${
-            isSelected ? 'scale-125 ring-4 ring-blue-400' : ''
-          } ${pulseClass}" 
-               style="background: linear-gradient(135deg, ${color} 0%, ${color}cc 100%); box-shadow: 0 4px 20px ${color}66">
-            <span class="text-2xl">🏥</span>
-          </div>
-          
-          <!-- Indicador de capacidad -->
-          <div class="absolute -top-2 -right-2 bg-white border-2 border-gray-200 rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold ${
-            capacityPercentage > 95 ? 'text-red-600' : 
-            capacityPercentage > 85 ? 'text-orange-600' : 
-            capacityPercentage > 75 ? 'text-yellow-600' : 'text-green-600'
-          }">
-            ${Math.round(capacityPercentage)}%
-          </div>
-          
-          <!-- Indicador de déficit de personal -->
-          ${criticalShortages > 0 ? `
-            <div class="absolute -bottom-2 -left-2 bg-red-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-lg animate-bounce">
-              ${criticalShortages}
-            </div>
-          ` : ''}
-          
-          <!-- Indicador de pacientes en espera -->
-          ${hospital.waitingPatients > 10 ? `
-            <div class="absolute -bottom-2 -right-2 bg-orange-600 text-white text-xs px-1.5 py-0.5 rounded-full font-semibold border-2 border-white shadow-md">
-              ${hospital.waitingPatients}
-            </div>
-          ` : ''}
-          
-          <!-- Indicador de emergencias -->
-          ${hospital.emergencyPatients > 0 ? `
-            <div class="absolute -top-2 -left-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white animate-ping">
-              !
-            </div>
-          ` : ''}
-        </div>
-      `,
+      html,
       iconSize: [64, 64],
       iconAnchor: [32, 32],
       popupAnchor: [0, -32],
@@ -270,7 +266,7 @@ const HospitalMarker: React.FC<{
       </Popup>
     </Marker>
   );
-};
+}
 
 // Componente para mostrar rutas de redistribución
 const RedistributionRoutes: React.FC<{
@@ -384,6 +380,11 @@ const RedistributionRoutes: React.FC<{
   );
 };
 
+// Component for map initialization
+interface MapInitProps {
+  onReady: (map: LeafletMap) => void;
+}
+
 export default function HospitalRedistributionMap({
   hospitals,
   redistributionRoutes,
@@ -402,16 +403,38 @@ export default function HospitalRedistributionMap({
   const [mapCenter, setMapCenter] = useState<LatLngTuple>([-34.6037, -58.3816]);
   const [zoom, setZoom] = useState(6);
 
+  // Helper seguro para invalidar tamaño del mapa evitando errores de Leaflet
+  const safeInvalidate = useCallback((retries: number = 0) => {
+    const map = mapRef.current as (LeafletMap & { getContainer?: () => HTMLElement; _container?: HTMLElement; _mapPane?: HTMLElement }) | null;
+    if (!map) return;
+    const container = map.getContainer ? map.getContainer() : map._container;
+    const pane = (map as any)._mapPane as HTMLElement | undefined;
+    const isAttached = !!container && document.body.contains(container) && container.offsetParent !== null;
+    if (!container || !pane || !isAttached) {
+      if (retries > 0) {
+        setTimeout(() => safeInvalidate(retries - 1), 100);
+      }
+      return;
+    }
+    try {
+      map.invalidateSize();
+    } catch {
+      if (retries > 0) setTimeout(() => safeInvalidate(retries - 1), 120);
+    }
+  }, []);
+
   // Auto-refresh del mapa cada 30 segundos si está habilitado
   useEffect(() => {
-    if (!autoRefresh) return;
-    
-    const interval = setInterval(() => {
-      // Aquí podrías disparar una actualización de datos
-      console.log('Auto-refreshing hospital data...');
-    }, 30000);
-
-    return () => clearInterval(interval);
+    let interval: ReturnType<typeof setInterval> | undefined;
+    if (autoRefresh) {
+      interval = setInterval(() => {
+        // Aquí podrías disparar una actualización de datos
+        // console.log('Auto-refreshing hospital data...');
+      }, 30000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [autoRefresh]);
 
   // Ajustar vista automáticamente para mostrar todos los hospitales
@@ -434,11 +457,13 @@ export default function HospitalRedistributionMap({
       setTimeout(() => {
         if (mapRef.current) {
           // Asegura que el mapa tenga tamaño correcto antes de ajustar bounds
-          mapRef.current.invalidateSize();
-          mapRef.current.fitBounds(bounds, {
-            padding: [50, 50],
-            maxZoom: 12
-          });
+          safeInvalidate(3);
+          try {
+            mapRef.current.fitBounds(bounds, {
+              padding: [50, 50],
+              maxZoom: 12
+            });
+          } catch {}
         }
       }, 100);
     }
@@ -449,25 +474,13 @@ export default function HospitalRedistributionMap({
     onHospitalSelect?.(hospital);
   }, [onHospitalSelect]);
 
-  // Loading state para SSR
-  if (typeof window === "undefined") {
-    return (
-      <div className="h-[500px] bg-gradient-to-br from-blue-50 to-sky-100 rounded-lg flex items-center justify-center border border-gray-200">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600 mx-auto"></div>
-          <p className="text-sm font-medium text-gray-700">Cargando mapa de redistribución hospitalaria...</p>
-        </div>
-      </div>
-    );
-  }
+  const isClient = typeof window !== 'undefined';
 
   // Invalida el tamaño del mapa al redimensionar el contenedor
   useEffect(() => {
     if (!containerRef.current || !mapRef.current) return;
     const ro = new ResizeObserver(() => {
-      if (mapRef.current) {
-        mapRef.current.invalidateSize();
-      }
+      safeInvalidate(1);
     });
     ro.observe(containerRef.current);
     return () => ro.disconnect();
@@ -476,14 +489,22 @@ export default function HospitalRedistributionMap({
   // Reaccionar a cambios de layout globales (sidebar, zen, view)
   useEffect(() => {
     const handler = () => {
-      if (mapRef.current) {
-        // doble disparo para cubrir transiciones
-        mapRef.current.invalidateSize();
-        setTimeout(() => mapRef.current && mapRef.current.invalidateSize(), 120);
-      }
+      // doble disparo para cubrir transiciones
+      safeInvalidate(2);
+      setTimeout(() => safeInvalidate(1), 120);
     };
     window.addEventListener('crisis:layout-changed', handler);
     return () => window.removeEventListener('crisis:layout-changed', handler);
+  }, []);
+
+  // Escuchar invalidaciones de tamaño provenientes del shell del mapa
+  useEffect(() => {
+    const handler = () => {
+      safeInvalidate(2);
+      setTimeout(() => safeInvalidate(1), 120);
+    };
+    window.addEventListener('map:invalidate-size', handler);
+    return () => window.removeEventListener('map:invalidate-size', handler);
   }, []);
 
   const MapInit: React.FC<{ onReady: (map: LeafletMap) => void }> = ({ onReady }) => {
@@ -496,6 +517,14 @@ export default function HospitalRedistributionMap({
 
   return (
   <div ref={containerRef} className="relative h-full">
+      {!isClient ? (
+        <div className="h-[500px] bg-gradient-to-br from-blue-50 to-sky-100 rounded-lg flex items-center justify-center border border-gray-200">
+          <div className="text-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600 mx-auto"></div>
+            <p className="text-sm font-medium text-gray-700">Cargando mapa de redistribuci 3n hospitalaria...</p>
+          </div>
+        </div>
+      ) : null}
       {/* Indicadores de estado del mapa */}
       <div className="absolute top-4 left-4 z-[1000] space-y-2 w-[320px] max-w-[80vw]">
         {/* Panel desplegable de estado */}
@@ -574,7 +603,8 @@ export default function HospitalRedistributionMap({
       </div>
 
       {/* Mapa principal */}
-    <MapContainer
+  {isClient && (
+  <MapContainer
         center={mapCenter}
         zoom={zoom}
   className={`${heightClass ?? 'h-[360px]'} w-full min-h-[320px] rounded-lg border border-gray-200`}
@@ -584,7 +614,11 @@ export default function HospitalRedistributionMap({
       >
         <MapInit onReady={(map) => {
           mapRef.current = map;
-          setTimeout(() => map.invalidateSize(), 0);
+          const scheduleInvalidate = (retries: number = 4) => {
+            safeInvalidate(retries);
+          };
+          // Ejecutar tras paint y reintentar si aún no es visible
+          requestAnimationFrame(() => scheduleInvalidate());
         }} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -610,7 +644,8 @@ export default function HospitalRedistributionMap({
             onRouteSelect={onRouteSelect}
           />
         )}
-      </MapContainer>
+  </MapContainer>
+  )}
     </div>
   );
 }

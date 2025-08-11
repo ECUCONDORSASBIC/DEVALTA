@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MarketplaceService } from './marketplace.service';
-import { UnifiedAuth } from '@/shared/middleware/UnifiedAuth';
+import { UnifiedAuth } from '../../auth/UnifiedAuthSystem';
 
 export class MarketplaceController {
   // Company endpoints
@@ -13,7 +13,7 @@ export class MarketplaceController {
       
       const companyData = {
         ...body,
-        createdBy: authResult.context?.userId!
+        createdBy: authResult.user?.userId!
       };
 
       const company = await MarketplaceService.createCompany(companyData);
@@ -105,8 +105,8 @@ export class MarketplaceController {
       }
 
       const canUpdate = 
-        authResult.context?.userRole === 'ADMIN' ||
-        existingCompany.createdBy === authResult.context?.userId;
+        authResult.user?.role === 'admin' ||
+        existingCompany.createdBy === authResult.user?.userId;
 
       if (!canUpdate) {
         return NextResponse.json(
@@ -140,7 +140,7 @@ export class MarketplaceController {
       
       const listingData = {
         ...body,
-        createdBy: authResult.context?.userId!
+        createdBy: authResult.user?.userId!
       };
 
       // Validar datos requeridos
@@ -241,8 +241,8 @@ export class MarketplaceController {
       }
 
       const canUpdate = 
-        authResult.context?.userRole === 'ADMIN' ||
-        existingListing.createdBy === authResult.context?.userId;
+        authResult.user?.role === 'admin' ||
+        existingListing.createdBy === authResult.user?.userId;
 
       if (!canUpdate) {
         return NextResponse.json(
@@ -283,8 +283,8 @@ export class MarketplaceController {
       }
 
       const canDelete = 
-        authResult.context?.userRole === 'ADMIN' ||
-        existingListing.createdBy === authResult.context?.userId;
+        authResult.user?.role === 'admin' ||
+        existingListing.createdBy === authResult.user?.userId;
 
       if (!canDelete) {
         return NextResponse.json(
@@ -319,7 +319,7 @@ export class MarketplaceController {
 
       const applicationData = {
         listingId,
-        applicantId: authResult.context?.userId!,
+        applicantId: authResult.user?.userId!,
         ...body
       };
 
@@ -364,8 +364,8 @@ export class MarketplaceController {
         }
 
         const canViewApplications = 
-          authResult.context?.userRole === 'ADMIN' ||
-          listing.createdBy === authResult.context?.userId;
+          authResult.user?.role === 'admin' ||
+          listing.createdBy === authResult.user?.userId;
 
         if (!canViewApplications) {
           return NextResponse.json(
@@ -383,7 +383,7 @@ export class MarketplaceController {
 
       } else if (applicantId) {
         // Obtener aplicaciones de un solicitante específico
-        if (authResult.context?.userRole !== 'ADMIN' && applicantId !== authResult.context?.userId) {
+        if (authResult.user?.role !== 'admin' && applicantId !== authResult.user?.userId) {
           return NextResponse.json(
             { success: false, error: 'Acceso denegado' },
             { status: 403 }
@@ -423,7 +423,7 @@ export class MarketplaceController {
       // Agregar información del revisor
       const updateData = {
         ...body,
-        reviewedBy: authResult.context?.userId,
+        reviewedBy: authResult.user?.userId,
         reviewedAt: new Date()
       };
 

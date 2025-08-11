@@ -6,29 +6,24 @@ export const authVersion = '1.1.0';
 // ============== SERVICIOS ==============
 // Servicio de autenticación consolidado (migrado desde auth-service)
 export {
-  AuthService,
-  getAuthService,
-  UserRole,
-  PublicUserRole
+    AuthService, PublicUserRole, UserRole, getAuthService
 } from './services/AuthService';
 
 // Tipos principales
 export type {
-  User,
-  AuthState,
-  LoginCredentials,
-  RegisterData
+    AuthState,
+    LoginCredentials,
+    RegisterData, User
 } from './services/AuthService';
 
 // ============== HOOKS Y COMPONENTES ==============
 // Hooks de React (migrado y mejorado desde auth-service)
 export {
-  AuthProvider,
-  useAuth,
-  useProtectedRoute,
-  useRequireAuth,
-  useRole,
-  AuthContext
+    AuthContext, AuthProvider,
+    useAuth,
+    useProtectedRoute,
+    useRequireAuth,
+    useRole
 } from './hooks/useAuth';
 
 // ============== LEGACY EXPORTS ==============
@@ -42,4 +37,20 @@ export { default as default } from './services/AuthService';
 
 // ============== REDIRECCIONES ==============
 export * from './utils/redirects';
+
+// ============== CONSTANTES ==============
+// Nombres de cookies estandarizados (evitar imports profundos)
+export { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from './constants/cookies';
+
+// ============== MIDDLEWARE ==============
+// SSO Middleware para Next.js apps
+export { 
+  createAuthMiddleware,
+  authGuard 
+} from './middleware/auth-guard';
+export { 
+  createSSOMiddleware, 
+  ssoMiddlewareConfig,
+  type SSOConfig 
+} from './middleware/sso-middleware';
 

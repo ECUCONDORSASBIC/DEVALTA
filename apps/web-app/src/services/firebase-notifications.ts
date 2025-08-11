@@ -1,20 +1,19 @@
-// Importar servicios Firebase usando aliases consistentes
-import { db, auth } from '@/firebase'
-// Importar funciones mock de Firestore
-import { 
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  onSnapshot,
-  serverTimestamp,
-  Timestamp
-} from '@/lib/firestore-mock'
+// Importar servicios Firebase usando alias consistente y wrapper de Firestore
+import { db } from '../../config/firebase'
+import {
+    addDoc,
+    collection,
+    doc,
+    getDocs,
+    limit,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    Timestamp,
+    updateDoc,
+    where
+} from '../lib/firestore-mock'
 
 export interface MedicalNotification {
   id: string
@@ -34,7 +33,7 @@ export interface MedicalNotification {
     medicalData?: any
   }
   read: boolean
-  createdAt: Timestamp
+  createdAt: any
   readAt?: Timestamp
   // Campos médicos específicos
   priority: 'low' | 'medium' | 'high' | 'urgent'

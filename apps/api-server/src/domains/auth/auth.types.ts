@@ -1,41 +1,14 @@
-export interface AuthUser {
-  id: string;
-  email: string;
-  role: 'PATIENT' | 'DOCTOR' | 'ADMIN' | 'COMPANY';
-  firstName?: string;
-  lastName?: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
+// ARCHIVO MIGRADO - Ver auth/UnifiedAuthSystem.ts
+// Los tipos han sido consolidados en el sistema unificado de autenticación
 
-export interface SSOLoginRequest {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
-}
+export { 
+  UserRole,
+  type AuthToken,
+  type AuthContext,
+  type AuthResult,
+  type SSOLoginRequest,
+  type SSOLoginResponse
+} from '../../auth/UnifiedAuthSystem';
 
-export interface SSOLoginResponse {
-  success: boolean;
-  user?: AuthUser;
-  accessToken?: string;
-  refreshToken?: string;
-  redirectUrl?: string;
-  error?: string;
-}
-
-export interface SSOTokenRequest {
-  refreshToken: string;
-}
-
-export interface SSOTokenResponse {
-  success: boolean;
-  accessToken?: string;
-  error?: string;
-}
-
-export interface AuthContext {
-  user: AuthUser | null;
-  isAuthenticated: boolean;
-  role?: string;
-}
+// Legacy compatibility - deprecated
+export type AuthUser = AuthToken;

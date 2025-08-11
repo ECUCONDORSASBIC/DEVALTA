@@ -14,7 +14,7 @@ import {
   CheckCircle,
   ChevronDown, ChevronUp,
   Clock,
-  Map,
+  Map as MapIcon,
   Maximize2,
   MessageSquare,
   Minimize2,
@@ -26,8 +26,9 @@ import {
   XCircle,
   Zap
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { HospitalDataIntegrationService, HospitalMetrics } from '../../services/HospitalDataIntegrationService';
+import { CSSProperties, useCallback, useEffect, useState } from 'react';
+import { HospitalMetrics } from '../../services/HospitalDataIntegrationService';
+import type { Hospital as MapHospital, RedistributionRoute as MapRoute, StaffShortage as MapStaffShortage } from './HospitalRedistributionMap';
 import HospitalRedistributionMap from './HospitalRedistributionMap';
 
 interface DashboardProps {
@@ -116,8 +117,8 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
   
   // 🗺️ Map Integration State
   const [showMapView, setShowMapView] = useState(false);
-  const [mapHospitals, setMapHospitals] = useState<any[]>([]);
-  const [selectedHospitalOnMap, setSelectedHospitalOnMap] = useState<any>(null);
+  const [mapHospitals, setMapHospitals] = useState<MapHospital[]>([]);
+  const [selectedHospitalOnMap, setSelectedHospitalOnMap] = useState<MapHospital | null>(null);
   
   // 🎛️ UI Collapsible Sections State
   const [expandedSections, setExpandedSections] = useState({
@@ -133,38 +134,7 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
   // Servicio de integración - comentado temporalmente para evitar errores
   // const dataService = new HospitalDataIntegrationService(config);
 
-  useEffect(() => {
-    // Cargar datos iniciales
-    loadHospitalData();
-    loadNetworkData();
-
-    // Configurar actualización en tiempo real - simulada
-    const unsubscribe = () => {
-      // Simular desconexión - en producción usaría dataService.startRealTimeMonitoring
-      console.log('Real-time monitoring would be disconnected here');
-    };
-
-    // Actualización periódica cada 30 segundos
-    const interval = setInterval(() => {
-      loadHospitalData();
-      checkCompletedRedistributions();
-    }, 30000);
-
-    // 🚨 Monitor de emergencia cada 10 segundos
-    const emergencyInterval = setInterval(() => {
-      if (emergencyMode) {
-        evaluateEmergencyActions();
-      }
-    }, 10000);
-
-    return () => {
-      unsubscribe();
-      clearInterval(interval);
-      clearInterval(emergencyInterval);
-    };
-  }, [hospitalId, autoRedistributionEnabled, autoJobPostingEnabled, emergencyMode]);
-
-  const loadHospitalData = async () => {
+  const loadHospitalData = useCallback(async () => {
     try {
       setLoading(true);
       // Usar datos mock mientras se solucionan problemas del servicio
@@ -183,36 +153,36 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
             averageWaitTime: 45,
             critical: 3
           },
-          specialties: [
+      specialties: [
             {
               name: 'Cardiología',
               doctors: 5,
-              capacity: 50,
+        patients: 50,
               saturation: 85
             },
             {
               name: 'Neurología',
               doctors: 3,
-              capacity: 25,
+        patients: 25,
               saturation: 92
             },
             {
               name: 'Pediatría',
               doctors: 8,
-              capacity: 75,
+        patients: 75,
               saturation: 78
             }
           ]
         },
         staff: {
-          total: 150,
-          active: 135,
-          available: 15
+      total: 150,
+      active: 135,
+  bySpecialty: (new Map() as Map<string, number>)
         },
         dataQuality: {
           source: 'mixed' as any,
           confidence: 87,
-          lastUpdated: new Date()
+      lastUpdate: new Date()
         }
       };
       
@@ -241,7 +211,7 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
             {
               name: 'General',
               doctors: 10,
-              capacity: 100,
+              patients: 100,
               saturation: 60
             }
           ]
@@ -249,60 +219,22 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
         staff: {
           total: 100,
           active: 90,
-          available: 10
+          bySpecialty: (new Map() as Map<string, number>)
         },
         dataQuality: {
           source: 'mock' as any,
           confidence: 50,
-          lastUpdated: new Date()
+          lastUpdate: new Date()
         }
       };
       setMetrics(defaultData);
     } finally {
       setLoading(false);
     }
-  };
+  }, [hospitalId]);
 
-  const updateNetworkStatus = (data: HospitalMetrics) => {
-    try {
-      // Calcular saturación manualmente para evitar errores del servicio
-      const bedsPercentage = data.occupancy.beds.percentage;
-      const emergencyWaiting = data.occupancy.emergency.waiting;
-      
-      // Lógica de saturación simplificada
-      let saturationLevel: 'normal' | 'warning' | 'critical' = 'normal';
-      let saturationScore = bedsPercentage;
-      
-      if (bedsPercentage >= 90) {
-        saturationLevel = 'critical';
-        saturationScore = bedsPercentage + (emergencyWaiting * 2);
-      } else if (bedsPercentage >= 75) {
-        saturationLevel = 'warning';
-        saturationScore = bedsPercentage + emergencyWaiting;
-      }
-      
-      // Actualizar estado de red basado en saturación
-      setNetworkStatus(prev => ({
-        ...prev,
-        critical: saturationLevel === 'critical' ? Math.min(prev.critical + 1, 100) : prev.critical,
-        warning: saturationLevel === 'warning' ? Math.min(prev.warning + 1, 100) : prev.warning
-      }));
-      
-      // Activar modo de emergencia si la saturación es crítica
-      if (saturationLevel === 'critical' && saturationScore > 90) {
-        setEmergencyMode(true);
-      } else if (saturationScore < 60) {
-        setEmergencyMode(false);
-      }
-    } catch (error) {
-      console.error('Error updating network status:', error);
-      // En caso de error, usar valores conservadores
-      setEmergencyMode(false);
-    }
-  };
-
-  // 🔄 REDISTRIBUTION LOGIC
-  const loadNetworkData = async () => {
+  // 🔄 REDISTRIBUTION LOGIC (moved up to avoid "used before declaration" issues)
+  const loadNetworkData = useCallback(async () => {
     // Mock network data - En producción vendría de la API
     const mockHospitals = [
       {
@@ -355,13 +287,13 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
     setStaffShortages(shortages);
 
     // 🗺️ Preparar datos para el mapa
-    const mapFormattedHospitals = mockHospitals.map(hospital => ({
+    const mapFormattedHospitals: MapHospital[] = mockHospitals.map(hospital => ({
       id: hospital.id,
       name: hospital.name,
       location: {
         city: hospital.location.city,
         country: hospital.location.country,
-        coordinates: hospital.location.coordinates
+        coordinates: hospital.location.coordinates as [number, number]
       },
       currentCapacity: hospital.capacity.current,
       maxCapacity: hospital.capacity.max,
@@ -382,7 +314,105 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
     }));
 
     setMapHospitals(mapFormattedHospitals);
+  }, []);
+
+  const checkCompletedRedistributions = useCallback(() => {
+    // Limpiar redistribuciones completadas después de 5 minutos
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    setRedistributionSuggestions(prev => 
+      prev.filter(s => 
+        s.status !== 'completed' || s.createdAt > fiveMinutesAgo
+      )
+    );
+  }, []);
+
+  const evaluateEmergencyActions = useCallback(() => {
+    // Acciones automáticas en modo de emergencia
+    if (metrics && metrics.occupancy.beds.percentage > 95) {
+      // Forzar redistribucion inmediata
+      const criticalSuggestions = redistributionSuggestions.filter(
+        s => s.priority === 'critical' && s.status === 'pending'
+      );
+      
+      criticalSuggestions.forEach(suggestion => {
+        if (autoRedistributionEnabled) {
+          executeRedistribution(suggestion.id);
+        }
+      });
+    }
+  }, [metrics, redistributionSuggestions, autoRedistributionEnabled]);
+
+  useEffect(() => {
+    // Cargar datos iniciales
+    loadHospitalData();
+    loadNetworkData();
+
+    // Configurar actualización en tiempo real - simulada
+    const unsubscribe = () => {
+      // Simular desconexión - en producción usaría dataService.startRealTimeMonitoring
+      console.log('Real-time monitoring would be disconnected here');
+    };
+
+    // Actualización periódica cada 30 segundos
+    const interval = setInterval(() => {
+      loadHospitalData();
+      checkCompletedRedistributions();
+    }, 30000);
+
+    // 🚨 Monitor de emergencia cada 10 segundos
+    const emergencyInterval = setInterval(() => {
+      if (emergencyMode) {
+        evaluateEmergencyActions();
+      }
+    }, 10000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+      clearInterval(emergencyInterval);
+    };
+  }, [hospitalId, autoRedistributionEnabled, autoJobPostingEnabled, emergencyMode, loadHospitalData, loadNetworkData, checkCompletedRedistributions, evaluateEmergencyActions]);
+
+
+  const updateNetworkStatus = (data: HospitalMetrics) => {
+    try {
+      // Calcular saturación manualmente para evitar errores del servicio
+      const bedsPercentage = data.occupancy.beds.percentage;
+      const emergencyWaiting = data.occupancy.emergency.waiting;
+      
+      // Lógica de saturación simplificada
+      let saturationLevel: 'normal' | 'warning' | 'critical' = 'normal';
+      let saturationScore = bedsPercentage;
+      
+      if (bedsPercentage >= 90) {
+        saturationLevel = 'critical';
+        saturationScore = bedsPercentage + (emergencyWaiting * 2);
+      } else if (bedsPercentage >= 75) {
+        saturationLevel = 'warning';
+        saturationScore = bedsPercentage + emergencyWaiting;
+      }
+      
+      // Actualizar estado de red basado en saturación
+      setNetworkStatus(prev => ({
+        ...prev,
+        critical: saturationLevel === 'critical' ? Math.min(prev.critical + 1, 100) : prev.critical,
+        warning: saturationLevel === 'warning' ? Math.min(prev.warning + 1, 100) : prev.warning
+      }));
+      
+      // Activar modo de emergencia si la saturación es crítica
+      if (saturationLevel === 'critical' && saturationScore > 90) {
+        setEmergencyMode(true);
+      } else if (saturationScore < 60) {
+        setEmergencyMode(false);
+      }
+    } catch (error) {
+      console.error('Error updating network status:', error);
+      // En caso de error, usar valores conservadores
+      setEmergencyMode(false);
+    }
   };
+
+  // (loadNetworkData moved above)
 
   const generateRedistributionSuggestions = (hospitals: any[]): RedistributionSuggestion[] => {
     const suggestions: RedistributionSuggestion[] = [];
@@ -585,35 +615,11 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
     // En producción: await jobMarketplaceAPI.createUrgentPosting(newJobPosting);
   };
 
-  const checkCompletedRedistributions = () => {
-    // Limpiar redistribuciones completadas después de 5 minutos
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    setRedistributionSuggestions(prev => 
-      prev.filter(s => 
-        s.status !== 'completed' || s.createdAt > fiveMinutesAgo
-      )
-    );
-  };
 
-  const evaluateEmergencyActions = () => {
-    // Acciones automáticas en modo de emergencia
-    if (metrics && metrics.occupancy.beds.percentage > 95) {
-      // Forzar redistribucion inmediata
-      const criticalSuggestions = redistributionSuggestions.filter(
-        s => s.priority === 'critical' && s.status === 'pending'
-      );
-      
-      criticalSuggestions.forEach(suggestion => {
-        if (autoRedistributionEnabled) {
-          executeRedistribution(suggestion.id);
-        }
-      });
-    }
-  };
 
   // 🗺️ Funciones para el mapa
-  const convertRedistributionSuggestionsForMap = () => {
-    return redistributionSuggestions.map(suggestion => {
+  const convertRedistributionSuggestionsForMap = (): MapRoute[] => {
+    return redistributionSuggestions.map<MapRoute | null>(suggestion => {
       const fromHospital = mapHospitals.find(h => h.id === suggestion.fromHospitalId);
       const toHospital = mapHospitals.find(h => h.id === suggestion.toHospitalId);
       
@@ -628,11 +634,11 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
         priority: suggestion.priority,
         estimatedTime: suggestion.estimatedTime,
         progress: suggestion.status === 'executing' ? Math.floor(Math.random() * 80) + 10 : undefined
-      };
-    }).filter(Boolean);
+      } as MapRoute;
+    }).filter((r): r is MapRoute => r !== null);
   };
 
-  const handleHospitalSelectOnMap = (hospital: any) => {
+  const handleHospitalSelectOnMap = (hospital: MapHospital) => {
     setSelectedHospitalOnMap(hospital);
     console.log('Hospital seleccionado en mapa:', hospital);
   };
@@ -690,7 +696,7 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
   };
 
   // Aplicar estilos Solarized con clases CSS personalizadas
-  const containerStyle: React.CSSProperties = {
+  const containerStyle: CSSProperties = {
     minHeight: '100vh',
     backgroundColor: isDarkMode ? solarizedColors.base03 : solarizedColors.base3,
     color: isDarkMode ? solarizedColors.base0 : solarizedColors.base00,
@@ -698,7 +704,7 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
     fontFamily: '"Inter", "SF Pro Text", system-ui, sans-serif'
   };
 
-  const headerStyle: React.CSSProperties = {
+  const headerStyle: CSSProperties = {
     backgroundColor: isDarkMode ? `${solarizedColors.base02}F2` : `${solarizedColors.base2}E6`,
     borderColor: isDarkMode ? `${solarizedColors.base01}4D` : `${solarizedColors.base01}33`,
     color: isDarkMode ? solarizedColors.base1 : solarizedColors.base01,
@@ -706,7 +712,7 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
   };
 
   // Additional component styles
-  const hospitalCardStyle: React.CSSProperties = {
+  const hospitalCardStyle: CSSProperties = {
     backgroundColor: isDarkMode ? solarizedColors.base02 : solarizedColors.base2,
     borderColor: isDarkMode ? solarizedColors.base01 : solarizedColors.base1,
     color: isDarkMode ? solarizedColors.base0 : solarizedColors.base00,
@@ -717,7 +723,7 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
     boxShadow: isDarkMode ? `0 4px 20px ${solarizedColors.base03}40` : `0 4px 20px ${solarizedColors.base01}20`
   };
 
-  const badgeStyle: React.CSSProperties = {
+  const badgeStyle: CSSProperties = {
     fontSize: '0.75rem',
     fontWeight: '600',
     padding: '0.25rem 0.75rem',
@@ -725,42 +731,42 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
     fontFamily: '"Fira Code", monospace'
   };
 
-  const criticalBadgeStyle: React.CSSProperties = {
+  const criticalBadgeStyle: CSSProperties = {
     ...badgeStyle,
     backgroundColor: `${solarizedColors.red}20`,
     color: solarizedColors.red,
     border: `1px solid ${solarizedColors.red}40`
   };
 
-  const warningBadgeStyle: React.CSSProperties = {
+  const warningBadgeStyle: CSSProperties = {
     ...badgeStyle,
     backgroundColor: `${solarizedColors.orange}20`,
     color: solarizedColors.orange,
     border: `1px solid ${solarizedColors.orange}40`
   };
 
-  const successBadgeStyle: React.CSSProperties = {
+  const successBadgeStyle: CSSProperties = {
     ...badgeStyle,
     backgroundColor: `${solarizedColors.green}20`,
     color: solarizedColors.green,
     border: `1px solid ${solarizedColors.green}40`
   };
 
-  const infoBadgeStyle: React.CSSProperties = {
+  const infoBadgeStyle: CSSProperties = {
     ...badgeStyle,
     backgroundColor: `${solarizedColors.blue}20`,
     color: solarizedColors.blue,
     border: `1px solid ${solarizedColors.blue}40`
   };
 
-  const titleStyle: React.CSSProperties = {
+  const titleStyle: CSSProperties = {
     color: isDarkMode ? solarizedColors.base1 : solarizedColors.base01,
     fontSize: '1.125rem',
     fontWeight: '600',
     fontFamily: '"Inter", system-ui, sans-serif'
   };
 
-  const subtitleStyle: React.CSSProperties = {
+  const subtitleStyle: CSSProperties = {
     color: isDarkMode ? solarizedColors.base01 : solarizedColors.base1,
     fontSize: '0.875rem',
     fontFamily: '"Inter", system-ui, sans-serif'
@@ -1316,7 +1322,7 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
                         : (isDarkMode ? 'border-slate-600 hover:bg-slate-700' : 'border-slate-300 hover:bg-slate-50')
                     }`}
                   >
-                    <Map className="h-3 w-3 mr-1" />
+                    <MapIcon className="h-3 w-3 mr-1" />
                     🗺️ Mapa: {showMapView ? 'ON' : 'OFF'}
                   </Button>
                 </div>
@@ -1346,7 +1352,7 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Map className="h-5 w-5 text-green-600" />
+                  <MapIcon className="h-5 w-5 text-green-600" />
                   Mapa Interactivo de Redistribución Hospitalaria
                   <Badge variant="outline" className="ml-2 bg-green-50 text-green-700">
                     Tiempo Real
@@ -1396,7 +1402,14 @@ export default function HospitalNetworkDashboard({ hospitalId, config }: Dashboa
                     <HospitalRedistributionMap
                       hospitals={mapHospitals}
                       redistributionRoutes={convertRedistributionSuggestionsForMap()}
-                      staffShortages={staffShortages}
+                      staffShortages={staffShortages.map<MapStaffShortage>(s => ({
+                        hospitalId: s.hospitalId,
+                        hospitalName: s.hospitalName,
+                        role: s.specialty,
+                        shortage: s.shortage,
+                        severity: s.severity,
+                        autoJobPostingTriggered: s.autoJobPostingTriggered
+                      }))}
                       onHospitalSelect={handleHospitalSelectOnMap}
                       onRouteSelect={handleRouteSelectOnMap}
                       showRedistributionRoutes={true}

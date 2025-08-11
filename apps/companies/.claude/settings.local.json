@@ -23,7 +23,21 @@
       "Bash(Remove-Item \"C:\\Users\\Eduardo\\Documents\\devaltamedica\\apps\\patients\\src\\components\\ui\\FormError.tsx\" -Force)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(pnpm --filter @altamedica/diagnostic-engine build)"
+      "Bash(pnpm --filter @altamedica/diagnostic-engine build)",
+      "Bash(npm run type-check:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint)",
+      "Bash(pnpm build:*)",
+      "Bash(npx pnpm:*)",
+      "Bash(./node_modules/.bin/next build)",
+      "Bash(npm root:*)",
+      "Bash(node:*)",
+      "Bash(if [ -d \".next\" ])",
+      "Bash(then echo \".next directory exists\")",
+      "Bash(else echo \".next directory does not exist\")",
+      "Bash(fi)",
+      "Bash(then echo \".next directory still exists\")",
+      "Bash(else echo \".next directory successfully removed\")"
     ],
     "deny": []
   }

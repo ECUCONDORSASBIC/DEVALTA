@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from "@altamedica/auth"
-import { auth, sendVerificationEmail } from '@altamedica/firebase-config'; // Importar desde firebase-config
+import { auth, sendVerificationEmail } from '@altamedica/firebase-config'
 import { applyActionCode } from 'firebase/auth'
 import { AlertCircle, ArrowRight, CheckCircle, Loader2, Mail, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 export default function VerifyEmailPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user, loading } = useAuth()
+  const { user } = useAuth()
   
   const [isVerifying, setIsVerifying] = useState(false)
   const [verificationStatus, setVerificationStatus] = useState<'pending' | 'success' | 'error'>('pending')
@@ -73,17 +73,17 @@ export default function VerifyEmailPage() {
   }
 
   const handleResendVerification = async () => {
-    if (!user) {
+  if (!user || !auth.currentUser) {
       toast.error('No hay usuario autenticado');
       return;
     }
     
     setIsResending(true)
-    console.log('📤 [VerifyEmail] Reenviando email de verificación para:', user.email);
+  console.log('📤 [VerifyEmail] Reenviando email de verificación para:', auth.currentUser?.email || user.email);
     
     try {
-      // Reenviar email de verificación usando Firebase Auth
-      await sendVerificationEmail(user); // Usar la función importada
+  // Reenviar email de verificación usando Firebase Auth
+  await sendVerificationEmail(auth.currentUser);
       console.log('✅ [VerifyEmail] Email de verificación reenviado exitosamente');
       toast.success('Email de verificación reenviado. Revisa tu bandeja de entrada.');
       setErrorMessage(''); // Limpiar errores previos

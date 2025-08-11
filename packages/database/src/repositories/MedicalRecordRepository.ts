@@ -4,9 +4,9 @@
  * y optimizaciones para consultas médicas frecuentes
  */
 
-import { BaseRepository, BaseEntity, ServiceContext, QueryOptions, RepositoryResult } from './BaseRepository';
+import { BaseRepository, BaseEntity, ServiceContext, QueryOptions, RepositoryResult } from './BaseRepository.js';
 import { z } from 'zod';
-import { dbConnection } from '../core/DatabaseConnection';
+import { dbConnection } from '../core/DatabaseConnection.js';
 
 // Schema Zod para Medical Record migrado desde el API server
 export const MedicalRecordSchema = z.object({

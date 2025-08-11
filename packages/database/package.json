@@ -2,6 +2,7 @@
   "name": "@altamedica/database",
   "version": "2.0.0",
   "description": "AltaMedica unified database layer with Firebase/Firestore, HIPAA compliance, and medical data optimization",
+  "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -15,8 +16,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+  "lint": "eslint . --ext .ts,.tsx --no-error-on-unmatched-pattern",
+  "lint:fix": "eslint . --ext .ts,.tsx --fix --no-error-on-unmatched-pattern"
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",

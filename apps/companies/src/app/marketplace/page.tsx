@@ -1,29 +1,39 @@
-'use client';
+"use client";
 
 import {
-    Briefcase,
-    Clock,
-    DollarSign,
-    Eye,
-    Grid,
-    List,
-    MapPin,
-    MoreHorizontal,
-    Plus,
-    Search,
-    TrendingUp,
-    Users
+  Briefcase,
+  ChevronDown,
+  Clock,
+  DollarSign,
+  Eye,
+  Grid,
+  List,
+  MapPin,
+  MoreHorizontal,
+  PanelLeft,
+  PanelRight,
+  Plus,
+  Search,
+  TrendingUp,
+  Users
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // Importar hooks del marketplace
+import JobForm from '@/components/marketplace/JobForm';
+import JobMarketplaceDashboard from '@/components/marketplace/JobMarketplaceDashboard';
+import MarketplaceAnalytics from '@/components/marketplace/MarketplaceAnalytics';
+import MessagingSystem from '@/components/marketplace/MessagingSystem';
 import {
-    useCompanyProfile,
-    useDoctorSearch,
-    useJobApplications,
-    useMarketplaceJobs
+  useCompanyProfile,
+  useDoctorSearch,
+  useJobApplications,
+  useMarketplaceJobs
 } from '@altamedica/marketplace-hooks';
+// SSR-safe map import
+const MarketplaceMap = dynamic(() => import('@/components/MarketplaceMap'), { ssr: false });
 
 // === TIPOS TYPESCRIPT ===
 interface JobPosting {
@@ -58,6 +68,18 @@ interface CompanyMarketplaceStats {
   totalViews: number;
   averageRating: number;
   responseRate: number;
+}
+
+// Utilidad: normaliza distintos formatos de ubicación a string
+function formatLocation(loc: any): string {
+  if (!loc) return '';
+  if (typeof loc === 'string') return loc;
+  // Casos comunes: { city, country, address? } o anidados
+  const city = loc.city || loc?.address?.city || loc?.municipality || '';
+  const country = loc.country || loc?.address?.country || '';
+  const addr = typeof loc.address === 'string' ? loc.address : (loc.address?.line1 || '');
+  const parts = [city, country].filter(Boolean);
+  return parts.length ? parts.join(', ') : (addr || '');
 }
 
 // === DATOS MOCK ===
@@ -202,7 +224,21 @@ const JobCard = ({ job, onEdit, onView, onPause }: {
             </div>
             <div className="flex items-center gap-1">
               <DollarSign className="w-4 h-4" />
-              {job.salary.currency} {job.salary.min.toLocaleString()} - {job.salary.max.toLocaleString()}
+              {(() => {
+                const s: any = (job as any)?.salary;
+                const cur = s?.currency ?? '';
+                const min = typeof s?.min === 'number' ? s.min : undefined;
+                const max = typeof s?.max === 'number' ? s.max : undefined;
+                if (min != null && max != null) {
+                  return `${cur} ${min.toLocaleString()} - ${max.toLocaleString()}`;
+                }
+                // Intentar otros formatos comunes
+                const amount = typeof s?.amount === 'number' ? s.amount : undefined;
+                if (amount != null) {
+                  return `${cur} ${amount.toLocaleString()}`;
+                }
+                return 'A convenir';
+              })()}
             </div>
           </div>
         </div>
@@ -233,7 +269,7 @@ const JobCard = ({ job, onEdit, onView, onPause }: {
         <div className="text-center">
           <div className="flex items-center justify-center gap-1">
             <Eye className="w-4 h-4 text-neutral-400" />
-            <span className="text-sm font-medium text-neutral-900">{job.views}</span>
+            <span className="text-sm font-medium text-neutral-900">{Number((job as any)?.views) || 0}</span>
           </div>
           <p className="text-xs text-neutral-500 mt-1">Visualizaciones</p>
         </div>
@@ -241,7 +277,11 @@ const JobCard = ({ job, onEdit, onView, onPause }: {
           <div className="flex items-center justify-center gap-1">
             <TrendingUp className="w-4 h-4 text-neutral-400" />
             <span className="text-sm font-medium text-neutral-900">
-              {Math.round((job.applications / job.views) * 100)}%
+              {(() => {
+                const views = Number((job as any)?.views) || 0;
+                const apps = Number((job as any)?.applications) || 0;
+                return views > 0 ? Math.round((apps / views) * 100) : 0;
+              })()}%
             </span>
           </div>
           <p className="text-xs text-neutral-500 mt-1">Conversión</p>
@@ -261,44 +301,181 @@ export default function CompanyMarketplacePage() {
     isLoading: isProfileLoading
   } = useCompanyProfile('current-company-id');
 
-  const {
-    jobs: publishedJobs,
-    isLoading: isJobsLoading,
-    error: jobsError,
-    createJob,
-    updateJob,
-    deleteJob
-  } = useMarketplaceJobs();
+  const jobsApi = useMarketplaceJobs() as any;
+  const publishedJobs: any[] = Array.isArray(jobsApi?.jobs) ? jobsApi.jobs : [];
+  const isJobsLoading: boolean = !!jobsApi?.isLoading;
+  const jobsError: any = jobsApi?.error;
+  const createJob = jobsApi?.createJob as any;
+  const updateJob = jobsApi?.updateJob as any;
+  const deleteJob = jobsApi?.deleteJob as any;
 
-  const {
-    applications,
-    isLoading: isApplicationsLoading
-  } = useJobApplications('current-company-id');
+  const applicationsApi = useJobApplications('current-company-id') as any;
+  const applications: any[] = Array.isArray(applicationsApi?.applications) ? applicationsApi.applications : [];
+  const isApplicationsLoading: boolean = !!applicationsApi?.isLoading;
 
-  const {
-    doctors: availableDoctors,
-    searchDoctors
-  } = useDoctorSearch();
+  const doctorApi = useDoctorSearch() as any;
+  const availableDoctors: any[] = Array.isArray(doctorApi?.doctors) ? doctorApi.doctors : [];
+  const searchDoctors = doctorApi?.searchDoctors as any;
 
   // Estado local
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'paused' | 'closed'>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [activeTab, setActiveTab] = useState<'overview' | 'jobs' | 'map' | 'analytics' | 'messages'>('map');
   const [showNewJobModal, setShowNewJobModal] = useState(false);
+  const [showMessaging, setShowMessaging] = useState(false);
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string | undefined>(undefined);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | undefined>(undefined);
+  // VS Code-like layout: paneles plegables
+  const [showLeftPanel, setShowLeftPanel] = useState(true);
+  const [showRightPanel, setShowRightPanel] = useState(true);
+  const [openOffers, setOpenOffers] = useState(true);
+  const [openCounterparty, setOpenCounterparty] = useState(true);
+  const [openAnalytics, setOpenAnalytics] = useState(true);
+  const [openComms, setOpenComms] = useState(true);
+  const [openQuickNew, setOpenQuickNew] = useState(false);
+  // Onboarding / Demo guiada
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3 | 4>(1);
+  const [demoMode, setDemoMode] = useState(false);
 
-  // Usar datos del hook o mock data como fallback
-  const displayJobs = publishedJobs || mockCompanyJobs;
-  const stats = {
+  // Datos de ejemplo para el mapa (médicos y empresas) - pueden provenir del contexto/hook en el futuro
+  const mapDoctors = useMemo(() => ([
+    {
+      id: 'dr-martinez-001',
+      name: 'Dr. Carlos Martínez',
+      specialties: ['Cardiología'],
+      location: { city: 'Buenos Aires', country: 'Argentina', coordinates: [-34.6037, -58.3816] as [number, number] },
+      hourlyRate: 120,
+      experience: 10,
+      rating: 4.8,
+      workArrangement: 'on_site',
+      isUrgentAvailable: true,
+      isOnline: true,
+      verificationStatus: 'verified',
+      languages: ['Español', 'Inglés'],
+      responseTime: 2,
+      offersDirectServices: false
+    },
+    {
+      id: 'dr-lopez-002',
+      name: 'Dra. María López',
+      specialties: ['Pediatría'],
+      location: { city: 'Córdoba', country: 'Argentina', coordinates: [-31.4201, -64.1888] as [number, number] },
+      hourlyRate: 80,
+      experience: 6,
+      rating: 4.6,
+      workArrangement: 'hybrid',
+      isUrgentAvailable: false,
+      isOnline: false,
+      verificationStatus: 'pending',
+      languages: ['Español'],
+      responseTime: 6,
+      offersDirectServices: true,
+      publishedServices: [
+        { id: 'srv-1', title: 'Consulta Pediátrica', price: { amount: 50, currency: 'USD', type: 'per_session' }, deliveryMethod: 'telemedicine' }
+      ]
+    }
+  ]), []);
+  const mapCompanies = useMemo(() => ([
+    {
+      id: 'hospital-san-vicente-001',
+      name: 'Hospital San Vicente',
+      industry: 'Salud y Medicina',
+      location: { city: 'Buenos Aires', country: 'Argentina', coordinates: [-34.6037, -58.3816] as [number, number] },
+      rating: 4.8,
+      size: 'Grande',
+      activeJobs: 3,
+      urgentJobs: 1,
+      isActivelyHiring: true,
+      totalHires: 127,
+      companyType: 'hospital'
+    }
+  ]), []);
+
+  const doctorsForMap = (availableDoctors && (availableDoctors as any[]).length > 0 ? (availableDoctors as any[]) : (mapDoctors as any[]));
+  const companiesForMap = (mapCompanies as any[]);
+
+  // Reflow del mapa al activar la pestaña de Mapa
+  useEffect(() => {
+    if (activeTab === 'map') {
+      // pequeño retraso para asegurar que el contenedor esté renderizado
+      const t = setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('map:invalidate-size'));
+        }
+      }, 120);
+      return () => clearTimeout(t);
+    }
+  }, [activeTab]);
+
+  // Atajos de teclado VS Code-like: Ctrl+B (toggle panel izquierdo), Ctrl+Shift+B (derecho)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'b')) {
+        if (e.shiftKey) {
+          setShowRightPanel(v => !v);
+        } else {
+          setShowLeftPanel(v => !v);
+        }
+        setTimeout(() => window.dispatchEvent(new Event('map:invalidate-size')), 150);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+  // Mostrar onboarding en primera visita a Hub
+  useEffect(() => {
+    if (activeTab === 'map') {
+      const seen = typeof window !== 'undefined' ? localStorage.getItem('marketplace_onboarding_seen') : '1';
+      if (!seen) {
+        setShowOnboarding(true);
+        setDemoMode(true);
+      }
+    }
+  }, [activeTab]);
+
+  const finishOnboarding = () => {
+    setShowOnboarding(false);
+    setDemoMode(false);
+    try { localStorage.setItem('marketplace_onboarding_seen', '1'); } catch {}
+    setTimeout(() => window.dispatchEvent(new Event('map:invalidate-size')), 120);
+  };
+
+  const nextStep = () => {
+    setOnboardingStep((s) => (s < 4 ? ((s + 1) as 1|2|3|4) : s));
+    setTimeout(() => window.dispatchEvent(new Event('map:invalidate-size')), 120);
+  };
+  const prevStep = () => setOnboardingStep((s) => (s > 1 ? ((s - 1) as 1|2|3|4) : s));
+
+  const toggleLeftPanel = useCallback(() => {
+    setShowLeftPanel(v => !v);
+    setTimeout(() => window.dispatchEvent(new Event('map:invalidate-size')), 150);
+  }, []);
+  const toggleRightPanel = useCallback(() => {
+    setShowRightPanel(v => !v);
+    setTimeout(() => window.dispatchEvent(new Event('map:invalidate-size')), 150);
+  }, []);
+
+  // Usar datos del hook o mock data como fallback y normalizar location a string
+  const rawJobs = (Array.isArray(publishedJobs) && (publishedJobs as any[]).length > 0)
+    ? (publishedJobs as any[])
+    : (mockCompanyJobs as any[]);
+  const displayJobs: JobPosting[] = rawJobs.map((job: any) => ({
+    ...job,
+    location: formatLocation(job?.location)
+  }));
+  const stats: CompanyMarketplaceStats = {
     totalJobs: displayJobs.length,
     activeJobs: displayJobs.filter(j => j.status === 'active').length,
     totalApplications: applications?.length || mockStats.totalApplications,
-    totalViews: displayJobs.reduce((sum, job) => sum + job.views, 0),
+  totalViews: displayJobs.reduce((sum, job: any) => sum + (Number(job?.views) || 0), 0),
     averageRating: mockStats.averageRating,
     responseRate: mockStats.responseRate
   };
 
   // Filtrar jobs según el término de búsqueda y filtros
-  const filteredJobs = displayJobs.filter(job => {
+  const filteredJobs: JobPosting[] = displayJobs.filter((job: JobPosting) => {
     const matchesSearch = searchTerm === '' || 
       job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.specialty.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -332,154 +509,425 @@ export default function CompanyMarketplacePage() {
         });
       }
     } catch (error) {
-      console.error('Error updating job status:', error);
+      // Error updating job status - could implement proper error handling here
     }
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
-      <div className="bg-white border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-vscode-editor text-vscode-foreground">
+      {/* Header VS Code-like */}
+      <div className="sticky top-0 z-20 border-b border-vscode-border bg-vscode-activity-bar text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-neutral-900">Marketplace - Gestión de Ofertas</h1>
-              <p className="text-sm text-neutral-600 mt-1">
-                Gestiona tus ofertas laborales y encuentra los mejores profesionales médicos
-              </p>
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-semibold">Marketplace</h1>
+              <span className="hidden md:inline text-xs opacity-80">Gestión integral: ofertas, mapa, analytics y mensajes</span>
             </div>
-            <button
-              onClick={handleCreateJob}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Nueva Oferta
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            icon={Briefcase}
-            title="Total de Ofertas"
-            value={stats.totalJobs}
-            trend={8}
-            color="blue"
-          />
-          <StatCard
-            icon={TrendingUp}
-            title="Ofertas Activas"
-            value={stats.activeJobs}
-            trend={15}
-            color="green"
-          />
-          <StatCard
-            icon={Users}
-            title="Aplicaciones Recibidas"
-            value={stats.totalApplications}
-            trend={22}
-            color="purple"
-          />
-          <StatCard
-            icon={Eye}
-            title="Visualizaciones"
-            value={stats.totalViews.toLocaleString()}
-            trend={12}
-            color="orange"
-          />
-        </div>
-
-        {/* Filtros y Controles */}
-        <div className="bg-white rounded-lg border border-neutral-200 p-6 mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-            {/* Búsqueda */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Buscar por título, especialidad o departamento..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            {/* Filtros */}
-            <div className="flex items-center gap-4">
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value as any)}
-                className="px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            <div className="flex items-center gap-2">
+              <button onClick={toggleLeftPanel} className="px-2 py-1 rounded border border-vscode-border/50 hover:bg-vscode-list-hover text-sm flex items-center gap-1">
+                <PanelLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Panel Izq</span>
+              </button>
+              <button onClick={toggleRightPanel} className="px-2 py-1 rounded border border-vscode-border/50 hover:bg-vscode-list-hover text-sm flex items-center gap-1">
+                <PanelRight className="w-4 h-4" />
+                <span className="hidden sm:inline">Panel Der</span>
+              </button>
+              <button
+                onClick={() => setShowMessaging(true)}
+                className="px-2 py-1 rounded border border-vscode-border/50 hover:bg-vscode-list-hover text-sm"
+                title="Abrir Mensajes"
               >
-                <option value="all">Todos los estados</option>
-                <option value="active">Activas</option>
-                <option value="paused">Pausadas</option>
-                <option value="closed">Cerradas</option>
-              </select>
-
-              {/* Vista */}
-              <div className="flex items-center border border-neutral-300 rounded-lg">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-neutral-400'}`}
-                >
-                  <Grid className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-neutral-400'}`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
+                💬
+              </button>
+              <button
+                onClick={() => setShowNewJobModal(true)}
+                className="inline-flex items-center px-3 py-1.5 bg-vscode-activity-badge text-white text-sm font-medium rounded hover:brightness-110"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Nueva Oferta
+              </button>
             </div>
           </div>
-        </div>
-
-        {/* Lista de Ofertas */}
-        {isJobsLoading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="text-neutral-600 mt-4">Cargando ofertas...</p>
-          </div>
-        ) : filteredJobs.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-neutral-200">
-            <Briefcase className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-neutral-900 mb-2">No se encontraron ofertas</h3>
-            <p className="text-neutral-600 mb-6">
-              {searchTerm ? 'Intenta con otros términos de búsqueda' : 'Comienza creando tu primera oferta laboral'}
-            </p>
-            <button
-              onClick={handleCreateJob}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Crear Primera Oferta
-            </button>
-          </div>
-        ) : (
-          <div className={`grid gap-6 ${
-            viewMode === 'grid' 
-              ? 'grid-cols-1 lg:grid-cols-2' 
-              : 'grid-cols-1'
-          }`}>
-            {filteredJobs.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                onEdit={handleEditJob}
-                onView={handleViewJob}
-                onPause={handlePauseJob}
-              />
+          {/* Tabs VS Code-like */}
+          <div className="mt-3 flex gap-2 text-sm">
+            {[
+              { id: 'overview', label: 'Resumen' },
+              { id: 'jobs', label: 'Ofertas' },
+              { id: 'map', label: 'Hub' },
+              { id: 'analytics', label: 'Analytics' },
+            ].map(t => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id as any)}
+                className={`px-3 py-1.5 rounded border ${activeTab === t.id ? 'bg-vscode-editor text-white border-vscode-border' : 'border-transparent hover:bg-vscode-list-hover text-vscode-foreground'}`}
+              >
+                {t.label}
+              </button>
             ))}
           </div>
+        </div>
+      </div>
+
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {activeTab === 'overview' && (
+          <JobMarketplaceDashboard />
+        )}
+
+        {activeTab === 'jobs' && (
+          <>
+            {/* Estadísticas */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <StatCard icon={Briefcase} title="Total de Ofertas" value={stats.totalJobs} trend={8} color="blue" />
+              <StatCard icon={TrendingUp} title="Ofertas Activas" value={stats.activeJobs} trend={15} color="green" />
+              <StatCard icon={Users} title="Aplicaciones Recibidas" value={stats.totalApplications} trend={22} color="purple" />
+              <StatCard icon={Eye} title="Visualizaciones" value={stats.totalViews.toLocaleString()} trend={12} color="orange" />
+            </div>
+
+            {/* Filtros y Controles */}
+            <div className="bg-white rounded-lg border border-neutral-200 p-6 mb-6">
+              <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                {/* Búsqueda */}
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      placeholder="Buscar por título, especialidad o departamento..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Filtros */}
+                <div className="flex items-center gap-4">
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value as any)}
+                    className="px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="all">Todos los estados</option>
+                    <option value="active">Activas</option>
+                    <option value="paused">Pausadas</option>
+                    <option value="closed">Cerradas</option>
+                  </select>
+
+                  {/* Vista */}
+                  <div className="flex items-center border border-neutral-300 rounded-lg">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={`p-2 ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-neutral-400'}`}
+                    >
+                      <Grid className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={`p-2 ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-neutral-400'}`}
+                    >
+                      <List className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Lista de Ofertas */}
+            {isJobsLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="text-neutral-600 mt-4">Cargando ofertas...</p>
+              </div>
+            ) : filteredJobs.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-lg border border-neutral-200">
+                <Briefcase className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-neutral-900 mb-2">No se encontraron ofertas</h3>
+                <p className="text-neutral-600 mb-6">
+                  {searchTerm ? 'Intenta con otros términos de búsqueda' : 'Comienza creando tu primera oferta laboral'}
+                </p>
+                <button
+                  onClick={() => setShowNewJobModal(true)}
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Crear Primera Oferta
+                </button>
+              </div>
+            ) : (
+              <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
+                {filteredJobs.map((job) => (
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    onEdit={handleEditJob}
+                    onView={handleViewJob}
+                    onPause={handlePauseJob}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {activeTab === 'map' && (
+          <div className="border border-vscode-border rounded-lg overflow-hidden h-[calc(100vh-168px)] flex bg-vscode-panel">
+            {/* Panel Izquierdo (plegable) */}
+            {showLeftPanel && (
+              <div className="w-[360px] border-r border-vscode-border h-full flex flex-col">
+                {/* Ofertas plegable */}
+                <div className="border-b border-vscode-border">
+                  <button
+                    onClick={() => setOpenOffers(o => !o)}
+                    className="w-full flex items-center justify-between px-3 py-2 hover:bg-vscode-list-hover"
+                  >
+                    <span className="text-sm font-medium flex items-center gap-2"><Briefcase className="w-4 h-4"/> Ofertas</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${openOffers ? '' : '-rotate-90'}`} />
+                  </button>
+                  {openOffers && (
+                    <div className="max-h-64 overflow-y-auto px-3 pb-2">
+                      {filteredJobs.length === 0 ? (
+                        <p className="text-xs opacity-70 px-1 py-2">No hay ofertas</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {filteredJobs.map(job => (
+                            <div key={job.id} className="p-3 rounded border border-vscode-border/60 bg-vscode-editor hover:bg-vscode-list-hover">
+                              <div className="flex items-start justify-between gap-2">
+                                <div>
+                                  <p className="text-sm font-semibold text-white">{job.title}</p>
+                                  <p className="text-xs opacity-80">{job.department} • {job.location}</p>
+                                </div>
+                                <button
+                                  onClick={() => handleViewJob(job.id)}
+                                  className="text-xs px-2 py-1 rounded border border-vscode-border/60 hover:bg-vscode-list-hover"
+                                >Ver</button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {/* Contraparte (Médicos) plegable */}
+                <div className="flex-1 flex flex-col">
+                  <div className="border-b border-vscode-border">
+                    <button
+                      onClick={() => setOpenCounterparty(o => !o)}
+                      className="w-full flex items-center justify-between px-3 py-2 hover:bg-vscode-list-hover"
+                    >
+                      <span className="text-sm font-medium flex items-center gap-2"><Users className="w-4 h-4"/> Profesionales</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform ${openCounterparty ? '' : '-rotate-90'}`} />
+                    </button>
+                    {openCounterparty && (
+                      <div className="p-3">
+                        <div className="relative mb-3">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 opacity-70 w-4 h-4" />
+                          <input
+                            type="text"
+                            placeholder="Buscar médicos por nombre o ciudad..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-3 py-2 rounded border border-vscode-border bg-vscode-editor text-vscode-foreground placeholder:opacity-60 focus:outline-none focus:ring-1 focus:ring-vscode-activity-badge"
+                          />
+                        </div>
+                        <div className="h-[calc(100%-56px)] overflow-y-auto -mr-2 pr-2">
+                          {doctorsForMap
+                            .filter((d: any) => !searchTerm || d.name.toLowerCase().includes(searchTerm.toLowerCase()) || d.location.city.toLowerCase().includes(searchTerm.toLowerCase()))
+                            .map((doc: any) => (
+                              <button
+                                key={doc.id}
+                                onClick={() => {
+                                  setSelectedDoctorId(doc.id);
+                                  setTimeout(() => window.dispatchEvent(new Event('map:invalidate-size')), 120);
+                                }}
+                                className={`w-full text-left px-3 py-2 rounded border border-transparent hover:border-vscode-border hover:bg-vscode-list-hover transition-colors ${selectedDoctorId === doc.id ? 'bg-vscode-list-hover border-vscode-border' : ''}`}
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div className="h-9 w-9 rounded-full bg-blue-500/20 text-blue-300 flex items-center justify-center">👨‍⚕️</div>
+                                  <div className="min-w-0">
+                                    <div className="flex items-center justify-between">
+                                      <p className="text-sm font-medium truncate">{doc.name}</p>
+                                      <span className="text-[10px] opacity-80 flex items-center gap-1">
+                                        ⭐ {doc.rating}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs opacity-80 truncate">{doc.specialties?.join(', ')}</p>
+                                    <p className="text-[11px] opacity-70 flex items-center gap-1">
+                                      <MapPin className="w-3 h-3" /> {doc.location?.city}, {doc.location?.country}
+                                    </p>
+                                  </div>
+                                </div>
+                              </button>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Mapa centrado */}
+            <div className="flex-1 h-full">
+              <MarketplaceMap
+                doctors={doctorsForMap as any}
+                companies={companiesForMap as any}
+                enableControls
+                theme="vscode"
+                selectedDoctorId={selectedDoctorId}
+                selectedCompanyId={selectedCompanyId}
+                onDoctorSelect={(doc: any) => setSelectedDoctorId(doc.id)}
+                onCompanySelect={(c: any) => setSelectedCompanyId(c.id)}
+                demoMode={demoMode}
+              />
+            </div>
+
+            {/* Panel Derecho (plegable) */}
+            {showRightPanel && (
+              <div className="w-[360px] border-l border-vscode-border h-full flex flex-col">
+                {/* Mensajes / Nueva Oferta */}
+                <div className="border-b border-vscode-border">
+                  <button
+                    onClick={() => setOpenComms(o => !o)}
+                    className="w-full flex items-center justify-between px-3 py-2 hover:bg-vscode-list-hover"
+                  >
+                    <span className="text-sm font-medium">Mensajes y Nueva Oferta</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${openComms ? '' : '-rotate-90'}`} />
+                  </button>
+                  {openComms && (
+                    <div className="px-3 pb-3 space-y-2">
+                      <button
+                        onClick={() => setShowMessaging(true)}
+                        className="w-full text-left px-3 py-2 rounded border border-vscode-border hover:bg-vscode-list-hover text-sm"
+                      >💬 Abrir Mensajes</button>
+                      <button
+                        onClick={() => setShowNewJobModal(true)}
+                        className="w-full text-left px-3 py-2 rounded bg-vscode-activity-badge text-white hover:brightness-110 text-sm"
+                      >➕ Crear Nueva Oferta</button>
+                    </div>
+                  )}
+                </div>
+                {/* Analytics competitivo */}
+                <div className="flex-1 flex flex-col">
+                  <div className="border-b border-vscode-border">
+                    <button
+                      onClick={() => setOpenAnalytics(o => !o)}
+                      className="w-full flex items-center justify-between px-3 py-2 hover:bg-vscode-list-hover"
+                    >
+                      <span className="text-sm font-medium flex items-center gap-2"><TrendingUp className="w-4 h-4"/> Análisis Competitivo</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform ${openAnalytics ? '' : '-rotate-90'}`} />
+                    </button>
+                    {openAnalytics && (
+                      <div className="p-3 space-y-3 overflow-y-auto">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="p-2 rounded border border-vscode-border bg-vscode-editor">
+                            <p className="text-[11px] opacity-80">Ofertas Activas</p>
+                            <p className="text-lg font-semibold">{stats.activeJobs}</p>
+                          </div>
+                          <div className="p-2 rounded border border-vscode-border bg-vscode-editor">
+                            <p className="text-[11px] opacity-80">Aplicaciones</p>
+                            <p className="text-lg font-semibold">{stats.totalApplications}</p>
+                          </div>
+                          <div className="p-2 rounded border border-vscode-border bg-vscode-editor">
+                            <p className="text-[11px] opacity-80">Visitas</p>
+                            <p className="text-lg font-semibold">{stats.totalViews.toLocaleString()}</p>
+                          </div>
+                          <div className="p-2 rounded border border-vscode-border bg-vscode-editor">
+                            <p className="text-[11px] opacity-80">Rating Promedio</p>
+                            <p className="text-lg font-semibold">{stats.averageRating}</p>
+                          </div>
+                        </div>
+                        <div className="text-[12px] opacity-80">
+                          • Top especialidades en demanda: Cardiología, Pediatría, Neurología
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <MarketplaceAnalytics />
         )}
       </div>
+
+      {/* Modales */}
+      {/* Onboarding Overlay */}
+      {showOnboarding && activeTab === 'map' && (
+        <div className="fixed inset-0 bg-black/60 z-[2000] flex items-center justify-center p-4">
+          <div className="bg-vscode-panel text-vscode-foreground border border-vscode-border rounded-lg shadow-xl max-w-2xl w-full">
+            <div className="p-4 border-b border-vscode-border flex items-center justify-between">
+              <h3 className="font-semibold">Demo guiada: Centro de Crisis</h3>
+              <button onClick={finishOnboarding} className="text-sm opacity-80 hover:opacity-100">✕</button>
+            </div>
+            <div className="p-4 space-y-4">
+              {onboardingStep === 1 && (
+                <div className="space-y-2">
+                  <h4 className="text-lg font-semibold">1) Hospital Saturado</h4>
+                  <p className="text-sm opacity-90">Observa en el mapa el Hospital San Vicente en rojo/alerta. El sistema detecta saturación de guardia/UCI y sugiere derivar.</p>
+                  <p className="text-sm opacity-90">Esto se basa en disponibilidad, triage y reglas clínicas. No favorece público/privado; prioriza tiempo a tratamiento.</p>
+                </div>
+              )}
+              {onboardingStep === 2 && (
+                <div className="space-y-2">
+                  <h4 className="text-lg font-semibold">2) Ambulancia</h4>
+                  <p className="text-sm opacity-90">Se asigna una ambulancia 🚑 según SLA y convenios. Quien paga la ambulancia depende del contrato (hospital, aseguradora o coordinación regional).</p>
+                </div>
+              )}
+              {onboardingStep === 3 && (
+                <div className="space-y-2">
+                  <h4 className="text-lg font-semibold">3) Trayecto</h4>
+                  <p className="text-sm opacity-90">Visualiza el trayecto punteado rojo desde el hospital origen al receptor. El sistema estima tiempos y evita colapsos en ruta.</p>
+                </div>
+              )}
+              {onboardingStep === 4 && (
+                <div className="space-y-2">
+                  <h4 className="text-lg font-semibold">4) Hospital Receptor</h4>
+                  <p className="text-sm opacity-90">Se selecciona el receptor óptimo por capacidad y especialidad. Los costos clínicos se rigen por convenios vigentes con el pagador.</p>
+                  <p className="text-sm opacity-90">Como dueño del hospital, tu rol es mantener datos de disponibilidad, aceptar/rechazar derivaciones por SLA y disparar derivación cuando corresponda; el sistema orquesta, no decide por ti.</p>
+                </div>
+              )}
+            </div>
+            <div className="p-4 border-t border-vscode-border flex items-center justify-between">
+              <div className="text-xs opacity-80">Paso {onboardingStep} de 4</div>
+              <div className="flex gap-2">
+                <button onClick={prevStep} className="px-3 py-1.5 rounded border border-vscode-border hover:bg-vscode-list-hover text-sm">Atrás</button>
+                {onboardingStep < 4 ? (
+                  <button onClick={nextStep} className="px-3 py-1.5 rounded bg-vscode-activity-badge text-white text-sm hover:brightness-110">Siguiente</button>
+                ) : (
+                  <button onClick={finishOnboarding} className="px-3 py-1.5 rounded bg-vscode-activity-badge text-white text-sm hover:brightness-110">Finalizar</button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {showNewJobModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-auto">
+            <div className="p-4 border-b flex items-center justify-between">
+              <h3 className="font-semibold">Nueva Oferta</h3>
+              <button onClick={() => setShowNewJobModal(false)} className="text-neutral-500 hover:text-neutral-700">✕</button>
+            </div>
+            <div className="p-4">
+              <JobForm
+                onSubmit={(data) => {
+                  // Submit job data to backend
+                  setShowNewJobModal(false);
+                }}
+                onCancel={() => setShowNewJobModal(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showMessaging && (
+        <MessagingSystem onClose={() => setShowMessaging(false)} />
+      )}
     </div>
   );
 }

@@ -1,9 +1,10 @@
-import '@altamedica/firebase/client-only'; // Initialize Firebase Client
+import { CompanyLayoutProvider } from '@/components/layout/CompanyLayoutProvider';
+import { QueryProvider } from '@/providers/QueryProvider';
 import { AuthProvider } from "@altamedica/auth";
+import '@altamedica/firebase/client-only'; // Initialize Firebase Client
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { CompanyLayoutProvider } from '@/components/layout/CompanyLayoutProvider';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -24,6 +25,30 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Cliente: handler de ChunkLoadError en DEV (evita pantallas en blanco por hot reload)
+  const handlerScript = `
+    (function(){
+      if (typeof window === 'undefined') return;
+      var isDev = window.location.hostname === 'localhost' || window.location.port;
+      if (!isDev) return;
+      var origConsoleError = console.error;
+      console.error = function(){
+        try {
+          var args = Array.prototype.slice.call(arguments);
+          var isChunkErr = args && args.some && args.some(function(a){
+            return a && a.name === 'ChunkLoadError' || (typeof a === 'string' && a.indexOf('ChunkLoadError') !== -1);
+          });
+          if (isChunkErr) {
+            var url = new URL(window.location.href);
+            url.searchParams.set('nocache', Date.now().toString());
+            window.location.replace(url.toString());
+            return;
+          }
+        } catch {}
+        origConsoleError.apply(console, arguments);
+      };
+    })();
+  `;
   return (
     <html lang="es" className={inter.variable}>
       <head>
@@ -31,12 +56,16 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body className="min-h-screen bg-gray-50 font-sans antialiased">
+  {/* Inyectar handler solo en cliente (no usar componentes inexistentes) */}
+        <script dangerouslySetInnerHTML={{ __html: handlerScript }} />
         <AuthProvider>
-          <CompanyLayoutProvider>
-            <div id="__next" className="min-h-screen">
-              {children}
-            </div>
-          </CompanyLayoutProvider>
+          <QueryProvider>
+            <CompanyLayoutProvider>
+              <div id="__next" className="min-h-screen">
+                {children}
+              </div>
+            </CompanyLayoutProvider>
+          </QueryProvider>
         </AuthProvider>
       </body>
     </html>

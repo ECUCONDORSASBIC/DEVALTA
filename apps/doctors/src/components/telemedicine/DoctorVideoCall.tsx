@@ -1,31 +1,19 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
 import {
-  Mic,
-  MicOff,
-  Video,
-  VideoOff,
-  Monitor,
-  Phone,
-  PhoneOff,
-  Settings,
-  Volume2,
-  VolumeX,
-  Maximize,
-  Minimize,
-  RotateCcw,
-  AlertCircle,
-  X,
-  Circle,
-  Square,
-  Download,
-  Stethoscope,
-  FileText,
-  Camera,
-  MessageSquare
+    Circle,
+    Download,
+    Maximize,
+    Mic,
+    Minimize,
+    Monitor,
+    PhoneOff,
+    Square,
+    Stethoscope,
+    Video
 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 interface DoctorVideoCallProps {
   roomId: string;
@@ -48,6 +36,8 @@ export default function DoctorVideoCall({
   showStats = true,
   className = ''
 }: DoctorVideoCallProps) {
+  // Feature flag para desactivar telemedicina (WebRTC retirado)
+  const TELEMED_ENABLED = (process.env.NEXT_PUBLIC_TELEMEDICINE_ENABLED === 'true');
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -317,11 +307,13 @@ export default function DoctorVideoCall({
 
   // Auto-conectar
   useEffect(() => {
+    if (!TELEMED_ENABLED) return;
     handleStartCall();
     return () => {
+      if (!TELEMED_ENABLED) return;
       handleEndCall();
     };
-  }, []);
+  }, [TELEMED_ENABLED]);
 
   // Manejar fullscreen
   const toggleFullscreen = () => {
@@ -368,6 +360,25 @@ export default function DoctorVideoCall({
       a.click();
     }
   };
+
+  // Si la funcionalidad está deshabilitada, mostrar UI informativa y no iniciar WebRTC
+  if (!TELEMED_ENABLED) {
+    return (
+      <div className={`flex items-center justify-center min-h-[300px] bg-gray-50 ${className}`}>
+        <div className="text-center max-w-xl">
+          <div className="mx-auto mb-3 w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+            <span className="text-yellow-700 text-lg">!</span>
+          </div>
+          <h3 className="text-gray-900 font-semibold text-lg">Telemedicina deshabilitada</h3>
+          <p className="text-gray-600 text-sm mt-1">
+            La funcionalidad de videollamada en tiempo real (WebRTC) ha sido retirada.
+            Si necesitas habilitar un modo de demo, establece la variable de entorno
+            <span className="font-mono"> NEXT_PUBLIC_TELEMEDICINE_ENABLED=true</span> temporalmente.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (isConnecting) {
     return (

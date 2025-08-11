@@ -89,7 +89,7 @@ export interface DashboardNotification {
   actionText?: string;
   createdAt: string;
   expiresAt?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // 📊 Estadísticas rápidas
@@ -188,7 +188,7 @@ export interface DashboardApiError {
   error: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
     suggestions?: string[];
   };
   timestamp: string;

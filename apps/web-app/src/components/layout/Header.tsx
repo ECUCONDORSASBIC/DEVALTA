@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Menu, X, User, LogIn, UserPlus, ChevronDown } from 'lucide-react';
+import { Menu, X, User, LogIn, UserPlus, ChevronDown, Heart, GraduationCap } from 'lucide-react';
 import { cn } from '@altamedica/utils';
 
 interface HeaderProps {
@@ -111,7 +111,7 @@ export function Header({
   return (
     <header className={headerClasses} role="banner">
       <div className={containerClasses}>
-        {/* Logo */}
+        {/* Logo and Developer Info */}
         <div className="flex items-center">
           <a 
             href="/" 
@@ -120,6 +120,20 @@ export function Header({
           >
             ALTAMEDICA
           </a>
+          <div className="hidden lg:flex items-center ml-4 pl-4 border-l border-neutral-200">
+            <div className="flex items-center space-x-2 text-xs text-neutral-500">
+              <span>Desarrollado con</span>
+              <Heart className="w-3 h-3 text-red-500 animate-pulse" />
+              <span>por</span>
+              <div className="flex items-center space-x-1 text-primary-600">
+                <GraduationCap className="w-3 h-3" />
+                <span className="font-medium">Eduardo Marques</span>
+              </div>
+              <span className="text-neutral-400">
+                Medicina - UBA
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Desktop Navigation */}

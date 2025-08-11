@@ -1,7 +1,0 @@
-# Firebase
-firebase-admin==6.5.0
-google-cloud-firestore==2.16.0
-
-# Otras dependencias de IA que podrías necesitar
-# openai
-# google-generativeai

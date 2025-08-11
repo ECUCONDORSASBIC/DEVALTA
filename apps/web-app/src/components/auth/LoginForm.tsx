@@ -71,16 +71,8 @@ export function LoginForm() {
       // Extraer datos de la respuesta SSO
       const responseData = result.data || result
       
-      // Guardar tokens SSO
-      if (responseData.token) {
-        localStorage.setItem('altamedica_token', responseData.token)
-      }
-      if (responseData.refreshToken) {
-        localStorage.setItem('altamedica_refresh_token', responseData.refreshToken)
-      }
-      if (responseData.user) {
-        localStorage.setItem('altamedica_user', JSON.stringify(responseData.user))
-      }
+  // No guardamos tokens en storage (cumplimiento HIPAA). El api-server setea cookies HttpOnly.
+  // Opcional: puedes almacenar datos no sensibles del usuario en memoria/estado si se requiere.
 
       // Redirigir basado en el rol del usuario o URL especificada
       const redirectUrl = responseData.redirectUrl || 

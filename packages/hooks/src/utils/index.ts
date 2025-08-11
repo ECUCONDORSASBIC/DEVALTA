@@ -16,6 +16,16 @@ export { useToggle } from './useToggle';
 export { useCounter } from './useCounter';
 export { useCopyToClipboard } from './useCopyToClipboard';
 
+// Hooks para hidratación SSR-safe (migrados desde companies app)
+export {
+  useIsClient,
+  useHydrationSafe,
+  useHydrationSafeLocalStorage,
+  useHydrationSafeSessionStorage,
+  useHydrationSafeWindow,
+  useHydrationSafeDocument
+} from './useHydrationSafe';
+
 // Hooks de performance optimizada (migrados desde patients app)
 export {
   useLazyComponent,

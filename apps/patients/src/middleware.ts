@@ -1,3 +1,4 @@
+import { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from '@altamedica/auth';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -42,9 +43,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 🔐 NUEVO SISTEMA SSO - Verificar cookies httpOnly
-  const authToken = request.cookies.get('auth-token');
-  const refreshToken = request.cookies.get('refresh-token');
+  // 🔐 NUEVO SISTEMA SSO - Verificar cookies httpOnly (nombres estandarizados con fallback)
+  const authToken =
+    request.cookies.get(AUTH_COOKIES.token) ??
+    request.cookies.get(LEGACY_AUTH_COOKIES.token);
+  const refreshToken =
+    request.cookies.get(AUTH_COOKIES.refresh) ??
+    request.cookies.get(LEGACY_AUTH_COOKIES.refresh);
   
   // No podemos leer el contenido de las cookies httpOnly desde el cliente
   // Necesitamos verificar con el servidor
@@ -55,7 +60,7 @@ export async function middleware(request: NextRequest) {
   if (authToken || refreshToken) {
     try {
       // Verificar token con el API server
-      const verifyResponse = await fetch('http://localhost:3008/api/v1/auth/verify', {
+  const verifyResponse = await fetch('http://localhost:3001/api/v1/auth/verify', {
         method: 'GET',
         headers: {
           'Cookie': request.headers.get('cookie') || ''
@@ -88,9 +93,9 @@ export async function middleware(request: NextRequest) {
   // Si no está autenticado, redirigir al login central SSO
   if (!isAuthenticated) {
     // Redirigir al gateway de autenticación centralizado
-    const ssoLoginUrl = new URL('http://localhost:3000/login');
+  const ssoLoginUrl = new URL('http://localhost:3000/auth/login');
     // Guardar la URL original para redirigir después del login
-    ssoLoginUrl.searchParams.set('redirect', `http://localhost:3003${pathname}`);
+  ssoLoginUrl.searchParams.set('redirect', `http://localhost:3003${pathname}`);
     return NextResponse.redirect(ssoLoginUrl);
   }
 

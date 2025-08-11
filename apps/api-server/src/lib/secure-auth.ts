@@ -152,7 +152,7 @@ export async function authenticateSecureRequest(request: NextRequest): Promise<S
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       // Try to get token from cookies as fallback
-      const cookieToken = request.cookies.get('auth-token')?.value
+  const cookieToken = request.cookies.get('altamedica_token')?.value || request.cookies.get('auth-token')?.value
       
       if (!cookieToken) {
         await auditLogger.logAuthFailure('MISSING_TOKEN', metadata.ipAddress, metadata.userAgent)

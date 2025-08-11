@@ -33,14 +33,6 @@
       "path": "./apps/web-app"
     },
     {
-      "name": "🐍 Python Tools",
-      "path": "./tools/python"
-    },
-    {
-      "name": "📜 Scripts",
-      "path": "./tools/scripts"
-    },
-    {
       "name": "⚙️ Config",
       "path": "./config"
     },

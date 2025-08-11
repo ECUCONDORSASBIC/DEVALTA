@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, Filter, MapPin, Star, Users, Phone, Globe, Clock } from 'lucide-react';
+import { Filter, MapPin, Search, Star, Users } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface Company {
   id: string;
@@ -112,7 +112,7 @@ export default function CompaniesSearchPage() {
           setCompanies(data);
         }
       } catch (error) {
-        console.error('Error fetching companies:', error);
+        // Error fetching companies - could implement proper error handling here
       } finally {
         setLoading(false);
       }
@@ -204,7 +204,7 @@ export default function CompaniesSearchPage() {
             </h2>
             {searchTerm && (
               <p className="text-sm text-gray-600 mt-1">
-                Resultados para "{searchTerm}"
+                Resultados para &quot;{searchTerm}&quot;
               </p>
             )}
           </div>

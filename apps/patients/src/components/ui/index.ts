@@ -22,27 +22,27 @@ import type { AppointmentData, MedicalRecordData } from '@altamedica/ui';
 // - FormGroup → @altamedica/ui/forms
 
 // 📦 RE-EXPORTACIÓN DE COMPONENTES CENTRALIZADOS
-export { 
-  SearchFilter, 
-  SearchFilterCompact, 
-  SearchFilterExpanded 
-} from '@altamedica/ui/forms';
+// export { 
+//   SearchFilter, 
+//   SearchFilterCompact, 
+//   SearchFilterExpanded 
+// } from '@altamedica/ui/forms';
 
-export { 
-  FormLabel, 
-  FormLabelCompact, 
-  FormLabelLarge 
-} from '@altamedica/ui/forms';
+// export { 
+//   FormLabel, 
+//   FormLabelCompact, 
+//   FormLabelLarge 
+// } from '@altamedica/ui/forms';
 
-export { 
-  FormError 
-} from '@altamedica/ui/forms';
+// export { 
+//   FormError 
+// } from '@altamedica/ui/forms';
 
-export { 
-  FormGroup, 
-  FormGroupCompact, 
-  FormGroupHorizontal 
-} from '@altamedica/ui/forms';
+// export { 
+//   FormGroup, 
+//   FormGroupCompact, 
+//   FormGroupHorizontal 
+// } from '@altamedica/ui/forms';
 
 // 📝 Tipos y interfaces locales (disponibles en @altamedica/ui)
 // export type { 
@@ -193,7 +193,7 @@ export const UI_THEME_CONFIG = {
 
 export default {
   // Componentes locales restantes
-  SearchFilter,
+  // SearchFilter,
   
   // Datos mock para desarrollo
   MOCK_APPOINTMENT,

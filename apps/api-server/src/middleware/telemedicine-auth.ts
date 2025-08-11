@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuth, hasPermission, hasRole } from '../lib/auth';
+import { UnifiedAuth, createAuthContext } from '../auth/UnifiedAuthSystem';
 
 // Tipos de middleware de autorización para telemedicina
 export interface TelemedicineAuthOptions {
@@ -38,16 +38,10 @@ export function telemedicineAuthMiddleware(options: TelemedicineAuthOptions = {}
     try {
       // 1. Verificar autenticación si es requerida
       if (requireAuth) {
-        const authResult = await verifyAuth(req);
+        const authResult = await UnifiedAuth(req);
         
         if (!authResult.success) {
-          return NextResponse.json(
-            { 
-              error: authResult.error || 'Authentication required',
-              code: 'AUTH_REQUIRED' 
-            },
-            { status: authResult.statusCode || 401 }
-          );
+          return authResult.response!;
         }
 
         // Agregar usuario autenticado al request
@@ -56,7 +50,8 @@ export function telemedicineAuthMiddleware(options: TelemedicineAuthOptions = {}
 
       // 2. Verificar roles permitidos
       if (req.user && allowedRoles.length > 0) {
-        const hasValidRole = allowedRoles.some(role => hasRole(req.user!, role));
+        const authContext = createAuthContext(req.user);
+        const hasValidRole = allowedRoles.some(role => authContext.hasRole(role as any));
         
         if (!hasValidRole) {
           return NextResponse.json(
@@ -64,7 +59,7 @@ export function telemedicineAuthMiddleware(options: TelemedicineAuthOptions = {}
               error: 'Insufficient role permissions',
               code: 'INSUFFICIENT_ROLE',
               required: allowedRoles,
-              current: req.user.roles
+              current: req.user.role
             },
             { status: 403 }
           );
@@ -73,8 +68,9 @@ export function telemedicineAuthMiddleware(options: TelemedicineAuthOptions = {}
 
       // 3. Verificar permisos específicos
       if (req.user && requirePermissions.length > 0) {
+        const authContext = createAuthContext(req.user);
         const hasValidPermission = requirePermissions.every(permission => 
-          hasPermission(req.user!, permission)
+          authContext.hasPermission(permission)
         );
         
         if (!hasValidPermission) {
@@ -157,9 +153,10 @@ async function checkTelemedicineResourceOwnership(req: AuthenticatedRequest): Pr
       }
 
       // Verificar si el usuario es parte de la sesión
+      const authContext = createAuthContext(user);
       const isPatient = user.patientId === session.patientId;
       const isDoctor = user.doctorId === session.doctorId;
-      const isAdmin = hasRole(user, 'admin');
+      const isAdmin = authContext.hasRole('admin' as any);
 
       return { 
         shouldCheck: true, 
@@ -175,9 +172,10 @@ async function checkTelemedicineResourceOwnership(req: AuthenticatedRequest): Pr
         return { shouldCheck: true, hasAccess: false };
       }
 
+      const authContext = createAuthContext(user);
       const isPatient = user.patientId === session.patientId;
       const isDoctor = user.doctorId === session.doctorId;
-      const isAdmin = hasRole(user, 'admin');
+      const isAdmin = authContext.hasRole('admin' as any);
 
       return { 
         shouldCheck: true, 
@@ -187,10 +185,11 @@ async function checkTelemedicineResourceOwnership(req: AuthenticatedRequest): Pr
 
     // Verificar acceso por userId (para endpoints de sesiones por usuario)
     if (userId) {
-      const isOwnData = user.id === userId || 
+      const authContext = createAuthContext(user);
+      const isOwnData = user.userId === userId || 
                        user.patientId === userId || 
                        user.doctorId === userId;
-      const isAdmin = hasRole(user, 'admin');
+      const isAdmin = authContext.hasRole('admin' as any);
 
       return { 
         shouldCheck: true, 

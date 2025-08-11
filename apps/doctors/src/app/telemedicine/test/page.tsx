@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
-import DoctorVideoCall from '../../../components/telemedicine/DoctorVideoCall';
+import { useState } from 'react';
 import ChatPanel from '../../../components/telemedicine/ChatPanel';
+import DoctorVideoCall from '../../../components/telemedicine/DoctorVideoCall';
 import SessionControls from '../../../components/telemedicine/SessionControls';
 
 export default function TelemedicineTestPage() {
@@ -103,7 +103,9 @@ export default function TelemedicineTestPage() {
     <div className="h-screen bg-gray-900 flex">
       <div className="flex-1 flex flex-col">
         <DoctorVideoCall
-          sessionId={roomId}
+          roomId={roomId}
+          patientId={patientId}
+          patientName={patientName}
           onEndCall={handleEndCall}
           onError={handleError}
         />

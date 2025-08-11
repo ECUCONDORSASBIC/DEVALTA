@@ -37,7 +37,7 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // 🏥 RUTAS HEALTH - CRITICAL FOR API TESTING
-import healthRoutes from './routes/health.routes';
+import healthRoutes from './routes/health.v2.routes';
 app.use('/api/v1/health', healthRoutes);
 console.log('✅ Health Routes mounted at /api/v1/health');
 
@@ -94,6 +94,11 @@ app.get('/api/v1/health/quick', (req, res) => {
     timestamp: new Date().toISOString(),
     message: 'Quick health check - API Server is running'
   });
+});
+
+// Root health for simple probes (legacy support)
+app.get('/health', (_req, res) => {
+  res.status(200).json({ ok: true, status: 'healthy' });
 });
 
 // Temporary test user creation endpoint
@@ -191,7 +196,7 @@ app.get('/api/v1/auth/test-me', (req, res) => {
   const authCookie = req.cookies?.altamedica_auth_token;
   
   if (!authCookie) {
-    return res.status(401).json({
+  return res.status(401).json({
       error: 'No autenticado',
       message: 'Token de autenticación requerido'
     });
@@ -215,7 +220,7 @@ app.get('/api/v1/auth/test-me', (req, res) => {
   }
   
   if (authenticatedUser) {
-    res.json({
+  return res.json({
       ...authenticatedUser,
       authenticated: true,
       timestamp: new Date().toISOString(),
@@ -225,7 +230,7 @@ app.get('/api/v1/auth/test-me', (req, res) => {
       }
     });
   } else {
-    res.status(401).json({
+  return res.status(401).json({
       error: 'Token inválido',
       message: 'Token de autenticación no válido'
     });
@@ -310,10 +315,26 @@ app.use('*', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 API Server running on port ${PORT}`);
-  console.log(`🔒 Security middlewares applied`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-});
+function startServer(port: number, attemptsLeft = 2) {
+  const server = app.listen(port, () => {
+    console.log(`🚀 API Server running on port ${port}`);
+    console.log(`🔒 Security middlewares applied`);
+    console.log(`📊 Health check: http://localhost:${port}/api/v1/health`);
+    console.log(`📍 Legacy health: http://localhost:${port}/health`);
+  });
+
+  server.on('error', (err: any) => {
+    if (err && err.code === 'EADDRINUSE' && attemptsLeft > 0) {
+      const nextPort = Number(port) + 1;
+      console.warn(`⚠️  Port ${port} in use. Retrying on ${nextPort} (remaining attempts: ${attemptsLeft})`);
+      setTimeout(() => startServer(nextPort, attemptsLeft - 1), 500);
+    } else {
+      console.error('🚨 Server failed to start:', err);
+      process.exit(1);
+    }
+  });
+}
+
+startServer(Number(PORT));
 
 export default app;

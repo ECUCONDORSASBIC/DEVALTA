@@ -418,7 +418,7 @@ class MedicalRecordsService {
     vitalSigns: VitalSigns;
     lastUpdated: string;
   }>> {
-    return apiClient.get<any>(`/api/v1/patients/${patientId}/medical-summary`);
+    return apiClient.get<{ allergies: string[]; chronicConditions: string[]; currentMedications: Medication[]; recentVisits: MedicalRecord[]; vitalSigns: VitalSigns; lastUpdated: string }>(`/api/v1/patients/${patientId}/medical-summary`);
   }
 
   /**

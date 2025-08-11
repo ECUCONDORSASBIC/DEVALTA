@@ -1,15 +1,20 @@
-import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { createSSOMiddleware } from '@altamedica/auth'
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  if (pathname.startsWith('/login')) {
-    const url = new URL('http://localhost:3000/auth/login')
-    url.searchParams.set('from', 'doctors')
-    if (pathname !== '/login') url.searchParams.set('path', pathname)
-    return NextResponse.redirect(url)
-  }
-  return NextResponse.next()
+// SSO centralizado para Doctors con rol requerido
+const sso = createSSOMiddleware({
+  appName: 'doctors',
+  allowedRoles: ['doctor'],
+  loginUrl: process.env.NEXT_PUBLIC_LOGIN_URL || 'http://localhost:3000/auth/login',
+  apiUrl: process.env.NEXT_PUBLIC_API_URL
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/verify`
+    : 'http://localhost:3001/api/v1/auth/verify',
+  publicPaths: ['/api/health', '/_next', '/favicon.ico', '/icons', '/images', '/robots.txt', '/sitemap.xml'],
+  debug: process.env.NODE_ENV === 'development',
+})
+
+export async function middleware(request: NextRequest) {
+  return sso(request)
 }
 
-export const config = { matcher: ['/login', '/login/:path*'] }
+export { ssoMiddlewareConfig as config } from '@altamedica/auth'

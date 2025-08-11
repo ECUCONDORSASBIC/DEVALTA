@@ -4,13 +4,24 @@
  */
 
 // Base Repository
-export { BaseRepository, type BaseEntity, type ServiceContext, type QueryOptions, type RepositoryResult } from './BaseRepository';
+export { BaseRepository, type BaseEntity, type ServiceContext, type QueryOptions, type RepositoryResult } from './BaseRepository.js';
 
 // Medical Repositories
-export { MedicalRecordRepository, medicalRecordRepository, type MedicalRecord } from './MedicalRecordRepository';
-export { PatientRepository, patientRepository, type Patient } from './PatientRepository';
-export { DoctorRepository, doctorRepository, type Doctor } from './DoctorRepository';
-export { AppointmentRepository, appointmentRepository, type Appointment } from './AppointmentRepository';
+export { MedicalRecordRepository, medicalRecordRepository, type MedicalRecord } from './MedicalRecordRepository.js';
+export { PatientRepository, patientRepository, type Patient } from './PatientRepository.js';
+export { DoctorRepository, doctorRepository, type Doctor } from './DoctorRepository.js';
+export { AppointmentRepository, appointmentRepository, type Appointment } from './AppointmentRepository.js';
+
+// Business Repositories
+export { CompanyRepository, companyRepository, type Company } from './CompanyRepository.js';
+export { 
+  MarketplaceRepository, 
+  marketplaceRepository, 
+  ApplicationRepository,
+  applicationRepository,
+  type MarketplaceOffer,
+  type Application 
+} from './MarketplaceRepository.js';
 
 // TODO: Add more repositories as they are implemented
 // export { PrescriptionRepository, prescriptionRepository } from './PrescriptionRepository';

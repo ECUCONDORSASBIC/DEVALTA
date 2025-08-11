@@ -1,3 +1,4 @@
+import { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from '@altamedica/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDashboardUrl } from '../config/app-urls';
 
@@ -6,7 +7,7 @@ import { getDashboardUrl } from '../config/app-urls';
  */
 export async function roleRedirectMiddleware(request: NextRequest) {
   // Obtener el token de autenticación
-  const authToken = request.cookies.get('auth-token')?.value;
+  const authToken = request.cookies.get(AUTH_COOKIES.token)?.value ?? request.cookies.get(LEGACY_AUTH_COOKIES.token)?.value;
   
   if (!authToken) {
     return null; // No hay token, dejar que pase

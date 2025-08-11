@@ -2,6 +2,19 @@
 
 Este archivo proporciona orientación exhaustiva a Claude Code (claude.ai/code) cuando trabaja con la aplicación API Server del proyecto AltaMedica Platform.
 
+## ⚠️ FILOSOFÍA E2E (End-to-End) OBLIGATORIA
+
+**CRÍTICO**: Todas las sugerencias y soluciones para el API Server deben ser **end-to-end (E2E)**, abarcando desde API routes hasta base de datos, frontend integration, tipos compartidos y testing completo. **No ofrecer soluciones parciales o incompletas**.
+
+### 🎯 Principios E2E para API Server
+- **API + Frontend**: Considera impacto en todas las apps del monorepo
+- **Base de Datos E2E**: Firebase + PostgreSQL + migraciones + schemas
+- **Tipos Compartidos**: Actualiza @altamedica/types para todos los contratos
+- **Sistemas Unificados**: OBLIGATORIO usar UnifiedAuthSystem, UnifiedNotificationSystem, UnifiedMarketplaceSystem, UnifiedTelemedicineController
+- **Testing E2E**: Unit + integration + API tests + validación de contratos
+- **Documentación**: Actualiza este CLAUDE.md + API docs tras cambios
+- **HIPAA E2E**: Cumplimiento completo desde API hasta logging y auditoría
+
 ## 🎯 Visión General
 
 **API Server** (Puerto 3001) es el **núcleo backend empresarial** de la plataforma AltaMedica. Construido con Next.js 15 API Routes + Express, Firebase Admin SDK, y arquitectura de microservicios, maneja de forma segura la autenticación SSO, datos médicos HIPAA-compliant, telemedicina WebRTC, IA médica avanzada y todas las operaciones críticas del sistema.

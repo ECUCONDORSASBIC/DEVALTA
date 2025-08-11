@@ -5,11 +5,13 @@
  */
 
 // Re-export medical schemas
-export { MedicalRecordSchema, type MedicalRecord } from '../repositories/MedicalRecordRepository';
-export { PatientSchema, type Patient } from '../repositories/PatientRepository';
+export { MedicalRecordSchema, type MedicalRecord } from '../repositories/MedicalRecordRepository.js';
+export { PatientSchema, type Patient } from '../repositories/PatientRepository.js';
+export { CompanySchema, type Company } from '../repositories/CompanyRepository.js';
+export { MarketplaceOfferSchema, ApplicationSchema, type MarketplaceOffer, type Application } from '../repositories/MarketplaceRepository.js';
 
 // Nuevos schemas centralizados
-export * from './medical-schemas';
-export * from './user-schemas';
-export * from './appointment-schemas';
-export * from './common-schemas';
+export * from './medical-schemas.js';
+export * from './user-schemas.js';
+export * from './appointment-schemas.js';
+export * from './common-schemas.js';

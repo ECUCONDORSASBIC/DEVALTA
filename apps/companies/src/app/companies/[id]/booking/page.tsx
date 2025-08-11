@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Calendar, Clock, User, Phone, Mail, MessageSquare, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Calendar, ArrowLeft, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 interface Doctor {
@@ -102,7 +102,7 @@ export default function BookingPage() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       setCurrentStep(5); // Success step
     } catch (error) {
-      console.error('Error booking appointment:', error);
+      // Error booking appointment - could implement proper error handling here
     } finally {
       setLoading(false);
     }

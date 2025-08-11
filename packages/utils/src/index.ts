@@ -19,7 +19,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Versión simple de cn sin dependencias (para casos básicos)
+ * Versiï¿½n simple de cn sin dependencias (para casos bï¿½sicos)
  */
 export function classNames(...classes: (string | undefined | null | false | 0)[]) {
   return classes.filter(Boolean).join(' ');
@@ -32,7 +32,7 @@ export function classNames(...classes: (string | undefined | null | false | 0)[]
 export type DateFormat = 'full' | 'short' | 'medium' | 'relative' | 'time' | 'datetime';
 
 /**
- * Formatea una fecha según el formato especificado
+ * Formatea una fecha segï¿½n el formato especificado
  */
 export function formatDate(
   date: Date | string | number,
@@ -43,7 +43,7 @@ export function formatDate(
   
   // Validar fecha
   if (isNaN(dateObj.getTime())) {
-    return 'Fecha inválida';
+    return 'Fecha invï¿½lida';
   }
   
   switch (format) {
@@ -91,7 +91,7 @@ export function formatDate(
 }
 
 /**
- * Obtiene tiempo relativo (hace X minutos/horas/días)
+ * Obtiene tiempo relativo (hace X minutos/horas/dï¿½as)
  */
 export function getRelativeTime(date: Date | string | number): string {
   const dateObj = date instanceof Date ? date : new Date(date);
@@ -104,7 +104,7 @@ export function getRelativeTime(date: Date | string | number): string {
     if (absDiff < 60) return 'En unos momentos';
     if (absDiff < 3600) return `En ${Math.floor(absDiff / 60)} minutos`;
     if (absDiff < 86400) return `En ${Math.floor(absDiff / 3600)} horas`;
-    if (absDiff < 2592000) return `En ${Math.floor(absDiff / 86400)} días`;
+    if (absDiff < 2592000) return `En ${Math.floor(absDiff / 86400)} dï¿½as`;
     return formatDate(dateObj, 'short');
   }
   
@@ -120,14 +120,14 @@ export function getRelativeTime(date: Date | string | number): string {
   }
   if (diffInSeconds < 2592000) {
     const days = Math.floor(diffInSeconds / 86400);
-    return `Hace ${days} ${days === 1 ? 'día' : 'días'}`;
+    return `Hace ${days} ${days === 1 ? 'dï¿½a' : 'dï¿½as'}`;
   }
   
   return formatDate(dateObj, 'short');
 }
 
 /**
- * Formatea tiempo de duración (ej: 1h 30min)
+ * Formatea tiempo de duraciï¿½n (ej: 1h 30min)
  */
 export function formatDuration(minutes: number): string {
   if (minutes < 60) {
@@ -145,11 +145,11 @@ export function formatDuration(minutes: number): string {
 }
 
 // ==========================================
-// FORMATEO DE NÚMEROS Y MONEDA
+// FORMATEO DE Nï¿½MEROS Y MONEDA
 // ==========================================
 
 /**
- * Formatea un número como moneda
+ * Formatea un nï¿½mero como moneda
  */
 export function formatCurrency(
   amount: number,
@@ -165,7 +165,7 @@ export function formatCurrency(
 }
 
 /**
- * Formatea un número con separadores de miles
+ * Formatea un nï¿½mero con separadores de miles
  */
 export function formatNumber(
   number: number,
@@ -198,18 +198,18 @@ export function formatPercent(
 // ==========================================
 
 /**
- * Formatea un número de teléfono
+ * Formatea un nï¿½mero de telï¿½fono
  */
 export function formatPhone(phone: string): string {
-  // Remover caracteres no numéricos
+  // Remover caracteres no numï¿½ricos
   const cleaned = phone.replace(/\D/g, '');
   
-  // Formato mexicano (10 dígitos)
+  // Formato mexicano (10 dï¿½gitos)
   if (cleaned.length === 10) {
     return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
   }
   
-  // Formato con código de país
+  // Formato con cï¿½digo de paï¿½s
   if (cleaned.length === 12 && cleaned.startsWith('52')) {
     return `+52 (${cleaned.slice(2, 5)}) ${cleaned.slice(5, 8)}-${cleaned.slice(8)}`;
   }
@@ -266,7 +266,7 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
- * Valida un número de teléfono mexicano
+ * Valida un nï¿½mero de telï¿½fono mexicano
  */
 export function isValidPhone(phone: string): boolean {
   const cleaned = phone.replace(/\D/g, '');
@@ -277,7 +277,7 @@ export function isValidPhone(phone: string): boolean {
  * Valida un RFC mexicano
  */
 export function isValidRFC(rfc: string): boolean {
-  const rfcRegex = /^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/;
+  const rfcRegex = /^[A-Zï¿½&]{3,4}\d{6}[A-Z0-9]{3}$/;
   return rfcRegex.test(rfc.toUpperCase());
 }
 
@@ -294,7 +294,7 @@ export function isValidCURP(curp: string): boolean {
 // ==========================================
 
 /**
- * Debounce - Retrasa la ejecución de una función
+ * Debounce - Retrasa la ejecuciï¿½n de una funciï¿½n
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
@@ -314,7 +314,7 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 /**
- * Throttle - Limita la frecuencia de ejecución
+ * Throttle - Limita la frecuencia de ejecuciï¿½n
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
@@ -356,7 +356,7 @@ export function slugify(str: string): string {
 }
 
 /**
- * Genera un ID único
+ * Genera un ID ï¿½nico
  */
 export function generateId(prefix?: string): string {
   const timestamp = Date.now().toString(36);
@@ -411,7 +411,7 @@ export function filterNullish<T extends Record<string, any>>(obj: T): Partial<T>
 }
 
 // ==========================================
-// UTILIDADES DE URL Y NAVEGACIÓN
+// UTILIDADES DE URL Y NAVEGACIï¿½N
 // ==========================================
 
 /**
@@ -484,6 +484,12 @@ export function removeFromStorage(key: string): boolean {
     return false;
   }
 }
+
+// ==========================================
+// UTILIDADES DE DESARROLLO
+// ==========================================
+
+export * from './dev';
 
 // ==========================================
 // EXPORTACIONES DE TIPOS

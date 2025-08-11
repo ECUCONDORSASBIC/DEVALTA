@@ -61,6 +61,7 @@ C:\Users\Eduardo\Documents\devaltamedica\packages\
 ## 📦 Detalle de Cada Paquete
 
 ### 🔐 **@altamedica/auth** (v1.0.0)
+
 **Propósito**: Sistema de autenticación SSO centralizado con JWT y manejo de sesiones.
 
 ```typescript
@@ -70,35 +71,38 @@ export {
   useAuth,
   useSSO,
   useSession,
-  
+
   // Components
   AuthProvider,
   ProtectedRoute,
-  
+
   // Services
   ssoClient,
   ssoService,
-  
+
   // Types
   User,
   AuthState,
-  UserRole
-}
+  UserRole,
+};
 ```
 
 **Archivos clave**:
+
 - `src/sso-client.ts` - Cliente SSO con fallback localStorage
 - `src/sso-service.ts` - Servicio SSO backend
 - `src/context/AuthContext.tsx` - Provider de autenticación
 - `src/hooks/index.ts` - Hooks de autenticación
 
 **Dependencias workspace**:
+
 - `@altamedica/firebase`
 - `@altamedica/shared`
 
 ---
 
 ### 🎨 **@altamedica/ui** (v1.0.0)
+
 **Propósito**: Sistema de diseño médico basado en Tailwind CSS + Radix UI.
 
 ```typescript
@@ -109,30 +113,31 @@ export {
   AppointmentCard,
   HealthMetricCard,
   VitalSignsChart,
-  
+
   // Core UI
   Button,
   Card,
   Input,
   Badge,
-  
+
   // Forms
   MedicalIntakeForm,
   SearchFilter,
   FormError,
-  
+
   // Dashboard
   MetricCard,
   StatsGrid,
   CustomizableMedicalDashboard,
-  
+
   // AI Components
   MedicalAIAssistant,
-  PredictiveHealthAnalytics
-}
+  PredictiveHealthAnalytics,
+};
 ```
 
 **Storybook**: Puerto 6006 para documentación interactiva
+
 ```bash
 cd packages/ui
 pnpm storybook
@@ -141,6 +146,7 @@ pnpm storybook
 ---
 
 ### 📊 **@altamedica/types** (v1.0.0)
+
 **Propósito**: Definiciones TypeScript centralizadas con validación Zod.
 
 ```typescript
@@ -153,6 +159,7 @@ import { HIPAACompliance } from '@altamedica/types/security';
 ```
 
 **Características**:
+
 - Exports modulares para tree-shaking óptimo
 - Esquemas Zod para validación runtime
 - Tipos FHIR R4 compliant
@@ -161,6 +168,7 @@ import { HIPAACompliance } from '@altamedica/types/security';
 ---
 
 ### 🔗 **@altamedica/hooks** (v1.0.0)
+
 **Propósito**: Biblioteca exhaustiva de React hooks organizados por dominio.
 
 ```typescript
@@ -170,36 +178,37 @@ export {
   usePatients,
   useMedicalAI,
   useHealthMetrics,
-  
+
   // Authentication
   useAuth,
   usePermissions,
-  
+
   // API Integration
   useAltamedicaAPI,
   useOptimistic,
   usePagination,
-  
+
   // Real-time
   useWebSocket,
   useNotifications,
   useRealTimeUpdates,
-  
+
   // UI/UX
   useTheme,
   useToast,
   useModal,
   useAccessibility,
-  
+
   // Utils
   useDebounce,
   useLocalStorage,
   useMediaQuery,
-  useAsync
-}
+  useAsync,
+};
 ```
 
 **Sub-exports disponibles**:
+
 - `/medical` - Hooks médicos
 - `/auth` - Hooks de autenticación
 - `/api` - Hooks de integración API
@@ -213,6 +222,7 @@ export {
 ---
 
 ### 🏥 **@altamedica/medical** (v1.0.0)
+
 **Propósito**: Componentes y utilidades del dominio médico.
 
 ```typescript
@@ -227,6 +237,7 @@ packages/medical/
 ```
 
 **Utilidades médicas**:
+
 - Cálculos BMI, dosis medicamentos
 - Validación datos clínicos
 - Formateo fechas médicas
@@ -235,6 +246,7 @@ packages/medical/
 ---
 
 ### 🌐 **@altamedica/api-client** (v1.0.0)
+
 **Propósito**: Cliente API unificado con TanStack Query y caché inteligente.
 
 ```typescript
@@ -246,19 +258,20 @@ export {
   useDoctors,
   usePrescriptions,
   useTelemedicine,
-  
+
   // Optimistic updates
   useOptimisticAppointments,
-  
+
   // Core client
   apiClient,
-  
+
   // Cache strategies
-  cacheStrategies
-}
+  cacheStrategies,
+};
 ```
 
 **Características**:
+
 - Manejo automático de errores
 - Reintentos configurables
 - Caché con invalidación inteligente
@@ -268,6 +281,7 @@ export {
 ---
 
 ### 💾 **@altamedica/database** (v1.0.0)
+
 **Propósito**: Capa de acceso a datos con Prisma ORM y repositorios.
 
 ```typescript
@@ -277,22 +291,23 @@ export {
   PatientRepository,
   MedicalRecordRepository,
   BaseRepository,
-  
+
   // Services
   CompanyService,
   B2CCommunicationService,
-  
+
   // Core
   DatabaseConnection,
-  
+
   // Schemas
   appointmentSchemas,
   medicalSchemas,
-  userSchemas
-}
+  userSchemas,
+};
 ```
 
 **Características**:
+
 - Patrón Repository para abstracción de datos
 - Soporte Firebase y PostgreSQL
 - Schemas Zod para validación
@@ -301,6 +316,7 @@ export {
 ---
 
 ### 📡 **@altamedica/telemedicine-core** (v1.0.0)
+
 **Propósito**: Implementación WebRTC para videollamadas médicas.
 
 ```typescript
@@ -309,18 +325,19 @@ export {
   // Hooks
   useTelemedicineUnified,
   useWebRTC,
-  
+
   // Services
   videoCallClient,
   webrtcService,
-  
+
   // Types
   TelemedicineSession,
-  WebRTCConfig
-}
+  WebRTCConfig,
+};
 ```
 
 **Características**:
+
 - Latencia optimizada <100ms
 - Soporte STUN/TURN
 - Grabación de sesiones (HIPAA compliant)
@@ -329,46 +346,44 @@ export {
 ---
 
 ### 🤖 **@altamedica/ai-agents** (v1.0.0)
+
 **Propósito**: Agentes IA para diagnóstico y análisis médico.
 
 ```typescript
 // Servicios disponibles
-export {
-  aiAgentsService,
-  diagnosticAgent,
-  symptomAnalyzer,
-  drugInteractionChecker
-}
+export { aiAgentsService, diagnosticAgent, symptomAnalyzer, drugInteractionChecker };
 ```
 
 ---
 
 ### 🔧 **@altamedica/utils** (v1.0.0)
+
 **Propósito**: Utilidades cross-platform y helpers.
 
 ```typescript
 export {
   // Funciones
-  cn,              // Class names utility
-  formatting,      // Formateo de datos
-  validation,      // Validaciones comunes
-  storage,         // LocalStorage wrapper
-  
+  cn, // Class names utility
+  formatting, // Formateo de datos
+  validation, // Validaciones comunes
+  storage, // LocalStorage wrapper
+
   // Hooks utilitarios
   useDebounce,
   useLocalStorage,
   useMediaQuery,
-  
+
   // Servicios
   ApiOptimizationMiddleware,
   RedirectManager,
-  TechnicalKnowledgeService
-}
+  TechnicalKnowledgeService,
+};
 ```
 
 ---
 
 ### 🛠️ **@altamedica/shared** (v1.0.0)
+
 **Propósito**: Servicios y constantes compartidas entre aplicaciones.
 
 ```typescript
@@ -378,25 +393,27 @@ export {
   jwtService,
   notificationService,
   paymentService,
-  
+
   // Constants
   API_ENDPOINTS,
   USER_ROLES,
-  
+
   // Types
   UserRoles,
-  Roles
-}
+  Roles,
+};
 ```
 
 ---
 
 ### 🏥 **@altamedica/patient-services** (v1.0.0)
+
 **Propósito**: Servicios especializados para gestión de pacientes.
 
 ---
 
 ### 🏪 **@altamedica/marketplace-hooks** (v1.0.0)
+
 **Propósito**: Hooks específicos del marketplace B2B.
 
 ```typescript
@@ -406,8 +423,8 @@ export {
   useJobApplications,
   useMarketplaceAnalytics,
   useMarketplaceJobs,
-  useMarketplaceMessaging
-}
+  useMarketplaceMessaging,
+};
 ```
 
 ---
@@ -648,12 +665,14 @@ pnpm test:e2e
 ### HIPAA Compliance en Paquetes
 
 **Paquetes críticos para HIPAA**:
+
 - `@altamedica/auth` - Autenticación y autorización
 - `@altamedica/medical-cache` - Cache de datos PHI
 - `@altamedica/database` - Persistencia de datos médicos
 - `@altamedica/telemedicine-core` - Comunicación segura
 
 **Requisitos**:
+
 1. Encriptación AES-256-GCM para PHI
 2. Audit logging en todas las operaciones médicas
 3. Access control basado en roles
@@ -675,6 +694,7 @@ pnpm test:e2e
 ### Problemas Comunes
 
 **Build failures**:
+
 ```bash
 # Limpiar y reconstruir
 pnpm clean
@@ -683,6 +703,7 @@ pnpm build
 ```
 
 **Type errors entre paquetes**:
+
 ```bash
 # Verificar versiones de TypeScript
 pnpm why typescript
@@ -692,6 +713,7 @@ pnpm --filter @altamedica/types build
 ```
 
 **Import resolution issues**:
+
 ```bash
 # Verificar exports en package.json
 # Verificar que el build se completó
@@ -700,6 +722,7 @@ ls dist/  # Debe contener archivos .js y .d.ts
 ```
 
 **Workspace dependency issues**:
+
 ```bash
 # Actualizar lockfile
 pnpm install --force
@@ -722,14 +745,14 @@ grep "workspace:" packages/*/package.json
 
 ### Tamaño de Bundles
 
-| Paquete | Size (min) | Size (gzip) |
-|---------|------------|-------------|
-| @altamedica/ui | 145 KB | 42 KB |
-| @altamedica/hooks | 89 KB | 28 KB |
-| @altamedica/types | 35 KB | 11 KB |
-| @altamedica/auth | 67 KB | 21 KB |
-| @altamedica/medical | 112 KB | 36 KB |
-| @altamedica/api-client | 78 KB | 24 KB |
+| Paquete                | Size (min) | Size (gzip) |
+| ---------------------- | ---------- | ----------- |
+| @altamedica/ui         | 145 KB     | 42 KB       |
+| @altamedica/hooks      | 89 KB      | 28 KB       |
+| @altamedica/types      | 35 KB      | 11 KB       |
+| @altamedica/auth       | 67 KB      | 21 KB       |
+| @altamedica/medical    | 112 KB     | 36 KB       |
+| @altamedica/api-client | 78 KB      | 24 KB       |
 
 ## 🚀 Mejores Prácticas
 
@@ -779,3 +802,9 @@ grep "workspace:" packages/*/package.json
 - Evitar comandos bash/Unix en scripts
 
 Esta documentación exhaustiva proporciona todo lo necesario para trabajar eficientemente con los paquetes compartidos de AltaMedica Platform, asegurando consistencia, calidad y cumplimiento médico en todo el ecosistema.
+
+## Cambios recientes de arquitectura
+
+- Autenticación unificada: estandarizamos nombres de cookies de sesión a `altamedica_token` y `altamedica_refresh` con compatibilidad temporal para `auth-token`/`refresh-token`. Usa `@altamedica/auth` → `AUTH_COOKIES` y `LEGACY_AUTH_COOKIES`.
+- Cumplimiento HIPAA: evita almacenar tokens en localStorage/sessionStorage. El api-server escribe cookies HttpOnly/Secure.
+- Corrección de build en @altamedica/api-helpers: se añadió `@types/minimatch` como dependencia de desarrollo.

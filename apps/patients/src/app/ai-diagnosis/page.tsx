@@ -1,48 +1,36 @@
 'use client';
 
-import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment, Html } from '@react-three/drei';
 import * as THREE from 'three';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 import {
   Activity,
   AlertTriangle,
   ArrowRight,
   Brain,
-  Calendar,
   Camera,
   CameraOff,
-  CheckCircle,
   ChevronRight,
-  Clock,
   Download,
-  Heart,
   Loader2,
-  MapPin,
   MessageSquare,
   Mic,
   MicOff,
-  Navigation,
-  Phone,
   Scan,
   Send,
-  Share2,
   Shield,
   Star,
-  Target,
-  Thermometer,
   Users,
-  Video,
-  X,
-  Zap
+  X
 } from 'lucide-react';
 
-// Importación dinámica del mapa
-const Map = dynamic(() => import('@/components/Map'), {
-  ssr: false,
-  loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg" />
-});
+// Importación dinámica del mapa - comentado porque no se usa
+// const Map = dynamic(() => import('@/components/Map'), {
+//   ssr: false,
+//   loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg" />
+// });
 
 // Modelos 3D del doctor (del anamnesis-juego)
 const DOCTOR_MODELS = [
@@ -150,19 +138,17 @@ function Doctor3D({
   isAnalyzing,
   confidence,
   symptomsCount,
-  onInteraction 
 }: { 
   currentStep: number;
   isAnalyzing: boolean;
   confidence: number;
   symptomsCount: number;
-  onInteraction: (action: string) => void;
 }) {
   const modelIndex = Math.floor(currentStep / 3) % DOCTOR_MODELS.length;
   const modelo = DOCTOR_MODELS[modelIndex];
   const { scene, animations } = useGLTF(modelo, true);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
-  const [animacionActual, setAnimacionActual] = useState<string | null>(null);
+  // const [animacionActual, setAnimacionActual] = useState<string | null>(null);
 
   useEffect(() => {
     if (scene) {
@@ -182,7 +168,7 @@ function Doctor3D({
       if (clip) {
         const action = mixer.clipAction(clip);
         action.reset().play();
-        setAnimacionActual(clip.name);
+        // setAnimacionActual(clip.name);
       }
     }
 
@@ -251,13 +237,13 @@ const useSpeechRecognition = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition;
+      const SpeechRecognition = (window as typeof window & { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
       recognitionRef.current.lang = 'es-ES';
 
-      recognitionRef.current.onresult = (event: any) => {
+      recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
         let finalTranscript = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const result = event.results[i];
@@ -270,7 +256,7 @@ const useSpeechRecognition = () => {
         }
       };
 
-      recognitionRef.current.onerror = (event: any) => {
+      recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
         setError(`Error de reconocimiento: ${event.error}`);
         setIsListening(false);
       };
@@ -311,7 +297,7 @@ const useCamera = () => {
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
       }
-    } catch (err) {
+    } catch {
       setError('No se pudo acceder a la cámara');
     }
   };
@@ -381,9 +367,9 @@ export default function AIDiagnosisPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [diagnosis, setDiagnosis] = useState<DiagnosisResult | null>(null);
   const [showCamera, setShowCamera] = useState(false);
-  const [showVitals, setShowVitals] = useState(false);
-  const [showMap, setShowMap] = useState(false);
-  const [selectedSpecialist, setSelectedSpecialist] = useState<SpecialistLocation | null>(null);
+  // const [showVitals, setShowVitals] = useState(false);
+  // const [showMap, setShowMap] = useState(false);
+  // const [selectedSpecialist, setSelectedSpecialist] = useState<SpecialistLocation | null>(null);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   
@@ -408,20 +394,20 @@ export default function AIDiagnosisPage() {
     occupation: ''
   });
   
-  // Estados de sensores
-  const [sensors, setSensors] = useState<DeviceSensor[]>([
-    { type: 'heartRate', available: false, unit: 'bpm' },
-    { type: 'temperature', available: false, unit: '°C' },
-    { type: 'oxygenSaturation', available: false, unit: '%' }
-  ]);
+  // Estados de sensores - comentado porque no se usa
+  // const [sensors, setSensors] = useState<DeviceSensor[]>([
+  //   { type: 'heartRate', available: false, unit: 'bpm' },
+  //   { type: 'temperature', available: false, unit: '°C' },
+  //   { type: 'oxygenSaturation', available: false, unit: '%' }
+  // ]);
 
   // Hooks personalizados
   const { isListening, transcript, startListening, stopListening } = useSpeechRecognition();
-  const { stream, videoRef, startCamera, stopCamera, captureImage } = useCamera();
+  const { videoRef, startCamera, stopCamera, captureImage } = useCamera();
   const { location, getLocation } = useGeolocation();
 
   // ID único del usuario (simulado - en producción vendría de auth)
-  const userId = 'patient_' + Math.random().toString(36).substr(2, 9);
+  // const userId = 'patient_' + Math.random().toString(36).substr(2, 9);
 
   // Verificar restricciones de uso al cargar la página
   useEffect(() => {
@@ -462,7 +448,7 @@ export default function AIDiagnosisPage() {
         setShowUsageWarning(true);
       }
     } catch (error) {
-      console.error('Error verificando restricciones:', error);
+      // console.error('Error verificando restricciones:', error);
       // Si hay error, permitir uso
       setUsageRestriction({
         can_use: true,
@@ -503,60 +489,60 @@ export default function AIDiagnosisPage() {
       // Actualizar restricciones de uso
       await checkUsageRestriction();
       
-      console.log('✅ Diagnóstico guardado localmente:', diagnosisId);
+      // console.log('✅ Diagnóstico guardado localmente:', diagnosisId);
       
-    } catch (error: any) {
-      console.error('❌ Error guardando diagnóstico:', error);
+    } catch {
+      // console.error('❌ Error guardando diagnóstico:', error);
     } finally {
       setIsSubmittingDiagnosis(false);
     }
   };
 
   // Funciones auxiliares para categorización
-  const categorizeSymphom = (symptomText: string): string => {
-    const text = symptomText.toLowerCase();
-    
-    if (text.includes('dolor de cabeza') || text.includes('mareo') || text.includes('vértigo')) return 'neurologico';
-    if (text.includes('tos') || text.includes('respirar') || text.includes('pecho')) return 'respiratorio';
-    if (text.includes('corazón') || text.includes('presión') || text.includes('palpitaciones')) return 'cardiovascular';
-    if (text.includes('estómago') || text.includes('náusea') || text.includes('diarrea')) return 'gastrointestinal';
-    if (text.includes('fiebre') || text.includes('fatiga') || text.includes('cansancio')) return 'sintomas_generales';
-    if (text.includes('dolor') && (text.includes('músculo') || text.includes('articulación'))) return 'musculoesqueletico';
-    if (text.includes('piel') || text.includes('rash') || text.includes('picazón')) return 'dermatologico';
-    
-    return 'otro';
-  };
+  // const categorizeSymphom = (symptomText: string): string => {
+  //   const text = symptomText.toLowerCase();
+  //   
+  //   if (text.includes('dolor de cabeza') || text.includes('mareo') || text.includes('vértigo')) return 'neurologico';
+  //   if (text.includes('tos') || text.includes('respirar') || text.includes('pecho')) return 'respiratorio';
+  //   if (text.includes('corazón') || text.includes('presión') || text.includes('palpitaciones')) return 'cardiovascular';
+  //   if (text.includes('estómago') || text.includes('náusea') || text.includes('diarrea')) return 'gastrointestinal';
+  //   if (text.includes('fiebre') || text.includes('fatiga') || text.includes('cansancio')) return 'sintomas_generales';
+  //   if (text.includes('dolor') && (text.includes('músculo') || text.includes('articulación'))) return 'musculoesqueletico';
+  //   if (text.includes('piel') || text.includes('rash') || text.includes('picazón')) return 'dermatologico';
+  //   
+  //   return 'otro';
+  // };
 
-  const categorizeDiagnosis = (diagnosis: string): string => {
-    const text = diagnosis.toLowerCase();
-    
-    if (text.includes('infección') || text.includes('viral') || text.includes('bacteriana')) return 'infeccioso';
-    if (text.includes('respiratoria') || text.includes('pulmonar') || text.includes('bronquitis')) return 'respiratorio';
-    if (text.includes('cardiovascular') || text.includes('cardíaco') || text.includes('corazón')) return 'cardiovascular';
-    if (text.includes('neurológico') || text.includes('neuronal') || text.includes('cerebral')) return 'nervioso';
-    if (text.includes('digestivo') || text.includes('gástrico') || text.includes('intestinal')) return 'digestivo';
-    if (text.includes('mental') || text.includes('psicológico') || text.includes('ansiedad')) return 'mental';
-    if (text.includes('piel') || text.includes('dermatológico')) return 'piel';
-    
-    return 'sintomas_generales';
-  };
+  // const categorizeDiagnosis = (diagnosis: string): string => {
+  //   const text = diagnosis.toLowerCase();
+  //   
+  //   if (text.includes('infección') || text.includes('viral') || text.includes('bacteriana')) return 'infeccioso';
+  //   if (text.includes('respiratoria') || text.includes('pulmonar') || text.includes('bronquitis')) return 'respiratorio';
+  //   if (text.includes('cardiovascular') || text.includes('cardíaco') || text.includes('corazón')) return 'cardiovascular';
+  //   if (text.includes('neurológico') || text.includes('neuronal') || text.includes('cerebral')) return 'nervioso';
+  //   if (text.includes('digestivo') || text.includes('gástrico') || text.includes('intestinal')) return 'digestivo';
+  //   if (text.includes('mental') || text.includes('psicológico') || text.includes('ansiedad')) return 'mental';
+  //   if (text.includes('piel') || text.includes('dermatológico')) return 'piel';
+  //   
+  //   return 'sintomas_generales';
+  // };
 
-  const parseDuration = (duration: string): number => {
-    const text = duration.toLowerCase();
-    if (text.includes('día') || text.includes('day')) {
-      const match = text.match(/(\d+)/);
-      return match ? parseInt(match[1]) : 1;
-    }
-    if (text.includes('semana') || text.includes('week')) {
-      const match = text.match(/(\d+)/);
-      return match ? parseInt(match[1]) * 7 : 7;
-    }
-    if (text.includes('mes') || text.includes('month')) {
-      const match = text.match(/(\d+)/);
-      return match ? parseInt(match[1]) * 30 : 30;
-    }
-    return 1; // default
-  };
+  // const parseDuration = (duration: string): number => {
+  //   const text = duration.toLowerCase();
+  //   if (text.includes('día') || text.includes('day')) {
+  //     const match = text.match(/(\d+)/);
+  //     return match ? parseInt(match[1]) : 1;
+  //   }
+  //   if (text.includes('semana') || text.includes('week')) {
+  //     const match = text.match(/(\d+)/);
+  //     return match ? parseInt(match[1]) * 7 : 7;
+  //   }
+  //   if (text.includes('mes') || text.includes('month')) {
+  //     const match = text.match(/(\d+)/);
+  //     return match ? parseInt(match[1]) * 30 : 30;
+  //   }
+  //   return 1; // default
+  // };
 
   // Efecto para manejar transcripción de voz
   useEffect(() => {

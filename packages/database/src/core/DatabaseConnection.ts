@@ -4,7 +4,10 @@
  * con optimizaciones para aplicaciones médicas y compliance HIPAA
  */
 
-import admin from '@altamedica/firebase-admin';
+import { App, cert, getApps, initializeApp, type ServiceAccount } from 'firebase-admin/app';
+import { Auth, getAuth } from 'firebase-admin/auth';
+import { Firestore, getFirestore } from 'firebase-admin/firestore';
+import { Storage, getStorage } from 'firebase-admin/storage';
 import * as winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
@@ -144,7 +147,7 @@ export class DatabaseConnection {
     }
 
     try {
-      const credentials = this.getFirebaseCredentials();
+  const credentials = this.getFirebaseCredentials();
       
       if (credentials) {
         this.app = initializeApp({
@@ -183,16 +186,20 @@ export class DatabaseConnection {
     try {
       this.firestore = getFirestore(app);
 
-      // Configuración optimizada para aplicaciones médicas
-      const firestoreSettings: Settings = {
-        ignoreUndefinedProperties: true,
-        ...(this.config.environment === 'production' && {
-          preferRest: true, // REST API para mejor compatibilidad serverless
-          ssl: true
-        })
-      };
-
-      this.firestore.settings(firestoreSettings);
+      // Configuración optimizada para aplicaciones médicas (Node Admin SDK)
+      // Nota: algunos campos (p.ej. preferRest) pueden no estar soportados según versión.
+      try {
+        this.firestore.settings({
+          // Algunas propiedades pueden no estar presentes según la versión
+          // de Firestore Admin; el cast a any evita error de tipos en versiones antiguas
+          ignoreUndefinedProperties: true,
+          ...(this.config.environment === 'production' && {
+            preferRest: true
+          })
+        } as any);
+      } catch (e) {
+        this.logger.debug('Firestore settings already configured or not supported by current version');
+      }
       this.logger.info('✅ Firestore configured successfully');
       
       return this.firestore;
@@ -213,7 +220,7 @@ export class DatabaseConnection {
     if (!app) return null;
 
     try {
-      this.auth = getAuth(app);
+  this.auth = getAuth(app);
       this.logger.info('✅ Firebase Auth configured successfully');
       return this.auth;
     } catch (error) {
@@ -233,7 +240,7 @@ export class DatabaseConnection {
     if (!app) return null;
 
     try {
-      this.storage = getStorage(app);
+  this.storage = getStorage(app);
       this.logger.info('✅ Firebase Storage configured successfully');
       return this.storage;
     } catch (error) {

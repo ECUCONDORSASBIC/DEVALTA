@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // 📝 TIPOS PRINCIPALES
 export interface APIResponse<T> {
@@ -66,8 +66,9 @@ class AltaMedicaAPIClient {
   private initializeClient(): void {
     try {
       if (typeof window !== 'undefined') {
-        this.token = localStorage.getItem('altamedica_token');
-        this.isInitialized = true;
+    // No persistimos tokens en el cliente; la sesión vive en cookies HttpOnly
+    this.token = null;
+    this.isInitialized = true;
       }
     } catch (error) {
       console.warn('⚠️ Error initializing API client:', error);
@@ -80,9 +81,7 @@ class AltaMedicaAPIClient {
       'Content-Type': 'application/json',
     };
 
-    if (this.config.enableAuth && this.token) {
-      headers.Authorization = `Bearer ${this.token}`;
-    }
+  // No agregamos Authorization; el servidor valida por cookies HttpOnly
 
     return headers;
   }
@@ -163,10 +162,8 @@ class AltaMedicaAPIClient {
         body: JSON.stringify({ idToken }),
       });
 
-      this.token = idToken;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('altamedica_token', this.token || '');
-      }
+  // El api-server setea cookies HttpOnly; no guardamos tokens en el cliente
+  this.token = null;
 
       return data;
     } catch (error) {
@@ -194,10 +191,7 @@ class AltaMedicaAPIClient {
         // Ignore logout API errors
       }
     } finally {
-      this.token = null;
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('altamedica_token');
-      }
+  this.token = null;
     }
   }
 
@@ -524,17 +518,13 @@ class AltaMedicaAPIClient {
   }
 
   setToken(token: string) {
-    this.token = token;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('altamedica_token', token);
-    }
+  // Ya no persistimos tokens en el cliente; mantener por compatibilidad en memoria si fuese necesario
+  this.token = token ?? null;
   }
 
   clearToken() {
     this.token = null;
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('altamedica_token');
-    }
+  // No hay storage que limpiar
   }
 }
 

@@ -111,6 +111,9 @@ Antes de considerar una tarea completada, verifica que has cumplido con lo sigui
 5.  [ ] **Flujo de Datos Unidireccional:** ¿El frontend llama al backend para obtener datos, y el backend es la única fuente de verdad?
 6.  [ ] **Consistencia:** ¿La nueva funcionalidad se ve y se comporta de manera consistente con el resto de la plataforma?
 
+## Documentación y guías
+
+- Nueva política de imports para evitar imports profundos y `.d.ts` ad-hoc: `docs/IMPORTS_POLICY.md`.
 ## 🚫 CRITICAL: RESTRICCIONES DE HERRAMIENTAS PARA WINDOWS
 
 Para asegurar la compatibilidad con el entorno de desarrollo nativo de Windows 11, debes seguir estas reglas:

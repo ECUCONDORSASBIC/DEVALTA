@@ -146,8 +146,8 @@ export default function AppointmentsPage() {
       setAppointments(mockAppointments);
       setDoctors(mockDoctors);
       setLoading(false);
-    } catch (error) {
-      console.error('Error loading data:', error);
+    } catch {
+      // console.error('Error loading data:', error);
       setLoading(false);
     }
   };

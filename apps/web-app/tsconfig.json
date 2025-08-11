@@ -47,7 +47,8 @@
       "@/types/*": ["./src/types/*"],
       "@/config/*": ["./config/*"],
       "@/services/*": ["./src/services/*"],
-      "@/firebase": ["./config/firebase"]
+  "@/firebase": ["./config/firebase"],
+  
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

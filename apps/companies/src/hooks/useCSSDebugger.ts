@@ -3,7 +3,7 @@
  * Aprovecha las nuevas características de Chrome DevTools v138+
  */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface CSSVariableInfo {
   name: string;
@@ -27,7 +27,7 @@ export const useCSSDebugger = (element?: HTMLElement) => {
   const [debugInfo, setDebugInfo] = useState<CSSDebugInfo | null>(null);
   const [isDebugging, setIsDebugging] = useState(false);
 
-  const analyzeCSSVariables = (targetElement: HTMLElement): CSSVariableInfo[] => {
+  const analyzeCSSVariables = useCallback((targetElement: HTMLElement): CSSVariableInfo[] => {
     const styles = getComputedStyle(targetElement);
     const variables: CSSVariableInfo[] = [];
 
@@ -48,9 +48,9 @@ export const useCSSDebugger = (element?: HTMLElement) => {
     }
 
     return variables;
-  };
+  }, []);
 
-  const analyzeComplexProperties = (targetElement: HTMLElement) => {
+  const analyzeComplexProperties = useCallback((targetElement: HTMLElement) => {
     const styles = getComputedStyle(targetElement);
     const complexProps: Record<string, any> = {};
 
@@ -77,9 +77,9 @@ export const useCSSDebugger = (element?: HTMLElement) => {
     });
 
     return complexProps;
-  };
+  }, [analyzePropertyValue]);
 
-  const analyzePropertyValue = (property: string, value: string) => {
+  const analyzePropertyValue = useCallback((property: string, value: string) => {
     // Análisis básico de valores complejos
     switch (property) {
       case 'box-shadow':
@@ -106,9 +106,9 @@ export const useCSSDebugger = (element?: HTMLElement) => {
       default:
         return { raw: value };
     }
-  };
+  }, []);
 
-  const measurePerformanceImpact = (targetElement: HTMLElement) => {
+  const measurePerformanceImpact = useCallback((targetElement: HTMLElement) => {
     // Análisis básico de impacto en rendimiento
     const heavySelectors: string[] = [];
     const rect = targetElement.getBoundingClientRect();
@@ -132,9 +132,9 @@ export const useCSSDebugger = (element?: HTMLElement) => {
       repaints: 0, // En un entorno real, esto requeriría Performance API
       reflows: 0
     };
-  };
+  }, []);
 
-  const debugElement = (targetElement?: HTMLElement) => {
+  const debugElement = useCallback((targetElement?: HTMLElement) => {
     if (!targetElement) return;
 
     setIsDebugging(true);
@@ -164,14 +164,14 @@ export const useCSSDebugger = (element?: HTMLElement) => {
     } finally {
       setIsDebugging(false);
     }
-  };
+  }, [analyzeCSSVariables, analyzeComplexProperties, measurePerformanceImpact]);
 
   // Auto-debug del elemento cuando cambia
   useEffect(() => {
     if (element) {
       debugElement(element);
     }
-  }, [element]);
+  }, [element, debugElement]);
 
   // Función para debug manual de cualquier elemento
   const debugSelector = (selector: string) => {
@@ -242,65 +242,5 @@ export const useCSSDebugger = (element?: HTMLElement) => {
 };
 
 // Componente de debug para desarrollo
-export const CSSDebugPanel = ({ targetSelector }: { targetSelector?: string }) => {
-  const [selectedElement, setSelectedElement] = useState<HTMLElement | undefined>();
-  const { debugInfo, isDebugging, debugSelector, findPerformanceIssues } = useCSSDebugger(selectedElement);
-
-  useEffect(() => {
-    if (targetSelector) {
-      const element = document.querySelector(targetSelector) as HTMLElement;
-      setSelectedElement(element);
-    }
-  }, [targetSelector]);
-
-  const performanceIssues = findPerformanceIssues();
-
-  if (process.env.NODE_ENV !== 'development') {
-    return null; // Solo mostrar en desarrollo
-  }
-
-  return (
-    <div className="fixed bottom-4 right-4 bg-white shadow-xl rounded-lg p-4 max-w-md max-h-96 overflow-auto z-50 border">
-      <h3 className="font-bold text-sm mb-2">🎨 CSS Debugger</h3>
-      
-      <div className="space-y-2 text-xs">
-        <button
-          onClick={() => debugSelector('body')}
-          className="bg-blue-500 text-white px-2 py-1 rounded text-xs"
-          disabled={isDebugging}
-        >
-          {isDebugging ? 'Analizando...' : 'Debug Body'}
-        </button>
-
-        {debugInfo && (
-          <div className="space-y-2">
-            <div>
-              <strong>Variables CSS:</strong> {debugInfo.variables.length}
-            </div>
-            
-            <div>
-              <strong>Propiedades complejas:</strong> {Object.keys(debugInfo.complexProperties).length}
-            </div>
-            
-            {debugInfo.performanceImpact.heavySelectors.length > 0 && (
-              <div className="text-yellow-600">
-                <strong>⚠️ Problemas:</strong>
-                <ul className="list-disc list-inside">
-                  {debugInfo.performanceImpact.heavySelectors.map((issue, i) => (
-                    <li key={i}>{issue}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-
-        {performanceIssues.length > 0 && (
-          <div className="border-t pt-2">
-            <strong className="text-red-600">🚨 Elementos problemáticos: {performanceIssues.length}</strong>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+// Nota: El panel visual CSSDebugPanel fue removido de este archivo .ts para evitar JSX.
+// Si se requiere, crear un archivo separado .tsx y exportarlo allí.

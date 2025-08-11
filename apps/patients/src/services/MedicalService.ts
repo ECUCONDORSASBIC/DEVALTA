@@ -31,7 +31,7 @@ export type {
 
 export class DeprecatedMedicalService {
   constructor() {
-    console.warn('⚠️ MedicalService está deprecated. Usar hooks de @altamedica/api-client');
+    // console.warn('⚠️ MedicalService está deprecated. Usar hooks de @altamedica/api-client');
   }
 }
 

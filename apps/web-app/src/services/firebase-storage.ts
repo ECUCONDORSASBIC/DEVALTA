@@ -1,33 +1,25 @@
 'use client'
 
-import { 
-  ref,
-  uploadBytes,
-  uploadBytesResumable,
-  getDownloadURL,
+import {
+  getFirebaseAuth,
+  getFirebaseFirestore,
+  getFirebaseStorage,
+  // Re-exported Firebase functions from @altamedica/firebase
   deleteObject,
-  listAll,
-  getMetadata,
-  updateMetadata
-} from 'firebase/storage'
-
-// Importar servicios Firebase usando aliases consistentes
-import { db, storage } from '@/firebase'
-// Importar funciones mock de Firestore en lugar de las reales
-import { 
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  collection,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
   addDoc,
-  query,
-  where,
+  collection,
+  doc,
+  getDoc,
   getDocs,
+  query,
   serverTimestamp,
-  Timestamp
-} from '@/lib/firestore-mock'
-import { storage, db, auth } from '@/firebase'
+  updateDoc,
+  where,
+  type Timestamp
+} from '@altamedica/firebase'
 
 export interface MedicalDocument {
   id: string
@@ -46,8 +38,8 @@ export interface MedicalDocument {
   tags: string[]
   description?: string
   // Fechas
-  createdAt: Timestamp
-  updatedAt: Timestamp
+  createdAt: any
+  updatedAt: any
   documentDate?: Timestamp // Fecha del documento médico real
   expiryDate?: Timestamp
   // Permisos
@@ -75,7 +67,7 @@ export interface MedicalDocument {
   status: 'active' | 'archived' | 'deleted'
   approved: boolean
   approvedBy?: string
-  approvedAt?: Timestamp
+  approvedAt?: any
 }
 
 export interface UploadProgress {
@@ -147,27 +139,38 @@ class FirebaseStorageService implements StorageService {
     onProgress?: (progress: UploadProgress) => void
   ): Promise<MedicalDocument> {
     try {
-      const authInstance = auth()
-      if (!authInstance?.currentUser) throw new Error('Usuario no autenticado')
-
-      const currentUser = authInstance.currentUser
+      const auth = getFirebaseAuth()
+      const currentUser = auth.currentUser
+      if (!currentUser) throw new Error('Usuario no autenticado')
+      
       const timestamp = Date.now()
       const fileName = `${timestamp}_${file.name}`
       const storagePath = `medical-documents/${patientId}/${documentType}/${fileName}`
       
       // Crear referencia de storage
-      const storageRef = ref(storage(), storagePath)
+      const storage = getFirebaseStorage()
+      const storageRef = ref(storage, storagePath)
       
       // Metadata de Firebase Storage
+      // customMetadata debe ser Record<string,string>
+      const baseCustom = {
+        patientId,
+        documentType,
+        uploadedBy: currentUser.uid,
+        originalName: file.name,
+        ...customMetadata
+      } as Record<string, any>
+
+      const customMeta: Record<string, string> = {}
+      Object.entries(baseCustom).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) {
+          customMeta[k] = typeof v === 'string' ? v : String(v)
+        }
+      })
+
       const storageMetadata = {
         contentType: file.type,
-        customMetadata: {
-          patientId,
-          documentType,
-          uploadedBy: currentUser.uid,
-          originalName: file.name,
-          ...customMetadata
-        }
+        customMetadata: customMeta
       }
 
       // Subir archivo con progreso
@@ -227,6 +230,7 @@ class FirebaseStorageService implements StorageService {
               }
 
               // Guardar en Firestore
+              const db = getFirebaseFirestore()
               const docRef = await addDoc(collection(db, this.documentsCollection), documentData)
               
               // Audit trail
@@ -278,6 +282,7 @@ class FirebaseStorageService implements StorageService {
     documentType?: MedicalDocument['documentType']
   ): Promise<MedicalDocument[]> {
     try {
+      const db = getFirebaseFirestore()
       let q = query(
         collection(db, this.documentsCollection),
         where('patientId', '==', patientId),
@@ -307,6 +312,7 @@ class FirebaseStorageService implements StorageService {
 
   async getDoctorDocuments(doctorId: string): Promise<MedicalDocument[]> {
     try {
+      const db = getFirebaseFirestore()
       const q = query(
         collection(db, this.documentsCollection),
         where('doctorId', '==', doctorId),
@@ -325,6 +331,7 @@ class FirebaseStorageService implements StorageService {
 
   async getDocumentById(documentId: string): Promise<MedicalDocument | null> {
     try {
+      const db = getFirebaseFirestore()
       const docRef = doc(db, this.documentsCollection, documentId)
       const docSnap = await getDoc(docRef)
       
@@ -343,6 +350,7 @@ class FirebaseStorageService implements StorageService {
 
   async getSharedDocuments(userId: string): Promise<MedicalDocument[]> {
     try {
+      const db = getFirebaseFirestore()
       const q = query(
         collection(db, this.documentsCollection),
         where('sharedWith', 'array-contains', userId),
@@ -362,6 +370,7 @@ class FirebaseStorageService implements StorageService {
   // Gestionar permisos
   async shareDocument(documentId: string, userId: string, permission: 'read' | 'write'): Promise<void> {
     try {
+      const db = getFirebaseFirestore()
       const docRef = doc(db, this.documentsCollection, documentId)
       await updateDoc(docRef, {
         [`accessPermissions.${userId}`]: permission,
@@ -377,6 +386,7 @@ class FirebaseStorageService implements StorageService {
 
   async revokeAccess(documentId: string, userId: string): Promise<void> {
     try {
+      const db = getFirebaseFirestore()
       const docRef = doc(db, this.documentsCollection, documentId)
       const docSnap = await getDoc(docRef)
       
@@ -403,6 +413,7 @@ class FirebaseStorageService implements StorageService {
     permissions: { [userId: string]: 'read' | 'write' | 'admin' }
   ): Promise<void> {
     try {
+      const db = getFirebaseFirestore()
       const docRef = doc(db, this.documentsCollection, documentId)
       await updateDoc(docRef, {
         accessPermissions: permissions,
@@ -450,6 +461,7 @@ class FirebaseStorageService implements StorageService {
   // Gestionar documentos
   async updateDocumentMetadata(documentId: string, metadata: Partial<MedicalDocument>): Promise<void> {
     try {
+      const db = getFirebaseFirestore()
       const docRef = doc(db, this.documentsCollection, documentId)
       await updateDoc(docRef, {
         ...metadata,
@@ -465,11 +477,13 @@ class FirebaseStorageService implements StorageService {
 
   async deleteDocument(documentId: string, permanentDelete = false): Promise<void> {
     try {
+      const db = getFirebaseFirestore()
       if (permanentDelete) {
         // Eliminar archivo de Storage
         const document = await this.getDocumentById(documentId)
         if (document) {
-          const storageRef = ref(storage(), document.storagePath)
+          const storage = getFirebaseStorage()
+          const storageRef = ref(storage, document.storagePath)
           await deleteObject(storageRef)
         }
 
@@ -496,6 +510,7 @@ class FirebaseStorageService implements StorageService {
 
   async restoreDocument(documentId: string): Promise<void> {
     try {
+      const db = getFirebaseFirestore()
       const docRef = doc(db, this.documentsCollection, documentId)
       await updateDoc(docRef, {
         status: 'active',
@@ -511,6 +526,7 @@ class FirebaseStorageService implements StorageService {
 
   async archiveDocument(documentId: string): Promise<void> {
     try {
+      const db = getFirebaseFirestore()
       const docRef = doc(db, this.documentsCollection, documentId)
       await updateDoc(docRef, {
         status: 'archived',
@@ -569,10 +585,11 @@ class FirebaseStorageService implements StorageService {
   // Compliance y seguridad
   async auditDocumentAccess(documentId: string, action: string): Promise<void> {
     try {
-      const authInstance = auth()
-      const currentUser = authInstance?.currentUser
+      const auth = getFirebaseAuth()
+      const currentUser = auth.currentUser
 
       if (currentUser) {
+        const db = getFirebaseFirestore()
         await addDoc(collection(db, this.auditCollection), {
           documentId,
           userId: currentUser.uid,
@@ -590,6 +607,7 @@ class FirebaseStorageService implements StorageService {
   async encryptDocument(documentId: string): Promise<void> {
     try {
       // Implementación básica - en producción usarías un servicio de encriptación real
+      const db = getFirebaseFirestore()
       const docRef = doc(db, this.documentsCollection, documentId)
       await updateDoc(docRef, {
         'metadata.encrypted': true,
@@ -604,6 +622,7 @@ class FirebaseStorageService implements StorageService {
 
   async getAuditTrail(documentId: string): Promise<any[]> {
     try {
+      const db = getFirebaseFirestore()
       const q = query(
         collection(db, this.auditCollection),
         where('documentId', '==', documentId)

@@ -1,68 +1,147 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "🚀 Ejecutar Patients App",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["--filter", "patients", "dev"],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "new",
-        "showReuseMessage": true,
-        "clear": false
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "🏥 Ejecutar Doctors App",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["--filter", "doctors", "dev"],
-      "group": "build",
-      "presentation": {
-        "panel": "new"
-      }
-    },
-    {
-      "label": "🔧 Ejecutar API Server",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["--filter", "api-server", "dev"],
-      "group": "build",
-      "presentation": {
-        "panel": "new"
-      }
-    },
-    {
-      "label": "🧪 Ejecutar Tests",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["test"],
-      "group": "test",
-      "presentation": {
-        "panel": "new"
-      }
-    },
-    {
-      "label": "🧹 Linter Fix",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["lint:fix"],
-      "group": "build"
-    },
-    {
-      "label": "📦 Build All",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["build"],
-      "group": "build"
-    }
-  ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "🚀 Ejecutar Patients App",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"--filter",
+				"patients",
+				"dev"
+			],
+			"options": {
+				"env": {
+					"PATH": "${env:PATH};${env:APPDATA}\\npm"
+				}
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "🏥 Ejecutar Doctors App",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"--filter",
+				"doctors",
+				"dev"
+			],
+			"options": {
+				"env": {
+					"PATH": "${env:PATH};${env:APPDATA}\\npm"
+				}
+			},
+			"group": "build",
+			"presentation": {
+				"panel": "new"
+			}
+		},
+		{
+			"label": "🔧 Ejecutar API Server",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"--filter",
+				"api-server",
+				"dev"
+			],
+			"options": {
+				"env": {
+					"PATH": "${env:PATH};${env:APPDATA}\\npm"
+				}
+			},
+			"group": "build",
+			"presentation": {
+				"panel": "new"
+			}
+		},
+		{
+			"label": "🧪 Ejecutar Tests",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"test"
+			],
+			"options": {
+				"env": {
+					"PATH": "${env:PATH};${env:APPDATA}\\npm"
+				}
+			},
+			"group": "test",
+			"presentation": {
+				"panel": "new"
+			}
+		},
+		{
+			"label": "🧹 Linter Fix",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"lint:fix"
+			],
+			"options": {
+				"env": {
+					"PATH": "${env:PATH};${env:APPDATA}\\npm"
+				}
+			},
+			"group": "build"
+		},
+		{
+			"label": "📦 Build All",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"build"
+			],
+			"options": {
+				"env": {
+					"PATH": "${env:PATH};${env:APPDATA}\\npm"
+				}
+			},
+			"group": "build"
+		},
+		{
+			"label": "🔍 Lint Companies",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"--filter",
+				"companies",
+				"lint"
+			],
+			"group": "build"
+		},
+		{
+			"label": "🧪 Quick Typecheck",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"-w",
+				"-r",
+				"build",
+				"--filter",
+				"@altamedica/api-server",
+				"--filter",
+				"@altamedica/web-app",
+				"--filter",
+				"@altamedica/patients"
+			],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		}
+	]
 }

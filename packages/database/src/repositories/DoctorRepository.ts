@@ -4,10 +4,9 @@
  * específicas y validaciones profesionales
  */
 
-import { BaseRepository, BaseEntity, ServiceContext, QueryOptions, RepositoryResult } from './BaseRepository';
-import { z } from 'zod';
-import { dbConnection } from '../core/DatabaseConnection';
-import { DoctorSchema } from '../schemas/user-schemas';
+import { dbConnection } from '../core/DatabaseConnection.js';
+import { DoctorSchema } from '../schemas/user-schemas.js';
+import { BaseEntity, BaseRepository, RepositoryResult, ServiceContext } from './BaseRepository.js';
 
 // Doctor entity interface que extiende BaseEntity
 export interface Doctor extends BaseEntity {
@@ -76,79 +75,78 @@ export interface Doctor extends BaseEntity {
 }
 
 export class DoctorRepository extends BaseRepository<Doctor> {
-  constructor() {
-    super('doctors', DoctorSchema);
-  }
+  protected collectionName = 'doctors';
+  protected entitySchema = DoctorSchema;
 
   /**
    * Buscar doctores por especialidad
    */
-  async findBySpecialty(specialty: string, context?: ServiceContext): Promise<RepositoryResult<Doctor[]>> {
+  async findBySpecialty(specialty: string, context: ServiceContext): Promise<RepositoryResult<Doctor>> {
+    const startTime = Date.now();
+    const db = await this.ensureFirestore();
+    
     try {
-      const db = await dbConnection.getFirestore();
-      
       const query = db.collection(this.collectionName)
         .where('specialty', 'array-contains', specialty)
         .where('status', '==', 'active')
         .where('isVerified', '==', true);
 
       const snapshot = await query.get();
-      const doctors = snapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data() 
-      } as Doctor));
+      const doctors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Doctor));
 
-      await this.auditLog('READ_BY_SPECIALTY', { specialty }, context);
+      await this.logAudit('read_by_specialty', 'collection', context, { specialty, count: doctors.length });
 
-      return {
-        success: true,
-        data: doctors
-      };
+      const duration = Date.now() - startTime;
+      dbConnection.recordQuery(`findBySpecialty_${this.collectionName}`, duration, true);
+
+      return { data: doctors, total: doctors.length, hasMore: false };
     } catch (error) {
-      return this.handleError(error, 'findBySpecialty');
+      const duration = Date.now() - startTime;
+      dbConnection.recordQuery(`findBySpecialty_${this.collectionName}`, duration, false);
+      throw error;
     }
   }
 
   /**
    * Buscar doctores por licencia médica
    */
-  async findByLicenseNumber(licenseNumber: string, context?: ServiceContext): Promise<RepositoryResult<Doctor | null>> {
+  async findByLicenseNumber(licenseNumber: string, context: ServiceContext): Promise<Doctor | null> {
+    const startTime = Date.now();
+    const db = await this.ensureFirestore();
+
     try {
-      const db = await dbConnection.getFirestore();
-      
       const query = db.collection(this.collectionName)
         .where('licenseNumber', '==', licenseNumber)
         .limit(1);
 
       const snapshot = await query.get();
-      
       if (snapshot.empty) {
-        return { success: true, data: null };
+        const duration = Date.now() - startTime;
+        dbConnection.recordQuery(`findByLicense_${this.collectionName}`, duration, true);
+        return null;
       }
 
-      const doctor = { 
-        id: snapshot.docs[0].id, 
-        ...snapshot.docs[0].data() 
-      } as Doctor;
+      const doctor = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as Doctor;
+      await this.logAudit('read_by_license', doctor.id, context, { licenseNumber });
 
-      await this.auditLog('READ_BY_LICENSE', { licenseNumber }, context);
-
-      return {
-        success: true,
-        data: doctor
-      };
+      const duration = Date.now() - startTime;
+      dbConnection.recordQuery(`findByLicense_${this.collectionName}`, duration, true);
+      return doctor;
     } catch (error) {
-      return this.handleError(error, 'findByLicenseNumber');
+      const duration = Date.now() - startTime;
+      dbConnection.recordQuery(`findByLicense_${this.collectionName}`, duration, false);
+      throw error;
     }
   }
 
   /**
    * Buscar doctores disponibles para telemedicina
    */
-  async findTelemedicineEnabled(context?: ServiceContext): Promise<RepositoryResult<Doctor[]>> {
+  async findTelemedicineEnabled(context: ServiceContext): Promise<RepositoryResult<Doctor>> {
+    const startTime = Date.now();
+    const db = await this.ensureFirestore();
+
     try {
-      const db = await dbConnection.getFirestore();
-      
       const query = db.collection(this.collectionName)
         .where('telemedicineEnabled', '==', true)
         .where('status', '==', 'active')
@@ -156,101 +154,74 @@ export class DoctorRepository extends BaseRepository<Doctor> {
         .where('acceptsNewPatients', '==', true);
 
       const snapshot = await query.get();
-      const doctors = snapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data() 
-      } as Doctor));
+      const doctors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Doctor));
 
-      await this.auditLog('READ_TELEMEDICINE_ENABLED', {}, context);
+      await this.logAudit('read_telemedicine_enabled', 'collection', context, { count: doctors.length });
 
-      return {
-        success: true,
-        data: doctors
-      };
+      const duration = Date.now() - startTime;
+      dbConnection.recordQuery(`findTelemedicine_${this.collectionName}`, duration, true);
+      return { data: doctors, total: doctors.length, hasMore: false };
     } catch (error) {
-      return this.handleError(error, 'findTelemedicineEnabled');
+      const duration = Date.now() - startTime;
+      dbConnection.recordQuery(`findTelemedicine_${this.collectionName}`, duration, false);
+      throw error;
     }
   }
 
   /**
    * Actualizar rating y estadísticas del doctor
    */
-  async updateRating(doctorId: string, newRating: number, context?: ServiceContext): Promise<RepositoryResult<Doctor | null>> {
-    try {
-      const doctorResult = await this.findById(doctorId, context);
-      if (!doctorResult.success || !doctorResult.data) {
-        return { success: false, error: 'Doctor no encontrado' };
-      }
+  async updateRating(doctorId: string, newRating: number, context: ServiceContext): Promise<Doctor | null> {
+    const doctor = await this.findById(doctorId, context);
+    if (!doctor) return null;
 
-      const doctor = doctorResult.data;
-      const currentRating = doctor.rating || 0;
-      const currentReviewCount = doctor.reviewCount || 0;
+    const currentRating = doctor.rating || 0;
+    const currentReviewCount = doctor.reviewCount || 0;
 
-      // Calcular nuevo promedio
-      const newReviewCount = currentReviewCount + 1;
-      const newAverageRating = ((currentRating * currentReviewCount) + newRating) / newReviewCount;
+    const newReviewCount = currentReviewCount + 1;
+    const newAverageRating = ((currentRating * currentReviewCount) + newRating) / newReviewCount;
 
-      const updateData = {
-        rating: Math.round(newAverageRating * 100) / 100, // 2 decimales
-        reviewCount: newReviewCount,
-        updatedAt: new Date()
-      };
+    const result = await this.update(doctorId, {
+      rating: Math.round(newAverageRating * 100) / 100,
+      reviewCount: newReviewCount,
+      updatedAt: new Date()
+    }, context);
 
-      const result = await this.update(doctorId, updateData, context);
-      
-      await this.auditLog('UPDATE_RATING', { 
-        doctorId, 
-        oldRating: currentRating, 
-        newRating: newAverageRating,
-        reviewCount: newReviewCount
-      }, context);
+    await this.logAudit('update_rating', doctorId, context, {
+      oldRating: currentRating,
+      newRating: newAverageRating,
+      reviewCount: newReviewCount
+    });
 
-      return result;
-    } catch (error) {
-      return this.handleError(error, 'updateRating');
-    }
+    return result;
   }
 
   /**
    * Verificar doctor
    */
-  async verifyDoctor(doctorId: string, context?: ServiceContext): Promise<RepositoryResult<Doctor | null>> {
-    try {
-      const updateData = {
-        isVerified: true,
-        verificationDate: new Date(),
-        status: 'active' as const,
-        updatedAt: new Date()
-      };
+  async verifyDoctor(doctorId: string, context: ServiceContext): Promise<Doctor | null> {
+    const result = await this.update(doctorId, {
+      isVerified: true,
+      verificationDate: new Date(),
+      status: 'active',
+      updatedAt: new Date()
+    } as any, context);
 
-      const result = await this.update(doctorId, updateData, context);
-      
-      await this.auditLog('DOCTOR_VERIFIED', { doctorId }, context);
-
-      return result;
-    } catch (error) {
-      return this.handleError(error, 'verifyDoctor');
-    }
+    await this.logAudit('doctor_verified', doctorId, context);
+    return result;
   }
 
   /**
    * Suspender doctor
    */
-  async suspendDoctor(doctorId: string, reason: string, context?: ServiceContext): Promise<RepositoryResult<Doctor | null>> {
-    try {
-      const updateData = {
-        status: 'suspended' as const,
-        updatedAt: new Date()
-      };
+  async suspendDoctor(doctorId: string, reason: string, context: ServiceContext): Promise<Doctor | null> {
+    const result = await this.update(doctorId, {
+      status: 'suspended',
+      updatedAt: new Date()
+    } as any, context);
 
-      const result = await this.update(doctorId, updateData, context);
-      
-      await this.auditLog('DOCTOR_SUSPENDED', { doctorId, reason }, context);
-
-      return result;
-    } catch (error) {
-      return this.handleError(error, 'suspendDoctor');
-    }
+    await this.logAudit('doctor_suspended', doctorId, context, { reason });
+    return result;
   }
 
   /**
@@ -264,77 +235,61 @@ export class DoctorRepository extends BaseRepository<Doctor> {
     minRating?: number;
     maxConsultationFee?: number;
     availability?: { dayOfWeek: number; time: string };
-  }, context?: ServiceContext): Promise<RepositoryResult<Doctor[]>> {
+  }, context: ServiceContext): Promise<RepositoryResult<Doctor>> {
+    const startTime = Date.now();
+    const db = await this.ensureFirestore();
+
     try {
-      const db = await dbConnection.getFirestore();
       let query = db.collection(this.collectionName)
         .where('status', '==', 'active')
         .where('isVerified', '==', true);
 
-      // Aplicar filtros
       if (filters.specialty) {
         query = query.where('specialty', 'array-contains', filters.specialty);
       }
-      
       if (filters.telemedicineEnabled !== undefined) {
         query = query.where('telemedicineEnabled', '==', filters.telemedicineEnabled);
       }
-      
       if (filters.acceptsNewPatients !== undefined) {
         query = query.where('acceptsNewPatients', '==', filters.acceptsNewPatients);
       }
 
       const snapshot = await query.get();
-      let doctors = snapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data() 
-      } as Doctor));
+      let doctors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Doctor));
 
-      // Filtros adicionales en memoria (para casos complejos)
       if (filters.minRating) {
-        doctors = doctors.filter(doc => (doc.rating || 0) >= filters.minRating!);
+        doctors = doctors.filter(doc => (doc.rating || 0) >= (filters.minRating as number));
       }
-
       if (filters.maxConsultationFee) {
-        doctors = doctors.filter(doc => 
-          !doc.consultationFee || doc.consultationFee <= filters.maxConsultationFee!
-        );
+        doctors = doctors.filter(doc => !doc.consultationFee || doc.consultationFee <= (filters.maxConsultationFee as number));
       }
 
-      await this.auditLog('SEARCH_DOCTORS', { filters }, context);
+      await this.logAudit('search_doctors', 'collection', context, { filters, count: doctors.length });
 
-      return {
-        success: true,
-        data: doctors
-      };
+      const duration = Date.now() - startTime;
+      dbConnection.recordQuery(`search_${this.collectionName}`, duration, true);
+      return { data: doctors, total: doctors.length, hasMore: false };
     } catch (error) {
-      return this.handleError(error, 'searchDoctors');
+      const duration = Date.now() - startTime;
+      dbConnection.recordQuery(`search_${this.collectionName}`, duration, false);
+      throw error;
     }
   }
 
   /**
    * Incrementar contador de consultas
    */
-  async incrementConsultationCount(doctorId: string, context?: ServiceContext): Promise<RepositoryResult<Doctor | null>> {
-    try {
-      const doctorResult = await this.findById(doctorId, context);
-      if (!doctorResult.success || !doctorResult.data) {
-        return { success: false, error: 'Doctor no encontrado' };
-      }
+  async incrementConsultationCount(doctorId: string, context: ServiceContext): Promise<Doctor | null> {
+    const doctor = await this.findById(doctorId, context);
+    if (!doctor) return null;
 
-      const updateData = {
-        totalConsultations: (doctorResult.data.totalConsultations || 0) + 1,
-        updatedAt: new Date()
-      };
+    const result = await this.update(doctorId, {
+      totalConsultations: (doctor.totalConsultations || 0) + 1,
+      updatedAt: new Date()
+    }, context);
 
-      const result = await this.update(doctorId, updateData, context);
-      
-      await this.auditLog('INCREMENT_CONSULTATIONS', { doctorId }, context);
-
-      return result;
-    } catch (error) {
-      return this.handleError(error, 'incrementConsultationCount');
-    }
+    await this.logAudit('increment_consultations', doctorId, context);
+    return result;
   }
 }
 

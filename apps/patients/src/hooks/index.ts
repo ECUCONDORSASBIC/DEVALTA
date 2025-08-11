@@ -35,17 +35,17 @@ export {
   useMediaQuery
 } from '@altamedica/hooks';
 
-export {
-  usePatients,
-  useAppointments,
-  useMedicalRecords,
-  usePrescriptions,
-  useTelemedicine
-} from '@altamedica/medical-hooks';
+// export {
+//   usePatients,
+//   useAppointments,
+//   useMedicalRecords,
+//   usePrescriptions,
+//   useTelemedicine
+// } from '@altamedica/medical-hooks';
 
 // Hooks locales que aún no están centralizados (serán migrados)
-export { useIntegratedServices } from './useIntegratedServices';
-export { useSpecializedHooks } from './useSpecializedHooks';
+// export { useIntegratedServices } from './useIntegratedServices';
+// export { useSpecializedHooks } from './useSpecializedHooks';
 
 // Tipos re-exportados
 export type {
@@ -71,10 +71,10 @@ export function useLegacyPatientHooks() {
 export default {
   // Re-exportaciones principales
   useAuth,
-  usePatients,
-  useAppointments,
-  useMedicalRecords,
-  useIntegratedServices,
+  // usePatients,
+  // useAppointments,
+  // useMedicalRecords,
+  // useIntegratedServices,
   
   // Legacy compatibility
   useLegacyPatientHooks

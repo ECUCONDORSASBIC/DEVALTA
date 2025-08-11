@@ -12,7 +12,7 @@
  * import { getAppUrl, findRoute } from '@altamedica/utils/navigation';
  */
 
-console.warn('⚠️ /utils/navigation está deprecated. Migrar a @altamedica/utils/navigation');
+// console.warn('⚠️ /utils/navigation está deprecated. Migrar a @altamedica/utils/navigation');
 
 // Re-exportar desde el paquete centralizado para compatibilidad temporal
 export {

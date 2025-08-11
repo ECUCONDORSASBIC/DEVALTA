@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencies
+# Dependencies - Sin restricciones excesivas
 # ----------------------------------------------------------------
 node_modules/
 .pnp
@@ -11,8 +11,10 @@ node_modules/
 !.yarn/releases
 !.yarn/versions
 .npm
+.pnpm-store/
+.pnpm-cache/
 
-# Build & Cache
+# Build & Cache - Mantener archivos necesarios
 # ----------------------------------------------------------------
 .next/
 out/
@@ -21,6 +23,8 @@ build/
 *.tsbuildinfo
 .turbo/
 .eslintcache
+.cache/
+.parcel-cache/
 
 # Testing
 # ----------------------------------------------------------------
@@ -85,22 +89,25 @@ Desktop.ini
 .fuse_hidden*
 .nfs*
 
-# IDE Configuration
+# IDE Configuration - Permitir configuraciones útiles
 # ----------------------------------------------------------------
-# Ignore all vscode files by default
-.vscode/*
-# But re-include files that are safe and useful to share
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# Solo ignorar archivos específicos de IDE
+.vscode/launch.json
+.vscode/c_cpp_properties.json
 .idea/
+*.swp
+*.swo
+*~
 
 # Temporary Files
 # ----------------------------------------------------------------
 *.tmp
 *.temp
+*.backup
+*.bak
 backups/
+.tmp/
+.temp/
 
 # Vercel
 # ----------------------------------------------------------------

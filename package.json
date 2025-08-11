@@ -3,16 +3,20 @@
   "version": "1.0.0",
   "description": "AltaMedica - Plataforma de Telemedicina Integral",
   "private": true,
-  
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
+    "preinstall": "npx only-allow pnpm",
+    "build": "turbo run build --no-cache",
+    "dev": "turbo run dev --no-cache",
     "dev:min": "concurrently \"pnpm --filter web-app dev\" \"pnpm --filter patients dev\" \"pnpm --filter api-server dev\" \"pnpm --filter doctors dev\"",
     "start:all-servers": "node start-all-servers.js",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
+    "pnpm:reinstall": "pnpm clean:node-modules && pnpm install",
+    "pnpm:force-install": "pnpm install --force --no-frozen-lockfile",
+    "pnpm:update-all": "pnpm update --recursive --latest",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
     "test": "turbo run test",
     "clean": "turbo run clean",
     "type-check": "turbo run type-check",
@@ -33,9 +37,16 @@
     "audit:single-login": "node tools/scripts/enforce-single-login.js"
   },
   "devDependencies": {
+    "@altamedica/eslint-config": "workspace:*",
     "@playwright/test": "^1.40.0",
+    "@types/minimatch": "^6.0.0",
     "concurrently": "^8.2.2",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-prettier": "^5.5.4",
     "turbo": "^1.13.4"
+  },
+  "dependencies": {
+    "@altamedica/config-next": "workspace:*"
   },
   "packageManager": "pnpm@8.15.6",
   "engines": {
@@ -52,6 +63,26 @@
       "react-dom": "^18.3.1",
       "@types/react": "^18.3.23",
       "@types/react-dom": "^18.3.5"
-    }
+    },
+    "peerDependencyRules": {
+      "allowAny": [
+        "*"
+      ],
+      "allowedVersions": {
+        "react": "*",
+        "react-dom": "*",
+        "@types/react": "*",
+        "@types/react-dom": "*"
+      },
+      "ignoreMissing": [
+        "*"
+      ]
+    },
+    "neverBuiltDependencies": [],
+    "allowedDeprecatedVersions": {
+      "*": "*"
+    },
+    "packageExtensions": {},
+    "patchedDependencies": {}
   }
 }

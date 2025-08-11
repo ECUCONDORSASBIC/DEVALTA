@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { AUTH_COOKIES, LEGACY_AUTH_COOKIES } from '../constants/cookies';
 
 interface AuthConfig {
   loginUrl?: string;
@@ -24,9 +25,13 @@ export async function authGuard(
   const { loginUrl, apiUrl, allowedRoles } = { ...DEFAULT_CONFIG, ...config };
   
   try {
-    // 1. Obtener cookies de la request
-    const authToken = request.cookies.get('auth-token');
-    const refreshToken = request.cookies.get('refresh-token');
+    // 1. Obtener cookies de la request (nuevo estándar + fallback legacy)
+    const authToken =
+      request.cookies.get(AUTH_COOKIES.token) ||
+      request.cookies.get(LEGACY_AUTH_COOKIES.token);
+    const refreshToken =
+      request.cookies.get(AUTH_COOKIES.refresh) ||
+      request.cookies.get(LEGACY_AUTH_COOKIES.refresh);
     
     // 2. Si no hay cookies, redirigir a login
     if (!authToken && !refreshToken) {

@@ -3,12 +3,12 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
+  'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
-    'prettier'
+  require.resolve('eslint-config-prettier'),
+  'plugin:prettier/recommended'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -17,12 +17,12 @@ module.exports = {
     ecmaFeatures: {
       jsx: true
     },
-    project: ['./tsconfig.json']
+    // No forzar un único tsconfig para evitar errores en apps sin raíz TSConfig.
+    // Los proyectos TypeScript serán detectados por resolvers en settings y overrides.
   },
   plugins: [
     '@typescript-eslint',
-    'react',
-    'react-hooks',
+  'react',
     'jsx-a11y',
     'import',
     'prettier'
@@ -40,7 +40,11 @@ module.exports = {
     'import/resolver': {
       typescript: {
         alwaysTryTypes: true,
-        project: ['./tsconfig.json', './packages/*/tsconfig.json', './apps/*/tsconfig.json']
+        project: [
+          './tsconfig.json',
+          './packages/*/tsconfig.json',
+          './apps/*/tsconfig.json'
+        ]
       }
     }
   },
@@ -72,6 +76,36 @@ module.exports = {
       }
     ],
     'import/no-duplicates': 'error',
+    // Prohibir imports internos salvo entradas públicas permitidas
+    'import/no-internal-modules': [
+      'error',
+      {
+        allow: [
+          '@altamedica/*',
+          '@altamedica/*/client',
+          '@altamedica/*/server',
+          '@altamedica/*/services',
+          '@altamedica/*/hooks'
+        ]
+      }
+    ],
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            group: ['@altamedica/*/src/*', '@altamedica/*/dist/*'],
+            message:
+              'No importes desde src/ o dist/ de los paquetes. Usa las API públicas o subpaths permitidos (client, server, services, hooks).'
+          },
+          {
+            group: ['@altamedica/*/constants/*'],
+            message:
+              'Constantes internas no son API pública. Expórtalas desde el entrypoint del paquete si deben usarse.'
+          }
+        ]
+      }
+    ],
     
     // General
     'no-console': ['warn', { allow: ['warn', 'error'] }],
@@ -88,6 +122,19 @@ module.exports = {
     'no-new-func': 'error'
   },
   overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        project: [
+          './tsconfig.json',
+          './packages/*/tsconfig.json',
+          './apps/*/tsconfig.json'
+        ],
+        tsconfigRootDir: __dirname,
+      },
+      rules: {}
+    },
     {
       files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
       env: {

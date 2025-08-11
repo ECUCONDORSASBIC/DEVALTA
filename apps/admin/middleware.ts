@@ -1,52 +1,20 @@
-import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { createSSOMiddleware } from '@altamedica/auth'
 
-// Rutas públicas mínimas (login local eliminado: redirigido a web-app)
-const publicRoutes = ['/api/health']
+// SSO centralizado para Admin (estricto)
+const sso = createSSOMiddleware({
+  appName: 'admin',
+  allowedRoles: ['admin', 'superadmin'],
+  loginUrl: process.env.NEXT_PUBLIC_LOGIN_URL || 'http://localhost:3000/auth/login',
+  apiUrl: process.env.NEXT_PUBLIC_API_URL
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/verify`
+    : 'http://localhost:3001/api/v1/auth/verify',
+  publicPaths: ['/api/health', '/_next', '/favicon.ico', '/icons', '/images', '/robots.txt', '/sitemap.xml'],
+  debug: process.env.NODE_ENV === 'development',
+})
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-
-  // Bloquear intento de uso de /login local → redirigir a gateway central
-  if (pathname.startsWith('/login')) {
-    const central = new URL('http://localhost:3000/auth/login')
-    central.searchParams.set('from', 'admin')
-    return NextResponse.redirect(central)
-  }
-  if (publicRoutes.some(route => pathname.startsWith(route))) return NextResponse.next()
-
-  // Verificar token de autenticación
-  const token = request.cookies.get('adminToken')?.value || 
-                request.headers.get('authorization')?.replace('Bearer ', '')
-
-  // Si no hay token, redirigir al login
-  if (!token) {
-  const central = new URL('http://localhost:3000/auth/login')
-  central.searchParams.set('from', 'admin')
-  central.searchParams.set('redirect', pathname)
-  return NextResponse.redirect(central)
-  }
-
-  // TODO: Validar token con el backend
-  // Por ahora, simplemente verificamos que existe
-  
-  // Si el usuario está autenticado y trata de acceder a la raíz, redirigir al dashboard
-  if (pathname === '/') {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
-  }
-
-  return NextResponse.next()
+export async function middleware(request: NextRequest) {
+  return sso(request)
 }
 
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    '/((?!_next/static|_next/image|favicon.ico|public).*)',
-  ],
-}
+export { ssoMiddlewareConfig as config } from '@altamedica/auth'

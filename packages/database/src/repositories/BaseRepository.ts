@@ -6,7 +6,7 @@
 
 import { Firestore, DocumentData, QueryDocumentSnapshot, Query, WriteBatch } from 'firebase-admin/firestore';
 import { z } from 'zod';
-import { dbConnection } from '../core/DatabaseConnection';
+import { dbConnection } from '../core/DatabaseConnection.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface BaseEntity {

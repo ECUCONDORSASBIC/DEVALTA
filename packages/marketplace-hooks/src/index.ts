@@ -6,6 +6,7 @@ export * from './hooks/useJobApplications';
 export * from './hooks/useMarketplaceAnalytics';
 export * from './hooks/useMarketplaceJobs';
 export * from './hooks/useMarketplaceMessaging';
+export * from './hooks/useMarketplaceNotifications';
 
 // Store exports
 export * from './stores/marketplaceStore';

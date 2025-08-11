@@ -8,19 +8,21 @@
 export const databaseVersion = '2.0.0';
 
 // Core Database Connection
-export { DatabaseConnection, dbConnection, getFirestoreDB, getAuthAdmin, getStorageAdmin } from './core/DatabaseConnection';
+export { DatabaseConnection, dbConnection, getAuthAdmin, getFirestoreDB, getStorageAdmin } from './core/DatabaseConnection.js';
 
 // Base Repository Pattern
-export { BaseRepository, type BaseEntity, type ServiceContext, type QueryOptions, type RepositoryResult } from './repositories/BaseRepository';
+export { BaseRepository, type BaseEntity, type QueryOptions, type RepositoryResult, type ServiceContext } from './repositories/BaseRepository.js';
 
 // Specialized Repositories
-export { MedicalRecordRepository, medicalRecordRepository } from './repositories/MedicalRecordRepository';
-export { PatientRepository, patientRepository } from './repositories/PatientRepository';
-export { DoctorRepository, doctorRepository } from './repositories/DoctorRepository';
-export { AppointmentRepository, appointmentRepository } from './repositories/AppointmentRepository';
+export { AppointmentRepository, appointmentRepository } from './repositories/AppointmentRepository.js';
+export { DoctorRepository, doctorRepository } from './repositories/DoctorRepository.js';
+export { MedicalRecordRepository, medicalRecordRepository } from './repositories/MedicalRecordRepository.js';
+export { PatientRepository, patientRepository } from './repositories/PatientRepository.js';
+export { CompanyRepository, companyRepository } from './repositories/CompanyRepository.js';
+export { MarketplaceRepository, marketplaceRepository, ApplicationRepository, applicationRepository } from './repositories/MarketplaceRepository.js';
 
-// Centralized Schemas
-export * from './schemas';
+// Centralized Schemas (namespaced to avoid type name collisions)
+export * as Schemas from './schemas';
 
 // Repository Index Export
 export * from './repositories';
@@ -41,11 +43,13 @@ export * from './monitoring';
 export * from './firebase/config';
 
 // Import instances for convenience functions
-import { dbConnection } from './core/DatabaseConnection';
-import { medicalRecordRepository } from './repositories/MedicalRecordRepository';
-import { patientRepository } from './repositories/PatientRepository';
-import { doctorRepository } from './repositories/DoctorRepository';
-import { appointmentRepository } from './repositories/AppointmentRepository';
+import { dbConnection } from './core/DatabaseConnection.js';
+import { appointmentRepository } from './repositories/AppointmentRepository.js';
+import { doctorRepository } from './repositories/DoctorRepository.js';
+import { medicalRecordRepository } from './repositories/MedicalRecordRepository.js';
+import { patientRepository } from './repositories/PatientRepository.js';
+import { companyRepository } from './repositories/CompanyRepository.js';
+import { marketplaceRepository, applicationRepository } from './repositories/MarketplaceRepository.js';
 
 // Convenience Functions for Quick Setup
 export async function initializeAltaMedicaDatabase() {
@@ -69,7 +73,10 @@ export async function initializeAltaMedicaDatabase() {
         medicalRecord: medicalRecordRepository,
         patient: patientRepository,
         doctor: doctorRepository,
-        appointment: appointmentRepository
+        appointment: appointmentRepository,
+        company: companyRepository,
+        marketplace: marketplaceRepository,
+        application: applicationRepository
       }
     };
   } catch (error) {

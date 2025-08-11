@@ -42,7 +42,9 @@
       "@/infrastructure/*": ["./src/infrastructure/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/middleware/*": ["./src/middleware/*"],
-      "@/test/*": ["./src/test/*"]
+  "@/test/*": ["./src/test/*"],
+  "@altamedica/auth": ["../../packages/auth/src"],
+  "@altamedica/auth/*": ["../../packages/auth/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

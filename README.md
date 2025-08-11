@@ -343,6 +343,8 @@ Los reportes de coverage se generan en `coverage/` de cada app.
 
 ## 📚 Estándares de Desarrollo
 
+Nota: Política de imports y cómo evitar imports profundos erróneos: ver `docs/IMPORTS_POLICY.md`.
+
 ### 🎨 **Convenciones de Código**
 
 #### **Estructura de Archivos**

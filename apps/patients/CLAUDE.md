@@ -1,5 +1,18 @@
 # CLAUDE.md - App: Patients 👤
-**Última actualización:** 28 de enero de 2025
+**Última actualización:** 11 de agosto de 2025
+
+## ⚠️ FILOSOFÍA E2E (End-to-End) OBLIGATORIA
+
+**CRÍTICO**: Todas las sugerencias y soluciones para esta app deben ser **end-to-end (E2E)**, abarcando desde frontend hasta backend, base de datos y configuración. **No ofrecer soluciones parciales o incompletas**.
+
+### 🎯 Principios E2E para Patients App
+- **Frontend + Backend**: Considera tanto React/Next.js como API routes
+- **Datos Médicos**: Cumplimiento HIPAA E2E (frontend + backend + logs + auditoría)
+- **Tipos Compartidos**: Actualiza @altamedica/types para contratos médicos
+- **Estado Global**: Integra con TanStack Query y providers médicos
+- **Testing E2E**: Unit tests + integration + Playwright con datos médicos
+- **Documentación**: Actualiza este CLAUDE.md tras cambios
+- **Sistemas Unificados**: SIEMPRE usar UnifiedAuthSystem, UnifiedNotificationSystem para alertas médicas
 
 ## 🎯 Resumen de la Aplicación
 - **Propósito:** Portal del paciente para gestionar citas, ver historial médico y comunicarse con los doctores.

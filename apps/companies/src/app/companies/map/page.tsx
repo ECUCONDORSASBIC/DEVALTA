@@ -174,7 +174,7 @@ export default function CompaniesMapPage() {
           });
         },
         (error) => {
-          console.error('Error getting location:', error);
+          // Error getting location - use default location
           // Default to Barcelona if location access is denied
           setUserLocation({ lat: 41.3851, lng: 2.1734 });
         }

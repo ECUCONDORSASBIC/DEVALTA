@@ -1,18 +1,17 @@
 // services/anamnesisService.ts
-import { 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  updateDoc, 
-  serverTimestamp,
-  query,
-  where,
-  orderBy,
-  limit,
+import type { Firestore } from 'firebase/firestore'
+import { db } from '../../config/firebase'
+import {
+  collection,
+  doc,
   getDocs,
-  Firestore
-} from 'firebase/firestore'
+  limit,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  where
+} from '../lib/firestore-mock'
 import { ProgresoAnamnesis, RespuestaAnamnesis } from '../types/anamnesis.types'
 
 interface AnamnesisFirebase extends ProgresoAnamnesis {
@@ -23,20 +22,8 @@ interface AnamnesisFirebase extends ProgresoAnamnesis {
   fechaCompletado?: any
 }
 
-// Función para obtener la instancia de Firestore de forma segura
-const getFirestoreInstance = (): Firestore | null => {
-  try {
-    // Solo en el cliente
-    if (typeof window !== 'undefined') {
-      const { db } = require('../../config/firebase')
-      return db
-    }
-    return null
-  } catch (error) {
-    console.error('Error obteniendo instancia de Firestore:', error)
-    return null
-  }
-}
+// Instancia centralizada de Firestore (SDK modular v9); SSR-safe por configuración en config/firebase
+const getFirestoreInstance = (): Firestore => db as unknown as Firestore
 
 // Guardar o actualizar progreso de anamnesis
 export const guardarAnamnesisFirebase = async (
@@ -44,10 +31,7 @@ export const guardarAnamnesisFirebase = async (
   progreso: ProgresoAnamnesis
 ): Promise<void> => {
   try {
-    const db = getFirestoreInstance()
-    if (!db) {
-      throw new Error('Firestore no disponible')
-    }
+  const db = getFirestoreInstance()
 
     const anamnesisRef = doc(db, 'anamnesis', `${pacienteId}_${Date.now()}`)
     
@@ -70,10 +54,7 @@ export const obtenerUltimaAnamnesis = async (
   pacienteId: string
 ): Promise<AnamnesisFirebase | null> => {
   try {
-    const db = getFirestoreInstance()
-    if (!db) {
-      throw new Error('Firestore no disponible')
-    }
+  const db = getFirestoreInstance()
 
     const anamnesisQuery = query(
       collection(db, 'anamnesis'),

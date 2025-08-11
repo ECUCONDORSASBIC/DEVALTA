@@ -3,10 +3,16 @@
  * Export centralizado de servicios de alto nivel
  */
 
-// Company Services
-export { companiesService, marketplaceService, analyticsService } from './CompanyService';
+// ⚠️ DEPRECATED SERVICES - Use Repositories instead
+// These services violate best practices by using Firebase Client SDK without ServiceContext
+/**
+ * @deprecated Use CompanyRepository and MarketplaceRepository instead
+ */
+export { companiesService, marketplaceService, analyticsService } from './CompanyService.js';
 
-// B2C Communication Services
+/**
+ * @deprecated Use MarketplaceRepository and ApplicationRepository instead
+ */
 export { 
   jobApplicationsService,
   messagingService,
@@ -14,7 +20,17 @@ export {
   notificationsService,
   communicationEventsService,
   realtimeService
-} from './B2CCommunicationService';
+} from './B2CCommunicationService.js';
+
+// ✅ RECOMMENDED: Use Repository Pattern instead
+export { 
+  CompanyRepository, 
+  companyRepository,
+  MarketplaceRepository, 
+  marketplaceRepository,
+  ApplicationRepository,
+  applicationRepository
+} from '../repositories/index.js';
 
 // TODO: Implement additional service layer
 // export { MedicalRecordService } from './MedicalRecordService';
@@ -22,4 +38,4 @@ export {
 // export { AppointmentService } from './AppointmentService';
 
 // Version export
-export const servicesVersion = '1.1.0';
+export const servicesVersion = '2.0.0';

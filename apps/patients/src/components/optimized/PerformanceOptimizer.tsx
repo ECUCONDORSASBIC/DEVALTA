@@ -1,37 +1,37 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback, useRef, Suspense, lazy } from 'react';
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress } from '@altamedica/ui';
 import {
   Activity,
-  Zap,
-  Clock,
-  Wifi,
-  WifiOff,
-  Settings,
-  RefreshCw,
-  TrendingUp,
-  TrendingDown,
   AlertCircle,
   CheckCircle,
-  XCircle,
-  Monitor,
-  HardDrive,
+  Clock,
   Cpu,
-  Memory,
-  Network
+  HardDrive,
+  Network,
+  XCircle,
+  Zap
 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@altamedica/ui';
-import { Badge } from '@altamedica/ui';
-import { Button } from '@altamedica/ui';
-import { Progress } from '@altamedica/ui';
-import { Switch } from '@altamedica/ui';
-import { useAuth } from '../../contexts/AuthContext';
-import { useToast } from '../../hooks/useToast';
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+// Switch local mínimo para evitar depender de UI inexistente
+type SwitchProps = { checked: boolean; onCheckedChange: (checked: boolean) => void };
+const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange }) => (
+  <label className="inline-flex items-center cursor-pointer select-none">
+    <input
+      type="checkbox"
+      className="sr-only"
+      checked={checked}
+      onChange={(e) => onCheckedChange(e.target.checked)}
+    />
+    <span className={`relative inline-block h-5 w-9 rounded-full transition-colors ${checked ? 'bg-primary-600' : 'bg-gray-300'}`}>
+      <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${checked ? 'translate-x-4' : ''}`} />
+    </span>
+  </label>
+);
 
 // Lazy load components
 const TelemedicineCall = lazy(() => import('../telemedicine/TelemedicineCall'));
 const TelemedicineDashboard = lazy(() => import('../dashboard/TelemedicineDashboard'));
-const NotificationSystem = lazy(() => import('../notifications/NotificationSystem'));
 
 interface PerformanceMetrics {
   fps: number;
@@ -76,8 +76,8 @@ interface OptimizationSettings {
 }
 
 export default function PerformanceOptimizer() {
-  const { user } = useAuth();
-  const { toast } = useToast();
+  // Toast no-op para evitar dependencia ausente
+  const toast = useCallback((..._args: any[]) => {}, []);
   
   const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null);
   const [settings, setSettings] = useState<OptimizationSettings>({
@@ -114,15 +114,7 @@ export default function PerformanceOptimizer() {
   }, [isMonitoring]);
 
   // Monitoreo automático de rendimiento
-  useEffect(() => {
-    if (settings.autoOptimize) {
-      const interval = setInterval(() => {
-        checkPerformanceAndOptimize();
-      }, 30000); // Cada 30 segundos
-
-      return () => clearInterval(interval);
-    }
-  }, [settings.autoOptimize]);
+  // (efecto de auto-optimización movido más abajo para declarar dependencias primero)
 
   // Iniciar monitoreo de rendimiento
   const startPerformanceMonitoring = () => {
@@ -185,7 +177,7 @@ export default function PerformanceOptimizer() {
 
     // Monitoreo de batería
     if ('getBattery' in navigator) {
-      navigator.getBattery().then((battery) => {
+      (navigator as any).getBattery().then((battery: any) => {
         const updateBattery = () => {
           updateMetrics({
             battery: {
@@ -292,6 +284,21 @@ export default function PerformanceOptimizer() {
       });
     }
   }, [metrics, settings, toast]);
+
+  // Monitoreo automático de rendimiento (intervalo periódico)
+  useEffect(() => {
+    let interval: number | undefined;
+    if (settings.autoOptimize) {
+      interval = window.setInterval(() => {
+        checkPerformanceAndOptimize();
+      }, 30000);
+    }
+    return () => {
+      if (interval) {
+        window.clearInterval(interval);
+      }
+    };
+  }, [settings.autoOptimize, checkPerformanceAndOptimize]);
 
   // Optimización manual
   const performManualOptimization = useCallback(() => {
@@ -438,7 +445,7 @@ export default function PerformanceOptimizer() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Memoria</CardTitle>
-              <Memory className="h-4 w-4 text-muted-foreground" />
+              <HardDrive className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{metrics.memory.percentage}%</div>

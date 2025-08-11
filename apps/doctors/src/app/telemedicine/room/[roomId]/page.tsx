@@ -1,34 +1,27 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useParams } from 'next/navigation';
-import { ProfessionalTelemedicineCall } from '@/components/telemedicine/ProfessionalTelemedicineCall';
-import { useAuth } from '@altamedica/hooks'; // Hook de autenticación centralizado
+import { useParams } from "next/navigation";
+import DoctorVideoCall from "../../../../components/telemedicine/DoctorVideoCall";
 
-const TelemedicineRoomPage = () => {
+export default function TelemedicineRoomPage() {
   const params = useParams();
-  const { user } = useAuth(); // Obtener el doctor autenticado
-  const roomId = params.roomid as string;
+  const roomId = (params?.roomId as string) || "test-room";
 
-  // En una aplicación real, el sessionId y patientId vendrían de la base de datos
-  // o del estado de la aplicación al iniciar la llamada. 
-  // Aquí usamos valores de ejemplo.
-  const sessionId = `session-for-room-${roomId}`;
-  const patientId = 'mock-patient-id'; // Esto debería ser dinámico
-
-  if (!user) {
-    return <div className="text-center p-8">Por favor, inicie sesión para unirse a la consulta.</div>;
-  }
+  // Datos mínimos de ejemplo para MVP
+  const patientId = "patient-mvp";
+  const patientName = "Paciente Demo";
 
   return (
-    <main className="w-full h-screen bg-gray-900">
-      <ProfessionalTelemedicineCall 
-        sessionId={sessionId}
-        doctorId={user.id}
+    <main className="w-full h-screen bg-gray-900 p-4">
+      <DoctorVideoCall
+        roomId={roomId}
         patientId={patientId}
+        patientName={patientName}
+        onEndCall={() => history.back()}
+        showControls
+        showStats
+        className="h-full"
       />
     </main>
   );
-};
-
-export default TelemedicineRoomPage;
+}

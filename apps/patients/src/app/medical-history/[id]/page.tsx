@@ -2,8 +2,8 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useMedicalRecord } from "../../../hooks/useMedicalHistory";
-import RecordDetails from "../../../components/medical-history/RecordDetails";
-import ExportPanel from "../../../components/medical-history/ExportPanel";
+// import RecordDetails from "../../../components/medical-history/RecordDetails";
+// import ExportPanel from "../../../components/medical-history/ExportPanel";
 
 export default function MedicalRecordDetailPage({
   params,
@@ -28,9 +28,10 @@ export default function MedicalRecordDetailPage({
       <button className="mb-4 text-blue-600" onClick={() => router.back()}>
         &larr; Volver
       </button>
-      <RecordDetails record={record} />
+      {/* <RecordDetails record={record} /> */}
+      <div>Detalle del registro médico ID: {id}</div>
       <div className="mt-6">
-        <ExportPanel records={[record]} />
+        {/* <ExportPanel records={[record]} /> */}
       </div>
     </div>
   );

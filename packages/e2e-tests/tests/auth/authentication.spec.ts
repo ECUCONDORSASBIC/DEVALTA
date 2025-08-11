@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../page-objects/login.page';
+import { expect, test } from '@playwright/test';
 import { DashboardPage } from '../page-objects/dashboard.page';
+import { LoginPage } from '../page-objects/login.page';
 
 test.describe('🔐 Authentication Flows', () => {
   let loginPage: LoginPage;
@@ -140,8 +140,8 @@ test.describe('🔐 Authentication Flows', () => {
     await expect(page).toHaveURL('http://localhost:3003/dashboard');
 
     // Get cookies
-    const cookies = await context.cookies();
-    const authCookie = cookies.find(c => c.name === 'auth-token');
+  const cookies = await context.cookies();
+  const authCookie = cookies.find(c => c.name === 'altamedica_token' || c.name === 'auth-token');
     
     // Assert cookie has extended expiry (30 days)
     expect(authCookie).toBeDefined();

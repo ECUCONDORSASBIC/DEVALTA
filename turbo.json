@@ -1,23 +1,43 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env*", "**/package.json", "**/pnpm-lock.yaml", "**/tsconfig.json", "**/.npmrc", "**/.pnpmrc"],
+  "globalEnv": ["NODE_ENV", "VERCEL_URL", "PORT"],
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"],
+      "cache": true,
+      "env": ["NODE_ENV", "NEXT_PUBLIC_*", "FIREBASE_*"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["NODE_ENV", "PORT", "NEXT_PUBLIC_*", "FIREBASE_*"]
     },
-    "lint": {},
+    "lint": {
+      "cache": true,
+      "outputs": []
+    },
+    "lint:fix": {
+      "cache": false,
+      "outputs": []
+    },
     "test": {
-      "dependsOn": ["build"]
+      "dependsOn": [],
+      "cache": true,
+      "outputs": ["coverage/**"]
     },
     "clean": {
-      "cache": false
+      "cache": false,
+      "outputs": []
     },
     "type-check": {
-      "dependsOn": ["^build"]
+      "dependsOn": [],
+      "cache": true,
+      "outputs": []
     }
+  },
+  "remoteCache": {
+    "signature": false
   }
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "../../../lib/auth-middleware";
+import { UnifiedAuth, UserRole } from "../../../../../api-server/src/auth/UnifiedAuthSystem";
 import { auditLog, logger } from "../../../lib/medical-mocks";
 
 // Configuración de marketplace de empleo médico para empresas
@@ -57,9 +57,17 @@ interface MarketplaceSettings {
   updatedBy: string;
 }
 
-export const GET = requireRole(['company'], async (request: NextRequest, user: any) => {
+export async function GET(request: NextRequest) {
+  // Autenticación y autorización usando UnifiedAuth
+  const authResult = await UnifiedAuth(request, [UserRole.COMPANY]);
+  
+  if (!authResult.success) {
+    return authResult.response;
+  }
+  
+  const user = authResult.user!;
   try {
-    const companyId = user.companyId || user.custom_claims?.companyId;
+    const companyId = user.companyId;
     
     if (!companyId) {
       return NextResponse.json(
@@ -122,13 +130,13 @@ export const GET = requireRole(['company'], async (request: NextRequest, user: a
         description: 'Centro médico líder buscando profesionales comprometidos con la excelencia'
       },
       updatedAt: new Date(),
-      updatedBy: user.uid
+      updatedBy: user.userId
     };
 
     // Log de auditoría
     await auditLog({
       action: 'marketplace_employment_settings_viewed',
-      userId: user.uid,
+      userId: user.userId,
       companyId,
       metadata: { endpoint: '/api/marketplace-settings' }
     });
@@ -146,7 +154,7 @@ export const GET = requireRole(['company'], async (request: NextRequest, user: a
   } catch (error) {
     logger.error('Error getting marketplace settings:', {
       error: error instanceof Error ? error.message : String(error),
-      userId: user?.uid,
+      userId: user?.userId,
       companyId: user?.companyId
     });
 
@@ -157,9 +165,17 @@ export const GET = requireRole(['company'], async (request: NextRequest, user: a
   }
 });
 
-export const PUT = requireRole(['company'], async (request: NextRequest, user: any) => {
+export async function PUT(request: NextRequest) {
+  // Autenticación y autorización usando UnifiedAuth
+  const authResult = await UnifiedAuth(request, [UserRole.COMPANY]);
+  
+  if (!authResult.success) {
+    return authResult.response;
+  }
+  
+  const user = authResult.user!;
   try {
-    const companyId = user.companyId || user.custom_claims?.companyId;
+    const companyId = user.companyId;
     
     if (!companyId) {
       return NextResponse.json(
@@ -173,7 +189,7 @@ export const PUT = requireRole(['company'], async (request: NextRequest, user: a
       ...body,
       companyId,
       updatedAt: new Date(),
-      updatedBy: user.uid
+      updatedBy: user.userId
     };
 
     // Validaciones de negocio para marketplace de empleo
@@ -203,7 +219,7 @@ export const PUT = requireRole(['company'], async (request: NextRequest, user: a
     // Log de auditoría para cambios
     await auditLog({
       action: 'marketplace_employment_settings_updated',
-      userId: user.uid,
+      userId: user.userId,
       companyId,
       metadata: { 
         changes: body,
@@ -214,7 +230,7 @@ export const PUT = requireRole(['company'], async (request: NextRequest, user: a
     // Simular guardado en base de datos
     logger.info('Marketplace employment settings updated:', {
       companyId,
-      userId: user.uid,
+      userId: user.userId,
       changes: Object.keys(body)
     });
 
@@ -227,7 +243,7 @@ export const PUT = requireRole(['company'], async (request: NextRequest, user: a
   } catch (error) {
     logger.error('Error updating marketplace settings:', {
       error: error instanceof Error ? error.message : String(error),
-      userId: user?.uid,
+      userId: user?.userId,
       companyId: user?.companyId
     });
 

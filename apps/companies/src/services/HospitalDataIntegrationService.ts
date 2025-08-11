@@ -3,7 +3,7 @@
  * Sistema multi-canal para recolección de datos hospitalarios en tiempo real
  */
 
-import { addDoc, collection, getFirebaseFirestore, limit, onSnapshot, orderBy, query } from '@altamedica/firebase/src/client';
+import { addDoc, collection, getFirebaseFirestore, limit, onSnapshot, orderBy, query } from '@altamedica/firebase/client';
 import type {
   DataSource,
   SaturationLevel,

@@ -4,9 +4,9 @@
  * y funcionalidades específicas para datos médicos sensibles
  */
 
-import { BaseRepository, BaseEntity, ServiceContext, QueryOptions, RepositoryResult } from './BaseRepository';
+import { BaseRepository, BaseEntity, ServiceContext, QueryOptions, RepositoryResult } from './BaseRepository.js';
 import { z } from 'zod';
-import { dbConnection } from '../core/DatabaseConnection';
+import { dbConnection } from '../core/DatabaseConnection.js';
 
 // Schema Zod para Patient migrado y mejorado
 export const PatientSchema = z.object({

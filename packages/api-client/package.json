@@ -11,7 +11,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint src --ext .ts,.tsx",
+  "lint": "eslint . --ext .ts,.tsx --no-error-on-unmatched-pattern",
+  "lint:fix": "eslint . --ext .ts,.tsx --fix --no-error-on-unmatched-pattern",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

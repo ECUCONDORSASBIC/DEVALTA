@@ -1,14 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import jwt from 'jsonwebtoken';
 import {
-  generateAuthToken,
-  verifyAuthToken,
-  generateRefreshToken,
-  verifyRefreshToken,
+  UnifiedAuthService,
   UserRole,
-  setUserClaims,
   createAuthContext
-} from '../lib/auth';
+} from '../auth/UnifiedAuthSystem';
 
 // Mock de Firebase Admin
 vi.mock('../lib/firebase-admin', () => ({
@@ -82,7 +78,7 @@ describe('Auth Service Tests', () => {
     });
 
     it('should reject an expired token', async () => {
-      // Generar token con expiración inmediata
+      // Generar token con expiraciï¿½n inmediata
       const expiredToken = generateAuthToken(testUser, '0s');
       
       // Esperar un momento para asegurar que expire
@@ -202,8 +198,8 @@ describe('Auth Service Tests', () => {
     it('should not expose sensitive information in token', () => {
       const sensitiveUser = {
         ...testUser,
-        password: 'should-not-appear', // Este campo no debería aparecer
-        ssn: '123-45-6789' // Información sensible
+        password: 'should-not-appear', // Este campo no deberï¿½a aparecer
+        ssn: '123-45-6789' // Informaciï¿½n sensible
       };
 
       const token = generateAuthToken(sensitiveUser as any);

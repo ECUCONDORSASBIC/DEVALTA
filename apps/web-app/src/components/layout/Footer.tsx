@@ -93,19 +93,6 @@ export function Footer({ className }: FooterProps) {
               <span className="hidden sm:inline">Todos los derechos reservados</span>
             </div>
 
-            {/* Developer Attribution */}
-            <div className="flex items-center space-x-2 text-sm">
-              <span className="text-neutral-500">Desarrollado con</span>
-              <Heart className="w-4 h-4 text-red-500 animate-pulse" />
-              <span className="text-neutral-500">por</span>
-              <div className="flex items-center space-x-2 text-primary-400">
-                <GraduationCap className="w-4 h-4" />
-                <span className="font-medium">Eduardo Marques</span>
-              </div>
-              <span className="text-neutral-500 text-xs">
-                Medicina - UBA
-              </span>
-            </div>
 
           </div>
           

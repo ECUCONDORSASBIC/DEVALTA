@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import NotificationService from '../notifications/notification-service';
+import { notificationService } from '../notifications/UnifiedNotificationSystem';
 
 const router = Router();
-const notificationService = new NotificationService();
 
 // Obtener notificaciones del usuario
 router.get('/user/:userId', async (req, res) => {

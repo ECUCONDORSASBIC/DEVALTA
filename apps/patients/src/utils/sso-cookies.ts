@@ -12,7 +12,7 @@
  * import { getSSOUser, hasSSOToken } from '@altamedica/auth/sso';
  */
 
-console.warn('⚠️ /utils/sso-cookies está deprecated. Migrar a @altamedica/auth/sso');
+// console.warn('⚠️ /utils/sso-cookies está deprecated. Migrar a @altamedica/auth/sso');
 
 // Re-exportar desde el paquete centralizado para compatibilidad temporal
 export {

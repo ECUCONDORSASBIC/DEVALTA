@@ -50,8 +50,8 @@ interface NetworkMinimapProps {
 export function NetworkMinimap({ hospitals: externalHospitals }: NetworkMinimapProps) {
   const [selectedHospital, setSelectedHospital] = useState<string | null>(null);
 
-  // Datos mock de hospitales
-  const mockHospitals: MiniHospital[] = [
+  // Datos mock de hospitales (memoizado para evitar re-renders)
+  const mockHospitals: MiniHospital[] = useMemo(() => [
     {
       id: 'h1',
       name: 'Hospital Central',
@@ -118,10 +118,10 @@ export function NetworkMinimap({ hospitals: externalHospitals }: NetworkMinimapP
       location: 'Zona Oeste',
       specialties: ['Rehabilitación', 'Medicina Deportiva']
     }
-  ];
+  ], []);
 
   // Fuente: props externas si vienen, sino mocks
-  const hospitals = useMemo(() => externalHospitals ?? mockHospitals, [externalHospitals]);
+  const hospitals = useMemo(() => externalHospitals ?? mockHospitals, [externalHospitals, mockHospitals]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

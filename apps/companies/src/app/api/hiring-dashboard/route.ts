@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "../../../lib/auth-middleware";
+import { UnifiedAuth, UserRole } from "../../../../../api-server/src/auth/UnifiedAuthSystem";
 import { auditLog, logger } from "../../../lib/medical-mocks";
 
 interface HiringMetrics {
@@ -52,9 +52,17 @@ interface HiringMetrics {
   generatedAt: Date;
 }
 
-export const GET = requireRole(['company'], async (request: NextRequest, user: any) => {
+export async function GET(request: NextRequest) {
+  // Autenticación y autorización usando UnifiedAuth
+  const authResult = await UnifiedAuth(request, [UserRole.COMPANY]);
+  
+  if (!authResult.success) {
+    return authResult.response;
+  }
+  
+  const user = authResult.user!;
   try {
-    const companyId = user.companyId || user.custom_claims?.companyId;
+    const companyId = user.companyId;
     const url = new URL(request.url);
     const period = (url.searchParams.get('period') as HiringMetrics['period']) || 'last_30_days';
     
@@ -127,7 +135,7 @@ export const GET = requireRole(['company'], async (request: NextRequest, user: a
     // Log de auditoría
     await auditLog({
       action: 'hiring_dashboard_viewed',
-      userId: user.uid,
+      userId: user.userId,
       companyId,
       metadata: { 
         period,
@@ -148,7 +156,7 @@ export const GET = requireRole(['company'], async (request: NextRequest, user: a
   } catch (error) {
     logger.error('Error getting hiring dashboard:', {
       error: error instanceof Error ? error.message : String(error),
-      userId: user?.uid,
+      userId: user?.userId,
       companyId: user?.companyId
     });
 
@@ -160,9 +168,17 @@ export const GET = requireRole(['company'], async (request: NextRequest, user: a
 });
 
 // Endpoint para exportar métricas
-export const POST = requireRole(['company'], async (request: NextRequest, user: any) => {
+export async function POST(request: NextRequest) {
+  // Autenticación y autorización usando UnifiedAuth
+  const authResult = await UnifiedAuth(request, [UserRole.COMPANY]);
+  
+  if (!authResult.success) {
+    return authResult.response;
+  }
+  
+  const user = authResult.user!;
   try {
-    const companyId = user.companyId || user.custom_claims?.companyId;
+    const companyId = user.companyId;
     const body = await request.json();
     const { format = 'pdf', period = 'last_30_days' } = body;
     
@@ -176,7 +192,7 @@ export const POST = requireRole(['company'], async (request: NextRequest, user: 
     // Log de auditoría para export
     await auditLog({
       action: 'hiring_report_exported',
-      userId: user.uid,
+      userId: user.userId,
       companyId,
       metadata: { 
         format,
@@ -192,7 +208,7 @@ export const POST = requireRole(['company'], async (request: NextRequest, user: 
     logger.info('Hiring report generated:', {
       reportId,
       companyId,
-      userId: user.uid,
+      userId: user.userId,
       format,
       period
     });
@@ -212,7 +228,7 @@ export const POST = requireRole(['company'], async (request: NextRequest, user: 
   } catch (error) {
     logger.error('Error generating hiring report:', {
       error: error instanceof Error ? error.message : String(error),
-      userId: user?.uid,
+      userId: user?.userId,
       companyId: user?.companyId
     });
 

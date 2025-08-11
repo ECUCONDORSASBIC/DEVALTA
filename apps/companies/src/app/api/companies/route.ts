@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "../../../lib/auth-middleware";
+import { UnifiedAuth, UserRole } from "../../../../../api-server/src/auth/UnifiedAuthSystem";
 import { companiesService } from "@altamedica/database";
 import { auditLog, logger } from "../../../lib/medical-mocks";
 
@@ -137,14 +137,23 @@ const fallbackCompaniesData = [
   },
 ];
 
-export const GET = requireRole(['company', 'admin'], async (request: NextRequest, user: any) => {
+export async function GET(request: NextRequest) {
+  // Autenticación y autorización usando UnifiedAuth
+  const authResult = await UnifiedAuth(request, [UserRole.COMPANY, UserRole.ADMIN]);
+  
+  if (!authResult.success) {
+    return authResult.response;
+  }
+  
+  const user = authResult.user!;
+  
   try {
-    const companyId = user.companyId || user.custom_claims?.companyId;
+    const companyId = user.companyId;
     
     // Log de auditoría
     await auditLog({
       action: 'companies_list_viewed',
-      userId: user.uid,
+      userId: user.userId,
       companyId: companyId || 'unknown',
       metadata: { endpoint: '/api/companies' }
     });
@@ -179,8 +188,8 @@ export const GET = requireRole(['company', 'admin'], async (request: NextRequest
   } catch (error) {
     logger.error('Error getting companies:', {
       error: error instanceof Error ? error.message : String(error),
-      userId: user?.uid,
-      companyId: user?.companyId
+      userId: user.userId,
+      companyId: user.companyId
     });
 
     return NextResponse.json(
@@ -188,4 +197,4 @@ export const GET = requireRole(['company', 'admin'], async (request: NextRequest
       { status: 500 }
     );
   }
-});
+}

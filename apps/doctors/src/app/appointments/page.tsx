@@ -33,7 +33,7 @@ export default function AppointmentsPage() {
 
   const loadAppointments = async () => {
     try {
-      let filters: any = {}
+      const filters: any = {}
       
       if (filter === 'today') {
         const today = new Date()

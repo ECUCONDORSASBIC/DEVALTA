@@ -11,7 +11,9 @@
       "Bash(pnpm servers:start:*)",
       "Bash(pnpm --filter @altamedica/diagnostic-engine build)",
       "Bash(taskkill:*)",
-      "Bash(pnpm exec playwright test:*)"
+      "Bash(pnpm exec playwright test:*)",
+      "Bash(pnpm build:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }

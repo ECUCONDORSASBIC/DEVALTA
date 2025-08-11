@@ -1,6 +1,10 @@
 /**
  * 🔗 B2C COMMUNICATION SERVICE - ALTAMEDICA DATABASE
  * Servicios de comunicación entre Companies y Doctors
+ * 
+ * @deprecated Este servicio está obsoleto. Use MarketplaceRepository y ApplicationRepository en su lugar.
+ * Este servicio viola las mejores prácticas usando Firebase Client SDK sin ServiceContext.
+ * Será eliminado en la próxima versión.
  */
 
 import { 

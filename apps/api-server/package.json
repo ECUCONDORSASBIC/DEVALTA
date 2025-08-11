@@ -4,7 +4,7 @@
   "description": "API Server for Altamedica telemedicine platform",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env PORT=3008 npx tsx src/server.ts",
+  "dev": "cross-env PORT=3001 npx tsx src/server.ts",
     "build": "tsc --build",
     "start": "node dist/server.js",
     "start:express": "npx tsx src/server.ts",
@@ -12,6 +12,7 @@
     "verify-security": "node scripts/verify-security.js"
   },
   "dependencies": {
+  "@altamedica/auth": "workspace:*",
     "@altamedica/api-helpers": "workspace:*",
     "@altamedica/database": "workspace:*",
     "@altamedica/firebase": "workspace:*",

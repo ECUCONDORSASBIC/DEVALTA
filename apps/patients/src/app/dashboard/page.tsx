@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth, useRequireAuth } from "@altamedica/auth';
+import { useAuth, useRequireAuth } from "@altamedica/auth";
 import { api } from '@/lib/api-client-jwt';
 import { 
   Calendar, 
@@ -47,11 +47,11 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { isAuthenticated, isLoading: authLoading } = useRequireAuth();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  // const [error, setError] = useState('');
 
   useEffect(() => {
     if (isAuthenticated && !authLoading) {
