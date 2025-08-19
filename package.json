@@ -89,7 +89,8 @@
     "emergency:disable-non-compliant:dry-run": "powershell -ExecutionPolicy Bypass -File scripts/emergency-hipaa-compliance.ps1 -DryRun",
     "emergency:status": "node scripts/check-emergency-status.js",
     "compliance:audit": "node altamedica-core/scripts/medical-compliance-check.js",
-    "security:audit": "pnpm audit && npx snyk test"
+    "security:audit": "pnpm audit && npx snyk test",
+    "audit:build": "node scripts/build-audit.cjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
